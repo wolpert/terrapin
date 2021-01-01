@@ -1,0 +1,5 @@
+/*
+ * Copyright (c) 2020 CodeHead Systems. All rights reserved
+ */
+
+include 'codehead-test', 'statemachine'

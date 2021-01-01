@@ -1,0 +1,38 @@
+/*
+ * Copyright (c) 2020 CodeHead Systems. All rights reserved
+ */
+
+apply plugin: 'java-library'
+apply plugin: 'idea'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+ext {
+    appName = "codehead-test"
+}
+
+configurations {
+    project.archivesBaseName = "${appName}"
+    jar.baseName = "${appName}"
+}
+test {
+    useJUnitPlatform() // needed for junit5
+}
+
+dependencies {
+    implementation("com.google.guava:guava:${guavaVersion}")
+    implementation("com.fasterxml.jackson.core:jackson-core:${jacksonVersion}")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:${jacksonVersion}")
+    implementation("org.junit.jupiter:junit-jupiter-api:${jupiterVersion}")
+    implementation("org.assertj:assertj-core:${assertjVersion}")
+    implementation("org.mockito:mockito-junit-jupiter:${mockitoVersion}")
+    implementation("org.mockito:mockito-core:${mockitoVersion}")
+
+    // Use JUnit Jupiter Engine for testing.
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${jupiterVersion}")
+    testImplementation("org.immutables:value-annotations:${immutablesVersion}")
+    testImplementation("com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}")
+    testImplementation("com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}")
+    testAnnotationProcessor("org.immutables:value:${immutablesVersion}")
+}

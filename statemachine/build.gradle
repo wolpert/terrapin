@@ -1,0 +1,61 @@
+/*
+ * Copyright (c) 2020 CodeHead Systems. All rights reserved
+ */
+
+apply plugin: 'java-library'
+apply plugin: 'idea'
+apply plugin: 'jacoco'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+ext {
+    appName = "statemachine"
+}
+
+configurations {
+    project.archivesBaseName = "${appName}"
+    jar.baseName = "${appName}"
+}
+test {
+    useJUnitPlatform() // needed for junit5
+    finalizedBy jacocoTestReport
+}
+jacocoTestReport {
+    reports {
+        xml.enabled false
+        csv.enabled false
+        html.destination file("${buildDir}/jacocoHtml")
+    }
+}
+
+dependencies {
+    implementation("com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}")
+    implementation("com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}")
+    implementation("com.fasterxml.jackson.core:jackson-core:${jacksonVersion}")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:${jacksonVersion}")
+    implementation("com.google.guava:guava:${guavaVersion}")
+    implementation("commons-io:commons-io:${commonsIoVersion}")
+    implementation("io.dropwizard.metrics:metrics-core:${metricsVersion}")
+    implementation("javax.inject:javax.inject:${javaxInjectVersion}")
+    implementation("org.slf4j:slf4j-api:${slf4jVersion}")
+
+    implementation("org.immutables:value-annotations:${immutablesVersion}")
+    annotationProcessor("org.immutables:value:${immutablesVersion}")
+
+    implementation("com.google.dagger:dagger:${daggerVersion}")
+    annotationProcessor("com.google.dagger:dagger-compiler:${daggerVersion}")
+
+
+    // Use JUnit Jupiter Engine for testing.
+    testImplementation project(':codehead-test')
+
+    testImplementation("ch.qos.logback:logback-classic:${logbackVersion}")
+    testImplementation("ch.qos.logback:logback-core:${logbackVersion}")
+    testImplementation("org.assertj:assertj-core:${assertjVersion}")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:${jupiterVersion}")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:${jupiterVersion}")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:${jupiterVersion}")
+    testImplementation("org.mockito:mockito-junit-jupiter:${mockitoVersion}")
+    testImplementation("org.mockito:mockito-core:${mockitoVersion}")
+}

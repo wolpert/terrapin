@@ -1,0 +1,21 @@
+{
+  "name": "goodSimpleStateMachine",
+  "id": "ID",
+  "version": 1,
+  "initialState": "s1",
+  "states": {
+    "s1": {
+      "name": "s1",
+      "transitions": {
+        "t": {
+          "name": "t",
+          "nextState": "s2"
+        }
+      }
+    },
+    "s2": {
+      "name": "s2",
+      "transitions": {}
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "badSimpleStateMachine",
+  "id": "ID",
+  "version": 1,
+  "states": {
+    "s1": {
+      "name": "s1",
+      "transitions": {
+        "t": {
+          "name": "t",
+          "nextState": "s3"
+        }
+      }
+    },
+    "s2": {
+      "name": "s2",
+      "transitions": {}
+    }
+  }
+}
