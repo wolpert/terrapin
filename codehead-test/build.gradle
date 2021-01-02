@@ -21,53 +21,6 @@ configurations {
     jar.baseName = "${appName}"
 }
 
-jar {
-    manifest.attributes["Implementation-Title"] = project.name
-    manifest.attributes["Implementation-Version"] = project.version
-    manifest.attributes["Automatic-Module-Name"] = project.name.replace('-', '.')  // for Jigsaw
-    manifest.attributes["Created-By"] =
-            "${System.getProperty("java.version")} (${System.getProperty("java.specification.vendor")})"
-
-    from(rootDir) {
-        include "README.md"
-        include "NOTICE.md"
-        include "LICENSE"
-        into "META-INF"
-        expand(copyright: new Date().format("yyyy"), version: project.version)
-    }
-}
-
-normalization {
-    runtimeClasspath {
-        ignore "META-INF/MANIFEST.MF"
-    }
-}
-
-javadoc {
-    description = "Generates project-level javadoc for use in -javadoc jar"
-
-    options.encoding = "UTF-8"
-    options.memberLevel = JavadocMemberLevel.PROTECTED
-    options.author = true
-    options.header = project.name
-    options.use = true
-    options.addStringOption("Xdoclint:none", "-quiet")
-
-    // Suppress warnings due to cross-module @see and @link references.
-    // Note that global 'api' task does display all warnings.
-    logging.captureStandardError LogLevel.INFO
-    logging.captureStandardOutput LogLevel.INFO  // suppress "## warnings" message
-}
-
-task sourcesJar(type: Jar, dependsOn: classes) {
-    archiveClassifier.set("sources")
-    from sourceSets.main.allSource
-}
-
-task javadocJar(type: Jar) {
-    archiveClassifier.set("javadoc")
-    from javadoc
-}
 // Create the pom configuration:
 def pomConfig = {
     licenses {
@@ -89,7 +42,6 @@ def pomConfig = {
         url "https://github.com/wolpert/terrapin"
     }
 }
-
 
 // Create the publication with the pom configuration:
 publishing {
@@ -116,7 +68,7 @@ bintray {
     publications = ['CodeHeadTestPublication']
     dryRun = false //[Default: false] Whether to run this as dry-run, without deploying
     publish = false //[Default: false] Whether version should be auto published after an upload
-    override = true //[Default: false] Whether to override version artifacts already published
+    override = false //[Default: false] Whether to override version artifacts already published
     pkg {
         repo = 'com.codeheadsystems.terrapin'
         name = project.ext.appName
