@@ -35,9 +35,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Purpose: Runtime context for available state machines.
- *
+ * <p>
  * How to use:
- *
+ * <p>
  * Context.builder().build();
  */
 @Singleton
@@ -175,8 +175,7 @@ public class Context {
     public <T> void transition(final T targetObject, final String transition) {
         log.debug("[{}] transition({},{})", id, targetObject, transition);
         metricManager.meter(CONTEXT_TRANSITION, 1);
-        final ActiveStateMachine<T> activeStateMachine = activeStateMachine(targetObject).orElseThrow(() ->
-            new IllegalArgumentException("No state machine found for class: " + targetObject.getClass()));
+        final ActiveStateMachine<T> activeStateMachine = getRequiredActiveStateMachine(targetObject);
         transitionManager.transition(activeStateMachine, targetObject, transition);
     }
 
@@ -190,8 +189,7 @@ public class Context {
     public <T> boolean nextState(final T targetObject) {
         log.debug("[{}] nextState({})", id, targetObject);
         metricManager.meter(CONTEXT_NEXT_STATE, 1);
-        final ActiveStateMachine<T> activeStateMachine = activeStateMachine(targetObject).orElseThrow(() ->
-            new IllegalArgumentException("No state machine found for class: " + targetObject.getClass()));
+        final ActiveStateMachine<T> activeStateMachine = getRequiredActiveStateMachine(targetObject);
         final Set<String> transitions = transitions(targetObject);
         if (transitions.isEmpty()) {
             log.debug("[{}] nextState({}) -> no next state available)", id, targetObject);
@@ -228,8 +226,7 @@ public class Context {
     public <T> Set<String> transitions(final T targetObject) {
         log.debug("[{}] transitions({})", id, targetObject);
         metricManager.meter(CONTEXT_TRANSITIONS, 1);
-        final ActiveStateMachine<T> activeStateMachine = activeStateMachine(targetObject).orElseThrow(() ->
-            new IllegalArgumentException("No state machine found for class: " + targetObject.getClass()));
+        final ActiveStateMachine<T> activeStateMachine = getRequiredActiveStateMachine(targetObject);
         return transitionManager.transitions(activeStateMachine, targetObject);
     }
 
@@ -244,11 +241,17 @@ public class Context {
         return stateMachineMap.keySet();
     }
 
+    /**
+     * Sets the initial state on the target object based on the registered statemachine. It ignores the current
+     * state. If the state machine does not define an initial state, this will throw an exception.
+     *
+     * @param target that will have its state changed.
+     * @param <T>    type of object.
+     */
     public <T> void setInitialState(final T target) {
         log.debug("[{}] setInitialState({})", id, target.getClass().getCanonicalName());
         metricManager.meter(CONTEXT_SET_INITIAL_STATE, 1);
-        final ActiveStateMachine<T> activeStateMachine = activeStateMachine(target)
-            .orElseThrow(() -> new TargetException("No state machine for class registered: " + target.getClass()));
+        final ActiveStateMachine<T> activeStateMachine = getRequiredActiveStateMachine(target);
         final String initialState = activeStateMachine.stateMachine().initialState()
             .orElseThrow(() -> new StateMachineException(activeStateMachine.stateMachine(), "No initial state, but needed for " + target.getClass()));
         invocationManager.set(activeStateMachine.invocationModel(), target, initialState);
@@ -280,6 +283,18 @@ public class Context {
         return activeStateMachineForClass(target.getClass()).map(ActiveStateMachine::stateMachine);
     }
 
+    /**
+     * Returns the state machine for the class, but if tot found, will throw an exception.
+     *
+     * @param targetObject to look for the state machine.
+     * @param <T>          type of object.
+     * @return a valid active state machine.
+     */
+    private <T> ActiveStateMachine<T> getRequiredActiveStateMachine(final T targetObject) {
+        return activeStateMachine(targetObject).orElseThrow(() ->
+            new IllegalArgumentException("No state machine found for class: " + targetObject.getClass()));
+    }
+
     private <T> Optional<ActiveStateMachine<T>> activeStateMachine(final T target) {
         log.debug("[{}] activeStateMachine({})", id, target);
         final Class<T> clazz = (Class<T>) target.getClass(); // freaking java...
@@ -296,7 +311,7 @@ public class Context {
                 final ActiveStateMachine<T> result = (ActiveStateMachine<T>) activeStateMachine;
                 return Optional.of(result);
             } else {
-                throw new IllegalStateException("Invalid active machine found for " +
+                throw new IllegalStateException("Bug found! Please file a ticket. Invalid active machine found for " +
                     targetClass.getCanonicalName() + ":" +
                     activeStateMachine.stateMachine().identifier());
             }

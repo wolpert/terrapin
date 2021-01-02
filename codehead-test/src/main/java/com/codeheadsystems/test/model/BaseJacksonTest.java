@@ -16,12 +16,20 @@
 
 package com.codeheadsystems.test.model;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.*;
+import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 import org.assertj.core.api.Condition;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.BeforeAll;
@@ -30,24 +38,23 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import javax.annotation.Nullable;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowable;
-
+/**
+ * Extend your test with this class and provide the immutable class as a type.
+ *
+ * @param <T>
+ */
 @ExtendWith(MockitoExtension.class)
 public abstract class BaseJacksonTest<T> {
 
-    protected static Set<String> methodsToIgnore;
-
     private static final Condition<Optional<?>> PRESENT = new Condition<>(Optional::isPresent, "isPresent");
-
+    protected static Set<String> methodsToIgnore;
     protected ObjectMapper objectMapper;
     protected String simpleName;
+
+    @BeforeAll
+    public static void findObjectMethods() {
+        methodsToIgnore = Arrays.stream(Object.class.getDeclaredMethods()).map(Method::getName).collect(Collectors.toSet());
+    }
 
     /**
      * Define the model interface/class that we are testing. We use this query for properties we want.
@@ -71,11 +78,6 @@ public abstract class BaseJacksonTest<T> {
      */
     protected ObjectMapper objectMapper() {
         return new ObjectMapper().registerModule(new Jdk8Module());
-    }
-
-    @BeforeAll
-    public static void findObjectMethods() {
-        methodsToIgnore = Arrays.stream(Object.class.getDeclaredMethods()).map(Method::getName).collect(Collectors.toSet());
     }
 
     @BeforeEach
@@ -298,7 +300,7 @@ public abstract class BaseJacksonTest<T> {
     List<Method> getRequiredMethods() {
         final Class<T> clazz = getBaseClass();
         return Arrays.stream(clazz.getMethods())
-            .filter(m ->!methodsToIgnore.contains(m.getName()))
+            .filter(m -> !methodsToIgnore.contains(m.getName()))
             .filter(m -> m.getDeclaredAnnotation(Nullable.class) == null)
             .filter(m -> m.getDeclaredAnnotation(JsonIgnore.class) == null)
             .filter(m -> !m.getReturnType().equals(Optional.class))
@@ -315,7 +317,7 @@ public abstract class BaseJacksonTest<T> {
     List<Method> getCollectionMethods() {
         final Class<T> clazz = getBaseClass();
         return Arrays.stream(clazz.getMethods())
-            .filter(m ->!methodsToIgnore.contains(m.getName()))
+            .filter(m -> !methodsToIgnore.contains(m.getName()))
             .filter(m -> m.getDeclaredAnnotation(JsonIgnore.class) == null)
             .filter(m -> Collection.class.isAssignableFrom(m.getReturnType()))
             .collect(Collectors.toList());
@@ -329,7 +331,7 @@ public abstract class BaseJacksonTest<T> {
     List<Method> getMapMethods() {
         final Class<T> clazz = getBaseClass();
         return Arrays.stream(clazz.getMethods())
-            .filter(m ->!methodsToIgnore.contains(m.getName()))
+            .filter(m -> !methodsToIgnore.contains(m.getName()))
             .filter(m -> m.getDeclaredAnnotation(JsonIgnore.class) == null)
             .filter(m -> Map.class.isAssignableFrom(m.getReturnType()))
             .collect(Collectors.toList());
@@ -343,7 +345,7 @@ public abstract class BaseJacksonTest<T> {
     List<Method> getNullableMethods() {
         final Class<T> clazz = getBaseClass();
         return Arrays.stream(clazz.getMethods())
-            .filter(m ->!methodsToIgnore.contains(m.getName()))
+            .filter(m -> !methodsToIgnore.contains(m.getName()))
             .filter(m -> m.getDeclaredAnnotation(JsonIgnore.class) == null)
             .filter(m -> m.getDeclaredAnnotation(Nullable.class) != null)
             .collect(Collectors.toList());
@@ -357,7 +359,7 @@ public abstract class BaseJacksonTest<T> {
     List<Method> getOptionalMethods() {
         final Class<T> clazz = getBaseClass();
         return Arrays.stream(clazz.getMethods())
-            .filter(m ->!methodsToIgnore.contains(m.getName()))
+            .filter(m -> !methodsToIgnore.contains(m.getName()))
             .filter(m -> m.getDeclaredAnnotation(JsonIgnore.class) == null)
             .filter(m -> m.getReturnType().equals(Optional.class))
             .collect(Collectors.toList());

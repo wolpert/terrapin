@@ -1,7 +1,9 @@
 # State Machine
 
 ## Purpose
-Provide a general purpose state machine with transition support.
+Provide a general purpose state machine with transition support. State machines can be programmatically
+created and registered with the classes that make up the stateful objects. Or annotations can be used
+to reduce to read in state machine definitions and use them for stateful objects.
 
 ## Usage
 ```java
@@ -14,6 +16,7 @@ Provide a general purpose state machine with transition support.
   context.initialState(newObject);
   context.nextState(newObject);
 ```
+For more examples, check out the functional tests.
 
 ## Features
 * Can define JSON-friendly state machines. (Can load from external sources.)
@@ -26,6 +29,12 @@ Provide a general purpose state machine with transition support.
 * Thread safe*. (See below for issues and what makes thread safety fail in this project.)
 
 ## Developer Notes
+
+This was originally a Java version of the RubyOnRails project activerecord-statemachine. It has grown in complexity
+and was reworked to use Immutables for the internal model to help with thread safety while state machines are changed.
+Though this project tries to be thread-safe, its highly dependent on how the stateful objects are used during
+the transitions, and code that is executed for the pre/post hooks. I removed the old plugable locking mechanism and
+hook code with the goal of trying to rework it so it's easier to use and better performance.
 
 ### Managers/Factories
 * StateMachineFactory: Used to create and validate state machines

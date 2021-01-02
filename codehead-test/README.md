@@ -2,7 +2,11 @@
 
 ## Immutable/Jackson JSON tests
 
-Tests the ability for your Immutable class to be JSON friendly.
+Tests the ability for your **Immutables** objects to be JSON friendly. Validates you have all the jackson
+annotations setup correctly. It can handle complex structures as well as simple ones. Allows for custom
+ObjectMapper to be used for the tests as well. See the state machine project for usage examples.
+
+I've seen variations of this from different places and made my own version that uses junit5 and assertJ.
 
 ## Usage
 
@@ -29,6 +33,20 @@ public class StandardImmutableModelTest extends BaseJacksonTest<StandardImmutabl
     }
 }
 ```
+## Release
+
+
+
+gradle  
+```
+repositories {
+    jcenter()
+}
+dependencies {
+    implementation 'com.codeheadsystems.terrapin:codehead-test:0.9'
+}
+```
+
 
 ## Features
 
