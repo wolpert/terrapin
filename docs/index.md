@@ -1,37 +1,19 @@
-## Welcome to GitHub Pages
+# terrapin
 
-You can use the [editor on GitHub](https://github.com/wolpert/terrapin/edit/main/docs/index.md) to maintain and preview the content for your website in Markdown files.
+Terrapin is a collection of software being open-sourced that was used within CodeHead Systems.
+The work is licensed under the Apache 2.0 license to promote being used by others with as much freedom
+as possible... commercial or otherwise.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+## State Machine
 
-### Markdown
+[StateMachine](https://github.com/wolpert/terrapin/tree/main/statemachine) provides a general-purpose
+state machine with both programmatic and JSON-loading support for state machine definitions. Stateful
+objects can use annotations for fields that encompasses the state. It provides metrics, pluggable locking
+mechanism and pre/post hooks as well. 
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+## CodeHead-Test
 
-```markdown
-Syntax highlighted code block
+[CodeHeadTest](https://github.com/wolpert/terrapin/tree/main/codehead-test) is a selection of test utilities
+used internally within CodeHead. These are being release as other code released under terrapin use them.
 
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/wolpert/terrapin/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+---

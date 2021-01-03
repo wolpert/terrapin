@@ -8,6 +8,18 @@ ObjectMapper to be used for the tests as well. See the state machine project for
 
 I've seen variations of this from different places and made my own version that uses junit5 and assertJ.
 
+## Release
+
+gradle
+```groovy
+repositories {
+    jcenter()
+}
+dependencies {
+    implementation 'com.codeheadsystems.terrapin:codehead-test:0.9'
+}
+```
+
 ## Usage
 
 ```java
@@ -31,19 +43,6 @@ public class StandardImmutableModelTest extends BaseJacksonTest<StandardImmutabl
             .someString("this string")
             .build();
     }
-}
-```
-## Release
-
-
-
-gradle  
-```
-repositories {
-    jcenter()
-}
-dependencies {
-    implementation 'com.codeheadsystems.terrapin:codehead-test:0.9'
 }
 ```
 
