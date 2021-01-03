@@ -35,7 +35,7 @@ public class ContextFunctionalTest extends BaseMetricTest {
     @BeforeEach
     void setup() {
         context = Context.builder()
-            .metricRegistry(metricRegistry)
+            .metricManager(metricRegistry)
             .build();
     }
 

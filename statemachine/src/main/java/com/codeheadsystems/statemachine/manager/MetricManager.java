@@ -1,64 +1,42 @@
-/*
- *    Copyright (c) 2021 Ned Wolpert <ned.wolpert@gmail.com>
- *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
- */
-
 package com.codeheadsystems.statemachine.manager;
 
-import static com.codahale.metrics.MetricRegistry.name;
-
-import com.codahale.metrics.Meter;
-import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.Timer;
 import java.util.function.Supplier;
-import javax.inject.Inject;
-import javax.inject.Singleton;
 
-@Singleton
-public class MetricManager {
+/**
+ * Provide your own metric manager.
+ */
+public interface MetricManager {
 
-    private final MetricRegistry metricRegistry;
+    /**
+     * This is effectively a 'rate'. Number/interval.
+     *
+     * @param metricName to use.
+     * @param value a value. Note, having a zero here is useful for cases
+     *              like error rates to indicate no value.
+     */
+    void meter(String metricName, long value);
 
-    @Inject
-    public MetricManager(final MetricRegistry metricRegistry) {
-        this.metricRegistry = metricRegistry;
-    }
-
-    public void meter(final String metricName, final long value) {
-        metricRegistry.meter(metricName).mark(value);
-    }
-
-    public Void time(final String metricName, final Runnable runnable) {
+    /**
+     * Calls the time method via a runable instead of a supplier.
+     *
+     * @param metricName to use.
+     * @param runnable to execute.
+     * @return basically nothing.
+     */
+    default Void time(String metricName, Runnable runnable) {
         return time(metricName, () -> {
             runnable.run();
             return null;
         });
     }
 
-    public <R> R time(final String metricName, final Supplier<R> supplier) {
-        final Timer timer = metricRegistry.timer(metricName);
-        final Meter failure = metricRegistry.meter(name(metricName, "failure"));
-        failure.mark(0); // set the count if needed.
-        final Timer.Context context = timer.time();
-        try {
-            return supplier.get();
-        } catch (RuntimeException re) {
-            failure.mark();
-            throw re;
-        } finally {
-            context.stop();
-        }
-    }
-
+    /**
+     * Latency of a given method. Note this should include counts too.
+     *
+     * @param metricName to use.
+     * @param supplier to execute.
+     * @param <R> return type.
+     * @return the value from the method.
+     */
+    <R> R time(String metricName, Supplier<R> supplier);
 }

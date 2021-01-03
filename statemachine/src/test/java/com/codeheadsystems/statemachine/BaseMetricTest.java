@@ -21,6 +21,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Slf4jReporter;
+import com.codeheadsystems.statemachine.manager.CodahaleMetricManager;
 import com.codeheadsystems.statemachine.manager.MetricManager;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -40,7 +41,7 @@ public class BaseMetricTest {
     public static void setMetricRegistry() {
         metricRegistry = new MetricRegistry();
         reporter = Slf4jReporter.forRegistry(metricRegistry)
-            .outputTo(LoggerFactory.getLogger(MetricManager.class))
+            .outputTo(LoggerFactory.getLogger(CodahaleMetricManager.class))
             .convertRatesTo(SECONDS)
             .convertDurationsTo(MILLISECONDS)
             .build();
@@ -54,7 +55,7 @@ public class BaseMetricTest {
 
     @BeforeEach
     public void setupMetricManager() {
-        metricManager = new MetricManager(metricRegistry);
+        metricManager = new CodahaleMetricManager(metricRegistry);
     }
 
 

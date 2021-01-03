@@ -18,6 +18,9 @@ package com.codeheadsystems.statemachine;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codeheadsystems.statemachine.factory.ObjectMapperFactory;
+import com.codeheadsystems.statemachine.manager.CodahaleMetricManager;
+import com.codeheadsystems.statemachine.manager.MetricManager;
+import com.codeheadsystems.statemachine.manager.NullMetricManager;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dagger.Component;
 import dagger.Module;
@@ -36,24 +39,47 @@ public class ContextBuilder {
     private static final Logger log = LoggerFactory.getLogger(ContextBuilder.class);
 
     private MetricRegistry metricRegistry;
+    private MetricManager metricManager;
 
     /**
-     * Add in your own metric registry if you want.
+     * Add in your own metric registry if you want. This will use the default metric manager.
      *
      * @param metricRegistry if you have a common one.
      * @return builder.
      */
-    public ContextBuilder metricRegistry(final MetricRegistry metricRegistry) {
+    public ContextBuilder metricManager(final MetricRegistry metricRegistry) {
         this.metricRegistry = metricRegistry;
+        return this;
+    }
+
+    /**
+     * Add in your own metric manager if you want.
+     *
+     * @param metricManager if you have  one.
+     * @return builder.
+     */
+    public ContextBuilder metricManager(final MetricManager metricManager) {
+        this.metricManager = metricManager;
         return this;
     }
 
     public Context build() {
         log.info("[ContextBuilder] build()");
+        final MetricManager resolvedMetricManager = resolveMetricManager();
         final ContextComponent component = DaggerContextBuilder_ContextComponent.builder()
-            .stateMachineModules(new StateMachineModules(metricRegistry))
+            .stateMachineModules(new StateMachineModules(resolvedMetricManager))
             .build();
         return component.context();
+    }
+
+    private MetricManager resolveMetricManager() {
+        if (metricManager != null) {
+            return metricManager;
+        } else if (metricRegistry != null) {
+            return new CodahaleMetricManager(metricRegistry);
+        } else {
+            return null;
+        }
     }
 
     @Singleton
@@ -67,19 +93,19 @@ public class ContextBuilder {
     @Module
     public static class StateMachineModules {
 
-        private final MetricRegistry metricRegistry;
+        private final MetricManager metricManager;
 
-        public StateMachineModules(final MetricRegistry metricRegistry) {
-            this.metricRegistry = metricRegistry;
+        public StateMachineModules(final MetricManager metricManager) {
+            this.metricManager = metricManager;
         }
 
         @Provides
         @Singleton
-        public MetricRegistry metricRegistry() {
-            if (metricRegistry == null) {
-                return new MetricRegistry();
+        public MetricManager metricManager() {
+            if (metricManager == null) {
+                return new NullMetricManager();
             } else {
-                return metricRegistry;
+                return metricManager;
             }
         }
 

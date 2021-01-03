@@ -65,8 +65,6 @@ reworked the structure of the code to follow the 'manager-model' layout.
 * SLF4J/Logback
 
 ### In process
-* Metrics should be optional, and more granular.
-  * User-provided metrics tooling as well.
 * Lock support at the transition level
 * Pre/Post transition support
 * Registration hooks

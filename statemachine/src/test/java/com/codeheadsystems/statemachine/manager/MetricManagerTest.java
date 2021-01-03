@@ -45,7 +45,7 @@ class MetricManagerTest {
 
     @BeforeEach
     void setUp() {
-        metricManager = new MetricManager(metricRegistry);
+        metricManager = new CodahaleMetricManager(metricRegistry);
     }
 
     @Test
