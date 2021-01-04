@@ -65,7 +65,7 @@ reworked the structure of the code to follow the 'manager-model' layout.
 * SLF4J/Logback
 
 ### In process
-* Lock support at the transition level
+* Allowing for AtomicReference to hold the state of the target object. (Statefull object) 
 * Pre/Post transition support
 * Registration hooks
 

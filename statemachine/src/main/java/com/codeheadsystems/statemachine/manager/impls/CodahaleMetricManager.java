@@ -14,13 +14,14 @@
  *    limitations under the License.
  */
 
-package com.codeheadsystems.statemachine.manager;
+package com.codeheadsystems.statemachine.manager.impls;
 
 import static com.codahale.metrics.MetricRegistry.name;
 
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
+import com.codeheadsystems.statemachine.manager.MetricManager;
 import java.util.function.Supplier;
 import javax.inject.Inject;
 import javax.inject.Singleton;

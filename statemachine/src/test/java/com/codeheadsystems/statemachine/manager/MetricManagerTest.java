@@ -23,6 +23,7 @@ import static org.mockito.Mockito.*;
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
+import com.codeheadsystems.statemachine.manager.impls.CodahaleMetricManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

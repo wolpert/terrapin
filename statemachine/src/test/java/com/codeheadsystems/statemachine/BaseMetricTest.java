@@ -21,7 +21,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Slf4jReporter;
-import com.codeheadsystems.statemachine.manager.CodahaleMetricManager;
+import com.codeheadsystems.statemachine.manager.impls.CodahaleMetricManager;
 import com.codeheadsystems.statemachine.manager.MetricManager;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;

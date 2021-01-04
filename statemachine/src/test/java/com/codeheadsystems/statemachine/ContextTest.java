@@ -23,6 +23,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.codeheadsystems.statemachine.converter.InvocationModelConverter;
+import com.codeheadsystems.statemachine.exceptions.StateMachineException;
 import com.codeheadsystems.statemachine.exceptions.TargetException;
 import com.codeheadsystems.statemachine.manager.InvocationManager;
 import com.codeheadsystems.statemachine.manager.StateMachineManager;
@@ -30,6 +31,7 @@ import com.codeheadsystems.statemachine.manager.TransitionManager;
 import com.codeheadsystems.statemachine.model.ActiveStateMachine;
 import com.codeheadsystems.statemachine.model.InvocationModel;
 import com.codeheadsystems.statemachine.model.StateMachine;
+import com.google.common.collect.ImmutableSet;
 import java.util.Optional;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,6 +46,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class ContextTest extends BaseMetricTest {
     private static final String IDENTIFIER = "identifier";
     private static final String TRANSITION = "transition";
+    private static final Object TARGET = new Object();
+    public static final String STATE = "state";
 
     @Mock private StateMachineManager stateMachineManager;
     @Mock private TransitionManager transitionManager;
@@ -53,6 +57,7 @@ class ContextTest extends BaseMetricTest {
     @Mock private StateMachine stateMachine;
     @Mock private Set<String> stringSet;
     @Captor private ArgumentCaptor<ActiveStateMachine<Object>> activeStateMachineArgumentCaptor;
+    @Captor private ArgumentCaptor<InvocationModel<Object>> invocationModelArgumentCaptor;
 
     private Context context;
 
@@ -87,11 +92,10 @@ class ContextTest extends BaseMetricTest {
     @Test
     void transition() {
         setupRegistration();
-        final Object object = new Object();
 
-        context.transition(object, TRANSITION);
+        context.transition(TARGET, TRANSITION);
 
-        verify(transitionManager).transition(activeStateMachineArgumentCaptor.capture(), eq(object), eq(TRANSITION));
+        verify(transitionManager).transition(activeStateMachineArgumentCaptor.capture(), eq(TARGET), eq(TRANSITION));
         assertThat(activeStateMachineArgumentCaptor.getValue())
             .hasFieldOrPropertyWithValue("stateMachine", stateMachine)
             .hasFieldOrPropertyWithValue("invocationModel", invocationModel);
@@ -109,11 +113,10 @@ class ContextTest extends BaseMetricTest {
     @Test
     void transitions() {
         setupRegistration();
-        final Object object = new Object();
-        when(transitionManager.transitions(activeStateMachineArgumentCaptor.capture(), eq(object)))
+        when(transitionManager.transitions(activeStateMachineArgumentCaptor.capture(), eq(TARGET)))
             .thenReturn(stringSet);
 
-        final Set<String> result = context.transitions(object);
+        final Set<String> result = context.transitions(TARGET);
 
         assertThat(result).isEqualTo(stringSet);
         assertThat(activeStateMachineArgumentCaptor.getValue())
@@ -148,6 +151,99 @@ class ContextTest extends BaseMetricTest {
         context.register(Object.class);
         assertThat(context.isRegistered(Object.class))
             .isTrue();
+    }
+
+    @Test
+    void nextState_noTransition() {
+        setupRegistration();
+        when(transitionManager.transitions(activeStateMachineArgumentCaptor.capture(), eq(TARGET)))
+            .thenReturn(ImmutableSet.of());
+
+        final boolean result = context.nextState(TARGET);
+
+        assertThat(result).isFalse();
+        assertThat(activeStateMachineArgumentCaptor.getValue())
+            .hasFieldOrPropertyWithValue("stateMachine", stateMachine)
+            .hasFieldOrPropertyWithValue("invocationModel", invocationModel);
+    }
+
+    @Test
+    void nextState_oneTransition() {
+        setupRegistration();
+        when(transitionManager.transitions(activeStateMachineArgumentCaptor.capture(), eq(TARGET)))
+            .thenReturn(ImmutableSet.of(TRANSITION));
+
+        final boolean result = context.nextState(TARGET);
+
+        assertThat(result).isTrue();
+        final ActiveStateMachine<Object> activeStateMachine = activeStateMachineArgumentCaptor.getValue();
+        assertThat(activeStateMachine)
+            .hasFieldOrPropertyWithValue("stateMachine", stateMachine)
+            .hasFieldOrPropertyWithValue("invocationModel", invocationModel);
+        verify(transitionManager).transition(activeStateMachine, TARGET, TRANSITION);
+    }
+
+    @Test
+    void nextState_twoTransition() {
+        setupRegistration();
+        when(transitionManager.transitions(activeStateMachineArgumentCaptor.capture(), eq(TARGET)))
+            .thenReturn(ImmutableSet.of("t1","t2"));
+
+        assertThatExceptionOfType(StateMachineException.class)
+            .isThrownBy(() -> context.nextState(TARGET));
+
+        assertThat(activeStateMachineArgumentCaptor.getValue())
+            .hasFieldOrPropertyWithValue("stateMachine", stateMachine)
+            .hasFieldOrPropertyWithValue("invocationModel", invocationModel);
+    }
+
+    @Test
+    void getStateMachine_found() {
+        setupRegistration();
+
+        final Optional<StateMachine> result = context.getStateMachine(TARGET);
+
+        assertThat(result)
+            .isPresent()
+            .contains(stateMachine);
+    }
+
+    @Test
+    void getStateMachine_notFound() {
+        setupRegistration();
+
+        final Optional<StateMachine> result = context.getStateMachine("blah");
+
+        assertThat(result)
+            .isNotPresent();
+    }
+
+    @Test
+    void setInitialState() {
+        setupRegistration();
+        when(stateMachine.initialState()).thenReturn(Optional.of(STATE));
+
+        context.setInitialState(TARGET);
+
+        verify(invocationManager).set(invocationModelArgumentCaptor.capture(), eq(TARGET), eq(STATE));
+    }
+
+    @Test
+    void setInitialState_notFound() {
+        setupRegistration();
+        when(stateMachine.initialState()).thenReturn(Optional.empty());
+
+        assertThatExceptionOfType(StateMachineException.class)
+            .isThrownBy(() -> context.setInitialState(TARGET));
+    }
+
+    @Test
+    void builder() {
+        final ContextBuilder result = Context.builder();
+
+        assertThat(result)
+            .isNotNull()
+            .isInstanceOf(ContextBuilder.class); // um... true?
     }
 
     private void setupRegistration() {

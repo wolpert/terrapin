@@ -141,7 +141,7 @@ public class StateMachineFactory {
         final boolean validInitialState = (!stateMachine.initialState().isPresent() || stateMachine.hasState(stateMachine.initialState().get()));
         log.info("isValid({}) -> allStatesDefined:{}, statesNameMatches={}, validInitialState={}",
             stateMachine.identifier(), allStatesDefined, statesNameMatches, validInitialState);
-        return allStatesDefined && statesNameMatches;
+        return allStatesDefined && statesNameMatches && validInitialState;
     }
 
     private ImmutableStateMachine replaceOrAdd(final StateMachine stateMachine, final State state) {

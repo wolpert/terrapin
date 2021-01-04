@@ -24,6 +24,7 @@ import static org.mockito.Mockito.when;
 
 import com.codeheadsystems.statemachine.BaseMetricTest;
 import com.codeheadsystems.statemachine.exceptions.TransitionException;
+import com.codeheadsystems.statemachine.manager.impls.NullLockManager;
 import com.codeheadsystems.statemachine.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -59,10 +60,12 @@ class TransitionManagerTest extends BaseMetricTest {
     @Captor private ArgumentCaptor<String> stringArgumentCaptor;
 
     private TransitionManager transitionManager;
+    private LockManager lockManager;
 
     @BeforeEach
     void setUp() {
-        transitionManager = new TransitionManager(invocationManager, metricManager);
+        lockManager = new NullLockManager();
+        transitionManager = new TransitionManager(invocationManager, metricManager, lockManager);
     }
 
     @Test

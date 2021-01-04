@@ -124,7 +124,7 @@ public class Context {
         final InvocationModel<T> model = invocationModelConverter.generate(targetClass);
         // Validate
         if (!model.targetClass().equals(targetClass)) { // Basically impossible... but have to check
-            throw new IllegalStateException("Unable to create invocation model for class: " + targetClass + ":" + model);
+            throw new IllegalStateException("Bug found! Please file a ticket. Unable to create invocation model for class: " + targetClass + ":" + model);
         }
         final ActiveStateMachine<T> activeStateMachine = ImmutableActiveStateMachine.<T>builder()
             .stateMachine(stateMachine)

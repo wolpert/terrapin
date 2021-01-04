@@ -18,9 +18,11 @@ package com.codeheadsystems.statemachine;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codeheadsystems.statemachine.factory.ObjectMapperFactory;
-import com.codeheadsystems.statemachine.manager.CodahaleMetricManager;
+import com.codeheadsystems.statemachine.manager.LockManager;
+import com.codeheadsystems.statemachine.manager.impls.CodahaleMetricManager;
 import com.codeheadsystems.statemachine.manager.MetricManager;
-import com.codeheadsystems.statemachine.manager.NullMetricManager;
+import com.codeheadsystems.statemachine.manager.impls.NullLockManager;
+import com.codeheadsystems.statemachine.manager.impls.NullMetricManager;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dagger.Component;
 import dagger.Module;
@@ -40,6 +42,18 @@ public class ContextBuilder {
 
     private MetricRegistry metricRegistry;
     private MetricManager metricManager;
+    private LockManager lockManager;
+
+    /**
+     * Add in your own lock manager
+     *
+     * @param lockManager to use.
+     * @return builder.
+     */
+    public ContextBuilder lockManager(final LockManager lockManager) {
+        this.lockManager = lockManager;
+        return this;
+    }
 
     /**
      * Add in your own metric registry if you want. This will use the default metric manager.
@@ -67,7 +81,7 @@ public class ContextBuilder {
         log.info("[ContextBuilder] build()");
         final MetricManager resolvedMetricManager = resolveMetricManager();
         final ContextComponent component = DaggerContextBuilder_ContextComponent.builder()
-            .stateMachineModules(new StateMachineModules(resolvedMetricManager))
+            .stateMachineModules(new StateMachineModules(resolvedMetricManager, lockManager))
             .build();
         return component.context();
     }
@@ -94,9 +108,22 @@ public class ContextBuilder {
     public static class StateMachineModules {
 
         private final MetricManager metricManager;
+        private final LockManager lockManager;
 
-        public StateMachineModules(final MetricManager metricManager) {
+        public StateMachineModules(final MetricManager metricManager,
+                                   final LockManager lockManager) {
             this.metricManager = metricManager;
+            this.lockManager = lockManager;
+        }
+
+        @Provides
+        @Singleton
+        public LockManager lockManager() {
+            if (lockManager == null) {
+                return new NullLockManager();
+            } else {
+                return lockManager;
+            }
         }
 
         @Provides

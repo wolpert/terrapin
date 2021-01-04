@@ -21,7 +21,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.codeheadsystems.statemachine.BaseMetricTest;
 import com.codeheadsystems.statemachine.converter.InvocationModelConverter;
 import com.codeheadsystems.statemachine.manager.InvocationManager;
+import com.codeheadsystems.statemachine.manager.LockManager;
 import com.codeheadsystems.statemachine.manager.TransitionManager;
+import com.codeheadsystems.statemachine.manager.impls.NullLockManager;
 import com.codeheadsystems.statemachine.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,13 +49,15 @@ class TransitionManagerFunctionalTest extends BaseMetricTest {
 
     private InvocationModelConverter converter;
     private TransitionManager transitionManager;
+    private LockManager lockManager;
 
     @BeforeEach
     void setUp() {
+        lockManager = new NullLockManager();
         converter = new InvocationModelConverter();
         transitionManager = new TransitionManager(
             new InvocationManager(metricManager),
-            metricManager);
+            metricManager, lockManager);
     }
 
     @Test

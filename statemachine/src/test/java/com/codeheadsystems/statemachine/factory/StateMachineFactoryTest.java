@@ -54,6 +54,20 @@ class StateMachineFactoryTest {
                 true
             ),
             Arguments.of(
+                ImmutableStateMachine.builder().id("id").name("oneStateWithInitialState").version(2L)
+                    .initialState("s")
+                    .putStates("s", ImmutableState.builder().name("s").build())
+                    .build(),
+                true
+            ),
+            Arguments.of(
+                ImmutableStateMachine.builder().id("id").name("oneStateWithBadInitialState").version(2L)
+                    .initialState("notS")
+                    .putStates("s", ImmutableState.builder().name("s").build())
+                    .build(),
+                false
+            ),
+            Arguments.of(
                 ImmutableStateMachine.builder().id("id").name("oneStateBadName").version(2L)
                     .putStates("s", ImmutableState.builder().name("notS").build())
                     .build(),
@@ -198,6 +212,59 @@ class StateMachineFactoryTest {
                 .hasSize(1)
                 .hasEntrySatisfying(TRANSITION.name(), t -> assertThat(t).isEqualTo(TRANSITION)))
             .hasEntrySatisfying(STATE_TO.name(), s -> assertThat(s).isEqualTo(STATE_TO));
+    }
+
+    @Test
+    void addInitialState_noState() {
+        final StateMachine stateMachine = factory.generateStateMachine(NAME);
+
+        final StateMachine result = factory.addInitialState(stateMachine, STATE_FROM.name());
+
+        assertThat(result)
+            .isNotNull()
+            .hasFieldOrPropertyWithValue("version", 2L)
+            .extracting(StateMachine::states, as(map(String.class, State.class)))
+            .hasSize(1)
+            .hasEntrySatisfying(STATE_FROM.name(), s -> assertThat(s)
+                .isNotNull()
+                .extracting(State::transitions, as(map(String.class, Transition.class)))
+                .isEmpty()
+            );
+    }
+
+    @Test
+    void addInitialState_withState() {
+        final StateMachine stateMachine = ImmutableStateMachine.copyOf(
+            factory.generateStateMachine(NAME))
+            .withStates(ImmutableMap.of(STATE_FROM.name(), STATE_FROM));
+
+        final StateMachine result = factory.addInitialState(stateMachine, STATE_FROM.name());
+
+        assertThat(result)
+            .isNotNull()
+            .hasFieldOrPropertyWithValue("version", 2L)
+            .extracting(StateMachine::states, as(map(String.class, State.class)))
+            .hasSize(1)
+            .hasEntrySatisfying(STATE_FROM.name(), s -> assertThat(s)
+                .isNotNull()
+                .extracting(State::transitions, as(map(String.class, Transition.class)))
+                .isEmpty()
+            );
+    }
+
+    @Test
+    void addInitialState_withState_withInitialState() {
+        final StateMachine stateMachine = ImmutableStateMachine.copyOf(
+            factory.generateStateMachine(NAME))
+            .withInitialState(STATE_FROM.name())
+            .withStates(ImmutableMap.of(STATE_FROM.name(), STATE_FROM));
+
+        final StateMachine result = factory.addInitialState(stateMachine, STATE_FROM.name());
+
+        assertThat(result)
+            .isNotNull()
+            .hasFieldOrPropertyWithValue("version", 1L)
+            .isEqualTo(stateMachine);
     }
 
     @Test

@@ -39,10 +39,13 @@ public class TransitionManager {
 
     private final InvocationManager invocationManager;
     private final MetricManager metricManager;
+    private final LockManager lockManager;
 
     @Inject
     public TransitionManager(final InvocationManager invocationManager,
-                             final MetricManager metricManager) {
+                             final MetricManager metricManager,
+                             final LockManager lockManager) {
+        this.lockManager = lockManager;
         log.debug("TransitionManager({},{})", invocationManager, metricManager);
         this.metricManager = metricManager;
         this.invocationManager = invocationManager;
@@ -67,7 +70,7 @@ public class TransitionManager {
         return metricManager.time(name(TransitionManager.class, "transition", stateMachine.name(), transitionName), () -> {
             // TODO: Execute pre-transition hooks
             // TODO: allow for pluggable lock management strategy before calling stateChange.
-            stateChange(stateMachine, model, object, transitionName);
+            lockManager.transitionUnderLock(stateMachine, object, () -> stateChange(stateMachine, model, object, transitionName));
             // TODO: Execute post-transition hooks
             return object;
         });
