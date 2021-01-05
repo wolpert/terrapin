@@ -14,7 +14,7 @@ repositories {
     jcenter()
 }
 dependencies {
-    implementation 'com.codeheadsystems.terrapin:statemachine:0.9'
+    implementation 'com.codeheadsystems.terrapin:statemachine:1.0'
 }
 ```
 
