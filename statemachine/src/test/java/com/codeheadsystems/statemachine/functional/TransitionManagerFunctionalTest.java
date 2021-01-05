@@ -25,6 +25,7 @@ import com.codeheadsystems.statemachine.manager.LockManager;
 import com.codeheadsystems.statemachine.manager.TransitionManager;
 import com.codeheadsystems.statemachine.manager.impls.NullLockManager;
 import com.codeheadsystems.statemachine.model.*;
+import com.google.common.collect.ImmutableSet;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -50,11 +51,13 @@ class TransitionManagerFunctionalTest extends BaseMetricTest {
     private InvocationModelConverter converter;
     private TransitionManager transitionManager;
     private LockManager lockManager;
+    private HookStruct hookStruct;
 
     @BeforeEach
     void setUp() {
+        hookStruct = new HookStruct();
         lockManager = new NullLockManager();
-        converter = new InvocationModelConverter();
+        converter = new InvocationModelConverter(ImmutableSet.of(hookStruct::preTrans), ImmutableSet.of(hookStruct::postTrans));
         transitionManager = new TransitionManager(
             new InvocationManager(metricManager),
             metricManager, lockManager);
@@ -70,6 +73,11 @@ class TransitionManagerFunctionalTest extends BaseMetricTest {
         assertThat(result)
             .isEqualTo(object)
             .hasFieldOrPropertyWithValue("state", SECOND_STATE);
+        assertThat(hookStruct)
+            .hasFieldOrPropertyWithValue("preTransitionObject", object)
+            .hasFieldOrPropertyWithValue("postTransitionObject", object)
+            .hasFieldOrPropertyWithValue("preTransitionTransition", TRANSITION)
+            .hasFieldOrPropertyWithValue("postTransitionTransition", TRANSITION);
     }
 
     static public class SampleClass {
@@ -96,5 +104,21 @@ class TransitionManagerFunctionalTest extends BaseMetricTest {
             throw new RuntimeException("blah");
         }
 
+    }
+
+    static public class HookStruct {
+        public Object preTransitionObject;
+        public String preTransitionTransition;
+        public Object postTransitionObject;
+        public String postTransitionTransition;
+
+        public void preTrans(final Object object, final String trans) {
+            preTransitionObject = object;
+            preTransitionTransition = trans;
+        }
+        public void postTrans(final Object object, final String trans) {
+            postTransitionObject = object;
+            postTransitionTransition = trans;
+        }
     }
 }

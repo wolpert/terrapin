@@ -23,15 +23,15 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.codeheadsystems.statemachine.BaseMetricTest;
+import com.codeheadsystems.statemachine.Hook;
 import com.codeheadsystems.statemachine.exceptions.TransitionException;
 import com.codeheadsystems.statemachine.manager.impls.NullLockManager;
 import com.codeheadsystems.statemachine.model.*;
+import com.google.common.collect.ImmutableSet;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mock;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
@@ -57,6 +57,8 @@ class TransitionManagerTest extends BaseMetricTest {
     @Mock private ActiveStateMachine<SampleClass> activeStateMachine;
     @Mock private InvocationManager invocationManager;
     @Mock private InvocationModel<SampleClass> model;
+    @Mock private Hook.PendingTransition pendingTransition;
+    @Mock private Hook.PostTransition postTransition;
     @Captor private ArgumentCaptor<String> stringArgumentCaptor;
 
     private TransitionManager transitionManager;
@@ -115,12 +117,17 @@ class TransitionManagerTest extends BaseMetricTest {
     void transition() {
         final SampleClass object = new SampleClass(FIRST_STATE);
         when(invocationManager.get(model, object)).thenReturn(FIRST_STATE);
+        when(model.pendingTransitionHooks()).thenReturn(ImmutableSet.of(pendingTransition));
+        when(model.postTransitionHooks()).thenReturn(ImmutableSet.of(postTransition));
 
         final SampleClass result = transitionManager.transition(MACHINE, model, object, TRANSITION);
 
         assertThat(result)
             .isEqualTo(object);
-        verify(invocationManager).set(eq(model), eq(object), stringArgumentCaptor.capture());
+        InOrder inOrder = Mockito.inOrder(pendingTransition, invocationManager, postTransition);
+        inOrder.verify(pendingTransition).transition(object, TRANSITION);
+        inOrder.verify(invocationManager).set(eq(model), eq(object), stringArgumentCaptor.capture());
+        inOrder.verify(postTransition).transition(object, TRANSITION);
         assertThat(stringArgumentCaptor.getValue())
             .isEqualTo(SECOND_STATE);
     }

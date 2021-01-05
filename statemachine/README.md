@@ -66,7 +66,7 @@ reworked the structure of the code to follow the 'manager-model' layout.
 
 ### In process
 * Allowing for AtomicReference to hold the state of the target object. (Statefull object) 
-* Pre/Post transition support
+* Pre/Post transition support at the state machine level. Global hooks exist.
 * Registration hooks
 
 ### Thread Safety

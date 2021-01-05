@@ -14,7 +14,7 @@ targetCompatibility = 1.8
 
 ext {
     appName = "statemachine"
-    version = "0.9.1"
+    version = "1.0"
 }
 
 configurations {
@@ -68,7 +68,7 @@ bintray {
     key = System.getenv('BINTRAY_KEY')
     publications = ['StateMachinePublication']
     dryRun = false //[Default: false] Whether to run this as dry-run, without deploying
-    publish = false //[Default: false] Whether version should be auto published after an upload
+    publish = true //[Default: false] Whether version should be auto published after an upload
     override = false //[Default: false] Whether to override version artifacts already published
     pkg {
         repo = 'com.codeheadsystems.terrapin'

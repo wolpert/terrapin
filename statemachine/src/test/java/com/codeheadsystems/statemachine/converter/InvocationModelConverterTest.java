@@ -16,21 +16,36 @@
 
 package com.codeheadsystems.statemachine.converter;
 
+import static com.codeheadsystems.statemachine.Hook.PendingTransition;
+import static com.codeheadsystems.statemachine.Hook.PostTransition;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import com.codeheadsystems.statemachine.annotation.StateTarget;
 import com.codeheadsystems.statemachine.model.InvocationModel;
+import com.google.common.collect.ImmutableSet;
+import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 class InvocationModelConverterTest {
 
+    @Mock private PendingTransition pendingTransition;
+    @Mock private PostTransition postTransition;
+
     private InvocationModelConverter converter;
+    private Set<PendingTransition> pendingTransitionSet;
+    private Set<PostTransition> postTransitionSet;
 
     @BeforeEach
     void setUp() {
-        converter = new InvocationModelConverter();
+        pendingTransitionSet = ImmutableSet.of(pendingTransition);
+        postTransitionSet = ImmutableSet.of(postTransition);
+        converter = new InvocationModelConverter(pendingTransitionSet, postTransitionSet);
     }
 
     @Test
@@ -47,6 +62,8 @@ class InvocationModelConverterTest {
 
         assertThat(result)
             .isNotNull()
+            .hasFieldOrPropertyWithValue("pendingTransitionHooks", pendingTransitionSet)
+            .hasFieldOrPropertyWithValue("postTransitionHooks", postTransitionSet)
             .hasFieldOrPropertyWithValue("targetClass", FieldTestSample.class)
             .hasFieldOrPropertyWithValue("propertyName", "weirdName")
             .hasFieldOrPropertyWithValue("retrieveMethod", FieldTestSample.class.getMethod("getWeirdName"))
@@ -59,6 +76,8 @@ class InvocationModelConverterTest {
 
         assertThat(result)
             .isNotNull()
+            .hasFieldOrPropertyWithValue("pendingTransitionHooks", pendingTransitionSet)
+            .hasFieldOrPropertyWithValue("postTransitionHooks", postTransitionSet)
             .hasFieldOrPropertyWithValue("targetClass", BeanSample.class)
             .hasFieldOrPropertyWithValue("propertyName", "state")
             .hasFieldOrPropertyWithValue("retrieveMethod", BeanSample.class.getMethod("getState"))
@@ -72,6 +91,8 @@ class InvocationModelConverterTest {
 
         assertThat(result)
             .isNotNull()
+            .hasFieldOrPropertyWithValue("pendingTransitionHooks", pendingTransitionSet)
+            .hasFieldOrPropertyWithValue("postTransitionHooks", postTransitionSet)
             .hasFieldOrPropertyWithValue("targetClass", BeanSample.class)
             .hasFieldOrPropertyWithValue("propertyName", "state")
             .hasFieldOrPropertyWithValue("retrieveMethod", BeanSample.class.getMethod("getState"))
@@ -85,6 +106,8 @@ class InvocationModelConverterTest {
 
         assertThat(result)
             .isNotNull()
+            .hasFieldOrPropertyWithValue("pendingTransitionHooks", pendingTransitionSet)
+            .hasFieldOrPropertyWithValue("postTransitionHooks", postTransitionSet)
             .hasFieldOrPropertyWithValue("targetClass", BeanSample.class)
             .hasFieldOrPropertyWithValue("propertyName", "state")
             .hasFieldOrPropertyWithValue("retrieveMethod", BeanSample.class.getMethod("getState"))

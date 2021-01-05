@@ -16,7 +16,10 @@
 
 package com.codeheadsystems.statemachine.model;
 
+import com.codeheadsystems.statemachine.Hook;
 import java.lang.reflect.Method;
+import java.util.Set;
+import java.util.concurrent.Callable;
 import org.immutables.value.Value;
 
 /**
@@ -52,6 +55,20 @@ public interface InvocationModel<T> {
      * @return method.
      */
     Method updateMethod();
+
+    /**
+     * The set of pending transition hooks to use.
+     *
+     * @return pending transition hooks.
+     */
+    Set<Hook.PendingTransition> pendingTransitionHooks();
+
+    /**
+     * The set of post transition hooks to use.
+     *
+     * @return post transition hooks.
+     */
+    Set<Hook.PostTransition> postTransitionHooks();
 
     @Value.Derived
     default String retrieveMethodSignature() {

@@ -68,10 +68,9 @@ public class TransitionManager {
                             final String transitionName) {
         log.debug("transition({},{},{})", stateMachine.identifier(), transitionName, object);
         return metricManager.time(name(TransitionManager.class, "transition", stateMachine.name(), transitionName), () -> {
-            // TODO: Execute pre-transition hooks
-            // TODO: allow for pluggable lock management strategy before calling stateChange.
+            model.pendingTransitionHooks().forEach(h -> h.transition(object, transitionName));
             lockManager.transitionUnderLock(stateMachine, object, () -> stateChange(stateMachine, model, object, transitionName));
-            // TODO: Execute post-transition hooks
+            model.postTransitionHooks().forEach(h -> h.transition(object, transitionName));
             return object;
         });
     }

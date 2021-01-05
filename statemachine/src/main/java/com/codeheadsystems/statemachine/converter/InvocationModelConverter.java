@@ -16,6 +16,8 @@
 
 package com.codeheadsystems.statemachine.converter;
 
+import static com.codeheadsystems.statemachine.Hook.*;
+
 import com.codeheadsystems.statemachine.annotation.StateTarget;
 import com.codeheadsystems.statemachine.model.ImmutableInvocationModel;
 import com.codeheadsystems.statemachine.model.InvocationModel;
@@ -23,7 +25,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.Set;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,8 +40,14 @@ public class InvocationModelConverter {
 
     private static final Logger log = LoggerFactory.getLogger(InvocationModelConverter.class);
 
+    private final Set<PendingTransition> globalPendingTransitions;
+    private final Set<PostTransition> globalPostTransitions;
+
     @Inject
-    public InvocationModelConverter() {
+    public InvocationModelConverter(@Named("PendingTransition") final Set<PendingTransition> globalPendingTransitions,
+                                    @Named("PostTransition") final Set<PostTransition> globalPostTransitions) {
+        this.globalPendingTransitions = globalPendingTransitions;
+        this.globalPostTransitions = globalPostTransitions;
         log.debug("InvocationModelConverter");
     }
 
@@ -116,6 +126,8 @@ public class InvocationModelConverter {
             .propertyName(propertyName)
             .retrieveMethod(getMethod)
             .updateMethod(setMethod)
+            .addAllPendingTransitionHooks(globalPendingTransitions)
+            .addAllPostTransitionHooks(globalPostTransitions)
             .build();
     }
 
