@@ -94,25 +94,25 @@ version '1.0-SNAPSHOT'
 
 ext {
     aiVersion = '1.8.2' // https://mvnrepository.com/artifact/com.badlogicgames.gdx/gdx-ai
-    ashleyVersion = '1.7.3' // https://mvnrepository.com/artifact/com.badlogicgames.ashley/ashley
-    assertjVersion = '3.18.1' // https://mvnrepository.com/artifact/org.assertj/assertj-core
+    ashleyVersion = '1.7.4' // https://mvnrepository.com/artifact/com.badlogicgames.ashley/ashley
+    assertjVersion = '3.19.0' // https://mvnrepository.com/artifact/org.assertj/assertj-core
     bouncyVersion = '1.68' // https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk15on
     box2DLightsVersion = '1.5' // https://mvnrepository.com/artifact/com.badlogicgames.box2dlights/box2dlights
     cassandraDriverVersion = '3.7.2' // https://mvnrepository.com/artifact/com.datastax.cassandra/cassandra-driver-core and https://mvnrepository.com/artifact/com.datastax.oss/java-driver-core
     cassandraUnitVersion = '3.11.2.0' // https://mvnrepository.com/artifact/org.cassandraunit/cassandra-unit
     commonsIoVersion = '2.8.0' // https://mvnrepository.com/artifact/commons-io/commons-io
-    daggerVersion = '2.30.1' // https://mvnrepository.com/artifact/com.google.dagger/dagger
-    dropwizardVersion = '2.0.17' // https://mvnrepository.com/artifact/io.dropwizard/dropwizard-core
-    gdxVersion = '1.9.12' // https://mvnrepository.com/artifact/com.badlogicgames.gdx/gdx
-    guavaVersion = '30.1-jre' // https://mvnrepository.com/artifact/com.google.guava/guava
+    daggerVersion = '2.35' // https://mvnrepository.com/artifact/com.google.dagger/dagger
+    dropwizardVersion = '2.0.21' // https://mvnrepository.com/artifact/io.dropwizard/dropwizard-core
+    gdxVersion = '1.10' // https://mvnrepository.com/artifact/com.badlogicgames.gdx/gdx
+    guavaVersion = '30.1.1-jre' // https://mvnrepository.com/artifact/com.google.guava/guava
     immutablesVersion = '2.8.8' // https://mvnrepository.com/artifact/org.immutables/value
-    jacksonVersion = '2.12.0' // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core
+    jacksonVersion = '2.12.3' // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core
     javaxInjectVersion = '1'
-    jupiterVersion = '5.7.0' // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
+    jupiterVersion = '5.7.1' // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
     logbackVersion = '1.2.3' // https://mvnrepository.com/artifact/ch.qos.logback/logback-core
-    metricsVersion = '4.1.16' // https://mvnrepository.com/artifact/io.dropwizard.metrics/metrics-core
-    mockitoVersion = '3.6.28' // https://mvnrepository.com/artifact/org.mockito/mockito-core
-    openfeign = '11.0' // https://mvnrepository.com/artifact/io.github.openfeign/feign-core
+    metricsVersion = '4.1.20' // https://mvnrepository.com/artifact/io.dropwizard.metrics/metrics-core
+    mockitoVersion = '3.9.0' // https://mvnrepository.com/artifact/org.mockito/mockito-core
+    openfeign = '11.1' // https://mvnrepository.com/artifact/io.github.openfeign/feign-core
     slf4jVersion = '1.7.30' // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
 }
 
