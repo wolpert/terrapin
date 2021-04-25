@@ -103,7 +103,7 @@ ext {
     commonsIoVersion = '2.8.0' // https://mvnrepository.com/artifact/commons-io/commons-io
     daggerVersion = '2.35' // https://mvnrepository.com/artifact/com.google.dagger/dagger
     dropwizardVersion = '2.0.21' // https://mvnrepository.com/artifact/io.dropwizard/dropwizard-core
-    gdxVersion = '1.10' // https://mvnrepository.com/artifact/com.badlogicgames.gdx/gdx
+    gdxVersion = '1.10.0' // https://mvnrepository.com/artifact/com.badlogicgames.gdx/gdx
     guavaVersion = '30.1.1-jre' // https://mvnrepository.com/artifact/com.google.guava/guava
     immutablesVersion = '2.8.8' // https://mvnrepository.com/artifact/org.immutables/value
     jacksonVersion = '2.12.3' // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core
