@@ -24,16 +24,16 @@ import com.codeheadsystems.test.model.BaseJacksonTest;
  */
 class TransitionTest extends BaseJacksonTest<Transition> {
 
-    @Override
-    protected Class<Transition> getBaseClass() {
-        return Transition.class;
-    }
+  @Override
+  protected Class<Transition> getBaseClass() {
+    return Transition.class;
+  }
 
-    @Override
-    protected Transition getInstance() {
-        return ImmutableTransition.builder()
-            .name("name")
-            .nextState("nextState")
-            .build();
-    }
+  @Override
+  protected Transition getInstance() {
+    return ImmutableTransition.builder()
+        .name("name")
+        .nextState("nextState")
+        .build();
+  }
 }

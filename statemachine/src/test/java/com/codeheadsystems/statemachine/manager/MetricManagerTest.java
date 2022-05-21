@@ -33,63 +33,69 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class MetricManagerTest {
 
-    private static final String NAME = "name";
+  private static final String NAME = "name";
 
-    @Mock private MetricRegistry metricRegistry;
-    @Mock private Timer timer;
-    @Mock private Meter meter;
-    @Mock private Meter meterSuccess;
-    @Mock private Meter meterFailure;
-    @Mock private Timer.Context context;
+  @Mock
+  private MetricRegistry metricRegistry;
+  @Mock
+  private Timer timer;
+  @Mock
+  private Meter meter;
+  @Mock
+  private Meter meterSuccess;
+  @Mock
+  private Meter meterFailure;
+  @Mock
+  private Timer.Context context;
 
-    private MetricManager metricManager;
+  private MetricManager metricManager;
 
-    @BeforeEach
-    void setUp() {
-        metricManager = new CodahaleMetricManager(metricRegistry);
-    }
+  @BeforeEach
+  void setUp() {
+    metricManager = new CodahaleMetricManager(metricRegistry);
+  }
 
-    @Test
-    public void meter() {
-        when(metricRegistry.meter(NAME)).thenReturn(meter);
+  @Test
+  public void meter() {
+    when(metricRegistry.meter(NAME)).thenReturn(meter);
 
-        metricManager.meter(NAME, 10L);
+    metricManager.meter(NAME, 10L);
 
-        verify(meter).mark(10L);
-    }
+    verify(meter).mark(10L);
+  }
 
-    @Test
-    public void timeWithSupplier_success() {
-        when(metricRegistry.timer(NAME)).thenReturn(timer);
-        when(metricRegistry.meter(NAME + ".failure")).thenReturn(meter);
-        when(timer.time()).thenReturn(context);
+  @Test
+  public void timeWithSupplier_success() {
+    when(metricRegistry.timer(NAME)).thenReturn(timer);
+    when(metricRegistry.meter(NAME + ".failure")).thenReturn(meter);
+    when(timer.time()).thenReturn(context);
 
-        final Boolean result = metricManager.time(NAME, () -> Boolean.TRUE);
+    final Boolean result = metricManager.time(NAME, () -> Boolean.TRUE);
 
-        assertThat(result).isNotNull().isTrue();
+    assertThat(result).isNotNull().isTrue();
 
-        verify(meter).mark(0);
-        verify(meter, never()).mark();
-        verify(context).stop();
-    }
+    verify(meter).mark(0);
+    verify(meter, never()).mark();
+    verify(context).stop();
+  }
 
-    @Test
-    public void timeWithSupplier_fail() {
-        when(metricRegistry.timer(NAME)).thenReturn(timer);
-        when(metricRegistry.meter(NAME + ".failure")).thenReturn(meter);
-        when(timer.time()).thenReturn(context);
+  @Test
+  public void timeWithSupplier_fail() {
+    when(metricRegistry.timer(NAME)).thenReturn(timer);
+    when(metricRegistry.meter(NAME + ".failure")).thenReturn(meter);
+    when(timer.time()).thenReturn(context);
 
-        assertThatExceptionOfType(IllegalArgumentException.class)
-            .isThrownBy(() -> metricManager.time(NAME, () -> {
-                if (true) {
-                    throw new IllegalArgumentException();
-                } else {
-                    return Boolean.FALSE;
-                }
-            }));
+    assertThatExceptionOfType(IllegalArgumentException.class)
+        .isThrownBy(() -> metricManager.time(NAME, () -> {
+          if (true) {
+            throw new IllegalArgumentException();
+          } else {
+            return Boolean.FALSE;
+          }
+        }));
 
-        verify(meter).mark(0);
-        verify(meter).mark();
-        verify(context).stop();
-    }
+    verify(meter).mark(0);
+    verify(meter).mark();
+    verify(context).stop();
+  }
 }

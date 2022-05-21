@@ -20,7 +20,7 @@ import com.codeheadsystems.statemachine.model.StateMachine;
 
 public class TransitionException extends StateMachineException {
 
-    public TransitionException(final StateMachine stateMachine, final String message) {
-        super(stateMachine, message);
-    }
+  public TransitionException(final StateMachine stateMachine, final String message) {
+    super(stateMachine, message);
+  }
 }

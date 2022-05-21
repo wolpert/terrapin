@@ -27,7 +27,13 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import org.assertj.core.api.Condition;
@@ -102,8 +108,8 @@ public abstract class BaseJacksonTest<T> {
 
         // Assert
         assertThat(unwoundInstance)
-            .describedAs("Verification %s can go to json and back to an object", simpleName)
-            .isEqualTo(instance);
+                .describedAs("Verification %s can go to json and back to an object", simpleName)
+                .isEqualTo(instance);
     }
 
     /**
@@ -126,8 +132,8 @@ public abstract class BaseJacksonTest<T> {
 
         // Assert
         assertThat(unwoundInstance)
-            .describedAs("Verification %s can go to json and back to an object with extra fields", simpleName)
-            .isEqualTo(instance);
+                .describedAs("Verification %s can go to json and back to an object with extra fields", simpleName)
+                .isEqualTo(instance);
     }
 
     /**
@@ -150,10 +156,10 @@ public abstract class BaseJacksonTest<T> {
 
             // Assert
             assertThat(thrown)
-                .describedAs("Throw test fail %s.%s()", simpleName, methodName)
-                .isNotNull()
-                .isInstanceOf(ValueInstantiationException.class)
-                .hasMessageContaining("Cannot construct instance of");
+                    .describedAs("Throw test fail %s.%s()", simpleName, methodName)
+                    .isNotNull()
+                    .isInstanceOf(ValueInstantiationException.class)
+                    .hasMessageContaining("Cannot construct instance of");
         }
     }
 
@@ -178,14 +184,14 @@ public abstract class BaseJacksonTest<T> {
 
             // Assert
             assertThat(instance)
-                .describedAs("Expected object equality to fail when removing %s.%s")
-                .isNotEqualTo(reducedInstance);
+                    .describedAs("Expected object equality to fail when removing %s.%s",simpleName, methodName)
+                    .isNotEqualTo(reducedInstance);
             assertThat(method.invoke(instance))
-                .describedAs("Setup fail %s.%s()", simpleName, methodName)
-                .isNotNull();
+                    .describedAs("Setup fail %s.%s()", simpleName, methodName)
+                    .isNotNull();
             assertThat(method.invoke(reducedInstance))
-                .describedAs("Method fail %s.%s()", simpleName, methodName)
-                .isNull();
+                    .describedAs("Method fail %s.%s()", simpleName, methodName)
+                    .isNull();
         }
     }
 
@@ -212,15 +218,15 @@ public abstract class BaseJacksonTest<T> {
             // Assert
             assertThat(instance).isNotEqualTo(reducedInstance);
             assertThat(method.invoke(instance))
-                .describedAs("Setup fail %s.%s()", simpleName, methodName)
-                .isNotNull()
-                .asInstanceOf(InstanceOfAssertFactories.ITERABLE)
-                .isNotEmpty();
+                    .describedAs("Setup fail %s.%s()", simpleName, methodName)
+                    .isNotNull()
+                    .asInstanceOf(InstanceOfAssertFactories.ITERABLE)
+                    .isNotEmpty();
             assertThat(method.invoke(reducedInstance))
-                .describedAs("Method fail %s.%s()", simpleName, methodName)
-                .isNotNull()
-                .asInstanceOf(InstanceOfAssertFactories.ITERABLE)
-                .isEmpty();
+                    .describedAs("Method fail %s.%s()", simpleName, methodName)
+                    .isNotNull()
+                    .asInstanceOf(InstanceOfAssertFactories.ITERABLE)
+                    .isEmpty();
         }
     }
 
@@ -245,17 +251,17 @@ public abstract class BaseJacksonTest<T> {
 
             // Assert
             assertThat(instance)
-                .isNotEqualTo(reducedInstance);
+                    .isNotEqualTo(reducedInstance);
             assertThat(method.invoke(instance))
-                .describedAs("Setup fail %s.%s()", simpleName, methodName)
-                .isNotNull()
-                .asInstanceOf(InstanceOfAssertFactories.MAP)
-                .isNotEmpty();
+                    .describedAs("Setup fail %s.%s()", simpleName, methodName)
+                    .isNotNull()
+                    .asInstanceOf(InstanceOfAssertFactories.MAP)
+                    .isNotEmpty();
             assertThat(method.invoke(reducedInstance))
-                .describedAs("Method fail %s.%s()", simpleName, methodName)
-                .isNotNull()
-                .asInstanceOf(InstanceOfAssertFactories.MAP)
-                .isEmpty();
+                    .describedAs("Method fail %s.%s()", simpleName, methodName)
+                    .isNotNull()
+                    .asInstanceOf(InstanceOfAssertFactories.MAP)
+                    .isEmpty();
         }
     }
 
@@ -283,30 +289,46 @@ public abstract class BaseJacksonTest<T> {
             final Object instanceValue = method.invoke(instance);
             final Object reducedValue = method.invoke(reducedInstance);
             assertThat(instanceValue)
-                .describedAs("Setup fail %s.%s()", simpleName, methodName)
-                .isNotNull()
-                .isInstanceOf(Optional.class)
-                .asInstanceOf(InstanceOfAssertFactories.OPTIONAL)
-                .is(PRESENT);
+                    .describedAs("Setup fail %s.%s()", simpleName, methodName)
+                    .isNotNull()
+                    .isInstanceOf(Optional.class)
+                    .asInstanceOf(InstanceOfAssertFactories.OPTIONAL)
+                    .is(PRESENT);
             assertThat(reducedValue)
-                .describedAs("Setup fail %s.%s()", simpleName, methodName)
-                .isNotNull()
-                .isInstanceOf(Optional.class)
-                .asInstanceOf(InstanceOfAssertFactories.OPTIONAL)
-                .isNot(PRESENT);
+                    .describedAs("Setup fail %s.%s()", simpleName, methodName)
+                    .isNotNull()
+                    .isInstanceOf(Optional.class)
+                    .asInstanceOf(InstanceOfAssertFactories.OPTIONAL)
+                    .isNot(PRESENT);
         }
     }
 
-    List<Method> getRequiredMethods() {
+    List<Method> getClassMethods() {
         final Class<T> clazz = getBaseClass();
         return Arrays.stream(clazz.getMethods())
-            .filter(m -> !methodsToIgnore.contains(m.getName()))
-            .filter(m -> m.getDeclaredAnnotation(Nullable.class) == null)
-            .filter(m -> m.getDeclaredAnnotation(JsonIgnore.class) == null)
-            .filter(m -> !m.getReturnType().equals(Optional.class))
-            .filter(m -> !Collection.class.isAssignableFrom(m.getReturnType()))
-            .filter(m -> !Map.class.isAssignableFrom(m.getReturnType()))
-            .collect(Collectors.toList());
+                .filter(m -> !methodsToIgnore.contains(m.getName()))
+                .filter(m -> !Modifier.isStatic(m.getModifiers()))
+                .filter(m -> m.getParameterCount() == 0)
+                .filter(m -> !m.getReturnType().equals(Void.TYPE))
+                .collect(Collectors.toList());
+    }
+
+    List<Method> getDefaultMethods() {
+        return getClassMethods().stream()
+                .filter(m -> m.getDeclaredAnnotation(JsonIgnore.class) == null)
+                .filter(Method::isDefault)
+                .collect(Collectors.toList());
+    }
+
+    List<Method> getRequiredMethods() {
+        return getClassMethods().stream()
+                .filter(m -> m.getDeclaredAnnotation(JsonIgnore.class) == null)
+                .filter(m -> m.getDeclaredAnnotation(Nullable.class) == null)
+                .filter(method -> !method.isDefault())
+                .filter(m -> !m.getReturnType().equals(Optional.class))
+                .filter(m -> !Collection.class.isAssignableFrom(m.getReturnType()))
+                .filter(m -> !Map.class.isAssignableFrom(m.getReturnType()))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -315,12 +337,10 @@ public abstract class BaseJacksonTest<T> {
      * @return list of methods.
      */
     List<Method> getCollectionMethods() {
-        final Class<T> clazz = getBaseClass();
-        return Arrays.stream(clazz.getMethods())
-            .filter(m -> !methodsToIgnore.contains(m.getName()))
-            .filter(m -> m.getDeclaredAnnotation(JsonIgnore.class) == null)
-            .filter(m -> Collection.class.isAssignableFrom(m.getReturnType()))
-            .collect(Collectors.toList());
+        return getClassMethods().stream()
+                .filter(m -> m.getDeclaredAnnotation(JsonIgnore.class) == null)
+                .filter(m -> Collection.class.isAssignableFrom(m.getReturnType()))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -329,12 +349,10 @@ public abstract class BaseJacksonTest<T> {
      * @return list of methods.
      */
     List<Method> getMapMethods() {
-        final Class<T> clazz = getBaseClass();
-        return Arrays.stream(clazz.getMethods())
-            .filter(m -> !methodsToIgnore.contains(m.getName()))
-            .filter(m -> m.getDeclaredAnnotation(JsonIgnore.class) == null)
-            .filter(m -> Map.class.isAssignableFrom(m.getReturnType()))
-            .collect(Collectors.toList());
+        return getClassMethods().stream()
+                .filter(m -> m.getDeclaredAnnotation(JsonIgnore.class) == null)
+                .filter(m -> Map.class.isAssignableFrom(m.getReturnType()))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -343,12 +361,10 @@ public abstract class BaseJacksonTest<T> {
      * @return list of methods.
      */
     List<Method> getNullableMethods() {
-        final Class<T> clazz = getBaseClass();
-        return Arrays.stream(clazz.getMethods())
-            .filter(m -> !methodsToIgnore.contains(m.getName()))
-            .filter(m -> m.getDeclaredAnnotation(JsonIgnore.class) == null)
-            .filter(m -> m.getDeclaredAnnotation(Nullable.class) != null)
-            .collect(Collectors.toList());
+        return getClassMethods().stream()
+                .filter(m -> m.getDeclaredAnnotation(JsonIgnore.class) == null)
+                .filter(m -> m.getDeclaredAnnotation(Nullable.class) != null)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -357,12 +373,10 @@ public abstract class BaseJacksonTest<T> {
      * @return list of methods.
      */
     List<Method> getOptionalMethods() {
-        final Class<T> clazz = getBaseClass();
-        return Arrays.stream(clazz.getMethods())
-            .filter(m -> !methodsToIgnore.contains(m.getName()))
-            .filter(m -> m.getDeclaredAnnotation(JsonIgnore.class) == null)
-            .filter(m -> m.getReturnType().equals(Optional.class))
-            .collect(Collectors.toList());
+        return getClassMethods().stream()
+                .filter(m -> m.getDeclaredAnnotation(JsonIgnore.class) == null)
+                .filter(m -> m.getReturnType().equals(Optional.class))
+                .collect(Collectors.toList());
     }
 
 }

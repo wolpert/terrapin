@@ -27,86 +27,86 @@ import org.junit.jupiter.api.Test;
  */
 class StateMachineTest extends BaseJacksonTest<StateMachine> {
 
-    public static final String FIRST_STATE = "s1";
-    public static final String SECOND_STATE = "s2";
-    public static final String TRANSITION = "t";
-    private static final StateMachine MACHINE = ImmutableStateMachine.builder()
+  public static final String FIRST_STATE = "s1";
+  public static final String SECOND_STATE = "s2";
+  public static final String TRANSITION = "t";
+  private static final StateMachine MACHINE = ImmutableStateMachine.builder()
+      .name("name")
+      .version(1L)
+      .id("id")
+      .initialState(FIRST_STATE)
+      .putStates(FIRST_STATE, ImmutableState.builder()
+          .name(FIRST_STATE)
+          .putTransitions(TRANSITION, ImmutableTransition.builder()
+              .name(TRANSITION)
+              .nextState(SECOND_STATE)
+              .build())
+          .build())
+      .putStates(SECOND_STATE, ImmutableState.builder().name(SECOND_STATE).build())
+      .build();
+
+  @Override
+  protected Class<StateMachine> getBaseClass() {
+    return StateMachine.class;
+  }
+
+  @Override
+  protected StateMachine getInstance() {
+    return ImmutableStateMachine.builder()
+        .id("id")
+        .name("name")
+        .initialState("s1")
+        .version(3L)
+        .putStates("s1", ImmutableState.builder().name("s1").build())
+        .putStates("s2", ImmutableState.builder().name("s2").build())
+        .build();
+  }
+
+
+  @Test
+  void getNextStateName() {
+    final Optional<String> result = MACHINE.nextState(FIRST_STATE, TRANSITION);
+
+    assertThat(result)
+        .isPresent()
+        .contains(SECOND_STATE);
+  }
+
+  @Test
+  void getNextStateName_noTransition() {
+    final Optional<String> result = MACHINE.nextState(SECOND_STATE, TRANSITION);
+
+    assertThat(result)
+        .isNotPresent();
+  }
+
+  @Test
+  void transition_badState() {
+    final Optional<String> result = MACHINE.nextState(TRANSITION, TRANSITION);
+
+    assertThat(result)
+        .isNotPresent();
+  }
+
+  @Test
+  void transition_badStateInTransition() {
+    final StateMachine bad = ImmutableStateMachine.builder()
         .name("name")
         .version(1L)
         .id("id")
-        .initialState(FIRST_STATE)
         .putStates(FIRST_STATE, ImmutableState.builder()
             .name(FIRST_STATE)
             .putTransitions(TRANSITION, ImmutableTransition.builder()
                 .name(TRANSITION)
-                .nextState(SECOND_STATE)
+                .nextState(TRANSITION)
                 .build())
             .build())
         .putStates(SECOND_STATE, ImmutableState.builder().name(SECOND_STATE).build())
         .build();
 
-    @Override
-    protected Class<StateMachine> getBaseClass() {
-        return StateMachine.class;
-    }
+    final Optional<String> result = bad.nextState(FIRST_STATE, TRANSITION);
 
-    @Override
-    protected StateMachine getInstance() {
-        return ImmutableStateMachine.builder()
-            .id("id")
-            .name("name")
-            .initialState("s1")
-            .version(3L)
-            .putStates("s1", ImmutableState.builder().name("s1").build())
-            .putStates("s2", ImmutableState.builder().name("s2").build())
-            .build();
-    }
-
-
-    @Test
-    void getNextStateName() {
-        final Optional<String> result = MACHINE.nextState(FIRST_STATE, TRANSITION);
-
-        assertThat(result)
-            .isPresent()
-            .contains(SECOND_STATE);
-    }
-
-    @Test
-    void getNextStateName_noTransition() {
-        final Optional<String> result = MACHINE.nextState(SECOND_STATE, TRANSITION);
-
-        assertThat(result)
-            .isNotPresent();
-    }
-
-    @Test
-    void transition_badState() {
-        final Optional<String> result = MACHINE.nextState(TRANSITION, TRANSITION);
-
-        assertThat(result)
-            .isNotPresent();
-    }
-
-    @Test
-    void transition_badStateInTransition() {
-        final StateMachine bad = ImmutableStateMachine.builder()
-            .name("name")
-            .version(1L)
-            .id("id")
-            .putStates(FIRST_STATE, ImmutableState.builder()
-                .name(FIRST_STATE)
-                .putTransitions(TRANSITION, ImmutableTransition.builder()
-                    .name(TRANSITION)
-                    .nextState(TRANSITION)
-                    .build())
-                .build())
-            .putStates(SECOND_STATE, ImmutableState.builder().name(SECOND_STATE).build())
-            .build();
-
-        final Optional<String> result = bad.nextState(FIRST_STATE, TRANSITION);
-
-        assertThat(result)
-            .isNotPresent();
-    }
+    assertThat(result)
+        .isNotPresent();
+  }
 }

@@ -50,4 +50,9 @@ public interface StandardImmutableModel {
 
     @JsonProperty("aMap")
     Map<String, String> aMap();
+
+    @JsonProperty("defaultString")
+    default String defaultString() {
+        return "defaultString";
+    }
 }

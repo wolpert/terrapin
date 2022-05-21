@@ -20,7 +20,7 @@ import com.codeheadsystems.statemachine.model.StateMachine;
 
 public class BadStateMachineException extends StateMachineException {
 
-    public BadStateMachineException(final StateMachine stateMachine, final String message) {
-        super(stateMachine, message);
-    }
+  public BadStateMachineException(final StateMachine stateMachine, final String message) {
+    super(stateMachine, message);
+  }
 }

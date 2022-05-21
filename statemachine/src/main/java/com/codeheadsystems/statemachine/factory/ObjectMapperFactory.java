@@ -27,14 +27,14 @@ import javax.inject.Singleton;
 @Singleton
 public class ObjectMapperFactory {
 
-    @Inject
-    public ObjectMapperFactory() {
+  @Inject
+  public ObjectMapperFactory() {
 
-    }
+  }
 
-    public ObjectMapper objectMapper() {
-        return new ObjectMapper()
-            .registerModule(new Jdk8Module());
-    }
+  public ObjectMapper objectMapper() {
+    return new ObjectMapper()
+        .registerModule(new Jdk8Module());
+  }
 
 }

@@ -26,35 +26,35 @@ import java.util.Optional;
  */
 public class Functional {
 
-    private Functional() {
+  private Functional() {
 
-    }
+  }
 
-    /**
-     * Immutable map helper.... adds the key/value to the immutable map.
-     *
-     * @param map   we are starting with
-     * @param key   of the entry.
-     * @param value of the entry.
-     * @param <K>   key type.
-     * @param <V>   value type.
-     * @return new map with the augmented entries.
-     */
-    public static <K, V> Map<K, V> add(final Map<K, V> map, final K key, final V value) {
-        if (map.containsKey(key)) {
-            final Map<K, V> growingMap = new HashMap<>(map);
-            growingMap.put(key, value);
-            return ImmutableMap.copyOf(growingMap);
-        } else {
-            return ImmutableMap.<K, V>builder().putAll(map).put(key, value).build();
-        }
+  /**
+   * Immutable map helper.... adds the key/value to the immutable map.
+   *
+   * @param map   we are starting with
+   * @param key   of the entry.
+   * @param value of the entry.
+   * @param <K>   key type.
+   * @param <V>   value type.
+   * @return new map with the augmented entries.
+   */
+  public static <K, V> Map<K, V> add(final Map<K, V> map, final K key, final V value) {
+    if (map.containsKey(key)) {
+      final Map<K, V> growingMap = new HashMap<>(map);
+      growingMap.put(key, value);
+      return ImmutableMap.copyOf(growingMap);
+    } else {
+      return ImmutableMap.<K, V>builder().putAll(map).put(key, value).build();
     }
+  }
 
-    public static <T> boolean is(final Optional<T> optionalT, final T value) {
-        if (!optionalT.isPresent() || value == null) {
-            return false;
-        }
-        return value.equals(optionalT.get());
+  public static <T> boolean is(final Optional<T> optionalT, final T value) {
+    if (!optionalT.isPresent() || value == null) {
+      return false;
     }
+    return value.equals(optionalT.get());
+  }
 
 }

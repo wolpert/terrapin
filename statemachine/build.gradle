@@ -2,15 +2,6 @@
  * Copyright (c) 2020 CodeHead Systems. All rights reserved
  */
 
-apply plugin: 'java-library'
-apply plugin: 'idea'
-apply plugin: 'jacoco'
-apply plugin: 'com.jfrog.bintray'
-apply plugin: 'maven'
-apply plugin: 'maven-publish'
-
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
 
 ext {
     appName = "statemachine"
@@ -22,89 +13,11 @@ configurations {
     jar.baseName = "${appName}"
 }
 
-// Create the pom configuration:
-def pomConfig = {
-    licenses {
-        license {
-            name "The Apache Software License, Version 2.0"
-            url "http://www.apache.org/licenses/LICENSE-2.0.txt"
-            distribution "repo"
-        }
-    }
-    developers {
-        developer {
-            id "wolpert"
-            name "Ned Wolpert"
-            email "ned.wolpert@codeheadsystems.com"
-        }
-    }
-
-    scm {
-        url "https://github.com/wolpert/terrapin"
-    }
-}
-
-// Create the publication with the pom configuration:
-publishing {
-    publications {
-        StateMachinePublication(MavenPublication) {
-            from components.java
-            artifact sourcesJar
-            artifact javadocJar
-            groupId 'com.codeheadsystems.terrapin'
-            artifactId project.ext.appName
-            version project.ext.version
-            pom.withXml {
-                def projectNode = asNode()
-                // Append POM configuration.
-                projectNode.children().last() + pomConfig
-            }
-        }
-    }
-}
-
-bintray {
-    user = System.getenv('BINTRAY_USER')
-    key = System.getenv('BINTRAY_KEY')
-    publications = ['StateMachinePublication']
-    dryRun = false //[Default: false] Whether to run this as dry-run, without deploying
-    publish = true //[Default: false] Whether version should be auto published after an upload
-    override = false //[Default: false] Whether to override version artifacts already published
-    pkg {
-        repo = 'com.codeheadsystems.terrapin'
-        name = project.ext.appName
-        licenses = ['Apache-2.0']
-        vcsUrl = 'https://github.com/wolpert/terrapin/tree/main/codehead-test'
-        version {
-            name = project.ext.version
-            released = new Date()
-        }
-    }
-}
-
-test {
-    useJUnitPlatform() // needed for junit5
-    finalizedBy jacocoTestReport
-}
-jacocoTestReport {
-    reports {
-        xml.enabled true
-        csv.enabled false
-        html.destination file("${buildDir}/jacocoHtml")
-    }
-    afterEvaluate {
-        classDirectories.setFrom(files(classDirectories.files.collect {
-            fileTree(dir: it, exclude: [
-                    '**/*_Factory.class',
-                    '**/*_Factory**.class'
-            ])
-        }))
-    }
-}
+jacocoTestReport.finalizedBy jacocoTestCoverageVerification
 
 dependencies {
     implementation("com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}")
-    implementation("com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}")
+    implementation("com.fasterxml.jackson.core:jackson-databind:${jacksonDatabindVersion}")
     implementation("com.fasterxml.jackson.core:jackson-core:${jacksonVersion}")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:${jacksonVersion}")
     implementation("com.google.guava:guava:${guavaVersion}")

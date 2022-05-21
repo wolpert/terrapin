@@ -34,137 +34,137 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class InvocationModelConverterTest {
 
-    @Mock private PendingTransition pendingTransition;
-    @Mock private PostTransition postTransition;
+  @Mock private PendingTransition pendingTransition;
+  @Mock private PostTransition postTransition;
 
-    private InvocationModelConverter converter;
-    private Set<PendingTransition> pendingTransitionSet;
-    private Set<PostTransition> postTransitionSet;
+  private InvocationModelConverter converter;
+  private Set<PendingTransition> pendingTransitionSet;
+  private Set<PostTransition> postTransitionSet;
 
-    @BeforeEach
-    void setUp() {
-        pendingTransitionSet = ImmutableSet.of(pendingTransition);
-        postTransitionSet = ImmutableSet.of(postTransition);
-        converter = new InvocationModelConverter(pendingTransitionSet, postTransitionSet);
+  @BeforeEach
+  void setUp() {
+    pendingTransitionSet = ImmutableSet.of(pendingTransition);
+    postTransitionSet = ImmutableSet.of(postTransition);
+    converter = new InvocationModelConverter(pendingTransitionSet, postTransitionSet);
+  }
+
+  @Test
+  void generate() {
+  }
+
+  @Test
+  void testGenerate() {
+  }
+
+  @Test
+  void generate_fieldAnnotation() throws NoSuchMethodException {
+    final InvocationModel<FieldTestSample> result = converter.generate(FieldTestSample.class);
+
+    assertThat(result)
+        .isNotNull()
+        .hasFieldOrPropertyWithValue("pendingTransitionHooks", pendingTransitionSet)
+        .hasFieldOrPropertyWithValue("postTransitionHooks", postTransitionSet)
+        .hasFieldOrPropertyWithValue("targetClass", FieldTestSample.class)
+        .hasFieldOrPropertyWithValue("propertyName", "weirdName")
+        .hasFieldOrPropertyWithValue("retrieveMethod", FieldTestSample.class.getMethod("getWeirdName"))
+        .hasFieldOrPropertyWithValue("updateMethod", FieldTestSample.class.getMethod("setWeirdName", String.class));
+  }
+
+  @Test
+  void generate_implicit() throws NoSuchMethodException {
+    final InvocationModel<BeanSample> result = converter.generate(BeanSample.class);
+
+    assertThat(result)
+        .isNotNull()
+        .hasFieldOrPropertyWithValue("pendingTransitionHooks", pendingTransitionSet)
+        .hasFieldOrPropertyWithValue("postTransitionHooks", postTransitionSet)
+        .hasFieldOrPropertyWithValue("targetClass", BeanSample.class)
+        .hasFieldOrPropertyWithValue("propertyName", "state")
+        .hasFieldOrPropertyWithValue("retrieveMethod", BeanSample.class.getMethod("getState"))
+        .hasFieldOrPropertyWithValue("updateMethod", BeanSample.class.getMethod("setState", String.class));
+  }
+
+  @Test
+  void generate_bean() throws NoSuchMethodException {
+    final InvocationModel<BeanSample> result = converter.generate(
+        BeanSample.class, "state");
+
+    assertThat(result)
+        .isNotNull()
+        .hasFieldOrPropertyWithValue("pendingTransitionHooks", pendingTransitionSet)
+        .hasFieldOrPropertyWithValue("postTransitionHooks", postTransitionSet)
+        .hasFieldOrPropertyWithValue("targetClass", BeanSample.class)
+        .hasFieldOrPropertyWithValue("propertyName", "state")
+        .hasFieldOrPropertyWithValue("retrieveMethod", BeanSample.class.getMethod("getState"))
+        .hasFieldOrPropertyWithValue("updateMethod", BeanSample.class.getMethod("setState", String.class));
+  }
+
+  @Test
+  void generate_explicit() throws NoSuchMethodException {
+    final InvocationModel<BeanSample> result = converter.generate(
+        BeanSample.class, "state", "getState", "setState");
+
+    assertThat(result)
+        .isNotNull()
+        .hasFieldOrPropertyWithValue("pendingTransitionHooks", pendingTransitionSet)
+        .hasFieldOrPropertyWithValue("postTransitionHooks", postTransitionSet)
+        .hasFieldOrPropertyWithValue("targetClass", BeanSample.class)
+        .hasFieldOrPropertyWithValue("propertyName", "state")
+        .hasFieldOrPropertyWithValue("retrieveMethod", BeanSample.class.getMethod("getState"))
+        .hasFieldOrPropertyWithValue("updateMethod", BeanSample.class.getMethod("setState", String.class));
+  }
+
+  @Test
+  void generate_explicit_badMethod() throws NoSuchMethodException {
+    assertThatExceptionOfType(IllegalArgumentException.class)
+        .isThrownBy(() -> converter.generate(BeanSample.class, "state", "doesnotexist", "setState"));
+  }
+
+  @Test
+  void generate_explicit_badAccess() throws NoSuchMethodException {
+    assertThatExceptionOfType(IllegalArgumentException.class)
+        .isThrownBy(() -> converter.generate(BeanSample.class, "state", "internalGetState", "setState"));
+  }
+
+  static class BeanSample {
+
+    private String state;
+
+    public BeanSample(final String state) {
+      setState(state);
     }
 
-    @Test
-    void generate() {
+    public String getState() {
+      return state;
     }
 
-    @Test
-    void testGenerate() {
+    public void setState(final String state) {
+      this.state = state;
     }
 
-    @Test
-    void generate_fieldAnnotation() throws NoSuchMethodException {
-        final InvocationModel<FieldTestSample> result = converter.generate(FieldTestSample.class);
-
-        assertThat(result)
-            .isNotNull()
-            .hasFieldOrPropertyWithValue("pendingTransitionHooks", pendingTransitionSet)
-            .hasFieldOrPropertyWithValue("postTransitionHooks", postTransitionSet)
-            .hasFieldOrPropertyWithValue("targetClass", FieldTestSample.class)
-            .hasFieldOrPropertyWithValue("propertyName", "weirdName")
-            .hasFieldOrPropertyWithValue("retrieveMethod", FieldTestSample.class.getMethod("getWeirdName"))
-            .hasFieldOrPropertyWithValue("updateMethod", FieldTestSample.class.getMethod("setWeirdName", String.class));
+    private String internalGetState() {
+      return state;
     }
 
-    @Test
-    void generate_implicit() throws NoSuchMethodException {
-        final InvocationModel<BeanSample> result = converter.generate(BeanSample.class);
 
-        assertThat(result)
-            .isNotNull()
-            .hasFieldOrPropertyWithValue("pendingTransitionHooks", pendingTransitionSet)
-            .hasFieldOrPropertyWithValue("postTransitionHooks", postTransitionSet)
-            .hasFieldOrPropertyWithValue("targetClass", BeanSample.class)
-            .hasFieldOrPropertyWithValue("propertyName", "state")
-            .hasFieldOrPropertyWithValue("retrieveMethod", BeanSample.class.getMethod("getState"))
-            .hasFieldOrPropertyWithValue("updateMethod", BeanSample.class.getMethod("setState", String.class));
+  }
+
+  static class FieldTestSample {
+
+    @StateTarget
+    private String weirdName;
+
+    public FieldTestSample(final String weirdName) {
+      setWeirdName(weirdName);
     }
 
-    @Test
-    void generate_bean() throws NoSuchMethodException {
-        final InvocationModel<BeanSample> result = converter.generate(
-            BeanSample.class, "state");
-
-        assertThat(result)
-            .isNotNull()
-            .hasFieldOrPropertyWithValue("pendingTransitionHooks", pendingTransitionSet)
-            .hasFieldOrPropertyWithValue("postTransitionHooks", postTransitionSet)
-            .hasFieldOrPropertyWithValue("targetClass", BeanSample.class)
-            .hasFieldOrPropertyWithValue("propertyName", "state")
-            .hasFieldOrPropertyWithValue("retrieveMethod", BeanSample.class.getMethod("getState"))
-            .hasFieldOrPropertyWithValue("updateMethod", BeanSample.class.getMethod("setState", String.class));
+    public String getWeirdName() {
+      return weirdName;
     }
 
-    @Test
-    void generate_explicit() throws NoSuchMethodException {
-        final InvocationModel<BeanSample> result = converter.generate(
-            BeanSample.class, "state", "getState", "setState");
-
-        assertThat(result)
-            .isNotNull()
-            .hasFieldOrPropertyWithValue("pendingTransitionHooks", pendingTransitionSet)
-            .hasFieldOrPropertyWithValue("postTransitionHooks", postTransitionSet)
-            .hasFieldOrPropertyWithValue("targetClass", BeanSample.class)
-            .hasFieldOrPropertyWithValue("propertyName", "state")
-            .hasFieldOrPropertyWithValue("retrieveMethod", BeanSample.class.getMethod("getState"))
-            .hasFieldOrPropertyWithValue("updateMethod", BeanSample.class.getMethod("setState", String.class));
+    public void setWeirdName(final String weirdName) {
+      this.weirdName = weirdName;
     }
 
-    @Test
-    void generate_explicit_badMethod() throws NoSuchMethodException {
-        assertThatExceptionOfType(IllegalArgumentException.class)
-            .isThrownBy(() -> converter.generate(BeanSample.class, "state", "doesnotexist", "setState"));
-    }
-
-    @Test
-    void generate_explicit_badAccess() throws NoSuchMethodException {
-        assertThatExceptionOfType(IllegalArgumentException.class)
-            .isThrownBy(() -> converter.generate(BeanSample.class, "state", "internalGetState", "setState"));
-    }
-
-    static class BeanSample {
-
-        private String state;
-
-        public BeanSample(final String state) {
-            setState(state);
-        }
-
-        public String getState() {
-            return state;
-        }
-
-        public void setState(final String state) {
-            this.state = state;
-        }
-
-        private String internalGetState() {
-            return state;
-        }
-
-
-    }
-
-    static class FieldTestSample {
-
-        @StateTarget
-        private String weirdName;
-
-        public FieldTestSample(final String weirdName) {
-            setWeirdName(weirdName);
-        }
-
-        public String getWeirdName() {
-            return weirdName;
-        }
-
-        public void setWeirdName(final String weirdName) {
-            this.weirdName = weirdName;
-        }
-
-    }
+  }
 }

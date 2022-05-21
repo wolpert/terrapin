@@ -15,17 +15,17 @@ import javax.inject.Singleton;
 @Deprecated
 public class NaiveLockManager implements LockManager {
 
-    @Inject
-    public NaiveLockManager() {
+  @Inject
+  public NaiveLockManager() {
 
-    }
+  }
 
-    @Override
-    public <T> void transitionUnderLock(final StateMachine stateMachine,
-                                        final T targetObject,
-                                        final Runnable stateChangeMethod) {
-        synchronized (targetObject) {
-            stateChangeMethod.run();
-        }
+  @Override
+  public <T> void transitionUnderLock(final StateMachine stateMachine,
+                                      final T targetObject,
+                                      final Runnable stateChangeMethod) {
+    synchronized (targetObject) {
+      stateChangeMethod.run();
     }
+  }
 }

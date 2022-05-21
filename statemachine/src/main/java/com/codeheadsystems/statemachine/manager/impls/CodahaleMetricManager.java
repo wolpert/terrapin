@@ -29,39 +29,41 @@ import javax.inject.Singleton;
 @Singleton
 public class CodahaleMetricManager implements MetricManager {
 
-    private final MetricRegistry metricRegistry;
+  private final MetricRegistry metricRegistry;
 
-    @Inject
-    public CodahaleMetricManager(final MetricRegistry metricRegistry) {
-        this.metricRegistry = metricRegistry;
-    }
+  @Inject
+  public CodahaleMetricManager(final MetricRegistry metricRegistry) {
+    this.metricRegistry = metricRegistry;
+  }
 
-    @Override public void meter(final String metricName, final long value) {
-        metricRegistry.meter(metricName).mark(value);
-    }
+  @Override
+  public void meter(final String metricName, final long value) {
+    metricRegistry.meter(metricName).mark(value);
+  }
 
-    /**
-     * The timer is used for this method. It provides the latency and a rate. We
-     * add a failure counter to the method to track runtime exceptions.
-     *
-     * @param metricName to use.
-     * @param supplier to execute.
-     * @param <R> return type.
-     * @return the value from the method.
-     */
-    @Override public <R> R time(final String metricName, final Supplier<R> supplier) {
-        final Timer timer = metricRegistry.timer(metricName);
-        final Meter failure = metricRegistry.meter(name(metricName, "failure"));
-        failure.mark(0); // set the count if needed.
-        final Timer.Context context = timer.time();
-        try {
-            return supplier.get();
-        } catch (RuntimeException re) {
-            failure.mark();
-            throw re;
-        } finally {
-            context.stop();
-        }
+  /**
+   * The timer is used for this method. It provides the latency and a rate. We
+   * add a failure counter to the method to track runtime exceptions.
+   *
+   * @param metricName to use.
+   * @param supplier   to execute.
+   * @param <R>        return type.
+   * @return the value from the method.
+   */
+  @Override
+  public <R> R time(final String metricName, final Supplier<R> supplier) {
+    final Timer timer = metricRegistry.timer(metricName);
+    final Meter failure = metricRegistry.meter(name(metricName, "failure"));
+    failure.mark(0); // set the count if needed.
+    final Timer.Context context = timer.time();
+    try {
+      return supplier.get();
+    } catch (RuntimeException re) {
+      failure.mark();
+      throw re;
+    } finally {
+      context.stop();
     }
+  }
 
 }

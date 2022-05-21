@@ -16,15 +16,14 @@
 
 package com.codeheadsystems.test.model;
 
-import com.google.common.collect.ImmutableList;
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
+import com.google.common.collect.ImmutableList;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
 
 public class StandardImmutableModelTest extends BaseJacksonTest<StandardImmutableModel> {
 
@@ -36,14 +35,14 @@ public class StandardImmutableModelTest extends BaseJacksonTest<StandardImmutabl
     @Override
     protected StandardImmutableModel getInstance() {
         return ImmutableStandardImmutableModel.builder()
-            .addBunchOfString("string1", "string2")
-            .someInt(5)
-            .someString("this string")
-            .nullableString("nullable string")
-            .optionalString(Optional.of("a optional string"))
-            .putAMap("a", "b")
-            .putAMap("c", "d")
-            .build();
+                .addBunchOfString("string1", "string2")
+                .someInt(5)
+                .someString("this string")
+                .nullableString("nullable string")
+                .optionalString(Optional.of("a optional string"))
+                .putAMap("a", "b")
+                .putAMap("c", "d")
+                .build();
     }
 
     /**
@@ -54,13 +53,13 @@ public class StandardImmutableModelTest extends BaseJacksonTest<StandardImmutabl
     public void testNotNullMethodNamess() {
         // Arrange
         final List<String> names = getRequiredMethods()
-            .stream()
-            .map(Method::getName)
-            .collect(Collectors.toList());
+                .stream()
+                .map(Method::getName)
+                .collect(Collectors.toList());
 
         // Assert
         assertThat(names)
-            .containsExactlyInAnyOrderElementsOf(ImmutableList.of("someInt", "someString"));
+                .containsExactlyInAnyOrderElementsOf(ImmutableList.of("someInt", "someString"));
     }
 
     /**
@@ -71,13 +70,13 @@ public class StandardImmutableModelTest extends BaseJacksonTest<StandardImmutabl
     public void testCollectionMethodNamess() {
         // Arrange
         final List<String> names = getCollectionMethods()
-            .stream()
-            .map(Method::getName)
-            .collect(Collectors.toList());
+                .stream()
+                .map(Method::getName)
+                .collect(Collectors.toList());
 
         // Assert
         assertThat(names)
-            .containsExactly("bunchOfString");
+                .containsExactly("bunchOfString");
     }
 
     /**
@@ -88,13 +87,13 @@ public class StandardImmutableModelTest extends BaseJacksonTest<StandardImmutabl
     public void testMapMethodNamess() {
         // Arrange
         final List<String> names = getMapMethods()
-            .stream()
-            .map(Method::getName)
-            .collect(Collectors.toList());
+                .stream()
+                .map(Method::getName)
+                .collect(Collectors.toList());
 
         // Assert
         assertThat(names)
-            .containsExactly("aMap");
+                .containsExactly("aMap");
     }
 
     /**
@@ -105,13 +104,24 @@ public class StandardImmutableModelTest extends BaseJacksonTest<StandardImmutabl
     public void testNullableMethodNames() {
         // Arrange
         final List<String> names = getNullableMethods()
-            .stream()
-            .map(Method::getName)
-            .collect(Collectors.toList());
+                .stream()
+                .map(Method::getName)
+                .collect(Collectors.toList());
 
         // Assert
         assertThat(names)
-            .containsExactly("nullableString");
+                .containsExactly("nullableString");
+    }
+
+    @Test
+    public void testDefaultMethodNames() {
+        final List<String> names = getDefaultMethods()
+                .stream()
+                .map(Method::getName)
+                .collect(Collectors.toList());
+        // Assert
+        assertThat(names)
+                .containsExactly("defaultString");
     }
 
     /**
@@ -122,12 +132,12 @@ public class StandardImmutableModelTest extends BaseJacksonTest<StandardImmutabl
     public void testOptionalMethodNames() {
         // Arrange
         final List<String> names = getOptionalMethods()
-            .stream()
-            .map(Method::getName)
-            .collect(Collectors.toList());
+                .stream()
+                .map(Method::getName)
+                .collect(Collectors.toList());
 
         // Assert
         assertThat(names)
-            .containsExactly("optionalString");
+                .containsExactly("optionalString");
     }
 }
