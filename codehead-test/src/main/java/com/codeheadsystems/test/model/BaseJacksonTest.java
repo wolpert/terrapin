@@ -20,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
@@ -146,21 +147,34 @@ public abstract class BaseJacksonTest<T> {
         // Arrange
         final String json = objectMapper.writeValueAsString(getInstance());
         for (Method method : getRequiredMethods()) {
-            final ObjectNode objectNode = objectMapper.readValue(json, ObjectNode.class);
-            final String methodName = method.getName();
-            objectNode.remove(methodName);
-            final String reducedJson = objectMapper.writeValueAsString(objectNode);
+            final String reducedJson = getReducedJson(json, method);
 
             // Act
             final Throwable thrown = catchThrowable(() -> objectMapper.readValue(reducedJson, getBaseClass()));
 
             // Assert
             assertThat(thrown)
-                    .describedAs("Throw test fail %s.%s()", simpleName, methodName)
+                    .describedAs("Throw test fail %s.%s()", simpleName, method.getName())
                     .isNotNull()
                     .isInstanceOf(ValueInstantiationException.class)
                     .hasMessageContaining("Cannot construct instance of");
         }
+    }
+
+    private String getReducedJson(final String json,
+                                  final Method methodToRemove) throws JsonProcessingException {
+        final ObjectNode objectNode = objectMapper.readValue(json, ObjectNode.class);
+        final String methodName = methodToRemove.getName();
+        final JsonProperty annotation = methodToRemove.getAnnotation(JsonProperty.class);
+        if (annotation != null && objectNode.findValue(annotation.value()) != null) {
+            objectNode.remove(annotation.value());
+        } else if (objectNode.findValue(methodName) != null) {
+            objectNode.remove(methodName);
+        } else {
+            System.out.println("WARNING: Likely testing failure on notnull. No value seen to remove for method: " + methodName);
+        }
+        final String reducedJson = objectMapper.writeValueAsString(objectNode);
+        return reducedJson;
     }
 
     /**
@@ -176,15 +190,13 @@ public abstract class BaseJacksonTest<T> {
 
         // Act
         for (Method method : getNullableMethods()) {
-            final ObjectNode objectNode = objectMapper.readValue(json, ObjectNode.class);
             final String methodName = method.getName();
-            objectNode.remove(methodName);
-            final String reducedJson = objectMapper.writeValueAsString(objectNode);
+            final String reducedJson = getReducedJson(json, method);
             final T reducedInstance = objectMapper.readValue(reducedJson, getBaseClass());
 
             // Assert
             assertThat(instance)
-                    .describedAs("Expected object equality to fail when removing %s.%s",simpleName, methodName)
+                    .describedAs("Expected object equality to fail when removing %s.%s", simpleName, methodName)
                     .isNotEqualTo(reducedInstance);
             assertThat(method.invoke(instance))
                     .describedAs("Setup fail %s.%s()", simpleName, methodName)
