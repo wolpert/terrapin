@@ -35,9 +35,11 @@ public class StandardImmutableModelTest extends BaseJacksonTest<StandardImmutabl
     @Override
     protected StandardImmutableModel getInstance() {
         return ImmutableStandardImmutableModel.builder()
+                .addBunchOfOtherString("onething", "leadsto", "another")
                 .addBunchOfString("string1", "string2")
                 .someInt(5)
                 .someString("this string")
+                .someWeirdString("weirdness")
                 .nullableString("nullable string")
                 .optionalString(Optional.of("a optional string"))
                 .putAMap("a", "b")
@@ -59,7 +61,7 @@ public class StandardImmutableModelTest extends BaseJacksonTest<StandardImmutabl
 
         // Assert
         assertThat(names)
-                .containsExactlyInAnyOrderElementsOf(ImmutableList.of("someInt", "someString"));
+                .containsExactlyInAnyOrderElementsOf(ImmutableList.of("someInt", "someString", "someWeirdString"));
     }
 
     /**
@@ -76,7 +78,7 @@ public class StandardImmutableModelTest extends BaseJacksonTest<StandardImmutabl
 
         // Assert
         assertThat(names)
-                .containsExactly("bunchOfString");
+                .containsExactlyInAnyOrderElementsOf(ImmutableList.of("bunchOfString","bunchOfOtherString"));
     }
 
     /**

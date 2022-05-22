@@ -221,10 +221,8 @@ public abstract class BaseJacksonTest<T> {
 
         // Act
         for (Method method : getCollectionMethods()) {
-            final ObjectNode objectNode = objectMapper.readValue(json, ObjectNode.class);
             final String methodName = method.getName();
-            objectNode.remove(methodName);
-            final String reducedJson = objectMapper.writeValueAsString(objectNode);
+            final String reducedJson = getReducedJson(json, method);
             final T reducedInstance = objectMapper.readValue(reducedJson, getBaseClass());
 
             // Assert
@@ -255,10 +253,8 @@ public abstract class BaseJacksonTest<T> {
 
         // Act
         for (Method method : getMapMethods()) {
-            final ObjectNode objectNode = objectMapper.readValue(json, ObjectNode.class);
             final String methodName = method.getName();
-            objectNode.remove(methodName);
-            final String reducedJson = objectMapper.writeValueAsString(objectNode);
+            final String reducedJson = getReducedJson(json, method);
             final T reducedInstance = objectMapper.readValue(reducedJson, getBaseClass());
 
             // Assert
@@ -290,10 +286,8 @@ public abstract class BaseJacksonTest<T> {
 
         // Act
         for (Method method : getOptionalMethods()) {
-            final ObjectNode objectNode = objectMapper.readValue(json, ObjectNode.class);
             final String methodName = method.getName();
-            objectNode.remove(methodName);
-            final String reducedJson = objectMapper.writeValueAsString(objectNode);
+            final String reducedJson = getReducedJson(json, method);
             final T reducedInstance = objectMapper.readValue(reducedJson, getBaseClass());
 
             // Assert

@@ -32,13 +32,17 @@ import org.immutables.value.Value;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public interface StandardImmutableModel {
 
-    @JsonProperty("someString")
     String someString();
+
+    @JsonProperty("some unique String")
+    String someWeirdString();
 
     @JsonProperty("someInt")
     int someInt();
 
-    @JsonProperty("bunchOfString")
+    @JsonProperty("bunchOfString annotated")
+    List<String> bunchOfOtherString();
+
     List<String> bunchOfString();
 
     @JsonProperty("nullableString")
