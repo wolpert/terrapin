@@ -1,0 +1,4 @@
+{
+  "enabled": "true",
+  "mockDataFileName": "{\n  \"amazon.dynamodb.endpoint\": \"http: //localhost:8000/\",\n  \"amazon.aws.accesskey\": \"key\",\n  \"amazon.aws.secretkey\": \"key2\"\n}"
+}

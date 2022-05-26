@@ -4,6 +4,11 @@
 
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
+
+// Testing in Intelij requires the library in your lib path. Errors will show where it needs to be. Example
+// from an Ubuntu box
+//  sudo mkdir /usr/lib/jni
+//  sudo cp -i oop-mock-dynamodb/build/libs/libsqlite4java-linux-amd64-1.0.392.so /usr/lib/jni
 buildscript {
     repositories {
         mavenLocal()
@@ -35,6 +40,7 @@ allprojects {
         google()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+        maven { url "https://s3-us-west-2.amazonaws.com/dynamodb-local/release"}
     }
     test {
         useJUnitPlatform() // needed for junit5
@@ -101,6 +107,8 @@ group 'com.codeheadsystems.terrapin'
 version '1.0-SNAPSHOT'
 
 ext {
+    awsLocalDDB = "1.15.0" // https://mvnrepository.com/artifact/com.amazonaws/DynamoDBLocal
+    awsSDK = "1.12.225" // https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-dynamodb
     aiVersion = '1.8.2' // https://mvnrepository.com/artifact/com.badlogicgames.gdx/gdx-ai
     ashleyVersion = '1.7.4' // https://mvnrepository.com/artifact/com.badlogicgames.ashley/ashley
     assertjVersion = '3.22.0' // https://mvnrepository.com/artifact/org.assertj/assertj-core
@@ -115,7 +123,7 @@ ext {
     guavaVersion = '31.1-jre' // https://mvnrepository.com/artifact/com.google.guava/guava
     immutablesVersion = '2.9.0' // https://mvnrepository.com/artifact/org.immutables/value
     jacksonVersion = '2.13.3' // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core
-    jacksonDatabindVersion = '2.13.2.2' // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
+    jacksonDatabindVersion = '2.13.3' // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
     javaxInjectVersion = '1'
     jupiterVersion = '5.8.2' // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
     log4jVersion = '2.17.2' //  https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core
