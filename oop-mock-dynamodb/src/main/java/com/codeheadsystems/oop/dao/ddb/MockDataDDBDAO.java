@@ -4,7 +4,7 @@
 package com.codeheadsystems.oop.dao.ddb;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.codeheadsystems.oop.dao.MockDataDAO;
+import com.codeheadsystems.oop.client.dao.MockDataDAO;
 import com.codeheadsystems.oop.dao.ddb.converter.DDBEntryConverter;
 import com.codeheadsystems.oop.dao.ddb.model.DDBEntry;
 import com.codeheadsystems.oop.mock.model.MockedData;
