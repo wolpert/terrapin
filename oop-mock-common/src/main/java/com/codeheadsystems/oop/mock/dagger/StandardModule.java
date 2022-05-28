@@ -7,15 +7,20 @@ import static com.codeheadsystems.oop.mock.manager.ResourceLookupManager.LOOKUP_
 
 import com.codeheadsystems.oop.mock.Hasher;
 import com.codeheadsystems.oop.mock.factory.ObjectMapperFactory;
+import com.codeheadsystems.oop.mock.resolver.MockDataResolver;
+import com.codeheadsystems.oop.mock.resolver.ResolverFactory;
+import com.codeheadsystems.oop.mock.translator.JsonTranslator;
+import com.codeheadsystems.oop.mock.translator.Translator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dagger.BindsOptionalOf;
 import dagger.Module;
 import dagger.Provides;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-@Module(includes = {StandardModule.BindingsModule.class})
+@Module(includes = {StandardModule.BindingsModule.class, OopConfigurationModule.class})
 public class StandardModule {
 
     public static final String OOP_SYSTEM = "OOP_SYSTEM";
@@ -31,6 +36,22 @@ public class StandardModule {
     @Singleton
     public ObjectMapper objectMapper(final ObjectMapperFactory factory) {
         return factory.objectMapper();
+    }
+
+    @Provides
+    @Singleton
+    public Translator translator(final JsonTranslator translator) {
+        return translator;
+    }
+
+    @Provides
+    @Singleton
+    public MockDataResolver resolver(final ResolverFactory factory) {
+        try {
+            return factory.build();
+        } catch (ClassNotFoundException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Module

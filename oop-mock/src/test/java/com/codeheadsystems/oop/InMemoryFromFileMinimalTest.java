@@ -7,7 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import com.codeheadsystems.oop.dagger.DaggerOopMockFactoryBuilder;
-import com.codeheadsystems.oop.dagger.OopMockFactoryModule;
+import com.codeheadsystems.oop.mock.dagger.OopConfigurationModule;
 import com.codeheadsystems.oop.mock.manager.TimeManager;
 import org.junit.jupiter.api.Test;
 
@@ -79,7 +79,7 @@ public class InMemoryFromFileMinimalTest {
 
     private ThrowException getTestWith(final OopMockConfiguration config) {
         return new ThrowException(DaggerOopMockFactoryBuilder.builder()
-                .oopMockFactoryModule(new OopMockFactoryModule(config))
+                .oopConfigurationModule(new OopConfigurationModule(config))
                 .build()
                 .factory());
     }

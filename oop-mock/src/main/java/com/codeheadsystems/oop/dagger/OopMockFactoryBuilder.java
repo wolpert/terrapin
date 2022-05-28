@@ -4,11 +4,12 @@
 package com.codeheadsystems.oop.dagger;
 
 import com.codeheadsystems.oop.OopMockFactory;
+import com.codeheadsystems.oop.mock.dagger.OopConfigurationModule;
 import com.codeheadsystems.oop.mock.dagger.StandardModule;
 import dagger.Component;
 import javax.inject.Singleton;
 
-@Component(modules = {OopMockFactoryModule.class})
+@Component(modules = {StandardModule.class})
 @Singleton
 public interface OopMockFactoryBuilder {
 
