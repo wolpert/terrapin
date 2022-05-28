@@ -53,6 +53,7 @@ public class ResolverFactory {
         builder.put(ResourceLookupManager.class, manager);
         builder.put(Translator.class, translator);
         builder.put(Hasher.class, hasher);
+        configuration.resolverConfiguration().ifPresent(rc->builder.put(ResolverConfiguration.class, rc));
         instanceMap = builder.build();
         resolverClass = configuration.resolverConfiguration()
                 .map(ResolverConfiguration::resolverClass)
@@ -72,7 +73,7 @@ public class ResolverFactory {
         final Object[] args = new Object[constructor.getParameterCount()];
         final Class<?>[] params = constructor.getParameterTypes();
         LOGGER.debug("param count: " + constructor.getParameterCount());
-        for (int i = 0; i < args.length; i++) { // First one is the class itself, if the number is > 0
+        for (int i = 0; i < args.length; i++) {
             Class<?> param = params[i];
             args[i] = instanceMap.get(param);
             LOGGER.debug("   {} -> {}", param, args[i]);

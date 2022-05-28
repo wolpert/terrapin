@@ -32,7 +32,8 @@ public class InMemoryResolver implements MockDataResolver {
                             final Hasher hasher) {
         LOGGER.info("InMemoryResolver({})", configuration);
         this.hasher = hasher;
-        final String filename = configuration.mockDataFileName().orElseThrow(() -> new IllegalArgumentException("No filename found for inMemoryResolver"));
+        final String filename = configuration.mockDataFileName()
+                .orElseThrow(() -> new IllegalArgumentException("No filename found for inMemoryResolver"));
         final InputStream inputStream = manager.inputStream(filename)
                 .orElseThrow(() -> new IllegalArgumentException("No such file for data store:" + filename));
         this.datastore = converter.convert(inputStream, InMemoryMockedDataStore.class).datastore();

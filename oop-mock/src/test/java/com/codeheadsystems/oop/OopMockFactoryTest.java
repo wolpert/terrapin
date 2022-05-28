@@ -24,7 +24,6 @@ class OopMockFactoryTest {
 
     private OopMockFactory oopMockFactory;
 
-
     @Test
     void generate_disabled() {
         when(oopMockConfiguration.enabled()).thenReturn(false);
@@ -42,5 +41,17 @@ class OopMockFactoryTest {
 
         assertThat(oopMockFactory.generate(Object.class))
                 .isEqualTo(oopMock);
+    }
+
+    @Test
+    void generate_instance() {
+        oopMockFactory = OopMockFactory.getInstance();
+
+        final OopMock mock = oopMockFactory.generate(Object.class);
+        assertThat(mock)
+                .isNotNull()
+                .extracting(Object::getClass)
+                .isNotEqualTo(PassThroughOopMock.class)
+                .isEqualTo(ClassOopMock.class);
     }
 }

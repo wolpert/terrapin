@@ -34,12 +34,14 @@ public class OopMockClient {
     public <R> void mockSetup(final R mockData,
                               final String lookup,
                               final String id) {
+        LOGGER.info("mockSetup({},{})", lookup, id);
         final MockedData storedMockData = translator.marshal(mockData);
         dao.store(namespace, lookup, id, storedMockData);
     }
 
     public void deleteMock(final String lookup,
                            final String id) {
+        LOGGER.info("mockDelete({},{})", lookup, id);
         dao.delete(namespace, lookup, id);
     }
 
