@@ -3,7 +3,6 @@
 
 package com.codeheadsystems.oop.mock.dagger;
 
-import static com.codeheadsystems.oop.mock.Hasher.OOP_SYSTEM;
 import static com.codeheadsystems.oop.mock.manager.ResourceLookupManager.LOOKUP_CLASS;
 
 import com.codeheadsystems.oop.mock.Hasher;
@@ -19,11 +18,12 @@ import javax.inject.Singleton;
 @Module(includes = {StandardModule.BindingsModule.class})
 public class StandardModule {
 
+    public static final String OOP_SYSTEM = "OOP_SYSTEM";
     public static final String DEFAULT = "DEFAULT";
 
     @Provides
     @Singleton
-    public Hasher hasher(@Named(OOP_SYSTEM) final Optional<String> system){
+    public Hasher hasher(@Named(OOP_SYSTEM) final Optional<String> system) {
         return new Hasher(system.orElse(DEFAULT));
     }
 
@@ -37,7 +37,7 @@ public class StandardModule {
     interface BindingsModule {
 
         /**
-         * Provides the system namespace to set. Else will be default.
+         * Provides the system namespace to set. If not set, it will be default: DEFAULT
          *
          * @return system name.
          */
@@ -50,6 +50,7 @@ public class StandardModule {
          * ResourceLookupManager cannot find the resource you need.
          *
          * @return an instance.
+         * @see com.codeheadsystems.oop.mock.manager.ResourceLookupManager
          */
         @BindsOptionalOf
         @Named(LOOKUP_CLASS)

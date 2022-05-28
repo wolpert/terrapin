@@ -11,7 +11,6 @@ public class Hasher {
 
     public static final String NAMESPACE_DELIMINATOR = ":";
     public static final String DELIMINATOR = ".";
-    public static final String OOP_SYSTEM = "OOP_SYSTEM";
     public final String system;
 
     /**

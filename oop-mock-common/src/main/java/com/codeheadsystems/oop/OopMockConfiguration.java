@@ -48,4 +48,14 @@ public interface OopMockConfiguration {
     @JsonProperty("mockDataFileName")
     Optional<String> mockDataFileName();
 
+    /**
+     * Will use the resolver configuration as defined. Note that pulling in a resolver
+     * is done by adding in a resolver module to the dagger ioc. This allows for runtime.
+     * configuration.
+     *
+     * @return resolver configuration.
+     */
+    @JsonProperty("resolverConfiguration")
+    Optional<ResolverConfiguration> resolverConfiguration();
+
 }
