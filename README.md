@@ -22,6 +22,16 @@ This was originally a dumping ground of test utilities. Many of the utilities ha
 I'm picking and choosing what to add here if they don't exist elsewhere.
 I'll move more test utilities in as it makes sense.
 
+### OopMock
 
-Copyright (c) 2021 Ned Wolpert <ned.wolpert@gmail.com>  
+Out-of-process mock provides the ability to set mocks up for functional tests that work against service
+in an integration pattern. So if you are testing from the outside calls to your service
+but want to mock out client calls happening downstream of your service, this is for you. It
+has a safety value so that in production (where there is no configuration) the service
+is disabled completely.
+
+This is actually not an older project of mine... rather I built this after realizing how much
+I missed the internal Amazon project 'Chameleon' which OopMock was based on.
+
+Copyright (c) 2022 Ned Wolpert <ned.wolpert@gmail.com>  
 License: Apache 2.0
