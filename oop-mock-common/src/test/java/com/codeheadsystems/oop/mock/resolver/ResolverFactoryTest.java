@@ -22,10 +22,12 @@ import static org.mockito.Mockito.when;
 
 import com.codeheadsystems.oop.OopMockConfiguration;
 import com.codeheadsystems.oop.ResolverConfiguration;
+import com.codeheadsystems.oop.mock.Hasher;
 import com.codeheadsystems.oop.mock.converter.JsonConverter;
 import com.codeheadsystems.oop.mock.manager.ResourceLookupManager;
 import com.codeheadsystems.oop.mock.model.MockedData;
 import com.codeheadsystems.oop.mock.translator.Translator;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 import javax.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,6 +44,7 @@ class ResolverFactoryTest {
     @Mock private JsonConverter converter;
     @Mock private ResourceLookupManager manager;
     @Mock private Translator translator;
+    @Mock private Hasher hasher;
 
     @BeforeEach
     void setup() {
@@ -49,12 +52,16 @@ class ResolverFactoryTest {
                 .thenReturn(Optional.of(resolverConfiguration));
     }
 
+    private MockDataResolver factoryConstructAndGetResolver() throws ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        return new ResolverFactory(configuration, converter, manager, translator, hasher).build();
+    }
+
     @Test
     void build_notAssignable() {
         when(resolverConfiguration.resolverClass()).thenReturn(Object.class.getCanonicalName());
 
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> new ResolverFactory(configuration, converter, manager, translator).build())
+                .isThrownBy(() -> factoryConstructAndGetResolver())
                 .withMessageContaining("Resolver class is not a MockDataResolver");
     }
 
@@ -63,7 +70,7 @@ class ResolverFactoryTest {
         when(resolverConfiguration.resolverClass()).thenReturn("com.codeheadsystems.oop.mock.resolver.ResolverFactoryTest$DoNothing");
 
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> new ResolverFactory(configuration, converter, manager, translator).build())
+                .isThrownBy(() -> factoryConstructAndGetResolver())
                 .withMessageContaining("No constructor with @Inject for");
     }
 
@@ -72,33 +79,15 @@ class ResolverFactoryTest {
         when(resolverConfiguration.resolverClass()).thenReturn("com.codeheadsystems.oop.mock.resolver.ResolverFactoryTest$BadConstructorArgs");
 
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> new ResolverFactory(configuration, converter, manager, translator).build())
+                .isThrownBy(() -> factoryConstructAndGetResolver())
                 .withMessageContaining("Missing injected param for class");
-    }
-
-    @Test
-    void build() throws Exception {
-        when(resolverConfiguration.resolverClass()).thenReturn("com.codeheadsystems.oop.mock.resolver.ResolverFactoryTest$GoodExample");
-
-        assertThat(new ResolverFactory(configuration, converter, manager, translator).build())
-                .isNotNull()
-                .isInstanceOf(MockDataResolver.class);
-    }
-
-    @Test
-    void build_noparams() throws Exception {
-        when(resolverConfiguration.resolverClass()).thenReturn("com.codeheadsystems.oop.mock.resolver.ResolverFactoryTest$GoodExampleNoParams");
-
-        assertThat(new ResolverFactory(configuration, converter, manager, translator).build())
-                .isNotNull()
-                .isInstanceOf(MockDataResolver.class);
     }
 
     @Test
     void build_goodExampleWithArg() throws Exception {
         when(resolverConfiguration.resolverClass()).thenReturn(GoodExampleWithArg.class.getCanonicalName());
 
-        assertThat(new ResolverFactory(configuration, converter, manager, translator).build())
+        assertThat(factoryConstructAndGetResolver())
                 .isNotNull()
                 .isInstanceOf(MockDataResolver.class);
     }
@@ -107,25 +96,9 @@ class ResolverFactoryTest {
     void build_goodExampleWithNoArgs() throws Exception {
         when(resolverConfiguration.resolverClass()).thenReturn(NoArgGoodExample.class.getCanonicalName());
 
-        assertThat(new ResolverFactory(configuration, converter, manager, translator).build())
+        assertThat(factoryConstructAndGetResolver())
                 .isNotNull()
                 .isInstanceOf(MockDataResolver.class);
-    }
-
-
-    public class GoodExampleNoParams extends DoNothing {
-        @Inject
-        public GoodExampleNoParams() {
-
-        }
-    }
-
-    public class GoodExample extends DoNothing {
-        @Inject
-        public GoodExample(final JsonConverter converter,
-                           final ResourceLookupManager manager) {
-
-        }
     }
 
     public class BadConstructorArgs extends DoNothing {

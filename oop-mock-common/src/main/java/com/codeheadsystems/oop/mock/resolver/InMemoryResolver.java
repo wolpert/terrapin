@@ -3,9 +3,13 @@
 
 package com.codeheadsystems.oop.mock.resolver;
 
+import com.codeheadsystems.oop.OopMockConfiguration;
 import com.codeheadsystems.oop.mock.Hasher;
+import com.codeheadsystems.oop.mock.converter.JsonConverter;
+import com.codeheadsystems.oop.mock.manager.ResourceLookupManager;
 import com.codeheadsystems.oop.mock.model.InMemoryMockedDataStore;
 import com.codeheadsystems.oop.mock.model.MockedData;
+import java.io.InputStream;
 import java.util.Map;
 import java.util.Optional;
 import javax.inject.Inject;
@@ -18,15 +22,20 @@ public class InMemoryResolver implements MockDataResolver {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryResolver.class);
 
-    protected final InMemoryMockedDataStore dataStore;
     protected final Hasher hasher;
+    protected final Map<String, Map<String, MockedData>> datastore;
 
     @Inject
-    public InMemoryResolver(final InMemoryMockedDataStore dataStore,
+    public InMemoryResolver(final OopMockConfiguration configuration,
+                            final JsonConverter converter,
+                            final ResourceLookupManager manager,
                             final Hasher hasher) {
+        LOGGER.info("InMemoryResolver({})", configuration);
         this.hasher = hasher;
-        LOGGER.info("InMemoryResolver({})", dataStore.datastore().keySet());
-        this.dataStore = dataStore;
+        final String filename = configuration.mockDataFileName().orElseThrow(() -> new IllegalArgumentException("No filename found for inMemoryResolver"));
+        final InputStream inputStream = manager.inputStream(filename)
+                .orElseThrow(() -> new IllegalArgumentException("No such file for data store:" + filename));
+        this.datastore = converter.convert(inputStream, InMemoryMockedDataStore.class).datastore();
     }
 
     @Override
@@ -34,7 +43,7 @@ public class InMemoryResolver implements MockDataResolver {
                                         final String lookup,
                                         final String discriminator) {
         LOGGER.debug("resolve({},{},{})", namespace, lookup, discriminator);
-        final Map<String, MockedData> discriminatorMap = dataStore.datastore().get(namespace);
+        final Map<String, MockedData> discriminatorMap = datastore.get(namespace);
         if (discriminatorMap == null) {
             LOGGER.debug("-> no namespace");
             return Optional.empty();

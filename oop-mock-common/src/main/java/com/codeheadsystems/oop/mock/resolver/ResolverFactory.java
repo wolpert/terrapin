@@ -18,6 +18,7 @@ package com.codeheadsystems.oop.mock.resolver;
 
 import com.codeheadsystems.oop.OopMockConfiguration;
 import com.codeheadsystems.oop.ResolverConfiguration;
+import com.codeheadsystems.oop.mock.Hasher;
 import com.codeheadsystems.oop.mock.converter.JsonConverter;
 import com.codeheadsystems.oop.mock.manager.ResourceLookupManager;
 import com.codeheadsystems.oop.mock.translator.Translator;
@@ -43,13 +44,15 @@ public class ResolverFactory {
     public ResolverFactory(final OopMockConfiguration configuration,
                            final JsonConverter converter,
                            final ResourceLookupManager manager,
-                           final Translator translator) {
-        LOGGER.info("ResolverFactory()");
+                           final Translator translator,
+                           final Hasher hasher) {
+        LOGGER.info("ResolverFactory({})",configuration);
         final ImmutableMap.Builder<Class<?>, Object> builder = ImmutableMap.builder();
         builder.put(OopMockConfiguration.class, configuration);
         builder.put(JsonConverter.class, converter);
         builder.put(ResourceLookupManager.class, manager);
         builder.put(Translator.class, translator);
+        builder.put(Hasher.class, hasher);
         instanceMap = builder.build();
         resolverClass = configuration.resolverConfiguration()
                 .map(ResolverConfiguration::resolverClass)
@@ -68,9 +71,11 @@ public class ResolverFactory {
                 .orElseThrow(() -> new IllegalArgumentException("No constructor with @Inject for " + resolverClass));
         final Object[] args = new Object[constructor.getParameterCount()];
         final Class<?>[] params = constructor.getParameterTypes();
-        for (int i = 1; i < args.length; i++) { // First one is the class itself, if the number is > 0
-            Object param = params[i];
-            args[i] = instanceMap.get(params[i]);
+        LOGGER.debug("param count: " + constructor.getParameterCount());
+        for (int i = 0; i < args.length; i++) { // First one is the class itself, if the number is > 0
+            Class<?> param = params[i];
+            args[i] = instanceMap.get(param);
+            LOGGER.debug("   {} -> {}", param, args[i]);
             if (args[i] == null) {
                 throw new IllegalArgumentException("Missing injected param for class " + resolverClass + " type " + params[i].getName());
             }

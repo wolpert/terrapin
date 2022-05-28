@@ -7,22 +7,21 @@ import com.codeheadsystems.oop.ImmutableOopMockConfiguration;
 import com.codeheadsystems.oop.OopMockConfiguration;
 import com.codeheadsystems.oop.mock.converter.JsonConverter;
 import com.codeheadsystems.oop.mock.dagger.StandardModule;
-import com.codeheadsystems.oop.mock.manager.InMemoryDataStoreManager;
 import com.codeheadsystems.oop.mock.manager.ResourceLookupManager;
 import com.codeheadsystems.oop.mock.model.InMemoryMockedDataStore;
 import com.codeheadsystems.oop.mock.resolver.InMemoryResolver;
 import com.codeheadsystems.oop.mock.resolver.MockDataResolver;
+import com.codeheadsystems.oop.mock.resolver.ResolverFactory;
 import com.codeheadsystems.oop.mock.translator.JsonTranslator;
 import com.codeheadsystems.oop.mock.translator.Translator;
 import dagger.Module;
 import dagger.Provides;
+import java.lang.reflect.InvocationTargetException;
 import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * TODO: get all this from the configuration
- */
+
 @Module(includes = {StandardModule.class})
 public class OopMockFactoryModule {
 
@@ -36,12 +35,12 @@ public class OopMockFactoryModule {
         this(CONFIGURATION_FILENAME);
     }
 
-    public OopMockFactoryModule(final String configurationName){
+    public OopMockFactoryModule(final String configurationName) {
         this.configurationFileName = configurationName;
-        configuration=null;
+        configuration = null;
     }
 
-    public OopMockFactoryModule(final OopMockConfiguration configuration){
+    public OopMockFactoryModule(final OopMockConfiguration configuration) {
         this.configuration = configuration;
         this.configurationFileName = null;
     }
@@ -52,31 +51,21 @@ public class OopMockFactoryModule {
         return translator;
     }
 
-    /**
-     * TODO: use configuration to generate. Right now it assumes in memory, which is bunk.
-     *
-     * @param resolver
-     * @return
-     */
     @Provides
     @Singleton
-    public MockDataResolver resolver(final InMemoryResolver resolver) {
-        return resolver;
-    }
-
-    // TODO: Remove this when you fix the resolver.
-    @Provides
-    @Singleton
-    public InMemoryMockedDataStore inMemoryMockedDataStore(final InMemoryDataStoreManager inMemoryDataStoreManager,
-                                                           final OopMockConfiguration configuration) {
-        return inMemoryDataStoreManager.from(configuration.mockDataFileName().get()); // yeah, it'll blow up.
+    public MockDataResolver resolver(final ResolverFactory factory) {
+        try {
+            return factory.build();
+        } catch (ClassNotFoundException|InvocationTargetException|InstantiationException|IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Provides
     @Singleton
     public OopMockConfiguration configuration(final ResourceLookupManager manager,
                                               final JsonConverter converter) {
-        if (configuration!=null){
+        if (configuration != null) {
             return configuration;
         }
         return manager.inputStream(configurationFileName)
