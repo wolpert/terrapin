@@ -21,20 +21,34 @@ import static com.codeheadsystems.oop.mock.dagger.ResolverModule.DEFAULT_RESOLVE
 import com.codeheadsystems.oop.OopMockFactory;
 import com.codeheadsystems.oop.mock.dagger.StandardModule;
 import com.codeheadsystems.oop.mock.resolver.InMemoryResolver;
+import com.codeheadsystems.oop.mock.resolver.MockDataResolver;
+import com.codeheadsystems.oop.mock.resolver.ResolverFactory;
 import dagger.Component;
 import dagger.Module;
 import dagger.Provides;
+import java.lang.reflect.InvocationTargetException;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-@Component(modules = {StandardModule.class, OopMockFactoryBuilder.ServerModule.class})
+@Component(modules = {StandardModule.class, OopMockFactoryBuilder.ServerResolverModule.class})
 @Singleton
 public interface OopMockFactoryBuilder {
 
     OopMockFactory factory();
 
     @Module
-    class ServerModule {
+    class ServerResolverModule {
+
+        @Provides
+        @Singleton
+        public MockDataResolver resolver(final ResolverFactory factory) {
+            try {
+                return factory.build();
+            } catch (ClassNotFoundException | InvocationTargetException | InstantiationException |
+                     IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
         /**
          * We allow the server to use the inMemory resolver by default, which if nothing is defined will

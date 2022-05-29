@@ -12,7 +12,7 @@ configurations {
     jar.baseName = "${appName}"
 }
 
-//jacocoTestReport.finalizedBy jacocoTestCoverageVerification
+jacocoTestReport.finalizedBy jacocoTestCoverageVerification
 
 // Create the pom configuration:
 def pomConfig = {

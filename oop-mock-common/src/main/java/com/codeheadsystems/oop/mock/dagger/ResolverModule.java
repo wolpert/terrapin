@@ -21,6 +21,8 @@ import com.codeheadsystems.oop.ResolverConfiguration;
 import com.codeheadsystems.oop.mock.Hasher;
 import com.codeheadsystems.oop.mock.converter.JsonConverter;
 import com.codeheadsystems.oop.mock.manager.ResourceLookupManager;
+import com.codeheadsystems.oop.mock.resolver.MockDataResolver;
+import com.codeheadsystems.oop.mock.resolver.ResolverFactory;
 import com.codeheadsystems.oop.mock.translator.Translator;
 import dagger.Binds;
 import dagger.BindsOptionalOf;
@@ -28,6 +30,7 @@ import dagger.Module;
 import dagger.Provides;
 import dagger.multibindings.ClassKey;
 import dagger.multibindings.IntoMap;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -91,7 +94,6 @@ public interface ResolverModule {
                     .orElseGet(() -> defaultResolver
                             .orElseThrow(() -> new IllegalArgumentException("No resolver found in configuration")));
         }
-
     }
 
 }

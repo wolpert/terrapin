@@ -55,6 +55,7 @@ allprojects {
         afterEvaluate {
             classDirectories.setFrom(files(classDirectories.files.collect {
                 fileTree(dir: it, exclude: [
+                        '**/dagger/**.class',
                         '**/Dagger*Builder.class',
                         '**/*Exception.class',
                         '**/*Module.class',
@@ -67,6 +68,7 @@ allprojects {
         }
     }
     def excludeFiles = [
+            '**.dagger.**',
             '**.Dagger*Builder',
             '**.*Exception',
             '**.*Module',

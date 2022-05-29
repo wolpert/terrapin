@@ -16,6 +16,7 @@
 
 package com.codeheadsystems.oop.client;
 
+import com.codeheadsystems.oop.client.dagger.DaggerOopMockClientFactoryBuilder;
 import com.codeheadsystems.oop.client.dagger.OopMockClientAssistedFactory;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -30,14 +31,20 @@ public class OopMockClientFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OopMockClientFactory.class);
 
+    public static OopMockClientFactory instance() {
+        return DaggerOopMockClientFactoryBuilder.builder().build().factory();
+    }
+
     private final LoadingCache<Class<?>, OopMockClient> cache;
 
     @Inject
     public OopMockClientFactory(final OopMockClientAssistedFactory assistedFactory) {
+        LOGGER.info("OopMockClientFactory()");
         this.cache = CacheBuilder.newBuilder().build(CacheLoader.from(assistedFactory::create));
     }
 
     public OopMockClient generate(final Class<?> clazz) {
+        LOGGER.info("generate({})", clazz);
         return cache.getUnchecked(clazz);
     }
 

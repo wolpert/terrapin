@@ -57,17 +57,6 @@ public class StandardModule {
         return translator;
     }
 
-    @Provides
-    @Singleton
-    public MockDataResolver resolver(final ResolverFactory factory) {
-        try {
-            return factory.build();
-        } catch (ClassNotFoundException | InvocationTargetException | InstantiationException |
-                 IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     @Module
     interface BindingsModule {
 

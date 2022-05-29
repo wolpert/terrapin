@@ -17,14 +17,35 @@
 package com.codeheadsystems.oop.client.dagger;
 
 import com.codeheadsystems.oop.client.OopMockClientFactory;
+import com.codeheadsystems.oop.client.dao.MockDataDAO;
 import com.codeheadsystems.oop.mock.dagger.StandardModule;
+import com.codeheadsystems.oop.mock.resolver.ResolverFactory;
 import dagger.Component;
+import dagger.Module;
+import dagger.Provides;
+import java.lang.reflect.InvocationTargetException;
 import javax.inject.Singleton;
 
-//@Component(modules = {StandardModule.class})
-//@Singleton
+@Component(modules = {StandardModule.class, OopMockClientFactoryBuilder.ClientModule.class})
+@Singleton
 public interface OopMockClientFactoryBuilder {
 
     OopMockClientFactory factory();
+
+    @Module
+    class ClientModule {
+
+        @Provides
+        @Singleton
+        MockDataDAO dao(final ResolverFactory resolverFactory) {
+            try {
+                return resolverFactory.build();
+            } catch (ClassNotFoundException | InvocationTargetException | InstantiationException |
+                     IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+    }
 
 }
