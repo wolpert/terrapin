@@ -16,15 +16,9 @@
 
 package com.codeheadsystems.oop.mock.resolver;
 
-import static com.codeheadsystems.oop.mock.dagger.ResolverModule.RESOLVER;
+import static com.codeheadsystems.oop.mock.dagger.ResolverModule.RESOLVER_CLASSNAME;
+import static com.codeheadsystems.oop.mock.dagger.ResolverModule.RESOLVER_MAP;
 
-import com.codeheadsystems.oop.OopMockConfiguration;
-import com.codeheadsystems.oop.ResolverConfiguration;
-import com.codeheadsystems.oop.mock.Hasher;
-import com.codeheadsystems.oop.mock.converter.JsonConverter;
-import com.codeheadsystems.oop.mock.manager.ResourceLookupManager;
-import com.codeheadsystems.oop.mock.translator.Translator;
-import com.google.common.collect.ImmutableMap;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
@@ -35,6 +29,11 @@ import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * This is a builder for the resolver as defined in the OppMockConfiguration file. Note that it's generic for
+ * also the DAO instance as well. We use this because we want the configuration file to define the resolver we
+ * need to include. So this one class needs runtime injection. 
+ */
 @Singleton
 public class ResolverFactory {
 
@@ -44,13 +43,11 @@ public class ResolverFactory {
     private final String resolverClass;
 
     @Inject
-    public ResolverFactory(final OopMockConfiguration configuration,
-                           @Named(RESOLVER) final Map<Class<?>, Object> instanceMap) {
-        LOGGER.info("ResolverFactory({})", configuration);
+    public ResolverFactory(@Named(RESOLVER_CLASSNAME) final String resolverClass,
+                           @Named(RESOLVER_MAP) final Map<Class<?>, Object> instanceMap) {
+        LOGGER.info("ResolverFactory({})", resolverClass);
         this.instanceMap = instanceMap;
-        resolverClass = configuration.resolverConfiguration()
-                .map(ResolverConfiguration::resolverClass)
-                .orElseGet(InMemoryResolver.class::getCanonicalName);
+        this.resolverClass = resolverClass;
     }
 
     public <T> T build() throws ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException {

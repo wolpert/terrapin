@@ -16,15 +16,38 @@
 
 package com.codeheadsystems.oop.dagger;
 
+import static com.codeheadsystems.oop.mock.dagger.ResolverModule.DEFAULT_RESOLVER;
+
 import com.codeheadsystems.oop.OopMockFactory;
-import com.codeheadsystems.oop.mock.dagger.OopConfigurationModule;
 import com.codeheadsystems.oop.mock.dagger.StandardModule;
+import com.codeheadsystems.oop.mock.resolver.InMemoryResolver;
 import dagger.Component;
+import dagger.Module;
+import dagger.Provides;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
-@Component(modules = {StandardModule.class})
+@Component(modules = {StandardModule.class, OopMockFactoryBuilder.ServerModule.class})
 @Singleton
 public interface OopMockFactoryBuilder {
 
     OopMockFactory factory();
+
+    @Module
+    class ServerModule {
+
+        /**
+         * We allow the server to use the inMemory resolver by default, which if nothing is defined will
+         * disable oopMock completely.
+         *
+         * @return InMemoryResolver classname.
+         */
+        @Named(DEFAULT_RESOLVER)
+        @Provides
+        @Singleton
+        String defaultResolver(){
+            return InMemoryResolver.class.getCanonicalName();
+        }
+
+    }
 }

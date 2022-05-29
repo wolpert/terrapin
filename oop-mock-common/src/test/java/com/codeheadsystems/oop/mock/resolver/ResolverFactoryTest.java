@@ -59,55 +59,44 @@ class ResolverFactoryTest {
                 Translator.class, translator,
                 Hasher.class, hasher
         );
-        when(configuration.resolverConfiguration())
-                .thenReturn(Optional.of(resolverConfiguration));
     }
 
-    private MockDataResolver factoryConstructAndGetResolver() throws ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        return new ResolverFactory(configuration, instanceMap).build();
+    private MockDataResolver factoryConstructAndGetResolver(String classname) throws ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        return new ResolverFactory(classname, instanceMap).build();
     }
 
     @Test
     void build_noInject() {
-        when(resolverConfiguration.resolverClass()).thenReturn("com.codeheadsystems.oop.mock.resolver.ResolverFactoryTest$DoNothing");
-
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(this::factoryConstructAndGetResolver)
+                .isThrownBy(() -> factoryConstructAndGetResolver("com.codeheadsystems.oop.mock.resolver.ResolverFactoryTest$DoNothing"))
                 .withMessageContaining("No constructor with @Inject for");
     }
 
     @Test
     void build_badConstructorArgs() {
-        when(resolverConfiguration.resolverClass()).thenReturn("com.codeheadsystems.oop.mock.resolver.ResolverFactoryTest$BadConstructorArgs");
-
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(this::factoryConstructAndGetResolver)
+                .isThrownBy(() -> factoryConstructAndGetResolver("com.codeheadsystems.oop.mock.resolver.ResolverFactoryTest$BadConstructorArgs"))
                 .withMessageContaining("Missing injected param for class");
     }
 
     @Test
     void build_goodExampleWithArg() throws Exception {
-        when(resolverConfiguration.resolverClass()).thenReturn(GoodExampleWithArg.class.getCanonicalName());
-
-        assertThat(factoryConstructAndGetResolver())
+        assertThat(factoryConstructAndGetResolver(GoodExampleWithArg.class.getCanonicalName()))
                 .isNotNull()
                 .isInstanceOf(MockDataResolver.class);
     }
 
     @Test
     void build_goodExampleWithNoArgs_wrongReturnType() {
-        when(resolverConfiguration.resolverClass()).thenReturn(NoArgGoodExample.class.getCanonicalName());
         assertThatExceptionOfType(ClassCastException.class)
                 .isThrownBy(() -> {
-                    final Date date = new ResolverFactory(configuration, instanceMap).build();
+                    final Date date = new ResolverFactory(NoArgGoodExample.class.getCanonicalName(), instanceMap).build();
                 });
     }
 
     @Test
     void build_goodExampleWithNoArgs() throws Exception {
-        when(resolverConfiguration.resolverClass()).thenReturn(NoArgGoodExample.class.getCanonicalName());
-
-        assertThat(factoryConstructAndGetResolver())
+        assertThat(factoryConstructAndGetResolver(NoArgGoodExample.class.getCanonicalName()))
                 .isNotNull()
                 .isInstanceOf(MockDataResolver.class);
     }

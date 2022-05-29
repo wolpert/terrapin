@@ -17,42 +17,81 @@
 package com.codeheadsystems.oop.mock.dagger;
 
 import com.codeheadsystems.oop.OopMockConfiguration;
+import com.codeheadsystems.oop.ResolverConfiguration;
 import com.codeheadsystems.oop.mock.Hasher;
 import com.codeheadsystems.oop.mock.converter.JsonConverter;
 import com.codeheadsystems.oop.mock.manager.ResourceLookupManager;
 import com.codeheadsystems.oop.mock.translator.Translator;
 import dagger.Binds;
+import dagger.BindsOptionalOf;
 import dagger.Module;
 import dagger.Provides;
 import dagger.multibindings.ClassKey;
 import dagger.multibindings.IntoMap;
+import java.util.Optional;
 import javax.inject.Named;
+import javax.inject.Singleton;
 
 /**
  * Provides all of the base pieces needed for the resolver set.
+ *
  * @see com.codeheadsystems.oop.mock.resolver.ResolverFactory
  */
-@Module
+@Module(includes = ResolverModule.ResolverNameModule.class)
 public interface ResolverModule {
 
-    String RESOLVER = "resolver";
+    String RESOLVER_MAP = "resolver_map";
+    String DEFAULT_RESOLVER = "DEFAULT RESOLVER";
+    String RESOLVER_CLASSNAME = "RESOLVER CLASSNAME";
 
-    @Named(RESOLVER) @Binds @IntoMap @ClassKey(OopMockConfiguration.class)
+    @Named(RESOLVER_MAP)
+    @Binds
+    @IntoMap
+    @ClassKey(OopMockConfiguration.class)
     Object bindsOopMockConfiguration(OopMockConfiguration configuration);
 
-    @Named(RESOLVER) @Binds @IntoMap @ClassKey(JsonConverter.class)
+    @Named(RESOLVER_MAP)
+    @Binds
+    @IntoMap
+    @ClassKey(JsonConverter.class)
     Object bindsJsonConverter(JsonConverter converter);
 
-    @Named(RESOLVER) @Binds @IntoMap @ClassKey(ResourceLookupManager.class)
+    @Named(RESOLVER_MAP)
+    @Binds
+    @IntoMap
+    @ClassKey(ResourceLookupManager.class)
     Object bindsResourceLookupManager(ResourceLookupManager manager);
 
-    @Named(RESOLVER) @Binds @IntoMap @ClassKey(Translator.class)
+    @Named(RESOLVER_MAP)
+    @Binds
+    @IntoMap
+    @ClassKey(Translator.class)
     Object bindsTranslator(Translator translator);
 
-    @Named(RESOLVER) @Binds @IntoMap @ClassKey(Hasher.class)
+    @Named(RESOLVER_MAP)
+    @Binds
+    @IntoMap
+    @ClassKey(Hasher.class)
     Object bindsHasher(Hasher hasher);
 
+    @BindsOptionalOf
+    @Named(DEFAULT_RESOLVER)
+    String defaultResolver();
 
+    @Module
+    class ResolverNameModule {
 
+        @Provides
+        @Singleton
+        @Named(RESOLVER_CLASSNAME)
+        public String resolverClassName(@Named(DEFAULT_RESOLVER) final Optional<String> defaultResolver,
+                                        final OopMockConfiguration configuration) {
+            return configuration.resolverConfiguration()
+                    .map(ResolverConfiguration::resolverClass)
+                    .orElseGet(() -> defaultResolver
+                            .orElseThrow(() -> new IllegalArgumentException("No resolver found in configuration")));
+        }
+
+    }
 
 }
