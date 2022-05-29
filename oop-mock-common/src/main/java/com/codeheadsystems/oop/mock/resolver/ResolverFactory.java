@@ -16,6 +16,8 @@
 
 package com.codeheadsystems.oop.mock.resolver;
 
+import static com.codeheadsystems.oop.mock.dagger.ResolverModule.RESOLVER;
+
 import com.codeheadsystems.oop.OopMockConfiguration;
 import com.codeheadsystems.oop.ResolverConfiguration;
 import com.codeheadsystems.oop.mock.Hasher;
@@ -28,6 +30,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Map;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,30 +45,17 @@ public class ResolverFactory {
 
     @Inject
     public ResolverFactory(final OopMockConfiguration configuration,
-                           final JsonConverter converter,
-                           final ResourceLookupManager manager,
-                           final Translator translator,
-                           final Hasher hasher) {
-        LOGGER.info("ResolverFactory({})",configuration);
-        final ImmutableMap.Builder<Class<?>, Object> builder = ImmutableMap.builder();
-        builder.put(OopMockConfiguration.class, configuration);
-        builder.put(JsonConverter.class, converter);
-        builder.put(ResourceLookupManager.class, manager);
-        builder.put(Translator.class, translator);
-        builder.put(Hasher.class, hasher);
-        configuration.resolverConfiguration().ifPresent(rc->builder.put(ResolverConfiguration.class, rc));
-        instanceMap = builder.build();
+                           @Named(RESOLVER) final Map<Class<?>, Object> instanceMap) {
+        LOGGER.info("ResolverFactory({})", configuration);
+        this.instanceMap = instanceMap;
         resolverClass = configuration.resolverConfiguration()
                 .map(ResolverConfiguration::resolverClass)
                 .orElseGet(InMemoryResolver.class::getCanonicalName);
     }
 
-    public MockDataResolver build() throws ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public <T> T build() throws ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException {
         LOGGER.info("build({})", resolverClass);
         final Class<?> clazz = Class.forName(resolverClass);
-        if (!MockDataResolver.class.isAssignableFrom(clazz)) {
-            throw new IllegalArgumentException("Resolver class is not a MockDataResolver: " + resolverClass);
-        }
         final Constructor<?> constructor = Arrays.stream(clazz.getConstructors())
                 .filter(c -> c.isAnnotationPresent(Inject.class))
                 .findFirst()
@@ -81,7 +71,7 @@ public class ResolverFactory {
                 throw new IllegalArgumentException("Missing injected param for class " + resolverClass + " type " + params[i].getName());
             }
         }
-        return (MockDataResolver) constructor.newInstance(args);
+        return (T) constructor.newInstance(args);
     }
 
 }

@@ -20,7 +20,7 @@ import com.codeheadsystems.oop.client.OopMockClient;
 import dagger.assisted.AssistedFactory;
 
 @AssistedFactory
-public interface OopMockClientFactory {
+public interface OopMockClientAssistedFactory {
 
     OopMockClient create(final Class<?> clazz);
 

@@ -27,7 +27,10 @@ import com.codeheadsystems.oop.mock.converter.JsonConverter;
 import com.codeheadsystems.oop.mock.manager.ResourceLookupManager;
 import com.codeheadsystems.oop.mock.model.MockedData;
 import com.codeheadsystems.oop.mock.translator.Translator;
+import com.google.common.collect.ImmutableMap;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Date;
+import java.util.Map;
 import java.util.Optional;
 import javax.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,24 +48,23 @@ class ResolverFactoryTest {
     @Mock private ResourceLookupManager manager;
     @Mock private Translator translator;
     @Mock private Hasher hasher;
+    private Map<Class<?>, Object> instanceMap;
 
     @BeforeEach
     void setup() {
+        instanceMap = ImmutableMap.of(
+                OopMockConfiguration.class, configuration,
+                JsonConverter.class, converter,
+                ResourceLookupManager.class, manager,
+                Translator.class, translator,
+                Hasher.class, hasher
+        );
         when(configuration.resolverConfiguration())
                 .thenReturn(Optional.of(resolverConfiguration));
     }
 
     private MockDataResolver factoryConstructAndGetResolver() throws ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        return new ResolverFactory(configuration, converter, manager, translator, hasher).build();
-    }
-
-    @Test
-    void build_notAssignable() {
-        when(resolverConfiguration.resolverClass()).thenReturn(Object.class.getCanonicalName());
-
-        assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> factoryConstructAndGetResolver())
-                .withMessageContaining("Resolver class is not a MockDataResolver");
+        return new ResolverFactory(configuration, instanceMap).build();
     }
 
     @Test
@@ -70,7 +72,7 @@ class ResolverFactoryTest {
         when(resolverConfiguration.resolverClass()).thenReturn("com.codeheadsystems.oop.mock.resolver.ResolverFactoryTest$DoNothing");
 
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> factoryConstructAndGetResolver())
+                .isThrownBy(this::factoryConstructAndGetResolver)
                 .withMessageContaining("No constructor with @Inject for");
     }
 
@@ -79,7 +81,7 @@ class ResolverFactoryTest {
         when(resolverConfiguration.resolverClass()).thenReturn("com.codeheadsystems.oop.mock.resolver.ResolverFactoryTest$BadConstructorArgs");
 
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> factoryConstructAndGetResolver())
+                .isThrownBy(this::factoryConstructAndGetResolver)
                 .withMessageContaining("Missing injected param for class");
     }
 
@@ -90,6 +92,15 @@ class ResolverFactoryTest {
         assertThat(factoryConstructAndGetResolver())
                 .isNotNull()
                 .isInstanceOf(MockDataResolver.class);
+    }
+
+    @Test
+    void build_goodExampleWithNoArgs_wrongReturnType() {
+        when(resolverConfiguration.resolverClass()).thenReturn(NoArgGoodExample.class.getCanonicalName());
+        assertThatExceptionOfType(ClassCastException.class)
+                .isThrownBy(() -> {
+                    final Date date = new ResolverFactory(configuration, instanceMap).build();
+                });
     }
 
     @Test

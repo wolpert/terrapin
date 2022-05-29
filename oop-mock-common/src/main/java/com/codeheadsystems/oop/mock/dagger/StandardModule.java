@@ -33,7 +33,7 @@ import java.util.Optional;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-@Module(includes = {StandardModule.BindingsModule.class, OopConfigurationModule.class})
+@Module(includes = {StandardModule.BindingsModule.class, OopConfigurationModule.class, ResolverModule.class})
 public class StandardModule {
 
     public static final String OOP_SYSTEM = "OOP_SYSTEM";
@@ -62,7 +62,8 @@ public class StandardModule {
     public MockDataResolver resolver(final ResolverFactory factory) {
         try {
             return factory.build();
-        } catch (ClassNotFoundException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+        } catch (ClassNotFoundException | InvocationTargetException | InstantiationException |
+                 IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }
