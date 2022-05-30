@@ -31,10 +31,6 @@ public class OopMockClientFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OopMockClientFactory.class);
 
-    public static OopMockClientFactory instance() {
-        return DaggerOopMockClientFactoryBuilder.builder().build().factory();
-    }
-
     private final LoadingCache<Class<?>, OopMockClient> cache;
 
     @Inject

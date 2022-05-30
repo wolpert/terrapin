@@ -33,6 +33,9 @@ import org.slf4j.LoggerFactory;
  * This is a builder for the resolver as defined in the OppMockConfiguration file. Note that it's generic for
  * also the DAO instance as well. We use this because we want the configuration file to define the resolver we
  * need to include. So this one class needs runtime injection.
+ *
+ * Update: 5/30/2022: This is gotten too weird. Prepare for a refactoring.
+ * BWA HAHA HAHAHAH AHA HA
  */
 @Singleton
 public class ResolverFactory {
@@ -53,10 +56,14 @@ public class ResolverFactory {
     public <T> T build() throws ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException {
         LOGGER.info("build({})", resolverClass);
         final Class<?> clazz = Class.forName(resolverClass);
+        return buildForClass(clazz);
+    }
+
+    private <T> T buildForClass(final Class<?> clazz) throws ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException {
         final Constructor<?> constructor = Arrays.stream(clazz.getConstructors())
                 .filter(c -> c.isAnnotationPresent(Inject.class))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("No constructor with @Inject for " + resolverClass));
+                .orElseThrow(() -> new IllegalArgumentException("No constructor with @Inject for " + clazz.getCanonicalName()));
         final Object[] args = new Object[constructor.getParameterCount()];
         final Class<?>[] params = constructor.getParameterTypes();
         LOGGER.debug("param count: " + constructor.getParameterCount());
@@ -65,7 +72,11 @@ public class ResolverFactory {
             args[i] = instanceMap.get(param);
             LOGGER.debug("   {} -> {}", param, args[i]);
             if (args[i] == null) {
-                throw new IllegalArgumentException("Missing injected param for class " + resolverClass + " type " + params[i].getName());
+                // hail mary...
+                args[i] = buildForClass(param);
+                if (args[i] == null) {
+                    throw new IllegalArgumentException("Missing injected param for class " + resolverClass + " type " + params[i].getName());
+                }
             }
         }
         return (T) constructor.newInstance(args);

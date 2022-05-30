@@ -10,6 +10,7 @@ ext {
 configurations {
     project.archivesBaseName = "${appName}"
     jar.baseName = "${appName}"
+    dynamodb
 }
 
 jacocoTestReport.finalizedBy jacocoTestCoverageVerification
@@ -40,6 +41,9 @@ dependencies {
     implementation project(":oop-mock-client")
     implementation project(":oop-mock")
     implementation project(":oop-mock-dynamodb")
+    dynamodb fileTree (dir: 'lib', include: ["*.dylib", "*.so", "*.dll"])
+    dynamodb "com.amazonaws:DynamoDBLocal:${awsLocalDDB}"
+    implementation "com.amazonaws:DynamoDBLocal:${awsLocalDDB}"
     implementation "org.slf4j:slf4j-api:${slf4jVersion}"
     implementation("com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}")
     implementation("com.fasterxml.jackson.core:jackson-databind:${jacksonDatabindVersion}")
