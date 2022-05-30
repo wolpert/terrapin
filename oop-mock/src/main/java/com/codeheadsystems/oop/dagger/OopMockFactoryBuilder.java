@@ -19,6 +19,8 @@ package com.codeheadsystems.oop.dagger;
 import static com.codeheadsystems.oop.mock.dagger.ResolverModule.DEFAULT_RESOLVER;
 
 import com.codeheadsystems.oop.OopMockFactory;
+import com.codeheadsystems.oop.mock.dagger.OopConfigurationModule;
+import com.codeheadsystems.oop.mock.dagger.ResolverModule;
 import com.codeheadsystems.oop.mock.dagger.StandardModule;
 import com.codeheadsystems.oop.mock.resolver.InMemoryResolver;
 import com.codeheadsystems.oop.mock.resolver.MockDataResolver;
@@ -27,12 +29,23 @@ import dagger.Component;
 import dagger.Module;
 import dagger.Provides;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 @Component(modules = {StandardModule.class, OopMockFactoryBuilder.ServerResolverModule.class})
 @Singleton
 public interface OopMockFactoryBuilder {
+
+    static OopMockFactory generate() {
+        return DaggerOopMockFactoryBuilder.create().factory();
+    }
+
+    static OopMockFactory generate(final Map<Class<?>, Object> resolverDeps) {
+        return DaggerOopMockFactoryBuilder.builder()
+                .resolverConfigModule(new ResolverModule.ResolverConfigModule(resolverDeps))
+                .build().factory();
+    }
 
     OopMockFactory factory();
 

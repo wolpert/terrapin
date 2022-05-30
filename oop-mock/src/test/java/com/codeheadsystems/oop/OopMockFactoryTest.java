@@ -20,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 import com.codeheadsystems.oop.dagger.ClassOopMockFactory;
+import com.codeheadsystems.oop.dagger.OopMockFactoryBuilder;
 import com.codeheadsystems.oop.mock.ClassOopMock;
 import com.codeheadsystems.oop.mock.PassThroughOopMock;
 import org.junit.jupiter.api.Test;
@@ -58,7 +59,7 @@ class OopMockFactoryTest {
 
     @Test
     void generate_instance() {
-        oopMockFactory = OopMockFactory.getInstance();
+        oopMockFactory = OopMockFactoryBuilder.generate();
 
         final OopMock mock = oopMockFactory.generate(Object.class);
         assertThat(mock)

@@ -36,18 +36,6 @@ public class OopMockFactory {
 
     private final Generator generator;
 
-    /**
-     * The default getInstance you can use. In most cases, call this method to setup the instance, and inject this
-     * into your system. It will use dagger to configure itself based on the default configuration file in your
-     * classpath. However, advanced users (who happen to use dagger as well) can just have a provider for the
-     * OopMockConfiguration you want to use, and then you can inject the factory as needed.
-     *
-     * @return instance.
-     */
-    public static OopMockFactory getInstance() {
-        return DaggerOopMockFactoryBuilder.create().factory();
-    }
-
     @Inject
     public OopMockFactory(final OopMockConfiguration oopMockConfiguration,
                           final ClassOopMockFactory classOopMockFactory,
