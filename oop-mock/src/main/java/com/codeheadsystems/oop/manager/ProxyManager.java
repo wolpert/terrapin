@@ -16,6 +16,7 @@
 
 package com.codeheadsystems.oop.manager;
 
+import com.codeheadsystems.oop.OopMockConfiguration;
 import com.codeheadsystems.oop.mock.model.MockedData;
 import com.codeheadsystems.oop.mock.resolver.MockDataResolver;
 import com.codeheadsystems.oop.mock.translator.Translator;
@@ -32,12 +33,15 @@ public class ProxyManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(ProxyManager.class);
     private final MockDataResolver resolver;
     private final Translator translator;
+    private final DelayManager delayManager;
 
     @Inject
     public ProxyManager(final MockDataResolver resolver,
-                        final Translator translator) {
+                        final Translator translator,
+                        final DelayManager delayManager) {
         this.resolver = resolver;
         this.translator = translator;
+        this.delayManager = delayManager;
     }
 
     public <R> R proxy(final String namespace,
@@ -46,11 +50,14 @@ public class ProxyManager {
                        final Class<R> returnClass,
                        final Supplier<R> supplier) {
         LOGGER.debug("proxy({},{}, {})", namespace, lookup, id);
+        final long startTime = delayManager.startMillis();
         final Optional<MockedData> mockedData = resolver.resolve(namespace, lookup, id);
         if (mockedData.isPresent()) {
             final MockedData unmarshalled = mockedData.get();
             LOGGER.info("Found mocked result: {},{} -> {}", lookup, id, unmarshalled);
-            return translator.unmarshal(returnClass, unmarshalled);
+            final R result = translator.unmarshal(returnClass, unmarshalled);
+            delayManager.delay(startTime, unmarshalled.delayInMS());
+            return result;
         } else {
             LOGGER.debug("Not mocked: {},{}", lookup, id);
             return supplier.get();

@@ -36,6 +36,7 @@ class OopMockConfigurationTest extends BaseJacksonTest<OopMockConfiguration> {
         return ImmutableOopMockConfiguration.builder()
                 .mockDataFileName(MOCK_DATA_FILE_NAME)
                 .delayResponseEnabled(true)
+                .maxDelayTimeMS(10000L)
                 .enabled(true)
                 .resolverConfiguration(ImmutableResolverConfiguration.builder()
                         .addConfigurationLines("config 1")

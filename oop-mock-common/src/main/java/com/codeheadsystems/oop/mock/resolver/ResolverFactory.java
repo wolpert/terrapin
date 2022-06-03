@@ -59,6 +59,11 @@ public class ResolverFactory {
         return buildForClass(clazz);
     }
 
+    /**
+     * For now, this uses a recursive pattern to build the main object. Any object can be created, as long as objects it
+     * depends on exists in the map given to us. And that map cannot be named. There must be a better way in dagger to
+     * do this.
+     */
     private <T> T buildForClass(final Class<?> clazz) throws ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException {
         final Constructor<?> constructor = Arrays.stream(clazz.getConstructors())
                 .filter(c -> c.isAnnotationPresent(Inject.class))

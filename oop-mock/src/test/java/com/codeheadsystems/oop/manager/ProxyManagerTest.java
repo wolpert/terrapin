@@ -20,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
+import com.codeheadsystems.oop.OopMockConfiguration;
 import com.codeheadsystems.oop.mock.model.MockedData;
 import com.codeheadsystems.oop.mock.resolver.MockDataResolver;
 import com.codeheadsystems.oop.mock.translator.Translator;
@@ -44,17 +45,18 @@ class ProxyManagerTest {
     @Mock private Translator translator;
     @Mock private Supplier<Object> supplier;
     @Mock private MockedData mockedData;
+    @Mock private DelayManager delayManager;
 
     private ProxyManager manager;
 
     @BeforeEach
     public void setup() {
-        manager = new ProxyManager(resolver, translator);
+        manager = new ProxyManager(resolver, translator, delayManager);
     }
 
     @Test
-    public void proxy_dataFound(){
-        when(resolver.resolve(NAMESPACE,LOOKUP,ID)).thenReturn(Optional.of(mockedData));
+    public void proxy_dataFound() {
+        when(resolver.resolve(NAMESPACE, LOOKUP, ID)).thenReturn(Optional.of(mockedData));
         when(translator.unmarshal(Object.class, mockedData)).thenReturn(MOCK_RESULT);
 
         assertThat(manager.proxy(NAMESPACE, LOOKUP, ID, Object.class, supplier))
@@ -64,8 +66,8 @@ class ProxyManagerTest {
 
 
     @Test
-    public void proxy_dataNotFound(){
-        when(resolver.resolve(NAMESPACE,LOOKUP,ID)).thenReturn(Optional.empty());
+    public void proxy_dataNotFound() {
+        when(resolver.resolve(NAMESPACE, LOOKUP, ID)).thenReturn(Optional.empty());
         when(supplier.get()).thenReturn(REAL_RESULT);
 
         assertThat(manager.proxy(NAMESPACE, LOOKUP, ID, Object.class, supplier))

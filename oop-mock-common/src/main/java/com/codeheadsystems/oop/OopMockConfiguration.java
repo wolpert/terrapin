@@ -53,6 +53,16 @@ public interface OopMockConfiguration {
     }
 
     /**
+     * Max amount of time to wait for a delay. By default we set this to 5 seconds, which is
+     * forever. But set this as you need.
+     */
+    @Value.Default
+    @JsonProperty("maxDelayTimeMS")
+    default long maxDelayTimeMS() {
+        return 5000L;
+    }
+
+    /**
      * If mocked data is from a file, you can set this here.
      * WARNING, this will likely change format later.
      *

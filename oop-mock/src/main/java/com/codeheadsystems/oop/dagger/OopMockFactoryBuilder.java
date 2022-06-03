@@ -29,6 +29,7 @@ import dagger.Component;
 import dagger.Module;
 import dagger.Provides;
 import java.lang.reflect.InvocationTargetException;
+import java.time.Clock;
 import java.util.Map;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -51,6 +52,12 @@ public interface OopMockFactoryBuilder {
 
     @Module
     class ServerResolverModule {
+
+        @Provides
+        @Singleton
+        public Clock clock() {
+            return Clock.systemUTC();
+        }
 
         @Provides
         @Singleton
