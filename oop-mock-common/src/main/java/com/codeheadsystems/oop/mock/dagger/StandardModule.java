@@ -18,6 +18,7 @@ package com.codeheadsystems.oop.mock.dagger;
 
 import static com.codeheadsystems.oop.mock.manager.ResourceLookupManager.LOOKUP_CLASS;
 
+import com.codeheadsystems.oop.OopMockConfiguration;
 import com.codeheadsystems.oop.mock.Hasher;
 import com.codeheadsystems.oop.mock.factory.ObjectMapperFactory;
 import com.codeheadsystems.oop.mock.resolver.MockDataResolver;
@@ -40,8 +41,9 @@ public class StandardModule {
 
     @Provides
     @Singleton
-    public Hasher hasher(@Named(OOP_SYSTEM) final Optional<String> system) {
-        return new Hasher(system.orElse(DEFAULT));
+    public Hasher hasher(@Named(OOP_SYSTEM) final Optional<String> system,
+                         final OopMockConfiguration configuration) {
+        return new Hasher(system.orElse(configuration.namespace()));
     }
 
     @Provides

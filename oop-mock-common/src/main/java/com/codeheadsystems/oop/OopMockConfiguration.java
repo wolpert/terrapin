@@ -16,6 +16,8 @@
 
 package com.codeheadsystems.oop;
 
+import static com.codeheadsystems.oop.mock.dagger.StandardModule.DEFAULT;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -60,6 +62,15 @@ public interface OopMockConfiguration {
     @JsonProperty("maxDelayTimeMS")
     default long maxDelayTimeMS() {
         return 5000L;
+    }
+
+    /**
+     * The default namespace for this instance.
+     */
+    @Value.Default
+    @JsonProperty("namespace")
+    default String namespace() {
+        return DEFAULT;
     }
 
     /**
