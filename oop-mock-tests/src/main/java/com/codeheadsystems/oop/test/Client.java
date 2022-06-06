@@ -16,48 +16,64 @@
 
 package com.codeheadsystems.oop.test;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.codeheadsystems.oop.client.OopMockClient;
 import com.codeheadsystems.oop.client.OopMockClientFactory;
-import com.codeheadsystems.oop.client.dagger.OopMockClientFactoryBuilder;
-import com.google.common.collect.ImmutableMap;
 
 public class Client {
     public static final String MOCKED_DATA = "this is mocked data";
 
-    private OopMockClientFactory factory;
+    private final OopMockClientFactory factory;
 
-    public void setup(Database database) {
-        factory = OopMockClientFactoryBuilder.generate(ImmutableMap.of(DynamoDBMapper.class, database.dynamoDBMapper()));
+    public Client(final OopMockClientFactory factory) {
+        this.factory = factory;
     }
 
-    public String callServerNotMocked(final Server server) {
-        final OopMockClient client = factory.generate(Client.class);
-        return server.getBaseResult("callServerNotMocked");
+    /**
+     * Test: We generate the OopMockClient, but don't use it.
+     * Expected result would be un-mocked data.
+     *
+     * @param server we are calling.
+     * @return data from the server.
+     */
+    public String callServerWithoutMock(final Server server, final String id) {
+        return server.getBaseResult(id);
     }
 
-    public String callServerNotMockedByUs(final Server server) {
+    /**
+     * Test: We generate the OopMockClient, setup a mock, but use a different ID
+     * on the request than what we mocked.
+     * Expected result would be un-mocked data.
+     *
+     * @param server we are calling.
+     * @return data from the server.
+     */
+    public String callServerWithMockOnDifferentId(final Server server, final String id) {
         final OopMockClient client = factory.generate(Server.class);
-        client.mockSetup(MOCKED_DATA, "getBaseResult", "callServerMocked");
+        final String mockId = id + " other value";
+        client.mockSetup(MOCKED_DATA, Server.LOOKUP, mockId);
         try {
-            return server.getBaseResult("callServerNotMockedByUs");
+            return server.getBaseResult(id);
         } finally {
-            client.deleteMock("getBaseResult", "callServerMocked");
+            client.deleteMock(Server.LOOKUP, mockId);
         }
     }
 
-    public String callServerMocked(final Server server) {
+    /**
+     * Test: We generate the OopMockClient, setup a mock, and use the same ID
+     * on the request than what we mocked.
+     * Expected result would be mocked data.
+     *
+     * @param server we are calling.
+     * @return data from the server.
+     */
+    public String callServerMocked(final Server server, final String id) {
         final OopMockClient client = factory.generate(Server.class);
-        client.mockSetup(MOCKED_DATA, "getBaseResult", "callServerMocked");
+        client.mockSetup(MOCKED_DATA, Server.LOOKUP, id);
         try {
-            return server.getBaseResult("callServerMocked");
+            return server.getBaseResult(id);
         } finally {
-            client.deleteMock("getBaseResult", "callServerMocked");
+            client.deleteMock(Server.LOOKUP, id);
         }
-    }
-
-    public void teardown() {
-        factory = null;
     }
 
 }

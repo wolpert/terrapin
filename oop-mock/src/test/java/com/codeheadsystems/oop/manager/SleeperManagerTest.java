@@ -51,7 +51,7 @@ class SleeperManagerTest {
         final Runnable runnable = () -> {
             try {
                 latch.await();
-                Thread.sleep(10L);
+                Thread.sleep(10L); // Roll dem bones
                 currentThread.interrupt();
             } catch (Throwable e) {
                 thrown.set(e);

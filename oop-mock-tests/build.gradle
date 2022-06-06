@@ -13,7 +13,7 @@ configurations {
     dynamodb
 }
 
-jacocoTestReport.finalizedBy jacocoTestCoverageVerification
+//jacocoTestReport.finalizedBy jacocoTestCoverageVerification
 
 // Create the pom configuration:
 def pomConfig = {
@@ -40,10 +40,7 @@ def pomConfig = {
 dependencies {
     implementation project(":oop-mock-client")
     implementation project(":oop-mock")
-    implementation project(":oop-mock-dynamodb")
-    dynamodb fileTree (dir: 'lib', include: ["*.dylib", "*.so", "*.dll"])
-    dynamodb "com.amazonaws:DynamoDBLocal:${awsLocalDDB}"
-    implementation "com.amazonaws:DynamoDBLocal:${awsLocalDDB}"
+    implementation project(":oop-mock-common")
     implementation "org.slf4j:slf4j-api:${slf4jVersion}"
     implementation("com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}")
     implementation("com.fasterxml.jackson.core:jackson-databind:${jacksonDatabindVersion}")
@@ -61,12 +58,10 @@ dependencies {
     annotationProcessor("org.immutables:value:${immutablesVersion}")
     testAnnotationProcessor("org.immutables:value:${immutablesVersion}")
 
-    testImplementation("org.assertj:assertj-core:${assertjVersion}")
-    testImplementation("org.junit.jupiter:junit-jupiter-engine:${jupiterVersion}")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:${jupiterVersion}")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:${jupiterVersion}")
-    testImplementation("org.mockito:mockito-junit-jupiter:${mockitoVersion}")
-    testImplementation("org.mockito:mockito-core:${mockitoVersion}")
-    testImplementation("ch.qos.logback:logback-classic:${logbackVersion}")
-    testImplementation("ch.qos.logback:logback-core:${logbackVersion}")
+    implementation("org.assertj:assertj-core:${assertjVersion}")
+    implementation("org.junit.jupiter:junit-jupiter-engine:${jupiterVersion}")
+    implementation("org.junit.jupiter:junit-jupiter-api:${jupiterVersion}")
+    implementation("org.junit.jupiter:junit-jupiter-params:${jupiterVersion}")
+    implementation("ch.qos.logback:logback-classic:${logbackVersion}")
+    implementation("ch.qos.logback:logback-core:${logbackVersion}")
 }

@@ -56,12 +56,13 @@ def pomConfig = {
 dependencies {
 
     // DynamoDB testing
-    dynamodb fileTree (dir: 'lib', include: ["*.dylib", "*.so", "*.dll"])
+    dynamodb fileTree(dir: 'lib', include: ["*.dylib", "*.so", "*.dll"])
     dynamodb "com.amazonaws:DynamoDBLocal:${awsLocalDDB}"
     testImplementation "com.amazonaws:DynamoDBLocal:${awsLocalDDB}"
 
     implementation project(":oop-mock-common")
     implementation project(":oop-mock-client")
+    testImplementation project(":oop-mock-tests")
     implementation "com.amazonaws:aws-java-sdk-dynamodb:${awsSDK}"
     implementation "org.slf4j:slf4j-api:${slf4jVersion}"
     implementation("com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}")

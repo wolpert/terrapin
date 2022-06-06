@@ -28,7 +28,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dagger.BindsOptionalOf;
 import dagger.Module;
 import dagger.Provides;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 import javax.inject.Named;
 import javax.inject.Singleton;

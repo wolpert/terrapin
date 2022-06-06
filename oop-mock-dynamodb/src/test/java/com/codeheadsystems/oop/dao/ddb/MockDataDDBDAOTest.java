@@ -39,7 +39,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
  * This is half unit test and have functional in that we use a real (local) ddb instance.
  * I'm just really tired of cases where people ignore how the database works until integ
  * tests. So forcing the issue here.
- *
+ * <p>
  * Don't worry, the DDB instance is fast. But you'll need to load the SQL lib into your
  * path for now to get it to work. See DynamoDBExtension for details. (Only needed for
  * intelij, not for gradle on the cmdline.)
@@ -130,6 +130,7 @@ class MockDataDDBDAOTest {
                 .isNotNull()
                 .isEmpty();
     }
+
     @Test
     void delete_doesnotexists() {
         when(converter.convert(NAMESPACE, LOOKUP, DISCRIMINATOR)).thenReturn(ENTRY_WITHOUT_DATA);

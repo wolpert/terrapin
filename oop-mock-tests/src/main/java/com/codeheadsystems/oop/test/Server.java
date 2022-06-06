@@ -16,28 +16,23 @@
 
 package com.codeheadsystems.oop.test;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.codeheadsystems.oop.OopMock;
 import com.codeheadsystems.oop.OopMockFactory;
-import com.codeheadsystems.oop.dagger.OopMockFactoryBuilder;
-import com.google.common.collect.ImmutableMap;
 
 public class Server {
     public static final String BASE_RESULT = "This is from the server";
+    public static final String LOOKUP = "getBaseResult";
 
-    private OopMockFactory factory;
+    private final OopMockFactory factory;
 
-    public void setup(Database database) {
-        factory = OopMockFactoryBuilder.generate(ImmutableMap.of(DynamoDBMapper.class, database.dynamoDBMapper()));
+    public Server(final OopMockFactory factory) {
+        this.factory = factory;
     }
 
-    public void teardown() {
-        factory = null;
-    }
 
     public String getBaseResult(String id) {
         final OopMock oopMock = factory.generate(Server.class);
-        return oopMock.proxy(String.class, this::getBaseResult, "getBaseResult", id);
+        return oopMock.proxy(String.class, this::getBaseResult, LOOKUP, id);
     }
 
     private String getBaseResult() {
