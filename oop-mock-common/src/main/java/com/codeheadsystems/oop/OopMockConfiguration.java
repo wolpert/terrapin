@@ -16,7 +16,7 @@
 
 package com.codeheadsystems.oop;
 
-import static com.codeheadsystems.oop.mock.dagger.StandardModule.DEFAULT;
+import static com.codeheadsystems.oop.mock.dagger.StandardModule.NAMESPACE;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -70,7 +70,7 @@ public interface OopMockConfiguration {
     @Value.Default
     @JsonProperty("namespace")
     default String namespace() {
-        return DEFAULT;
+        return NAMESPACE;
     }
 
     /**

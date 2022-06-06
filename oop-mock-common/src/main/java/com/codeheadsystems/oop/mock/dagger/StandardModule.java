@@ -21,8 +21,6 @@ import static com.codeheadsystems.oop.mock.manager.ResourceLookupManager.LOOKUP_
 import com.codeheadsystems.oop.OopMockConfiguration;
 import com.codeheadsystems.oop.mock.Hasher;
 import com.codeheadsystems.oop.mock.factory.ObjectMapperFactory;
-import com.codeheadsystems.oop.mock.resolver.MockDataResolver;
-import com.codeheadsystems.oop.mock.resolver.ResolverFactory;
 import com.codeheadsystems.oop.mock.translator.JsonTranslator;
 import com.codeheadsystems.oop.mock.translator.Translator;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -37,8 +35,13 @@ import javax.inject.Singleton;
 public class StandardModule {
 
     public static final String OOP_SYSTEM = "OOP_SYSTEM";
-    public static final String DEFAULT = "DEFAULT";
+    public static final String NAMESPACE = "DEFAULT";
 
+    /**
+     * If the namespace is configured in the Dagger environment, we will use that. Else we will use what
+     * is in the configuration file. Note that the configuration file pulls the default namespace from
+     * here.
+     */
     @Provides
     @Singleton
     public Hasher hasher(@Named(OOP_SYSTEM) final Optional<String> system,
