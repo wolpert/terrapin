@@ -39,7 +39,7 @@ import org.junit.jupiter.api.extension.ParameterResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DynamoDBExtension extends DataStoreExtension implements BeforeAllCallback, AfterAllCallback,  ParameterResolver {
+public class DynamoDBExtension extends DataStoreExtension implements BeforeAllCallback, AfterAllCallback {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DynamoDBExtension.class);
 
@@ -78,18 +78,6 @@ public class DynamoDBExtension extends DataStoreExtension implements BeforeAllCa
             s.put(CLIENT, client);
             s.put(MAPPER, new DynamoDBMapper(client));
         });
-    }
-
-    @Override
-    public boolean supportsParameter(final ParameterContext parameterContext,
-                                     final ExtensionContext extensionContext) throws ParameterResolutionException {
-        return parameterContext.isAnnotated(DataStore.class);
-    }
-
-    @Override
-    public Object resolveParameter(final ParameterContext parameterContext,
-                                   final ExtensionContext extensionContext) throws ParameterResolutionException {
-        return extensionContext.getStore(namespace).get(CLIENT);
     }
 
     private AmazonDynamoDB getAmazonDynamoDB() {
