@@ -47,7 +47,6 @@ public class ClassOopMock implements OopMock {
                        final Supplier<R> supplier,
                        final String lookup,
                        final String id) {
-        // TODO There needs to be a live disablement check. So you can disable in real time.
         return proxyManager.proxy(namespace, lookup, id, returnClass, supplier);
     }
 

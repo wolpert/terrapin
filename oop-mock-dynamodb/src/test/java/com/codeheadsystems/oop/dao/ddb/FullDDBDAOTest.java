@@ -23,6 +23,8 @@ import com.codeheadsystems.oop.ImmutableResolverConfiguration;
 import com.codeheadsystems.oop.ResolverConfiguration;
 import com.codeheadsystems.oop.dao.ddb.model.DDBEntry;
 import com.codeheadsystems.oop.test.FullDAOTest;
+import com.codeheadsystems.test.datastore.DynamoDBExtension;
+import com.codeheadsystems.test.datastore.LocalDynamoDB;
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 import org.junit.jupiter.api.AfterEach;

@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package com.codeheadsystems.oop.dao.ddb;
+package com.codeheadsystems.test.datastore;
 
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.PARAMETER;

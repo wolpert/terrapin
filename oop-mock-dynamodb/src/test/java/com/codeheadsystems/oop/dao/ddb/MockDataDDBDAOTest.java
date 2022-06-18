@@ -25,6 +25,8 @@ import com.amazonaws.services.dynamodbv2.model.BillingMode;
 import com.codeheadsystems.oop.dao.ddb.converter.DDBEntryConverter;
 import com.codeheadsystems.oop.dao.ddb.model.DDBEntry;
 import com.codeheadsystems.oop.mock.model.MockedData;
+import com.codeheadsystems.test.datastore.DynamoDBExtension;
+import com.codeheadsystems.test.datastore.LocalDynamoDB;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

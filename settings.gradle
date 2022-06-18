@@ -2,5 +2,5 @@
  * Copyright (c) 2020 CodeHead Systems. All rights reserved
  */
 
-include 'codehead-test', 'statemachine',
+include 'codehead-test', ':datastore-test', 'statemachine',
     ':oop-mock-common', ':oop-mock-client', ':oop-mock', ':oop-mock-dynamodb', ':oop-mock-tests'
