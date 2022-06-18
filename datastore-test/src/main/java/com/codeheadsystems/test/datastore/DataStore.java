@@ -24,8 +24,12 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+/**
+ * Use this annotation to mark items you want configured by the DataStoreExtension class, or one of it's
+ * subclasses.
+ */
 @Target({FIELD, PARAMETER})
 @Retention(RUNTIME)
 @Documented
-public @interface LocalDynamoDB {
+public @interface DataStore {
 }

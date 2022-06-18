@@ -23,8 +23,8 @@ import com.codeheadsystems.oop.ImmutableResolverConfiguration;
 import com.codeheadsystems.oop.ResolverConfiguration;
 import com.codeheadsystems.oop.dao.ddb.model.DDBEntry;
 import com.codeheadsystems.oop.test.FullDAOTest;
+import com.codeheadsystems.test.datastore.DataStore;
 import com.codeheadsystems.test.datastore.DynamoDBExtension;
-import com.codeheadsystems.test.datastore.LocalDynamoDB;
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 import org.junit.jupiter.api.AfterEach;
@@ -34,13 +34,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @ExtendWith(DynamoDBExtension.class)
 public class FullDDBDAOTest extends FullDAOTest {
 
-    @LocalDynamoDB private DynamoDBMapper mapper;
-    @LocalDynamoDB private AmazonDynamoDB amazonDynamoDB;
+    @DataStore private DynamoDBMapper mapper;
+    @DataStore private AmazonDynamoDB amazonDynamoDB;
 
     @BeforeEach
     void setup() {
         amazonDynamoDB.createTable(mapper.generateCreateTableRequest(DDBEntry.class)
-                .withBillingMode(BillingMode.PAY_PER_REQUEST));
+            .withBillingMode(BillingMode.PAY_PER_REQUEST));
     }
 
     @AfterEach
@@ -52,8 +52,8 @@ public class FullDDBDAOTest extends FullDAOTest {
     @Override
     protected ResolverConfiguration resolverConfiguration() {
         return ImmutableResolverConfiguration.builder()
-                .resolverClass(MockDataDDBDAO.class.getCanonicalName())
-                .build();
+            .resolverClass(MockDataDDBDAO.class.getCanonicalName())
+            .build();
     }
 
     @Override

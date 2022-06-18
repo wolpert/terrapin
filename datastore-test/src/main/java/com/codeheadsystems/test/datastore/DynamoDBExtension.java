@@ -39,14 +39,17 @@ import org.junit.jupiter.api.extension.ParameterResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DynamoDBExtension implements BeforeAllCallback, AfterAllCallback, BeforeEachCallback, ParameterResolver {
+public class DynamoDBExtension extends DataStoreExtension implements BeforeAllCallback, AfterAllCallback,  ParameterResolver {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DynamoDBExtension.class);
 
-    private static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(DynamoDBExtension.class);
     private static final Class<?> SERVER = DynamoDBProxyServer.class;
     private static final Class<?> CLIENT = AmazonDynamoDB.class;
     private static final Class<?> MAPPER = DynamoDBMapper.class;
+
+    @Override protected Class<?> namespaceClass() {
+        return DynamoDBExtension.class;
+    }
 
     @Override
     public void afterAll(final ExtensionContext context) {
@@ -77,21 +80,16 @@ public class DynamoDBExtension implements BeforeAllCallback, AfterAllCallback, B
         });
     }
 
-    private void withStore(final ExtensionContext context,
-                           final Consumer<ExtensionContext.Store> consumer) {
-        consumer.accept(context.getStore(NAMESPACE));
-    }
-
     @Override
     public boolean supportsParameter(final ParameterContext parameterContext,
                                      final ExtensionContext extensionContext) throws ParameterResolutionException {
-        return parameterContext.isAnnotated(LocalDynamoDB.class);
+        return parameterContext.isAnnotated(DataStore.class);
     }
 
     @Override
     public Object resolveParameter(final ParameterContext parameterContext,
                                    final ExtensionContext extensionContext) throws ParameterResolutionException {
-        return extensionContext.getStore(NAMESPACE).get(CLIENT);
+        return extensionContext.getStore(namespace).get(CLIENT);
     }
 
     private AmazonDynamoDB getAmazonDynamoDB() {
@@ -105,50 +103,4 @@ public class DynamoDBExtension implements BeforeAllCallback, AfterAllCallback, B
                 .build();
     }
 
-    @Override
-    public void beforeEach(final ExtensionContext context) {
-        context.getRequiredTestInstances().getAllInstances().forEach(o -> {
-            Arrays.stream(o.getClass().getDeclaredFields())
-                    .filter(f -> f.isAnnotationPresent(LocalDynamoDB.class))
-                    .forEach(field -> {
-                        setValueForField(context, o, field);
-                    });
-        });
-    }
-
-    private void setValueForField(final ExtensionContext context,
-                                  final Object o,
-                                  final Field field) {
-        withStore(context, s -> {
-            final Object value = s.get(field.getType()); // Check the store to see we have this type.
-            if (value != null) { // Good, go set it.
-                enableSettingTheField(field);
-                try {
-                    field.set(o, value);
-                } catch (IllegalAccessException e) {
-                    LOGGER.error("Unable to set the field value for {}", field.getName(), e);
-                    LOGGER.error("Continuing, but expect nothing good will happen next.");
-                }
-            } else { // Too bad. Fail loudly so the dev can fix it.
-                LOGGER.error("Type {} is unknown to the DynamoDB extension. You have the annotation on the wrong field", field.getType());
-                throw new IllegalArgumentException("Unable to find DynamoDB extension value of type " + field.getType());
-            }
-        });
-    }
-
-    /**
-     * This allows us to set the field directly. It will fail if the security manager in play disallows it.
-     * We can talk about justifications all we want, but really we know Java is not Smalltalk. Meta programming
-     * is limited here. So... we try to do the right thing.
-     *
-     * @param field to change accessibility for.
-     */
-    private void enableSettingTheField(final Field field) {
-        try {
-            field.setAccessible(true);
-        } catch (RuntimeException re) {
-            LOGGER.error("Unable to change accessibility for field due to private var or security manager: {}", field.getName());
-            LOGGER.error("The setting will likely fail. Consider changing that type to protected.", re);
-        }
-    }
 }
