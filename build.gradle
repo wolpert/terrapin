@@ -111,6 +111,7 @@ version '1.0-SNAPSHOT'
 ext {
     awsLocalDDB = "1.15.0" // https://mvnrepository.com/artifact/com.amazonaws/DynamoDBLocal
     awsSDK = "1.12.243" // https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-dynamodb
+    awsSDK2 = "2.17.219" // https://mvnrepository.com/artifact/software.amazon.awssdk/dynamodb
     aiVersion = '1.8.2' // https://mvnrepository.com/artifact/com.badlogicgames.gdx/gdx-ai
     ashleyVersion = '1.7.4' // https://mvnrepository.com/artifact/com.badlogicgames.ashley/ashley
     assertjVersion = '3.23.1' // https://mvnrepository.com/artifact/org.assertj/assertj-core
@@ -123,6 +124,7 @@ ext {
     dropwizardVersion = '2.1.0' // https://mvnrepository.com/artifact/io.dropwizard/dropwizard-core
     gdxVersion = '1.11.0' // https://mvnrepository.com/artifact/com.badlogicgames.gdx/gdx
     guavaVersion = '31.1-jre' // https://mvnrepository.com/artifact/com.google.guava/guava
+    hsqldbVersion = '2.6.1' // https://mvnrepository.com/artifact/org.hsqldb/hsqldb
     immutablesVersion = '2.9.0' // https://mvnrepository.com/artifact/org.immutables/value
     jacksonVersion = '2.13.3' // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core
     jacksonDatabindVersion = '2.13.3' // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind

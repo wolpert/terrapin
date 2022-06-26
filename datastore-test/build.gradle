@@ -60,8 +60,10 @@ dependencies {
     dynamodb "com.amazonaws:DynamoDBLocal:${awsLocalDDB}"
     implementation "com.amazonaws:DynamoDBLocal:${awsLocalDDB}"
     implementation "com.amazonaws:aws-java-sdk-dynamodb:${awsSDK}"
+    implementation "software.amazon.awssdk:dynamodb:${awsSDK2}"
     implementation "org.slf4j:slf4j-api:${slf4jVersion}"
     implementation("com.google.guava:guava:${guavaVersion}")
+    api("org.hsqldb:hsqldb:${hsqldbVersion}")
 
     implementation project(":codehead-test")
     api("org.assertj:assertj-core:${assertjVersion}")
