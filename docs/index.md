@@ -1,5 +1,12 @@
 # terrapin
 
+> **NOTICE** The terrapin project is morphing. I'm starting to include new or unfinished development
+> work into the project from CodeHead system. CodeHead is officially dead as a company.
+> The terrapin project is a redo of the original Method System work from Colorado.
+> Just open-sourced this time.
+
+# About
+
 Terrapin is a collection of software being open-sourced that was used within CodeHead Systems.
 The work is licensed under the Apache 2.0 license to promote being used by others with as much freedom
 as possible... commercial or otherwise.
