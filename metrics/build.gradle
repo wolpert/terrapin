@@ -1,0 +1,52 @@
+/*
+ * Copyright (c) 2020 CodeHead Systems. All rights reserved
+ */
+
+apply plugin: 'idea'
+
+ext {
+    appName = "metrics"
+    version = "1.0"
+}
+
+configurations {
+    project.archivesBaseName = "${appName}"
+    jar.baseName = "${appName}"
+}
+
+//jacocoTestReport.finalizedBy jacocoTestCoverageVerification
+
+// Create the pom configuration:
+def pomConfig = {
+    licenses {
+        license {
+            name "The Apache Software License, Version 2.0"
+            url "http://www.apache.org/licenses/LICENSE-2.0.txt"
+            distribution "repo"
+        }
+    }
+    developers {
+        developer {
+            id "wolpert"
+            name "Ned Wolpert"
+            email "ned.wolpert@codeheadsystems.com"
+        }
+    }
+
+    scm {
+        url "https://github.com/wolpert/terrapin"
+    }
+}
+
+dependencies {
+    implementation "org.slf4j:slf4j-api:${slf4jVersion}"
+    implementation "com.google.dagger:dagger:${daggerVersion}" // Common files for runtime
+    testImplementation("org.junit.jupiter:junit-jupiter-api:${jupiterVersion}")
+    testImplementation("org.assertj:assertj-core:${assertjVersion}")
+    testImplementation("org.mockito:mockito-junit-jupiter:${mockitoVersion}")
+    testImplementation("org.mockito:mockito-core:${mockitoVersion}")
+    // Use JUnit Jupiter Engine for testing.
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${jupiterVersion}")
+    testImplementation("org.apache.logging.log4j:log4j-api:${log4jVersion}")
+    testImplementation("org.apache.logging.log4j:log4j-core:${log4jVersion}")
+}
