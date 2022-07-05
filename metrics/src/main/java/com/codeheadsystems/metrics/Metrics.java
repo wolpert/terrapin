@@ -67,6 +67,7 @@ public class Metrics implements Closeable {
         for(Map.Entry<String, Long> entry : counts.entrySet()) {
             metricsImplementation.count(entry.getKey(), entry.getValue());
         }
+        counts.clear();
     }
 
     // ---- Taken from dropwizard metric registry.

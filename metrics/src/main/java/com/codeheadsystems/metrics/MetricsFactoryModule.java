@@ -30,16 +30,16 @@ public class MetricsFactoryModule {
 
     public static final String DEFAULT_SUCCESS = ".success";
     public static final String DEFAULT_FAIL = ".fail";
-    public static final String METRICS_IMPLEMENTATION_FACTORY = "METRICS_IMPLEMENTATION_FACTORY";
+    public static final String METRICS_IMPLEMENTATION = "METRICS_IMPLEMENTATION_FACTORY";
     public static final String METRIC_SUCCESS_NAME = "METRIC_SUCCESS_NAME";
     public static final String METRIC_FAIL_NAME = "METRIC_FAIL_NAME";
 
     @Provides
     @Singleton
-    public MetricsFactory metricsFactory(@Named(METRICS_IMPLEMENTATION_FACTORY) final Optional<MetricsImplementationFactory> metricsImplementationFactory,
+    public MetricsFactory metricsFactory(@Named(METRICS_IMPLEMENTATION) final Optional<MetricsImplementation> metricsImplementation,
                                          @Named(METRIC_SUCCESS_NAME) final Optional<String> successName,
                                          @Named(METRIC_FAIL_NAME) final Optional<String> failName) {
-        return new MetricsFactory(metricsImplementationFactory.orElseGet(NullMetricsImplementationFactory::new),
+        return new MetricsFactory(metricsImplementation.orElseGet(NullMetricsImplementation::new),
                 successName.orElse(DEFAULT_SUCCESS),
                 failName.orElse(DEFAULT_FAIL));
     }

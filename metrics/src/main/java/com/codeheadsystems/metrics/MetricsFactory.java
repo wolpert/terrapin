@@ -26,21 +26,21 @@ public class MetricsFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MetricsFactory.class);
 
-    private final MetricsImplementationFactory metricsImplementationFactory;
+    private final MetricsImplementation metricsImplementation;
     private final String successName;
     private final String failName;
 
-    public MetricsFactory(final MetricsImplementationFactory metricsImplementationFactory,
+    public MetricsFactory(final MetricsImplementation metricsImplementation,
                           final String successName,
                           final String failName) {
-        this.metricsImplementationFactory = metricsImplementationFactory;
+        this.metricsImplementation = metricsImplementation;
         this.successName = successName;
         this.failName = failName;
-        LOGGER.info("MetricsFactory({},{},{})", this.metricsImplementationFactory, this.successName, this.failName);
+        LOGGER.info("MetricsFactory({},{},{})", this.metricsImplementation, this.successName, this.failName);
     }
 
     public Metrics get() {
-        return new Metrics(metricsImplementationFactory.get(), successName, failName);
+        return new Metrics(metricsImplementation, successName, failName);
     }
 
     public void with(final Consumer<Metrics> consumer) {
