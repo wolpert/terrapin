@@ -19,6 +19,7 @@ package com.codeheadsystems.metrics.dropwizard;
 import com.codahale.metrics.MetricRegistry;
 import com.codeheadsystems.metrics.MetricsImplementation;
 import java.io.IOException;
+import java.util.Map;
 import java.util.function.Supplier;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -37,12 +38,12 @@ public class DropwizardMetricsImplementation implements MetricsImplementation {
     }
 
     @Override
-    public void count(final String name, final long value) {
+    public void count(final String name, final long value, Map<String,String> dimensions) {
         metricRegistry.histogram(name).update(value);
     }
 
     @Override
-    public <R> R time(final String name, final Supplier<R> supplier) {
+    public <R> R time(final String name, final Map<String,String> dimensions, final Supplier<R> supplier) {
         return metricRegistry.timer(name).timeSupplier(supplier);
     }
 

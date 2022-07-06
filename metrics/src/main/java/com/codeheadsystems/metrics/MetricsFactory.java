@@ -39,7 +39,7 @@ public class MetricsFactory {
         LOGGER.info("MetricsFactory({},{},{})", this.metricsImplementation, this.successName, this.failName);
     }
 
-    public Metrics get() {
+    public Metrics build() {
         return new Metrics(metricsImplementation, successName, failName);
     }
 
@@ -51,7 +51,7 @@ public class MetricsFactory {
     }
 
     public <R> R with(final Function<Metrics,R> function) {
-        try(Metrics metrics = get()) {
+        try(Metrics metrics = build()) {
             return function.apply(metrics);
         } catch (IOException e) {
             LOGGER.error("Metrics Fail", e);

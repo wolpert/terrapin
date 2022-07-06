@@ -17,6 +17,7 @@
 package com.codeheadsystems.metrics;
 
 import java.io.Closeable;
+import java.util.Map;
 import java.util.function.Supplier;
 
 /**
@@ -26,21 +27,32 @@ public interface MetricsImplementation extends Closeable {
 
     /**
      * Counts the value into the metric. Can be any positive/negative number including zero.
-     * Note, in dropwizard metrics, this is likely just a histogram.
+     * Note, in dropwizard metrics, this is likely just a histogram. Note, if the metrics
+     * implementation does not support dimensions they will be ignored.
      *
-     * @param name of the metric.
-     * @param value for the counter.
+     * @param name       of the metric.
+     * @param value      for the counter.
+     * @param dimensions how to slice the data.
      */
-    void count(String name, long value);
+    void count(String name, long value, Map<String, String> dimensions);
+
+    default void count(String name, long value) {
+        count(name, value, Map.of());
+    }
 
     /**
-     * Default latency check. Note that this does not automatically track exceptions.
+     * Default latency check. Note that this does not automatically track exceptions.Note, if the metrics
+     * * implementation does not support dimensions they will be ignored.
      *
-     * @param name of the metric.
+     * @param name     of the metric.
      * @param supplier function to call. Should return a value.
-     * @param <R> return type.
+     * @param <R>      return type.
      * @return a value.
      */
-    <R> R time(String name, Supplier<R> supplier);
+    <R> R time(String name, Map<String, String> dimensions, Supplier<R> supplier);
+
+    default <R> R time(String name, Supplier<R> supplier) {
+        return time(name, Map.of(), supplier);
+    }
 
 }

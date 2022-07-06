@@ -16,6 +16,7 @@
 
 package com.codeheadsystems.metrics;
 
+import java.util.Map;
 import java.util.function.Supplier;
 
 /**
@@ -24,12 +25,12 @@ import java.util.function.Supplier;
 public class NullMetricsImplementation implements MetricsImplementation {
 
     @Override
-    public void count(final String name, final long value) {
+    public void count(final String name, final long value, Map<String, String> dimensions) {
 
     }
 
     @Override
-    public <R> R time(final String name, final Supplier<R> supplier) {
+    public <R> R time(final String name, final Map<String, String> dimensions, final Supplier<R> supplier) {
         return supplier.get();
     }
 
