@@ -15,7 +15,7 @@ as possible... commercial or otherwise.
 
 [StateMachine](https://github.com/wolpert/terrapin/tree/main/statemachine) provides a general-purpose
 state machine with both programmatic and JSON-loading support for state machine definitions. Stateful
-objects can use annotations for fields that encompasses the state. It provides metrics, pluggable locking
+objects can use annotations for fields that encompasses the state. It provides metricsImplementation, pluggable locking
 mechanism and pre/post hooks as well. 
 
 ## CodeHead-Test

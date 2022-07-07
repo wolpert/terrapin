@@ -20,7 +20,10 @@ import java.io.Closeable;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public interface Metrics extends Closeable {
+/**
+ * Base metrics we support. Any metric service needs to implement these metrics.
+ */
+public interface MetricsVendor extends Closeable {
 
     /**
      * Counts the value into the metric. Can be any positive/negative number including zero.
@@ -50,38 +53,6 @@ public interface Metrics extends Closeable {
 
     default <R> R time(String name, Supplier<R> supplier) {
         return time(name, Map.of(), supplier);
-    }
-
-    /**
-     * Concatenates a class name and elements to form a dotted name, eliding any null values or
-     * empty strings.
-     *
-     * @param klass the first element of the name
-     * @param names the remaining elements of the name
-     * @return {@code klass} and {@code names} concatenated by periods
-     */
-    default String name(Class<?> klass, String... names) {
-        return name(klass.getName(), names);
-    }
-
-    /**
-     * Concatenates elements to form a dotted name, eliding any null values or empty strings.
-     *
-     * @param name  the first element of the name
-     * @param names the remaining elements of the name
-     * @return {@code name} and {@code names} concatenated by periods
-     */
-    default String name(final String name, final String... names) {
-        final StringBuilder builder = new StringBuilder(name);
-        if (names != null) {
-            for (String s : names) {
-                if (s != null && !s.isEmpty()) {
-                    builder.append('.');
-                    builder.append(s);
-                }
-            }
-        }
-        return builder.toString();
     }
 
 }

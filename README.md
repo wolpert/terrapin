@@ -14,7 +14,7 @@ effects.
 ### StateMachine
 
 Provides a general purpose state machine implementation with pre/post transition hooks, functional styling and
-metrics. It proved pretty useful in older personal projects so made it open-source to increase availability.
+metricsImplementation. It proved pretty useful in older personal projects so made it open-source to increase availability.
 
 ### CodeHead Test
 

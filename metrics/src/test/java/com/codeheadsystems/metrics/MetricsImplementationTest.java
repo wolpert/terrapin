@@ -16,12 +16,15 @@
 
 package com.codeheadsystems.metrics;
 
+import static com.codeheadsystems.metrics.MetricsImplementation.FAIL;
+import static com.codeheadsystems.metrics.MetricsImplementation.SUCCESS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.function.Supplier;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,63 +33,61 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class MetricsTest {
+class MetricsImplementationTest {
 
-    private static final String SUCCESS = "success";
-    private static final String FAIL = "fail";
     private static final String METRIC_NAME = "name";
     private static final long ONE = 1;
     public static final int ZERO = 0;
 
-    @Mock private MetricsImplementation metricsImplementation;
+    @Mock private MetricsVendor metricsVendor;
     @Mock private Supplier<Boolean> supplier;
 
-    private Metrics metrics;
+    private MetricsImplementation metricsImplementation;
 
     @BeforeEach
     void setUp() {
-        metrics = new Metrics(metricsImplementation, SUCCESS, FAIL);
+        metricsImplementation = new MetricsImplementation(metricsVendor);
     }
 
     @Test
     void count() throws IOException {
-        metrics.count(METRIC_NAME, ONE);
-        metrics.close();
+        metricsImplementation.count(METRIC_NAME, ONE);
+        metricsImplementation.close();
 
-        verify(metricsImplementation).count(METRIC_NAME, ONE);
+        verify(metricsVendor).count(METRIC_NAME, Map.of(), ONE);
     }
 
     @Test
     void latency_success() throws IOException {
-        when(metricsImplementation.time(METRIC_NAME, supplier))
+        when(metricsVendor.time(METRIC_NAME, Map.of(), supplier))
                 .thenReturn(true);
 
-        assertThat(metrics.latency(METRIC_NAME, supplier))
+        assertThat(metricsImplementation.time(METRIC_NAME, supplier))
                 .isTrue();
-        metrics.close();
+        metricsImplementation.close();
 
-        verify(metricsImplementation).count(METRIC_NAME + SUCCESS, ONE);
-        verify(metricsImplementation).count(METRIC_NAME + FAIL, ZERO);
+        verify(metricsVendor).count(METRIC_NAME + SUCCESS, Map.of(), ONE);
+        verify(metricsVendor).count(METRIC_NAME + FAIL, Map.of(), ZERO);
     }
 
     @Test
     void latency_fail() throws IOException {
-        when(metricsImplementation.time(METRIC_NAME, supplier))
+        when(metricsVendor.time(METRIC_NAME, Map.of(), supplier))
                 .thenThrow(new IllegalArgumentException("mock"));
 
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> metrics.latency(METRIC_NAME, supplier))
+                .isThrownBy(() -> metricsImplementation.time(METRIC_NAME, supplier))
                 .withMessage("mock");
 
-        metrics.close();
+        metricsImplementation.close();
 
-        verify(metricsImplementation).count(METRIC_NAME + SUCCESS, ZERO);
-        verify(metricsImplementation).count(METRIC_NAME + FAIL, ONE);
+        verify(metricsVendor).count(METRIC_NAME + SUCCESS, Map.of(), ZERO);
+        verify(metricsVendor).count(METRIC_NAME + FAIL, Map.of(), ONE);
     }
 
     @Test
     void close() throws IOException {
-        metrics.close();
+        metricsImplementation.close();
     }
 
 }

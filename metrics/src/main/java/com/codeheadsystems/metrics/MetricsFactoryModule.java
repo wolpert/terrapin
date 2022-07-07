@@ -16,32 +16,26 @@
 
 package com.codeheadsystems.metrics;
 
+import dagger.Binds;
+import dagger.BindsOptionalOf;
 import dagger.Module;
 import dagger.Provides;
 import java.util.Optional;
+import java.util.function.Supplier;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 /**
- * To use this, you need to define provider for a MetricsImplementationFactory. Else you will get the null one.
+ * To use this, you need to define provider for a Metrics Vendor. Else you will get the null one.
+ * Check the logs when you get the metrics factory from the dagger container.
  */
-@Module
+@Module(includes = MetricsFactoryModule.Binder.class)
 public class MetricsFactoryModule {
 
-    public static final String DEFAULT_SUCCESS = ".success";
-    public static final String DEFAULT_FAIL = ".fail";
-    public static final String METRICS_IMPLEMENTATION = "METRICS_IMPLEMENTATION_FACTORY";
-    public static final String METRIC_SUCCESS_NAME = "METRIC_SUCCESS_NAME";
-    public static final String METRIC_FAIL_NAME = "METRIC_FAIL_NAME";
+    @Module
+    public interface Binder {
+        @BindsOptionalOf
+        MetricsVendor metricsVendor();
 
-    @Provides
-    @Singleton
-    public MetricsFactory metricsFactory(@Named(METRICS_IMPLEMENTATION) final Optional<MetricsImplementation> metricsImplementation,
-                                         @Named(METRIC_SUCCESS_NAME) final Optional<String> successName,
-                                         @Named(METRIC_FAIL_NAME) final Optional<String> failName) {
-        return new MetricsFactory(metricsImplementation.orElseGet(NullMetricsImplementation::new),
-                successName.orElse(DEFAULT_SUCCESS),
-                failName.orElse(DEFAULT_FAIL));
     }
-
 }

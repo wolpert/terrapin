@@ -16,43 +16,89 @@
 
 package com.codeheadsystems.metrics;
 
-import java.io.Closeable;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
 /**
- * Base metrics we support. Any metric service needs to implement these metrics.
+ * This class handles the metrics we need. It uses a metrics implementation object to send metrics to the server.
+ * Basically it's a helper.
  */
-public interface MetricsImplementation extends Closeable {
+public class MetricsImplementation implements Metrics {
+
+    public static final String SUCCESS = ".success";
+    public static final String FAIL = ".fail";
+
+    private final MetricsVendor metricsVendor;
+
+    public MetricsImplementation(final MetricsVendor metricsVendor) {
+        this.metricsVendor = metricsVendor;
+    }
+
+    public void count(final String name,
+                      final Map<String, String> dimensions,
+                      final long value) {
+        metricsVendor.count(name, dimensions, value);
+    }
+
+    public <R> R time(final String name,
+                      final Map<String, String> dimensions,
+                      final Supplier<R> supplier) {
+        try {
+            final R result = metricsVendor.time(name, dimensions, supplier);
+            count(name + SUCCESS, dimensions, 1);
+            count(name + FAIL, dimensions, 0);
+            return result;
+        } catch (RuntimeException re) {
+            count(name + SUCCESS, dimensions, 0);
+            count(name + FAIL, dimensions, 1);
+            throw re;
+        }
+    }
+
+    @Override
+    public void close() throws IOException {
+    }
+
+    // ---- Taken from dropwizard metric registry.
 
     /**
-     * Counts the value into the metric. Can be any positive/negative number including zero.
-     * Note, in dropwizard metrics, this is likely just a histogram. Note, if the metrics
-     * implementation does not support dimensions they will be ignored.
+     * Concatenates elements to form a dotted name, eliding any null values or empty strings.
      *
-     * @param name       of the metric.
-     * @param value      for the counter.
-     * @param dimensions how to slice the data.
+     * @param name  the first element of the name
+     * @param names the remaining elements of the name
+     * @return {@code name} and {@code names} concatenated by periods
      */
-    void count(String name, long value, Map<String, String> dimensions);
-
-    default void count(String name, long value) {
-        count(name, value, Map.of());
+    public String name(final String name, final String... names) {
+        final StringBuilder builder = new StringBuilder();
+        append(builder, name);
+        if (names != null) {
+            for (String s : names) {
+                append(builder, s);
+            }
+        }
+        return builder.toString();
     }
 
     /**
-     * Default latency check. Note that this does not automatically track exceptions.Note, if the metrics
-     * * implementation does not support dimensions they will be ignored.
+     * Concatenates a class name and elements to form a dotted name, eliding any null values or
+     * empty strings.
      *
-     * @param name     of the metric.
-     * @param supplier function to call. Should return a value.
-     * @param <R>      return type.
-     * @return a value.
+     * @param klass the first element of the name
+     * @param names the remaining elements of the name
+     * @return {@code klass} and {@code names} concatenated by periods
      */
-    <R> R time(String name, Map<String, String> dimensions, Supplier<R> supplier);
-
-    default <R> R time(String name, Supplier<R> supplier) {
-        return time(name, Map.of(), supplier);
+    public String name(Class<?> klass, String... names) {
+        return name(klass.getName(), names);
     }
 
+    private void append(StringBuilder builder, String part) {
+        if (part != null && !part.isEmpty()) {
+            if (builder.length() > 0) {
+                builder.append('.');
+            }
+            builder.append(part);
+        }
+    }
 }

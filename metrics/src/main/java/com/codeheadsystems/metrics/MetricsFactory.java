@@ -16,46 +16,42 @@
 
 package com.codeheadsystems.metrics;
 
-import java.io.IOException;
-import java.util.function.Consumer;
-import java.util.function.Function;
+import java.util.Optional;
+import java.util.function.Supplier;
+import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MetricsFactory {
-
+/**
+ * Initially, the metrics factory is a simplistic supplier. As we get more complicated, we can extend this as needed.
+ * But for now, just follow the supplier pattern.
+ */
+@Singleton
+public class MetricsFactory implements Supplier<Metrics>{
     private static final Logger LOGGER = LoggerFactory.getLogger(MetricsFactory.class);
+    private static final Metrics NULL_METRICS = new NullMetrics();
+    private final Supplier<Metrics> metricsSupplier;
 
-    private final MetricsImplementation metricsImplementation;
-    private final String successName;
-    private final String failName;
-
-    public MetricsFactory(final MetricsImplementation metricsImplementation,
-                          final String successName,
-                          final String failName) {
-        this.metricsImplementation = metricsImplementation;
-        this.successName = successName;
-        this.failName = failName;
-        LOGGER.info("MetricsFactory({},{},{})", this.metricsImplementation, this.successName, this.failName);
+    public MetricsFactory(Optional<MetricsVendor> metricsVendor){
+        LOGGER.info("MetricsFactory({}})", metricsVendor);
+        metricsSupplier = metricsVendor               // This is a little funky looking but...
+                .map(this::metricsImplementation)     // returns the supplier as built by the method
+                .orElse(MetricsFactory::nullMetrics); // returns the method which IS the supplier. Yeah, I know...
     }
 
-    public Metrics build() {
-        return new Metrics(metricsImplementation, successName, failName);
+    public static Metrics nullMetrics() {
+        return NULL_METRICS;
     }
 
-    public void with(final Consumer<Metrics> consumer) {
-        with(m -> {
-            consumer.accept(m);
-            return null;
-        });
+    /**
+     * Helper method to simplify the constructor. Else the map is too confusing.
+     */
+    private Supplier<Metrics> metricsImplementation(final MetricsVendor v) {
+        return () -> new MetricsImplementation(v);
     }
 
-    public <R> R with(final Function<Metrics,R> function) {
-        try(Metrics metrics = build()) {
-            return function.apply(metrics);
-        } catch (IOException e) {
-            LOGGER.error("Metrics Fail", e);
-            throw new IllegalStateException("Metrics fail", e);
-        }
+    @Override
+    public Metrics get() {
+        return metricsSupplier.get();
     }
 }

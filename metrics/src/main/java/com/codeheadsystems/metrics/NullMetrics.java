@@ -16,26 +16,24 @@
 
 package com.codeheadsystems.metrics;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.function.Supplier;
 
-/**
- * Empty class that does nothing.
- */
-public class NullMetricsImplementation implements MetricsImplementation {
+public class NullMetrics implements Metrics {
 
     @Override
-    public void count(final String name, final long value, Map<String, String> dimensions) {
+    public void count(final String name, final Map<String, String> dimensions, final long value) {
 
     }
 
     @Override
     public <R> R time(final String name, final Map<String, String> dimensions, final Supplier<R> supplier) {
-        return supplier.get();
+        return null;
     }
 
     @Override
-    public void close() {
+    public void close() throws IOException {
 
     }
 }

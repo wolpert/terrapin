@@ -17,7 +17,7 @@
 package com.codeheadsystems.metrics.dropwizard;
 
 import com.codahale.metrics.MetricRegistry;
-import com.codeheadsystems.metrics.MetricsImplementation;
+import com.codeheadsystems.metrics.MetricsVendor;
 import java.io.IOException;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -28,22 +28,22 @@ import javax.inject.Singleton;
  * Currently dimensions are ignored for dropwizard.
  */
 @Singleton
-public class DropwizardMetricsImplementation implements MetricsImplementation {
+public class DropwizardMetricsVendor implements MetricsVendor {
 
     private final MetricRegistry metricRegistry;
 
     @Inject
-    public DropwizardMetricsImplementation(final MetricRegistry metricRegistry) {
+    public DropwizardMetricsVendor(final MetricRegistry metricRegistry) {
         this.metricRegistry = metricRegistry;
     }
 
     @Override
-    public void count(final String name, final long value, Map<String,String> dimensions) {
+    public void count(final String name, Map<String, String> dimensions, final long value) {
         metricRegistry.histogram(name).update(value);
     }
 
     @Override
-    public <R> R time(final String name, final Map<String,String> dimensions, final Supplier<R> supplier) {
+    public <R> R time(final String name, final Map<String, String> dimensions, final Supplier<R> supplier) {
         return metricRegistry.timer(name).timeSupplier(supplier);
     }
 
