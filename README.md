@@ -2,6 +2,9 @@
 
 A collection of open-source tools.
 
+> **_NOTE:_** The Terrapin project is currently morphing into new work as well... not just
+> a dumping ground of my old projects. I'll update the readme soon(tm).
+
 ## Description
 
 The Terrapin project is a set of software projects that help provide features that can be used for a broad range
