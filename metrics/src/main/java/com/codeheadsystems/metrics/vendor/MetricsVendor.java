@@ -31,8 +31,8 @@ public interface MetricsVendor extends Closeable {
      * implementation does not support dimensions they will be ignored.
      *
      * @param name       of the metric.
-     * @param value      for the counter.
      * @param dimensions how to slice the data.
+     * @param value      for the counter.
      */
     void count(String name, Map<String, String> dimensions, long value);
 
@@ -40,11 +40,9 @@ public interface MetricsVendor extends Closeable {
      * Default latency check. Note that this does not automatically track exceptions.Note, if the metrics
      * * implementation does not support dimensions they will be ignored.
      *
-     * @param name     of the metric.
-     * @param supplier function to call. Should return a value.
-     * @param <R>      return type.
-     * @return a value.
+     * @param name       of the metric.
+     * @param dimensions how to slice the data.
+     * @param value      for the counter.
      */
-    <R> R time(String name, Map<String, String> dimensions, Supplier<R> supplier);
-
+    void time(String name, Map<String, String> dimensions, long value);
 }

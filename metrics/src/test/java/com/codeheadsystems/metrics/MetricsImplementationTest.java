@@ -26,6 +26,7 @@ import static org.mockito.Mockito.when;
 import com.codeheadsystems.metrics.impl.MetricsImplementation;
 import com.codeheadsystems.metrics.vendor.MetricsVendor;
 import java.io.IOException;
+import java.time.Clock;
 import java.util.Map;
 import java.util.function.Supplier;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,18 +38,18 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class MetricsImplementationTest {
 
+    public static final int ZERO = 0;
     private static final String METRIC_NAME = "name";
     private static final long ONE = 1;
-    public static final int ZERO = 0;
-
     @Mock private MetricsVendor metricsVendor;
     @Mock private Supplier<Boolean> supplier;
+    @Mock private Clock clock;
 
     private MetricsImplementation metricsImplementation;
 
     @BeforeEach
     void setUp() {
-        metricsImplementation = new MetricsImplementation(metricsVendor);
+        metricsImplementation = new MetricsImplementation(metricsVendor, clock);
     }
 
     @Test
@@ -61,7 +62,7 @@ class MetricsImplementationTest {
 
     @Test
     void latency_success() throws IOException {
-        when(metricsVendor.time(METRIC_NAME, Map.of(), supplier))
+        when(supplier.get())
                 .thenReturn(true);
 
         assertThat(metricsImplementation.time(METRIC_NAME, supplier))
@@ -74,7 +75,7 @@ class MetricsImplementationTest {
 
     @Test
     void latency_fail() throws IOException {
-        when(metricsVendor.time(METRIC_NAME, Map.of(), supplier))
+        when(supplier.get())
                 .thenThrow(new IllegalArgumentException("mock"));
 
         assertThatExceptionOfType(IllegalArgumentException.class)

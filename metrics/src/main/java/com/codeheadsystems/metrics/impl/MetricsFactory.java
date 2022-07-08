@@ -18,6 +18,7 @@ package com.codeheadsystems.metrics.impl;
 
 import com.codeheadsystems.metrics.Metrics;
 import com.codeheadsystems.metrics.vendor.MetricsVendor;
+import java.time.Clock;
 import java.util.Optional;
 import java.util.function.Supplier;
 import javax.inject.Inject;
@@ -28,18 +29,23 @@ import org.slf4j.LoggerFactory;
 /**
  * Initially, the metrics factory is a simplistic supplier. As we get more complicated, we can extend this as needed.
  * But for now, just follow the supplier pattern.
+ *
+ * TODO replace this with a dagger factory.
  */
 @Singleton
 public class MetricsFactory implements Supplier<Metrics> {
     private static final Logger LOGGER = LoggerFactory.getLogger(MetricsFactory.class);
     private final Metrics nullMetrics;
+    private final Clock clock;
     private final Supplier<Metrics> metricsSupplier;
 
     @Inject
     public MetricsFactory(final Optional<MetricsVendor> metricsVendor,
-                          final NullMetrics nullMetrics) {
+                          final NullMetrics nullMetrics,
+                          final Clock clock) {
         LOGGER.info("MetricsFactory({}})", metricsVendor);
         this.nullMetrics = nullMetrics;
+        this.clock = clock;
         this.metricsSupplier = metricsVendor      // This is a little funky looking but...
                 .map(this::metricsImplementation) // returns the supplier as built by the method
                 .orElse(this::nullMetrics);       // returns the method which IS the supplier. Yeah, I know...
@@ -53,7 +59,7 @@ public class MetricsFactory implements Supplier<Metrics> {
      * Helper method to simplify the constructor. Else the map is too confusing.
      */
     private Supplier<Metrics> metricsImplementation(final MetricsVendor v) {
-        return () -> new MetricsImplementation(v);
+        return () -> new MetricsImplementation(v, clock);
     }
 
     @Override

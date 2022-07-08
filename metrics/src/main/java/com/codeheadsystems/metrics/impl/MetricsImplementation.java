@@ -19,6 +19,7 @@ package com.codeheadsystems.metrics.impl;
 import com.codeheadsystems.metrics.Metrics;
 import com.codeheadsystems.metrics.vendor.MetricsVendor;
 import java.io.IOException;
+import java.time.Clock;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -33,14 +34,18 @@ public class MetricsImplementation implements Metrics {
     public static final String FAIL = ".fail";
 
     private final MetricsVendor metricsVendor;
-
+    private final Clock clock;
     private final Map<String, String> dimensions;
     private final HashMap<String, Long> counts;
+    private final HashMap<String, Long> times;
 
-    public MetricsImplementation(final MetricsVendor metricsVendor) {
+    public MetricsImplementation(final MetricsVendor metricsVendor,
+                                 final Clock clock) {
         this.metricsVendor = metricsVendor;
+        this.clock = clock;
         this.dimensions = new HashMap<>(); // This is not immutable.
         this.counts = new HashMap<>();
+        this.times = new HashMap<>();
     }
 
     @Override
@@ -65,65 +70,33 @@ public class MetricsImplementation implements Metrics {
         counts.put(name, currentValue + value);
     }
 
+    /**
+     * TODO: Make this not report the metrics until they are closed.
+     */
     public <R> R time(final String name,
                       final Supplier<R> supplier) {
         count(name + SUCCESS, 0);
         count(name + FAIL, 0);
+        final long startTime  = clock.millis();
         try {
-            final R result = metricsVendor.time(name, dimensions, supplier);
+            final R result = supplier.get();
             count(name + SUCCESS, 1);
             return result;
         } catch (RuntimeException re) {
             count(name + FAIL, 1);
             throw re;
+        } finally {
+            final long endTime = clock.millis();
+            times.put(name, endTime - startTime);
         }
     }
 
     @Override
     public void close() throws IOException {
         counts.forEach((name, value) -> metricsVendor.count(name, dimensions, value));
+        times.forEach((name,value)-> metricsVendor.time(name, dimensions, value));
         dimensions.clear();
         counts.clear();
     }
 
-    // ---- Taken from dropwizard metric registry.
-
-    /**
-     * Concatenates elements to form a dotted name, eliding any null values or empty strings.
-     *
-     * @param name  the first element of the name
-     * @param names the remaining elements of the name
-     * @return {@code name} and {@code names} concatenated by periods
-     */
-    public String name(final String name, final String... names) {
-        final StringBuilder builder = new StringBuilder();
-        append(builder, name);
-        if (names != null) {
-            for (String s : names) {
-                append(builder, s);
-            }
-        }
-        return builder.toString();
-    }
-
-    /**
-     * Concatenates a class name and elements to form a dotted name, eliding any null values or
-     * empty strings.
-     *
-     * @param klass the first element of the name
-     * @param names the remaining elements of the name
-     * @return {@code klass} and {@code names} concatenated by periods
-     */
-    public String name(Class<?> klass, String... names) {
-        return name(klass.getName(), names);
-    }
-
-    private void append(StringBuilder builder, String part) {
-        if (part != null && !part.isEmpty()) {
-            if (builder.length() > 0) {
-                builder.append('.');
-            }
-            builder.append(part);
-        }
-    }
 }

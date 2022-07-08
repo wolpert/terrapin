@@ -20,6 +20,10 @@ import java.io.Closeable;
 import java.util.Map;
 import java.util.function.Supplier;
 
+/**
+ * Metrics are designed to NOT report metrics until the object itself is closed. You MUST close
+ * the metrics object.
+ */
 public interface Metrics extends Closeable {
 
     /**

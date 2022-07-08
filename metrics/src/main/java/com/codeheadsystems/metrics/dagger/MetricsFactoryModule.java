@@ -22,6 +22,8 @@ import com.codeheadsystems.metrics.vendor.MetricsVendor;
 import dagger.Binds;
 import dagger.BindsOptionalOf;
 import dagger.Module;
+import dagger.Provides;
+import java.time.Clock;
 import java.util.function.Supplier;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -30,7 +32,7 @@ import javax.inject.Singleton;
  * To use this, you need to define provider for a Metrics Vendor. Else you will get the null one.
  * Check the logs when you get the metrics factory from the dagger container.
  */
-@Module
+@Module(includes = MetricsFactoryModule.Utilities.class)
 public interface MetricsFactoryModule {
     /**
      * This will be set when your dagger modules includes the vendor implementation. Metrics uses can ignore this.
@@ -48,5 +50,16 @@ public interface MetricsFactoryModule {
     @Singleton
     @Named("METRICS_SUPPLIER")
     Supplier<Metrics> metricsSupplier(MetricsFactory metricsFactory);
+
+    @Module
+    class Utilities {
+
+        @Provides
+        @Singleton
+        public Clock clock() {
+            return Clock.systemUTC();
+        }
+
+    }
 
 }

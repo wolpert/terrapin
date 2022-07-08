@@ -20,7 +20,7 @@ import com.codahale.metrics.MetricRegistry;
 import com.codeheadsystems.metrics.vendor.MetricsVendor;
 import java.io.IOException;
 import java.util.Map;
-import java.util.function.Supplier;
+import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -39,12 +39,12 @@ public class DropwizardMetricsVendor implements MetricsVendor {
 
     @Override
     public void count(final String name, Map<String, String> dimensions, final long value) {
-        metricRegistry.histogram(name).update(value);
+        metricRegistry.meter(name).mark(value);
     }
 
     @Override
-    public <R> R time(final String name, final Map<String, String> dimensions, final Supplier<R> supplier) {
-        return metricRegistry.timer(name).timeSupplier(supplier);
+    public void time(final String name, final Map<String, String> dimensions, final long value) {
+        metricRegistry.timer(name).update(value, TimeUnit.MILLISECONDS);
     }
 
     @Override
