@@ -14,13 +14,14 @@
  *    limitations under the License.
  */
 
-package com.codeheadsystems.metrics;
+package com.codeheadsystems.metrics.dagger;
 
+import com.codeheadsystems.metrics.Metrics;
+import com.codeheadsystems.metrics.impl.MetricsFactory;
+import com.codeheadsystems.metrics.vendor.MetricsVendor;
 import dagger.Binds;
 import dagger.BindsOptionalOf;
 import dagger.Module;
-import dagger.Provides;
-import java.util.Optional;
 import java.util.function.Supplier;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -29,13 +30,23 @@ import javax.inject.Singleton;
  * To use this, you need to define provider for a Metrics Vendor. Else you will get the null one.
  * Check the logs when you get the metrics factory from the dagger container.
  */
-@Module(includes = MetricsFactoryModule.Binder.class)
-public class MetricsFactoryModule {
+@Module
+public interface MetricsFactoryModule {
+    /**
+     * This will be set when your dagger modules includes the vendor implementation. Metrics uses can ignore this.
+     */
+    @BindsOptionalOf
+    @Singleton
+    MetricsVendor metricsVendor();
 
-    @Module
-    public interface Binder {
-        @BindsOptionalOf
-        MetricsVendor metricsVendor();
+    /**
+     * Metrics users can directly use the metrics factory as a supplier by using this directly. They will be the same
+     * thing. Just inject the @Named supplier into your class, and you are done. However, you should use a metrics
+     * helper to reduce the code bloat. But your call.
+     */
+    @Binds
+    @Singleton
+    @Named("METRICS_SUPPLIER")
+    Supplier<Metrics> metricsSupplier(MetricsFactory metricsFactory);
 
-    }
 }

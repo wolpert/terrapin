@@ -14,26 +14,50 @@
  *    limitations under the License.
  */
 
-package com.codeheadsystems.metrics;
+package com.codeheadsystems.metrics.impl;
 
+import com.codeheadsystems.metrics.Metrics;
 import java.io.IOException;
 import java.util.Map;
 import java.util.function.Supplier;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
+@Singleton
 public class NullMetrics implements Metrics {
 
-    @Override
-    public void count(final String name, final Map<String, String> dimensions, final long value) {
+    @Inject
+    public NullMetrics() {
 
-    }
-
-    @Override
-    public <R> R time(final String name, final Map<String, String> dimensions, final Supplier<R> supplier) {
-        return null;
     }
 
     @Override
     public void close() throws IOException {
 
+    }
+
+    @Override
+    public void setDimensions(final Map<String, String> dimensions) {
+
+    }
+
+    @Override
+    public void addDimensions(final Map<String, String> dimensions) {
+
+    }
+
+    @Override
+    public void addDimension(final String dimensionName, final String dimensionValue) {
+
+    }
+
+    @Override
+    public void count(final String name, final long value) {
+
+    }
+
+    @Override
+    public <R> R time(final String name, final Supplier<R> supplier) {
+        return null;
     }
 }

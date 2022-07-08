@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package com.codeheadsystems.metrics;
+package com.codeheadsystems.metrics.vendor;
 
 import java.io.Closeable;
 import java.util.Map;
@@ -36,10 +36,6 @@ public interface MetricsVendor extends Closeable {
      */
     void count(String name, Map<String, String> dimensions, long value);
 
-    default void count(String name, long value) {
-        count(name, Map.of(), value);
-    }
-
     /**
      * Default latency check. Note that this does not automatically track exceptions.Note, if the metrics
      * * implementation does not support dimensions they will be ignored.
@@ -50,9 +46,5 @@ public interface MetricsVendor extends Closeable {
      * @return a value.
      */
     <R> R time(String name, Map<String, String> dimensions, Supplier<R> supplier);
-
-    default <R> R time(String name, Supplier<R> supplier) {
-        return time(name, Map.of(), supplier);
-    }
 
 }

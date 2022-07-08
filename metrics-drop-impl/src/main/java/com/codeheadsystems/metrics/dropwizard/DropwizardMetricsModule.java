@@ -17,8 +17,9 @@
 package com.codeheadsystems.metrics.dropwizard;
 
 import com.codahale.metrics.MetricRegistry;
-import com.codeheadsystems.metrics.MetricsFactoryModule;
-import com.codeheadsystems.metrics.MetricsVendor;
+import com.codeheadsystems.metrics.dagger.MetricsFactoryModule;
+import com.codeheadsystems.metrics.vendor.MetricsVendor;
+import dagger.Binds;
 import dagger.Module;
 import dagger.Provides;
 import javax.inject.Singleton;
@@ -35,10 +36,12 @@ public class DropwizardMetricsModule {
         return new MetricRegistry();
     }
 
-    @Provides
-    @Singleton
-    MetricsVendor metricsImplementation(final DropwizardMetricsVendor implementation) {
-        return implementation;
-    }
+    @Module
+    public interface Binder {
 
+        @Binds
+        @Singleton
+        MetricsVendor metricsVendor(final DropwizardMetricsVendor vendor);
+
+    }
 }

@@ -23,19 +23,32 @@ import java.util.function.Supplier;
 public interface Metrics extends Closeable {
 
     /**
+     * You can set the dimensions for a metric. It is valid as long as it is open. We reset the
+     * dimensions when the metric is closed. It is optional to use. If you use this method, we
+     * clear out the old dimensions and replace them with this map.
+     *
+     * @param dimensions
+     */
+    void setDimensions(Map<String,String> dimensions);
+
+    /**
+     * This adds the dimensions to the existing set. Note, if an entry is already listed, it will
+     * overwrite the dimensions.
+     * @param dimensions
+     */
+    void addDimensions(Map<String,String> dimensions);
+
+    void addDimension(String dimensionName, String dimensionValue);
+
+    /**
      * Counts the value into the metric. Can be any positive/negative number including zero.
      * Note, in dropwizard metrics, this is likely just a histogram. Note, if the metrics
      * implementation does not support dimensions they will be ignored.
      *
      * @param name       of the metric.
      * @param value      for the counter.
-     * @param dimensions how to slice the data.
      */
-    void count(String name, Map<String, String> dimensions, long value);
-
-    default void count(String name, long value) {
-        count(name, Map.of(), value);
-    }
+    void count(String name, long value);
 
     /**
      * Default latency check. Note that this does not automatically track exceptions.Note, if the metrics
@@ -46,11 +59,7 @@ public interface Metrics extends Closeable {
      * @param <R>      return type.
      * @return a value.
      */
-    <R> R time(String name, Map<String, String> dimensions, Supplier<R> supplier);
-
-    default <R> R time(String name, Supplier<R> supplier) {
-        return time(name, Map.of(), supplier);
-    }
+    <R> R time(String name, Supplier<R> supplier);
 
     /**
      * Concatenates a class name and elements to form a dotted name, eliding any null values or

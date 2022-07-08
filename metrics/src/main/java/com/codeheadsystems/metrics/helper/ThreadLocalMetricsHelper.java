@@ -14,10 +14,12 @@
  *    limitations under the License.
  */
 
-package com.codeheadsystems.metrics;
+package com.codeheadsystems.metrics.helper;
 
+import com.codeheadsystems.metrics.Metrics;
+import com.codeheadsystems.metrics.impl.MetricsFactory;
+import com.codeheadsystems.metrics.MetricsHelper;
 import java.io.IOException;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -29,45 +31,48 @@ import org.slf4j.LoggerFactory;
  * it is usable in children.
  */
 @Singleton
-public class ThreadLocalMetricsFactory {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ThreadLocalMetricsFactory.class);
+public class ThreadLocalMetricsHelper implements MetricsHelper {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ThreadLocalMetricsHelper.class);
 
     private final MetricsFactory metricsFactory;
-    private final ThreadLocal<Metrics> threadLocalMetrics = ThreadLocal.withInitial(MetricsFactory::nullMetrics);
+    private final ThreadLocal<Metrics> threadLocalMetrics;
 
     @Inject
-    public ThreadLocalMetricsFactory(final MetricsFactory metricsFactory) {
+    public ThreadLocalMetricsHelper(final MetricsFactory metricsFactory) {
         LOGGER.info("ThreadLocalMetricsFactory({})", metricsFactory);
         this.metricsFactory = metricsFactory;
+        this.threadLocalMetrics = ThreadLocal.withInitial(metricsFactory::nullMetrics);
     }
 
-    public void with(final Runnable runnable) {
-        with(m-> {
-            runnable.run();
-        });
+    protected Metrics internalGetMetrics() {
+        return metricsFactory.get();
     }
 
-    public void with(final Consumer<Metrics> consumer) {
-        with(m -> {
-            consumer.accept(m);
-            return null;
-        });
-    }
-
-    public <R> R with(final Function<Metrics, R> function) {
-        try (Metrics metrics = metricsFactory.get()) {
-            threadLocalMetrics.set(metrics);
-            return function.apply(metrics);
+    protected void internalMetricsCleanup(final Metrics metrics) {
+        try {
+            metrics.close();
         } catch (IOException e) {
-            LOGGER.error("Metrics Fail", e);
-            throw new IllegalStateException("Metrics fail", e);
-        } finally {
-            threadLocalMetrics.set(MetricsFactory.nullMetrics());
+            LOGGER.error("Metrics ignored due to metrics failure: {}", metrics, e);
         }
     }
 
+    @Override
+    public <R> R with(final Function<Metrics, R> function) {
+        final Metrics metrics = internalGetMetrics();
+        try {
+            threadLocalMetrics.set(metrics);
+            return function.apply(metrics);
+        } finally {
+            internalMetricsCleanup(metrics);
+            threadLocalMetrics.set(metricsFactory.nullMetrics());
+        }
+    }
+
+    @Override
     public Metrics get() {
-        return threadLocalMetrics.get();
+        final Metrics metrics = threadLocalMetrics.get();
+        LOGGER.debug("get()-> {}", metrics);
+        return metrics;
     }
 
 }

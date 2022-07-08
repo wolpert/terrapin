@@ -14,8 +14,10 @@
  *    limitations under the License.
  */
 
-package com.codeheadsystems.metrics;
+package com.codeheadsystems.metrics.impl;
 
+import com.codeheadsystems.metrics.Metrics;
+import com.codeheadsystems.metrics.vendor.MetricsVendor;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,33 +34,56 @@ public class MetricsImplementation implements Metrics {
 
     private final MetricsVendor metricsVendor;
 
+    private final Map<String, String> dimensions;
+    private final HashMap<String, Long> counts;
+
     public MetricsImplementation(final MetricsVendor metricsVendor) {
         this.metricsVendor = metricsVendor;
+        this.dimensions = new HashMap<>(); // This is not immutable.
+        this.counts = new HashMap<>();
+    }
+
+    @Override
+    public void setDimensions(final Map<String, String> dimensions) {
+        dimensions.clear();
+        addDimensions(dimensions);
+    }
+
+    @Override
+    public void addDimensions(final Map<String, String> dimensions) {
+        this.dimensions.putAll(dimensions);
+    }
+
+    @Override
+    public void addDimension(final String dimensionName, final String dimensionValue) {
+        this.dimensions.put(dimensionName, dimensionValue);
     }
 
     public void count(final String name,
-                      final Map<String, String> dimensions,
                       final long value) {
-        metricsVendor.count(name, dimensions, value);
+        long currentValue = counts.getOrDefault(name, 0L);
+        counts.put(name, currentValue + value);
     }
 
     public <R> R time(final String name,
-                      final Map<String, String> dimensions,
                       final Supplier<R> supplier) {
+        count(name + SUCCESS, 0);
+        count(name + FAIL, 0);
         try {
             final R result = metricsVendor.time(name, dimensions, supplier);
-            count(name + SUCCESS, dimensions, 1);
-            count(name + FAIL, dimensions, 0);
+            count(name + SUCCESS, 1);
             return result;
         } catch (RuntimeException re) {
-            count(name + SUCCESS, dimensions, 0);
-            count(name + FAIL, dimensions, 1);
+            count(name + FAIL, 1);
             throw re;
         }
     }
 
     @Override
     public void close() throws IOException {
+        counts.forEach((name, value) -> metricsVendor.count(name, dimensions, value));
+        dimensions.clear();
+        counts.clear();
     }
 
     // ---- Taken from dropwizard metric registry.

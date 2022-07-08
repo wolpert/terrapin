@@ -17,7 +17,7 @@
 package com.codeheadsystems.metrics.dropwizard;
 
 import com.codahale.metrics.MetricRegistry;
-import com.codeheadsystems.metrics.MetricsVendor;
+import com.codeheadsystems.metrics.vendor.MetricsVendor;
 import java.io.IOException;
 import java.util.Map;
 import java.util.function.Supplier;

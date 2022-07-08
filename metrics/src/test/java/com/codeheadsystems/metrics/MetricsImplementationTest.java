@@ -16,13 +16,15 @@
 
 package com.codeheadsystems.metrics;
 
-import static com.codeheadsystems.metrics.MetricsImplementation.FAIL;
-import static com.codeheadsystems.metrics.MetricsImplementation.SUCCESS;
+import static com.codeheadsystems.metrics.impl.MetricsImplementation.FAIL;
+import static com.codeheadsystems.metrics.impl.MetricsImplementation.SUCCESS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.codeheadsystems.metrics.impl.MetricsImplementation;
+import com.codeheadsystems.metrics.vendor.MetricsVendor;
 import java.io.IOException;
 import java.util.Map;
 import java.util.function.Supplier;

@@ -14,10 +14,13 @@
  *    limitations under the License.
  */
 
-package com.codeheadsystems.metrics;
+package com.codeheadsystems.metrics.impl;
 
+import com.codeheadsystems.metrics.Metrics;
+import com.codeheadsystems.metrics.vendor.MetricsVendor;
 import java.util.Optional;
 import java.util.function.Supplier;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,20 +30,23 @@ import org.slf4j.LoggerFactory;
  * But for now, just follow the supplier pattern.
  */
 @Singleton
-public class MetricsFactory implements Supplier<Metrics>{
+public class MetricsFactory implements Supplier<Metrics> {
     private static final Logger LOGGER = LoggerFactory.getLogger(MetricsFactory.class);
-    private static final Metrics NULL_METRICS = new NullMetrics();
+    private final Metrics nullMetrics;
     private final Supplier<Metrics> metricsSupplier;
 
-    public MetricsFactory(Optional<MetricsVendor> metricsVendor){
+    @Inject
+    public MetricsFactory(final Optional<MetricsVendor> metricsVendor,
+                          final NullMetrics nullMetrics) {
         LOGGER.info("MetricsFactory({}})", metricsVendor);
-        metricsSupplier = metricsVendor               // This is a little funky looking but...
-                .map(this::metricsImplementation)     // returns the supplier as built by the method
-                .orElse(MetricsFactory::nullMetrics); // returns the method which IS the supplier. Yeah, I know...
+        this.nullMetrics = nullMetrics;
+        this.metricsSupplier = metricsVendor      // This is a little funky looking but...
+                .map(this::metricsImplementation) // returns the supplier as built by the method
+                .orElse(this::nullMetrics);       // returns the method which IS the supplier. Yeah, I know...
     }
 
-    public static Metrics nullMetrics() {
-        return NULL_METRICS;
+    public Metrics nullMetrics() {
+        return nullMetrics;
     }
 
     /**
