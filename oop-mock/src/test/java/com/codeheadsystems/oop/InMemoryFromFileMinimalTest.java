@@ -117,7 +117,7 @@ public class InMemoryFromFileMinimalTest {
         }
 
         public Boolean callNotMocked() {
-            return timeManager.logTimed(() -> oopMock.proxy(Boolean.class, this::doIt, METHOD_MOCK_NAME , UNSET_ID));
+            return timeManager.logTimed(() -> oopMock.proxy(Boolean.class, this::doIt, METHOD_MOCK_NAME, UNSET_ID));
         }
 
     }

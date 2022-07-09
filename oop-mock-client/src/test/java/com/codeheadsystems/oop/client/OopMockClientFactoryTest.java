@@ -17,7 +17,6 @@
 package com.codeheadsystems.oop.client;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 import com.codeheadsystems.oop.client.dagger.OopMockClientAssistedFactory;

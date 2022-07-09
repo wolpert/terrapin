@@ -38,11 +38,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class InMemoryResolverTest {
 
-    private static final String FILENAME = "filename";
     public static final String NAMESPACE = "namespace";
     public static final String LOOKUP = "lookup";
     public static final String DISCRIMINATOR = "discriminator";
     public static final String MARSHALLED_DATA = "marshaled";
+    private static final String FILENAME = "filename";
     private static final Hasher HASHER = new Hasher("blah");
     private static final InMemoryMockedDataStore datastore = ImmutableInMemoryMockedDataStore.builder()
             .putDatastore(NAMESPACE, ImmutableMap.of(HASHER.hash(LOOKUP, DISCRIMINATOR),

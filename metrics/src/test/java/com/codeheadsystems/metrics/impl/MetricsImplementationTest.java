@@ -23,14 +23,12 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.codeheadsystems.metrics.impl.MetricsImplementation;
 import com.codeheadsystems.metrics.vendor.MetricsVendor;
 import java.io.IOException;
 import java.time.Clock;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -107,7 +105,7 @@ class MetricsImplementationTest {
         metricsImplementation.count(METRIC_NAME, ONE);
         metricsImplementation.close();
 
-        final HashMap<String,String> expectedDimensions = new HashMap<>(TWO_DIMENSIONS);
+        final HashMap<String, String> expectedDimensions = new HashMap<>(TWO_DIMENSIONS);
         expectedDimensions.putAll(ONE_DIMENSIONS);
         expectedDimensions.put(DIMENSION_NAME, DIMENSION_VALUE);
 

@@ -72,13 +72,13 @@ class DynamoDBExtensionTest {
     }
 
     @Test
-    void weCanAddItems(){
+    void weCanAddItems() {
         final Entry entry = new Entry(HASH, RANGE, ATTRIBUTE);
         mapper.save(entry);
         final Entry result = mapper.load(Entry.class, HASH, RANGE);
         assertThat(result)
                 .isNotNull()
-                .hasFieldOrPropertyWithValue("attribute",ATTRIBUTE);
+                .hasFieldOrPropertyWithValue("attribute", ATTRIBUTE);
     }
 
 }

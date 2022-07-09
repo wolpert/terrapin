@@ -19,7 +19,8 @@ package com.codeheadsystems.test.datastore;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.function.Consumer;
-import org.junit.jupiter.api.extension.*;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,10 +51,10 @@ public abstract class DataStoreExtension implements BeforeEachCallback {
         withStore(context, store -> {
             context.getRequiredTestInstances().getAllInstances().forEach(o -> {
                 Arrays.stream(o.getClass().getDeclaredFields())
-                    .filter(f -> f.isAnnotationPresent(DataStore.class))
-                    .forEach(field -> {
-                        setValueForField(store, o, field);
-                    });
+                        .filter(f -> f.isAnnotationPresent(DataStore.class))
+                        .forEach(field -> {
+                            setValueForField(store, o, field);
+                        });
             });
         });
     }

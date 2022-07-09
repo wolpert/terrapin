@@ -18,7 +18,6 @@ package com.codeheadsystems.oop.mock.resolver;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.Mockito.when;
 
 import com.codeheadsystems.oop.OopMockConfiguration;
 import com.codeheadsystems.oop.ResolverConfiguration;

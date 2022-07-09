@@ -33,14 +33,15 @@ public interface Metrics extends Closeable {
      *
      * @param dimensions
      */
-    void setDimensions(Map<String,String> dimensions);
+    void setDimensions(Map<String, String> dimensions);
 
     /**
      * This adds the dimensions to the existing set. Note, if an entry is already listed, it will
      * overwrite the dimensions.
+     *
      * @param dimensions
      */
-    void addDimensions(Map<String,String> dimensions);
+    void addDimensions(Map<String, String> dimensions);
 
     void addDimension(String dimensionName, String dimensionValue);
 
@@ -49,8 +50,8 @@ public interface Metrics extends Closeable {
      * Note, in dropwizard metrics, this is likely just a histogram. Note, if the metrics
      * implementation does not support dimensions they will be ignored.
      *
-     * @param name       of the metric.
-     * @param value      for the counter.
+     * @param name  of the metric.
+     * @param value for the counter.
      */
     void count(String name, long value);
 

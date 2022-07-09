@@ -27,5 +27,6 @@ import javax.inject.Singleton;
 public interface MetricComponent {
 
     MetricsHelper metricsHelper();
+
     MetricRegistry registry();
 }

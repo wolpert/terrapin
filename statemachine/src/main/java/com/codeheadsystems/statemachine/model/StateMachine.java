@@ -34,59 +34,59 @@ import org.immutables.value.Value;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class StateMachine {
 
-  /**
-   * Represents the name in a meaningful way to the calling application.
-   *
-   * @return name.
-   */
-  @JsonProperty("name")
-  public abstract String name();
+    /**
+     * Represents the name in a meaningful way to the calling application.
+     *
+     * @return name.
+     */
+    @JsonProperty("name")
+    public abstract String name();
 
-  /**
-   * The identifier for this version. New instances will always have new identifiers. (Specific to the VM)
-   *
-   * @return id.
-   */
-  @JsonProperty("id")
-  public abstract String id();
+    /**
+     * The identifier for this version. New instances will always have new identifiers. (Specific to the VM)
+     *
+     * @return id.
+     */
+    @JsonProperty("id")
+    public abstract String id();
 
-  /**
-   * Version of the state machine. Adding states or transitions will up the version.
-   *
-   * @return version.
-   */
-  @JsonProperty("version")
-  public abstract Long version();
+    /**
+     * Version of the state machine. Adding states or transitions will up the version.
+     *
+     * @return version.
+     */
+    @JsonProperty("version")
+    public abstract Long version();
 
-  @JsonProperty("states")
-  public abstract Map<String, State> states();
+    @JsonProperty("states")
+    public abstract Map<String, State> states();
 
-  @JsonProperty("initialState")
-  public abstract Optional<String> initialState();
+    @JsonProperty("initialState")
+    public abstract Optional<String> initialState();
 
-  @JsonIgnore
-  public boolean hasState(final State state) {
-    return hasState(state.name());
-  }
+    @JsonIgnore
+    public boolean hasState(final State state) {
+        return hasState(state.name());
+    }
 
-  @JsonIgnore
-  public boolean hasState(final String name) {
-    return states().containsKey(name);
-  }
+    @JsonIgnore
+    public boolean hasState(final String name) {
+        return states().containsKey(name);
+    }
 
-  @JsonIgnore
-  public Optional<String> nextState(final String stateName, final String transitionName) {
-    return Optional.of(stateName)
-        .map(s -> states().get(s))
-        .map(s -> s.transitions().get(transitionName))
-        .map(t -> states().get(t.nextState()))
-        .map(State::name);
-  }
+    @JsonIgnore
+    public Optional<String> nextState(final String stateName, final String transitionName) {
+        return Optional.of(stateName)
+                .map(s -> states().get(s))
+                .map(s -> s.transitions().get(transitionName))
+                .map(t -> states().get(t.nextState()))
+                .map(State::name);
+    }
 
-  @JsonIgnore
-  @Value.Derived
-  public String identifier() {
-    return String.format("%s:%s:%s", name(), version(), id());
-  }
+    @JsonIgnore
+    @Value.Derived
+    public String identifier() {
+        return String.format("%s:%s:%s", name(), version(), id());
+    }
 
 }

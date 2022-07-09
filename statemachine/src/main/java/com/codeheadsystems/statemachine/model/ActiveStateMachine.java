@@ -24,8 +24,8 @@ import org.immutables.value.Value;
 @Value.Immutable
 public interface ActiveStateMachine<T> {
 
-  StateMachine stateMachine();
+    StateMachine stateMachine();
 
-  InvocationModel<T> invocationModel();
+    InvocationModel<T> invocationModel();
 
 }

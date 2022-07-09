@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Initially, the metrics factory is a simplistic supplier. As we get more complicated, we can extend this as needed.
  * But for now, just follow the supplier pattern.
- *
+ * <p>
  * TODO replace this with a dagger factory.
  */
 @Singleton

@@ -16,7 +16,6 @@
 
 package com.codeheadsystems.oop.client;
 
-import com.codeheadsystems.oop.client.dagger.DaggerOopMockClientFactoryBuilder;
 import com.codeheadsystems.oop.client.dagger.OopMockClientAssistedFactory;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;

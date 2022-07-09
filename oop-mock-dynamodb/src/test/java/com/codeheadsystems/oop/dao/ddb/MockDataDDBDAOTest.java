@@ -69,7 +69,7 @@ class MockDataDDBDAOTest {
     void setup() {
         dao = new MockDataDDBDAO(mapper, converter);
         amazonDynamoDB.createTable(mapper.generateCreateTableRequest(DDBEntry.class)
-            .withBillingMode(BillingMode.PAY_PER_REQUEST));
+                .withBillingMode(BillingMode.PAY_PER_REQUEST));
     }
 
     @AfterEach
@@ -82,8 +82,8 @@ class MockDataDDBDAOTest {
     void resolve_doesnotexist() {
         when(converter.convert(NAMESPACE, LOOKUP, DISCRIMINATOR)).thenReturn(ENTRY_WITHOUT_DATA);
         assertThat(dao.resolve(NAMESPACE, LOOKUP, DISCRIMINATOR))
-            .isNotNull()
-            .isEmpty();
+                .isNotNull()
+                .isEmpty();
     }
 
     @Test
@@ -92,9 +92,9 @@ class MockDataDDBDAOTest {
         when(converter.toMockedData(ddbEntryCaptor.capture())).thenReturn(Optional.of(mockedData));
         mapper.save(ENTRY_WITH_DATA);
         assertThat(dao.resolve(NAMESPACE, LOOKUP, DISCRIMINATOR))
-            .isNotNull()
-            .isNotEmpty()
-            .contains(mockedData);
+                .isNotNull()
+                .isNotEmpty()
+                .contains(mockedData);
     }
 
     @Test
@@ -103,34 +103,34 @@ class MockDataDDBDAOTest {
         when(converter.toMockedData(ddbEntryCaptor.capture())).thenReturn(Optional.empty());
         mapper.save(ENTRY_WITH_DATA);
         assertThat(dao.resolve(NAMESPACE, LOOKUP, DISCRIMINATOR))
-            .isNotNull()
-            .isEmpty();
+                .isNotNull()
+                .isEmpty();
     }
 
     @Test
     void store() {
         when(converter.convert(NAMESPACE, LOOKUP, DISCRIMINATOR, mockedData))
-            .thenReturn(ENTRY_WITH_DATA);
+                .thenReturn(ENTRY_WITH_DATA);
 
         dao.store(NAMESPACE, LOOKUP, DISCRIMINATOR, mockedData);
 
         assertThat(mapper.load(ENTRY_WITHOUT_DATA))
-            .isNotNull()
-            .hasFieldOrPropertyWithValue("mockData", MOCK_DATA);
+                .isNotNull()
+                .hasFieldOrPropertyWithValue("mockData", MOCK_DATA);
     }
 
     @Test
     void delete_exists() {
         mapper.save(ENTRY_WITH_DATA);
         assertThat(mapper.load(ENTRY_WITHOUT_DATA))
-            .isNotNull()
-            .hasFieldOrPropertyWithValue("mockData", MOCK_DATA); // verify we got this
+                .isNotNull()
+                .hasFieldOrPropertyWithValue("mockData", MOCK_DATA); // verify we got this
         when(converter.convert(NAMESPACE, LOOKUP, DISCRIMINATOR)).thenReturn(ENTRY_WITHOUT_DATA);
 
         dao.delete(NAMESPACE, LOOKUP, DISCRIMINATOR);
         assertThat(dao.resolve(NAMESPACE, LOOKUP, DISCRIMINATOR))
-            .isNotNull()
-            .isEmpty();
+                .isNotNull()
+                .isEmpty();
     }
 
     @Test
@@ -139,8 +139,8 @@ class MockDataDDBDAOTest {
 
         dao.delete(NAMESPACE, LOOKUP, DISCRIMINATOR);
         assertThat(dao.resolve(NAMESPACE, LOOKUP, DISCRIMINATOR))
-            .isNotNull()
-            .isEmpty();
+                .isNotNull()
+                .isEmpty();
         // really we are asserting there is no exception.
     }
 

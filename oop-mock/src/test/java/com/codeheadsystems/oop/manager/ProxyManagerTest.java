@@ -17,10 +17,8 @@
 package com.codeheadsystems.oop.manager;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-import com.codeheadsystems.oop.OopMockConfiguration;
 import com.codeheadsystems.oop.mock.model.MockedData;
 import com.codeheadsystems.oop.mock.resolver.MockDataResolver;
 import com.codeheadsystems.oop.mock.translator.Translator;

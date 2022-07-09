@@ -25,18 +25,18 @@ import org.junit.jupiter.api.Test;
 
 class ObjectMapperFactoryTest {
 
-  private ObjectMapperFactory factory;
+    private ObjectMapperFactory factory;
 
-  @BeforeEach
-  void setUp() {
-    factory = new ObjectMapperFactory();
-  }
+    @BeforeEach
+    void setUp() {
+        factory = new ObjectMapperFactory();
+    }
 
-  @Test
-  void objectMapper() {
-    final ObjectMapper mapper = factory.objectMapper();
+    @Test
+    void objectMapper() {
+        final ObjectMapper mapper = factory.objectMapper();
 
-    assertThat(mapper.getRegisteredModuleIds())
-        .contains(Jdk8Module.class.getCanonicalName());
-  }
+        assertThat(mapper.getRegisteredModuleIds())
+                .contains(Jdk8Module.class.getCanonicalName());
+    }
 }

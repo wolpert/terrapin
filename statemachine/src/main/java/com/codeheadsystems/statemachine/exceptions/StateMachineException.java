@@ -20,13 +20,13 @@ import com.codeheadsystems.statemachine.model.StateMachine;
 
 public class StateMachineException extends RuntimeException {
 
-  private static final String MESSAGE = "[%s] %s";
+    private static final String MESSAGE = "[%s] %s";
 
-  public StateMachineException(final StateMachine stateMachine, final String message) {
-    super(String.format(MESSAGE, stateMachine.identifier(), message));
-  }
+    public StateMachineException(final StateMachine stateMachine, final String message) {
+        super(String.format(MESSAGE, stateMachine.identifier(), message));
+    }
 
-  public StateMachineException(final StateMachine stateMachine, final String message, final Throwable throwable) {
-    super(String.format(MESSAGE, stateMachine.identifier(), message), throwable);
-  }
+    public StateMachineException(final StateMachine stateMachine, final String message, final Throwable throwable) {
+        super(String.format(MESSAGE, stateMachine.identifier(), message), throwable);
+    }
 }

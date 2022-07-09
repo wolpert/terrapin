@@ -17,8 +17,8 @@
 package com.codeheadsystems.metrics.helper;
 
 import com.codeheadsystems.metrics.Metrics;
-import com.codeheadsystems.metrics.impl.MetricsFactory;
 import com.codeheadsystems.metrics.MetricsHelper;
+import com.codeheadsystems.metrics.impl.MetricsFactory;
 import java.io.IOException;
 import java.util.function.Function;
 import javax.inject.Inject;

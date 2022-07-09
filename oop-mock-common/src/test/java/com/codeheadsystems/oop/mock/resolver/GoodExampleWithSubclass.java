@@ -16,11 +16,7 @@
 
 package com.codeheadsystems.oop.mock.resolver;
 
-import com.codeheadsystems.oop.OopMockConfiguration;
-import com.codeheadsystems.oop.mock.converter.JsonConverter;
-import com.codeheadsystems.oop.mock.manager.ResourceLookupManager;
 import com.codeheadsystems.oop.mock.model.MockedData;
-import com.codeheadsystems.oop.mock.translator.Translator;
 import java.util.Optional;
 import javax.inject.Inject;
 

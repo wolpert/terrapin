@@ -33,20 +33,20 @@ import org.immutables.value.Value;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public interface State {
 
-  @JsonProperty("name")
-  String name();
+    @JsonProperty("name")
+    String name();
 
-  @JsonProperty("transitions")
-  Map<String, Transition> transitions();
+    @JsonProperty("transitions")
+    Map<String, Transition> transitions();
 
-  @JsonIgnore
-  default boolean hasTransition(final Transition transition) {
-    return hasTransition(transition.name());
-  }
+    @JsonIgnore
+    default boolean hasTransition(final Transition transition) {
+        return hasTransition(transition.name());
+    }
 
-  @JsonIgnore
-  default boolean hasTransition(final String name) {
-    return transitions().containsKey(name);
-  }
+    @JsonIgnore
+    default boolean hasTransition(final String name) {
+        return transitions().containsKey(name);
+    }
 
 }

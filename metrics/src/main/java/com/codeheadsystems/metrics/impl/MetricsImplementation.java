@@ -77,7 +77,7 @@ public class MetricsImplementation implements Metrics {
                       final Supplier<R> supplier) {
         count(name + SUCCESS, 0);
         count(name + FAIL, 0);
-        final long startTime  = clock.millis();
+        final long startTime = clock.millis();
         try {
             final R result = supplier.get();
             count(name + SUCCESS, 1);
@@ -94,7 +94,7 @@ public class MetricsImplementation implements Metrics {
     @Override
     public void close() throws IOException {
         counts.forEach((name, value) -> metricsVendor.count(name, dimensions, value));
-        times.forEach((name,value)-> metricsVendor.time(name, dimensions, value));
+        times.forEach((name, value) -> metricsVendor.time(name, dimensions, value));
         dimensions.clear();
         counts.clear();
     }

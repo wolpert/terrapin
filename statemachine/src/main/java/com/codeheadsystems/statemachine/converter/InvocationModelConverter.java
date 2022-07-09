@@ -39,101 +39,101 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class InvocationModelConverter {
 
-  private static final Logger log = LoggerFactory.getLogger(InvocationModelConverter.class);
+    private static final Logger log = LoggerFactory.getLogger(InvocationModelConverter.class);
 
-  private final Set<PendingTransition> globalPendingTransitions;
-  private final Set<PostTransition> globalPostTransitions;
+    private final Set<PendingTransition> globalPendingTransitions;
+    private final Set<PostTransition> globalPostTransitions;
 
-  @Inject
-  public InvocationModelConverter(@Named("PendingTransition") final Set<PendingTransition> globalPendingTransitions,
-                                  @Named("PostTransition") final Set<PostTransition> globalPostTransitions) {
-    this.globalPendingTransitions = globalPendingTransitions;
-    this.globalPostTransitions = globalPostTransitions;
-    log.debug("InvocationModelConverter");
-  }
-
-  /**
-   * Generates an invocation model for the given class. Must use the default getState()/setState() pattern
-   * or use annotations.
-   *
-   * @param targetClass class we use.
-   * @param <T>         type for return.
-   * @return a usable model.
-   */
-  public <T> InvocationModel<T> generate(final Class<T> targetClass) {
-    log.debug("generate({})", targetClass);
-    return generateFromField(targetClass)
-        .orElseGet(() -> generate(targetClass, "state"));
-  }
-
-  // TODO alow for the field name to be set from the annotation. Requires handling the getter/setter based on
-  // the field instead of the annotation.
-  private <T> Optional<InvocationModel<T>> generateFromField(final Class<T> targetClass) {
-    return Arrays.stream(targetClass.getDeclaredFields())
-        .filter(this::isAnnotationPresent)
-        .findFirst()
-        .map(Field::getName)
-        .map(name -> generate(targetClass, name));
-  }
-
-  private boolean isAnnotationPresent(final Field field) {
-    field.setAccessible(true);
-    return field.isAnnotationPresent(StateTarget.class);
-  }
-
-  /**
-   * Generates an invocation model for a given class. Must follow the bean access pattern.
-   *
-   * @param targetClass  Class we use.
-   * @param propertyName name of the property.
-   * @param <T>          type of the class.
-   * @return a usable model.
-   */
-  public <T> InvocationModel<T> generate(final Class<T> targetClass,
-                                         final String propertyName) {
-    log.debug("generate({}),{}", targetClass, propertyName);
-    final String name = propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
-    return generate(targetClass, propertyName, "get" + name, "set" + name);
-  }
-
-  /**
-   * Generates an invocation model for a given class. Must follow the bean access pattern.
-   *
-   * @param targetClass  Class we use.
-   * @param propertyName name of the property.
-   * @param <T>          type of the class.
-   * @return a usable model.
-   */
-  public <T> InvocationModel<T> generate(final Class<T> targetClass,
-                                         final String propertyName,
-                                         final String getMethodName,
-                                         final String setMethodName) {
-    log.debug("generate({}),{},{},{}", targetClass, propertyName, getMethodName, setMethodName);
-    return generate(targetClass, propertyName,
-        getMethod(targetClass, getMethodName),
-        getMethod(targetClass, setMethodName, String.class));
-  }
-
-  public <T> InvocationModel<T> generate(final Class<T> targetClass,
-                                         final String propertyName,
-                                         final Method getMethod,
-                                         final Method setMethod) {
-    log.debug("generate({}),{},{},{}", targetClass, propertyName, getMethod.getName(), setMethod.getName());
-    return ImmutableInvocationModel.<T>builder()
-        .targetClass(targetClass)
-        .propertyName(propertyName)
-        .retrieveMethod(getMethod)
-        .updateMethod(setMethod)
-        .addAllPendingTransitionHooks(globalPendingTransitions)
-        .addAllPostTransitionHooks(globalPostTransitions)
-        .build();
-  }
-
-  private Method getMethod(Class<?> targetClass, String methodName, Class<?>... params) {
-    try {
-      return targetClass.getMethod(methodName, params);
-    } catch (NoSuchMethodException e) {
-      throw new IllegalArgumentException("No method available: " + targetClass.getName() + ":" + methodName + ":" + Arrays.toString(params), e);
+    @Inject
+    public InvocationModelConverter(@Named("PendingTransition") final Set<PendingTransition> globalPendingTransitions,
+                                    @Named("PostTransition") final Set<PostTransition> globalPostTransitions) {
+        this.globalPendingTransitions = globalPendingTransitions;
+        this.globalPostTransitions = globalPostTransitions;
+        log.debug("InvocationModelConverter");
     }
-  }
+
+    /**
+     * Generates an invocation model for the given class. Must use the default getState()/setState() pattern
+     * or use annotations.
+     *
+     * @param targetClass class we use.
+     * @param <T>         type for return.
+     * @return a usable model.
+     */
+    public <T> InvocationModel<T> generate(final Class<T> targetClass) {
+        log.debug("generate({})", targetClass);
+        return generateFromField(targetClass)
+                .orElseGet(() -> generate(targetClass, "state"));
+    }
+
+    // TODO alow for the field name to be set from the annotation. Requires handling the getter/setter based on
+    // the field instead of the annotation.
+    private <T> Optional<InvocationModel<T>> generateFromField(final Class<T> targetClass) {
+        return Arrays.stream(targetClass.getDeclaredFields())
+                .filter(this::isAnnotationPresent)
+                .findFirst()
+                .map(Field::getName)
+                .map(name -> generate(targetClass, name));
+    }
+
+    private boolean isAnnotationPresent(final Field field) {
+        field.setAccessible(true);
+        return field.isAnnotationPresent(StateTarget.class);
+    }
+
+    /**
+     * Generates an invocation model for a given class. Must follow the bean access pattern.
+     *
+     * @param targetClass  Class we use.
+     * @param propertyName name of the property.
+     * @param <T>          type of the class.
+     * @return a usable model.
+     */
+    public <T> InvocationModel<T> generate(final Class<T> targetClass,
+                                           final String propertyName) {
+        log.debug("generate({}),{}", targetClass, propertyName);
+        final String name = propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
+        return generate(targetClass, propertyName, "get" + name, "set" + name);
+    }
+
+    /**
+     * Generates an invocation model for a given class. Must follow the bean access pattern.
+     *
+     * @param targetClass  Class we use.
+     * @param propertyName name of the property.
+     * @param <T>          type of the class.
+     * @return a usable model.
+     */
+    public <T> InvocationModel<T> generate(final Class<T> targetClass,
+                                           final String propertyName,
+                                           final String getMethodName,
+                                           final String setMethodName) {
+        log.debug("generate({}),{},{},{}", targetClass, propertyName, getMethodName, setMethodName);
+        return generate(targetClass, propertyName,
+                getMethod(targetClass, getMethodName),
+                getMethod(targetClass, setMethodName, String.class));
+    }
+
+    public <T> InvocationModel<T> generate(final Class<T> targetClass,
+                                           final String propertyName,
+                                           final Method getMethod,
+                                           final Method setMethod) {
+        log.debug("generate({}),{},{},{}", targetClass, propertyName, getMethod.getName(), setMethod.getName());
+        return ImmutableInvocationModel.<T>builder()
+                .targetClass(targetClass)
+                .propertyName(propertyName)
+                .retrieveMethod(getMethod)
+                .updateMethod(setMethod)
+                .addAllPendingTransitionHooks(globalPendingTransitions)
+                .addAllPostTransitionHooks(globalPostTransitions)
+                .build();
+    }
+
+    private Method getMethod(Class<?> targetClass, String methodName, Class<?>... params) {
+        try {
+            return targetClass.getMethod(methodName, params);
+        } catch (NoSuchMethodException e) {
+            throw new IllegalArgumentException("No method available: " + targetClass.getName() + ":" + methodName + ":" + Arrays.toString(params), e);
+        }
+    }
 }

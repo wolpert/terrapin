@@ -30,9 +30,8 @@ import org.slf4j.LoggerFactory;
 @Module
 public class OopConfigurationModule {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OopConfigurationModule.class);
     public static final String CONFIGURATION_FILENAME = "oopMockConfiguration.json";
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(OopConfigurationModule.class);
     private final String configurationFileName;
     private final OopMockConfiguration configuration;
 

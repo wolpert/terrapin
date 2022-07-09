@@ -18,7 +18,6 @@ package com.codeheadsystems.metrics.vendor;
 
 import java.io.Closeable;
 import java.util.Map;
-import java.util.function.Supplier;
 
 /**
  * Base metrics we support. Any metric service needs to implement these metrics.

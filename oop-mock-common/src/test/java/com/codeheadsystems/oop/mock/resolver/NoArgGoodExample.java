@@ -20,7 +20,7 @@ import com.codeheadsystems.oop.mock.model.MockedData;
 import java.util.Optional;
 import javax.inject.Inject;
 
-public class NoArgGoodExample implements MockDataResolver{
+public class NoArgGoodExample implements MockDataResolver {
 
     @Inject
     public NoArgGoodExample() {

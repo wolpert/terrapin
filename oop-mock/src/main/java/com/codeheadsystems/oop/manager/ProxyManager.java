@@ -16,7 +16,6 @@
 
 package com.codeheadsystems.oop.manager;
 
-import com.codeheadsystems.oop.OopMockConfiguration;
 import com.codeheadsystems.oop.mock.model.MockedData;
 import com.codeheadsystems.oop.mock.resolver.MockDataResolver;
 import com.codeheadsystems.oop.mock.translator.Translator;

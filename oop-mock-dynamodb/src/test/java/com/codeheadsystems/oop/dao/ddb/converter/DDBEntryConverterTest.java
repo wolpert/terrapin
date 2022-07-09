@@ -17,7 +17,6 @@
 package com.codeheadsystems.oop.dao.ddb.converter;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 import com.codeheadsystems.oop.dao.ddb.model.DDBEntry;
@@ -38,8 +37,8 @@ class DDBEntryConverterTest {
     public static final String DISCRIMINATOR = "discriminator";
     public static final String HASH = "hash";
     public static final String RANGE = "range";
-    private static final String JSON = "JSON";
     public static final DDBEntry ENTRY_WITHOUT_DATA = new DDBEntry(HASH, RANGE);
+    private static final String JSON = "JSON";
     public static final DDBEntry ENTRY_WITH_DATA = new DDBEntry(HASH, RANGE, JSON);
 
     @Mock private Hasher hasher;

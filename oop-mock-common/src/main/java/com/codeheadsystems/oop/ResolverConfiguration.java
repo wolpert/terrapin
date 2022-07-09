@@ -33,9 +33,9 @@ public interface ResolverConfiguration {
     /**
      * This is the class that implements MockDataResolver. Note that we require there is one and only one
      * constructor with the @Inject annotation. (We use that to build the class.)
-     * @see ResolverFactory
      *
      * @return classname.
+     * @see ResolverFactory
      */
     @JsonProperty("resolverClass")
     String resolverClass();

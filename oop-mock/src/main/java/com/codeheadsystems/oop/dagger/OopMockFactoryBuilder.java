@@ -19,7 +19,6 @@ package com.codeheadsystems.oop.dagger;
 import static com.codeheadsystems.oop.mock.dagger.ResolverModule.DEFAULT_RESOLVER;
 
 import com.codeheadsystems.oop.OopMockFactory;
-import com.codeheadsystems.oop.mock.dagger.OopConfigurationModule;
 import com.codeheadsystems.oop.mock.dagger.ResolverModule;
 import com.codeheadsystems.oop.mock.dagger.StandardModule;
 import com.codeheadsystems.oop.mock.resolver.InMemoryResolver;
@@ -79,7 +78,7 @@ public interface OopMockFactoryBuilder {
         @Named(DEFAULT_RESOLVER)
         @Provides
         @Singleton
-        String defaultResolver(){
+        String defaultResolver() {
             return InMemoryResolver.class.getCanonicalName();
         }
 

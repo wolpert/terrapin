@@ -23,7 +23,7 @@ import java.util.function.Function;
  * MetricsHelper is a thread-safe class that gives you the ability for a top-level method to call the 'with' method
  * which sets the metrics in the helper instance, which is retrievable by the 'get' method. This way, you do not
  * have to add the metrics object to every method name that you want to share.
- *
+ * <p>
  * If you make a mistake, and there is no metrics set, then the metrics helper will return a null metrics.
  */
 public interface MetricsHelper {

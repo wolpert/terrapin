@@ -17,7 +17,6 @@
 package com.codeheadsystems.statemachine.manager.impls;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 import com.codeheadsystems.statemachine.manager.MetricManager;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,7 +41,7 @@ class NullMetricManagerTest {
 
     @Test
     void time() {
-        final Boolean b = metricManager.time(METRIC_NAME, ()->Boolean.TRUE);
+        final Boolean b = metricManager.time(METRIC_NAME, () -> Boolean.TRUE);
         assertThat(b).isTrue();
     }
 }

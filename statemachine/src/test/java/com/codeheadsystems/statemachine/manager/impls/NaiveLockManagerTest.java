@@ -63,7 +63,7 @@ class NaiveLockManagerTest {
         });
         future.get();
         assertThat(atomicInteger)
-            .hasValue(1);
+                .hasValue(1);
     }
 
 

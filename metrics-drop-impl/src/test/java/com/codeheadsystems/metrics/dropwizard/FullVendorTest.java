@@ -16,18 +16,19 @@
 
 package com.codeheadsystems.metrics.dropwizard;
 
-import com.codahale.metrics.ConsoleReporter;
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.Slf4jReporter;
 import com.codeheadsystems.metrics.MetricsHelper;
 import com.codeheadsystems.metrics.test.BaseMetricTest;
 import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.slf4j.LoggerFactory;
 
 public class FullVendorTest extends BaseMetricTest {
 
     protected MetricRegistry registry;
-    protected ConsoleReporter reporter;
+    protected Slf4jReporter reporter;
 
     @Override
     protected MetricsHelper metricsHelper() {
@@ -38,7 +39,8 @@ public class FullVendorTest extends BaseMetricTest {
 
     @BeforeEach
     void setupReporter() {
-        reporter = ConsoleReporter.forRegistry(registry)
+        reporter = Slf4jReporter.forRegistry(registry)
+                .outputTo(LoggerFactory.getLogger(FullVendorTest.class))
                 .convertRatesTo(TimeUnit.SECONDS)
                 .convertDurationsTo(TimeUnit.MILLISECONDS)
                 .build();

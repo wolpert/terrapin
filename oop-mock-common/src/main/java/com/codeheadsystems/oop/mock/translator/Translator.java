@@ -21,7 +21,7 @@ import com.codeheadsystems.oop.mock.model.MockedData;
 /**
  * Provides the mechanism to un/marshal results. This can be used to store values in the datastore,
  * as well as get them out.
- *
+ * <p>
  * The test client that stores the value must use the same translator as the server.
  */
 public interface Translator {
@@ -29,9 +29,9 @@ public interface Translator {
     /**
      * Convert the marshalled text back to the original object.
      *
-     * @param clazz class of what we are returning.
+     * @param clazz          class of what we are returning.
      * @param marshalledData that we converted before.
-     * @param <R> type of object.
+     * @param <R>            type of object.
      * @return the object.
      */
     <R> R unmarshal(Class<R> clazz, MockedData marshalledData);
@@ -40,7 +40,7 @@ public interface Translator {
      * Convert the object to text that can be stored.
      *
      * @param object to marshall.
-     * @param <R> type of object.
+     * @param <R>    type of object.
      * @return the marshall text.
      */
     <R> MockedData marshal(R object);

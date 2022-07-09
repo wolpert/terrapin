@@ -23,11 +23,11 @@ import org.junit.jupiter.api.Test;
 class HasherTest {
 
     private static final String SYSTEM = "DEFAULT";
-    
+
     @Test
     void hash() {
         final Hasher hasher = new Hasher(SYSTEM);
-        final String result = hasher.hash("a","b","c");
+        final String result = hasher.hash("a", "b", "c");
 
         assertThat(result)
                 .isEqualTo("a.b.c");

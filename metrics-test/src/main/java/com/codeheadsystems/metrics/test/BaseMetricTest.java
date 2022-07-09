@@ -23,9 +23,9 @@ import org.junit.jupiter.api.Test;
 
 public abstract class BaseMetricTest {
 
-    abstract protected MetricsHelper metricsHelper();
-
     protected MetricsHelper metricsHelper;
+
+    abstract protected MetricsHelper metricsHelper();
 
     @BeforeEach
     void setup() {

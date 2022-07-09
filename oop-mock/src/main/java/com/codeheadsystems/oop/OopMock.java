@@ -34,10 +34,10 @@ public interface OopMock {
      * framework for the class.
      *
      * @param returnClass We use this to cast the result of the mock if we had one.
-     * @param supplier The method that is being mocked.
-     * @param lookup Used to lookup the mock result.
-     * @param id id of the actual request.
-     * @param <R> Type of result.
+     * @param supplier    The method that is being mocked.
+     * @param lookup      Used to lookup the mock result.
+     * @param id          id of the actual request.
+     * @param <R>         Type of result.
      * @return the result, mocked or supplied.
      */
     <R> R proxy(Class<R> returnClass, Supplier<R> supplier, String lookup, String id);

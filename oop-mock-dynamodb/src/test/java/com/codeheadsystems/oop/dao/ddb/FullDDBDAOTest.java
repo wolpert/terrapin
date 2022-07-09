@@ -40,7 +40,7 @@ public class FullDDBDAOTest extends FullDAOTest {
     @BeforeEach
     void setup() {
         amazonDynamoDB.createTable(mapper.generateCreateTableRequest(DDBEntry.class)
-            .withBillingMode(BillingMode.PAY_PER_REQUEST));
+                .withBillingMode(BillingMode.PAY_PER_REQUEST));
     }
 
     @AfterEach
@@ -52,8 +52,8 @@ public class FullDDBDAOTest extends FullDAOTest {
     @Override
     protected ResolverConfiguration resolverConfiguration() {
         return ImmutableResolverConfiguration.builder()
-            .resolverClass(MockDataDDBDAO.class.getCanonicalName())
-            .build();
+                .resolverClass(MockDataDDBDAO.class.getCanonicalName())
+                .build();
     }
 
     @Override

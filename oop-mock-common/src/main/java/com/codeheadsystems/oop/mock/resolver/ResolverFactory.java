@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * This is a builder for the resolver as defined in the OppMockConfiguration file. Note that it's generic for
  * also the DAO instance as well. We use this because we want the configuration file to define the resolver we
  * need to include. So this one class needs runtime injection.
- *
+ * <p>
  * Update: 5/30/2022: This is gotten too weird. Prepare for a refactoring.
  * BWA HAHA HAHAHAH AHA HA
  */

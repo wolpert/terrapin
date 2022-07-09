@@ -17,7 +17,6 @@
 package com.codeheadsystems.oop;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 import com.codeheadsystems.test.model.BaseJacksonTest;
 import org.junit.jupiter.api.Test;

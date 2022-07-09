@@ -78,7 +78,7 @@ public class StandardImmutableModelTest extends BaseJacksonTest<StandardImmutabl
 
         // Assert
         assertThat(names)
-                .containsExactlyInAnyOrderElementsOf(ImmutableList.of("bunchOfString","bunchOfOtherString"));
+                .containsExactlyInAnyOrderElementsOf(ImmutableList.of("bunchOfString", "bunchOfOtherString"));
     }
 
     /**
