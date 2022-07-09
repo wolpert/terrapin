@@ -49,14 +49,14 @@ public class MetricsImplementation implements Metrics {
     }
 
     @Override
-    public void setDimensions(final Map<String, String> dimensions) {
-        dimensions.clear();
-        addDimensions(dimensions);
+    public void setDimensions(final Map<String, String> dimensionsToUse) {
+        this.dimensions.clear();
+        addDimensions(dimensionsToUse);
     }
 
     @Override
-    public void addDimensions(final Map<String, String> dimensions) {
-        this.dimensions.putAll(dimensions);
+    public void addDimensions(final Map<String, String> dimensionsToUse) {
+        this.dimensions.putAll(dimensionsToUse);
     }
 
     @Override
@@ -93,6 +93,7 @@ public class MetricsImplementation implements Metrics {
 
     @Override
     public void close() throws IOException {
+        System.out.println(dimensions);
         counts.forEach((name, value) -> metricsVendor.count(name, dimensions, value));
         times.forEach((name,value)-> metricsVendor.time(name, dimensions, value));
         dimensions.clear();

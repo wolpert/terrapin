@@ -58,6 +58,6 @@ public class NullMetrics implements Metrics {
 
     @Override
     public <R> R time(final String name, final Supplier<R> supplier) {
-        return null;
+        return supplier.get();
     }
 }
