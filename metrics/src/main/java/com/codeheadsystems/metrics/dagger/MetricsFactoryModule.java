@@ -38,7 +38,6 @@ public interface MetricsFactoryModule {
      * This will be set when your dagger modules includes the vendor implementation. Metrics uses can ignore this.
      */
     @BindsOptionalOf
-    @Singleton
     MetricsVendor metricsVendor();
 
     /**

@@ -21,15 +21,19 @@ import com.codeheadsystems.metrics.impl.MetricsFactory;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Optional;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Singleton
 public class PoolableThreadLocalMetricsHelper extends ThreadLocalMetricsHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PoolableThreadLocalMetricsHelper.class);
 
     private final ArrayList<Metrics> pool;
 
+    @Inject
     public PoolableThreadLocalMetricsHelper(final MetricsFactory metricsFactory) {
         super(metricsFactory);
         pool = new ArrayList<>();

@@ -39,11 +39,17 @@ def pomConfig = {
 }
 
 dependencies {
+    implementation "org.slf4j:slf4j-api:${slf4jVersion}"
     implementation project(":metrics")
     api "io.dropwizard.metrics:metrics-core:${metricsVersion}"
     api "io.dropwizard.metrics:metrics-jmx:${metricsVersion}"
     implementation "com.google.dagger:dagger:${daggerVersion}" // Common files for runtime
     annotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
+
+    testAnnotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
+    testImplementation project(":metrics-test")
+    testImplementation("ch.qos.logback:logback-classic:${logbackVersion}")
+    testImplementation("ch.qos.logback:logback-core:${logbackVersion}")
     testImplementation("org.junit.jupiter:junit-jupiter-api:${jupiterVersion}")
     testImplementation("org.assertj:assertj-core:${assertjVersion}")
     testImplementation("org.mockito:mockito-junit-jupiter:${mockitoVersion}")

@@ -14,34 +14,32 @@
  *    limitations under the License.
  */
 
-package com.codeheadsystems.metrics.dropwizard;
+package com.codeheadsystems.metrics.dagger;
 
-import com.codahale.metrics.MetricRegistry;
-import com.codeheadsystems.metrics.dagger.MetricsFactoryModule;
-import com.codeheadsystems.metrics.vendor.MetricsVendor;
+import com.codeheadsystems.metrics.MetricsHelper;
+import com.codeheadsystems.metrics.helper.PoolableThreadLocalMetricsHelper;
+import com.codeheadsystems.metrics.helper.ThreadLocalMetricsHelper;
 import dagger.Binds;
 import dagger.Module;
-import dagger.Provides;
 import javax.inject.Singleton;
 
 /**
- * We include Metrics Factory. Use that for these metrics.
+ * This interface contains two modules. You have to pick one to get the metrics helper you want.
  */
-@Module(includes = {MetricsFactoryModule.class, DropwizardMetricsModule.Binder.class})
-public class DropwizardMetricsModule {
+public interface MetricHelperModule {
 
-    @Provides
-    @Singleton
-    MetricRegistry metricRegistry() {
-        return new MetricRegistry();
+    @Module
+    public interface Default {
+        @Binds
+        @Singleton
+        MetricsHelper metricsHelper(ThreadLocalMetricsHelper helper);
     }
 
     @Module
-    public interface Binder {
-
+    public interface Pooled {
         @Binds
         @Singleton
-        MetricsVendor metricsVendor(final DropwizardMetricsVendor vendor);
-
+        MetricsHelper metricsHelper(PoolableThreadLocalMetricsHelper helper);
     }
+
 }

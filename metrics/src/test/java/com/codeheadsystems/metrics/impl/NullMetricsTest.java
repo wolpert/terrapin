@@ -70,4 +70,10 @@ class NullMetricsTest {
                 .isNotNull()
                 .isTrue();
     }
+
+    @Test
+    void name() {
+        assertThat(metrics.name(NullMetricsTest.class, "one", "two"))
+                .isEqualTo("com.codeheadsystems.metrics.impl.NullMetricsTest.one.two");
+    }
 }

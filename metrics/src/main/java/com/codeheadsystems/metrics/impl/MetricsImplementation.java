@@ -93,7 +93,6 @@ public class MetricsImplementation implements Metrics {
 
     @Override
     public void close() throws IOException {
-        System.out.println(dimensions);
         counts.forEach((name, value) -> metricsVendor.count(name, dimensions, value));
         times.forEach((name,value)-> metricsVendor.time(name, dimensions, value));
         dimensions.clear();

@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package com.codeheadsystems.metrics;
+package com.codeheadsystems.metrics.impl;
 
 import static com.codeheadsystems.metrics.impl.MetricsImplementation.FAIL;
 import static com.codeheadsystems.metrics.impl.MetricsImplementation.SUCCESS;

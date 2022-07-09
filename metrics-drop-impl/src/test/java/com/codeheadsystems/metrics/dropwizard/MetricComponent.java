@@ -17,31 +17,15 @@
 package com.codeheadsystems.metrics.dropwizard;
 
 import com.codahale.metrics.MetricRegistry;
-import com.codeheadsystems.metrics.dagger.MetricsFactoryModule;
-import com.codeheadsystems.metrics.vendor.MetricsVendor;
-import dagger.Binds;
-import dagger.Module;
-import dagger.Provides;
+import com.codeheadsystems.metrics.MetricsHelper;
+import com.codeheadsystems.metrics.dagger.MetricHelperModule;
+import dagger.Component;
 import javax.inject.Singleton;
 
-/**
- * We include Metrics Factory. Use that for these metrics.
- */
-@Module(includes = {MetricsFactoryModule.class, DropwizardMetricsModule.Binder.class})
-public class DropwizardMetricsModule {
+@Singleton
+@Component(modules = {DropwizardMetricsModule.class, MetricHelperModule.Pooled.class})
+public interface MetricComponent {
 
-    @Provides
-    @Singleton
-    MetricRegistry metricRegistry() {
-        return new MetricRegistry();
-    }
-
-    @Module
-    public interface Binder {
-
-        @Binds
-        @Singleton
-        MetricsVendor metricsVendor(final DropwizardMetricsVendor vendor);
-
-    }
+    MetricsHelper metricsHelper();
+    MetricRegistry registry();
 }
