@@ -1,15 +1,22 @@
 # terrapin
 
-> **NOTICE** The terrapin project is morphing. I'm starting to include new or unfinished development
-> work into the project from CodeHead system. CodeHead is officially dead as a company.
-> The terrapin project is a redo of the original Method System work from Colorado.
-> Just open-sourced this time.
+terrapin is a project to give the primary data owners the ability to let third parties access their
+data safely. Primary owners can revoke access at any time, removing the ability for a third party
+to access the data. During this time, the data itself is store at the third party, encrypted via
+terrapin.
+
+Under the covers, terrapin is a collections of independent projects and micro-services that can
+serve other purposes beyond the primary purpose of the terrapin project. These subprojects as well as
+the primary project are all licensed under the permissive Apache 2 license scheme.
+
+As of right now, the software exists in a mono-repository to ease the development process. Changes
+to the subprojects must not break the other projects that rely on them. Using a mono-repository
+forces execution of all the tests to ensure compatibility.
 
 # About Subprojects
 
-Much of the projects in Terrapin are usable independently. What follows is the collection
-of software being open-sourced. The work is licensed under the Apache 2.0 license to promote being used by others with
-as much freedom as possible... commercial or otherwise.
+These subprojects were developed to provide specific features that were reusable across software
+within CodeHead Systems. THe original projects and new ones being developed are all open-sourced.
 
 ## Out-of-process mock
 
@@ -39,6 +46,6 @@ jUnit5.
 As CodeHead Systems was winding down, I wanted to do something with the software that
 was not specific to any project. So I started Terrapin as a way to get the software into
 open-source under the Apache 2.0 license. But in the back of my head I wanted to still
-work on the key/data management project... so I'm renaming that project Terrapin.
+work on the key/data management project... so I'm renaming that project terrapin.
 
 ---

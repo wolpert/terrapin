@@ -4,4 +4,5 @@
 
 include 'codehead-test', 'datastore-test', 'statemachine',
         'metrics', 'metrics-test', 'metrics-drop-impl',
-        'oop-mock-common', 'oop-mock-client', 'oop-mock', 'oop-mock-dynamodb', 'oop-mock-tests'
+        'oop-mock-common', 'oop-mock-client', 'oop-mock', 'oop-mock-dynamodb', 'oop-mock-tests',
+	'keyservice-common', 'keyservice-dao', 'keyservice-dao-test', 'keyservice-dao-ddb'
