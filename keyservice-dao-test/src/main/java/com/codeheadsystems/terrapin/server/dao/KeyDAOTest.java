@@ -18,6 +18,8 @@ package com.codeheadsystems.terrapin.server.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.codeheadsystems.metrics.MetricsHelper;
+import com.codeheadsystems.metrics.helper.NullMetricsHelper;
 import com.codeheadsystems.terrapin.common.factory.ObjectMapperFactory;
 import com.codeheadsystems.terrapin.server.dao.model.ImmutableKey;
 import com.codeheadsystems.terrapin.server.dao.model.Key;
@@ -33,18 +35,18 @@ public abstract class KeyDAOTest {
 
     protected final Random random = new Random();
     protected final ObjectMapper mapper = new ObjectMapperFactory().generate();
-
+    protected final MetricsHelper metricsHelper = new NullMetricsHelper();
     protected KeyDAO dao;
 
     protected abstract KeyDAO keyDAO();
 
     @BeforeEach
-    void setupDao(){
+    void setupDao() {
         dao = keyDAO();
     }
 
     @Test
-    public void assertTrue(){
+    public void assertTrue() {
         assertThat(keyDAO())
                 .isNotNull();
     }

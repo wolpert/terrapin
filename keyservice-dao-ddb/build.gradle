@@ -22,11 +22,12 @@ dependencies {
     // DynamoDB testing
     dynamodb "com.amazonaws:DynamoDBLocal:${awsLocalDDB}"
 
-    implementation "software.amazon.awssdk:dynamodb:${awsSDK2}"
     implementation project(":keyservice-dao")
     implementation project(":keyservice-common")
-    implementation "org.slf4j:slf4j-api:${slf4jVersion}"
+    implementation project(":metrics")
 
+    implementation "software.amazon.awssdk:dynamodb:${awsSDK2}"
+    implementation "org.slf4j:slf4j-api:${slf4jVersion}"
     implementation "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}"
     implementation "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
     implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonDatabindVersion}"
@@ -47,5 +48,7 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter-engine:${jupiterVersion}"
     testImplementation "org.mockito:mockito-core:${mockitoVersion}"
     testImplementation "org.mockito:mockito-junit-jupiter:${mockitoVersion}"
+    testImplementation("ch.qos.logback:logback-classic:${logbackVersion}")
+    testImplementation("ch.qos.logback:logback-core:${logbackVersion}")
 }
 

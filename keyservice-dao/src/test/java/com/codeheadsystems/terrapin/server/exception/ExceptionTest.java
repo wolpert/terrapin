@@ -32,7 +32,8 @@ class ExceptionTest {
     private static Stream<Arguments> runtimeExceptions() {
         return Stream.of(
                 Arguments.of(DatalayerException.class),
-                Arguments.of(DependencyException.class)
+                Arguments.of(DependencyException.class),
+                Arguments.of(RetryableException.class)
         );
     }
 

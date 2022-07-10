@@ -18,6 +18,7 @@ package com.codeheadsystems.metrics.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.codeheadsystems.metrics.MetricsName;
 import java.io.IOException;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -70,9 +71,4 @@ class NullMetricsTest {
                 .isTrue();
     }
 
-    @Test
-    void name() {
-        assertThat(metrics.name(NullMetricsTest.class, "one", "two"))
-                .isEqualTo("com.codeheadsystems.metrics.impl.NullMetricsTest.one.two");
-    }
 }

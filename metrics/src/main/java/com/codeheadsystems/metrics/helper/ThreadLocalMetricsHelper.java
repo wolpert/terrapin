@@ -19,6 +19,7 @@ package com.codeheadsystems.metrics.helper;
 import com.codeheadsystems.metrics.Metrics;
 import com.codeheadsystems.metrics.MetricsHelper;
 import com.codeheadsystems.metrics.impl.MetricsFactory;
+import com.codeheadsystems.metrics.impl.NullMetrics;
 import java.io.IOException;
 import java.util.function.Function;
 import javax.inject.Inject;
@@ -58,13 +59,18 @@ public class ThreadLocalMetricsHelper implements MetricsHelper {
 
     @Override
     public <R> R with(final Function<Metrics, R> function) {
-        final Metrics metrics = internalGetMetrics();
-        try {
-            threadLocalMetrics.set(metrics);
-            return function.apply(metrics);
-        } finally {
-            internalMetricsCleanup(metrics);
-            threadLocalMetrics.set(metricsFactory.nullMetrics());
+        final Metrics currentMetrics = threadLocalMetrics.get();
+        if (currentMetrics instanceof NullMetrics) { // create a real one and use that, closing when done.
+            final Metrics metrics = internalGetMetrics();
+            try {
+                threadLocalMetrics.set(metrics);
+                return function.apply(metrics);
+            } finally {
+                internalMetricsCleanup(metrics);
+                threadLocalMetrics.set(metricsFactory.nullMetrics());
+            }
+        } else { // we have an active metrics object in play. Just reuse it and do not close it when done.
+            return function.apply(currentMetrics);
         }
     }
 

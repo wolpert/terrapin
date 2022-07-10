@@ -16,48 +16,56 @@
 
 package com.codeheadsystems.terrapin.server.dao;
 
+import com.codeheadsystems.metrics.Metrics;
+import com.codeheadsystems.metrics.MetricsHelper;
+import com.codeheadsystems.metrics.MetricsName;
 import com.codeheadsystems.terrapin.server.dao.converter.KeyConverter;
 import com.codeheadsystems.terrapin.server.dao.model.Batch;
 import com.codeheadsystems.terrapin.server.dao.model.Key;
 import com.codeheadsystems.terrapin.server.dao.model.KeyIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.KeyVersionIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.OwnerIdentifier;
+import com.codeheadsystems.terrapin.server.exception.DependencyException;
+import com.codeheadsystems.terrapin.server.exception.RetryableException;
 import java.util.Optional;
+import java.util.function.Supplier;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
-import software.amazon.awssdk.services.dynamodb.model.ConsumedCapacity;
-import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.GetItemResponse;
-import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.PutItemResponse;
+import software.amazon.awssdk.services.dynamodb.model.*;
 
 @Singleton
 public class KeyDAODynamoDB implements KeyDAO {
+    public static final String STORE_KEY_METRIC = MetricsName.name(KeyDAODynamoDB.class, "store", "key");
+    public static final String LOAD_KEY_VERSION_METRIC = MetricsName.name(KeyDAODynamoDB.class, "load", "key", "version");
 
     private static final Logger LOGGER = LoggerFactory.getLogger(KeyDAODynamoDB.class);
 
     private final TableConfiguration tableConfiguration;
     private final DynamoDbClient dynamoDbClient;
     private final KeyConverter keyConverter;
+    private final MetricsHelper metricsHelper;
 
     @Inject
     public KeyDAODynamoDB(final DynamoDbClient dynamoDbClient,
                           final TableConfiguration tableConfiguration,
-                          final KeyConverter keyConverter) {
+                          final KeyConverter keyConverter,
+                          final MetricsHelper metricsHelper) {
         LOGGER.info("KeyDAODynamoDB({},{},{})", dynamoDbClient, tableConfiguration, keyConverter);
         this.tableConfiguration = tableConfiguration;
         this.dynamoDbClient = dynamoDbClient;
         this.keyConverter = keyConverter;
+        this.metricsHelper = metricsHelper;
     }
 
     @Override
     public void store(final Key key) {
         LOGGER.debug("store({})", key.keyIdentifier());
-        final PutItemRequest putItemRequest = keyConverter.toPutItemRequest(key);
-        final PutItemResponse response = dynamoDbClient.putItem(putItemRequest);
+        final Metrics metrics = metricsHelper.get();
+        final PutItemRequest request = keyConverter.toPutItemRequest(key);
+        final PutItemResponse response = exceptionCheck(STORE_KEY_METRIC, () -> dynamoDbClient.putItem(request));
         final ConsumedCapacity consumedCapacity = response.consumedCapacity();
         LOGGER.debug("store:{}", consumedCapacity);
     }
@@ -65,8 +73,9 @@ public class KeyDAODynamoDB implements KeyDAO {
     @Override
     public Optional<Key> load(final KeyVersionIdentifier identifier) {
         LOGGER.debug("load({})", identifier);
+        final Metrics metrics = metricsHelper.get();
         final GetItemRequest request = keyConverter.toGetItemRequest(identifier);
-        final GetItemResponse response = dynamoDbClient.getItem(request);
+        final GetItemResponse response = exceptionCheck(LOAD_KEY_VERSION_METRIC, () -> dynamoDbClient.getItem(request));
         if (response.hasItem()) {
             return Optional.of(keyConverter.from(response));
         } else {
@@ -76,7 +85,7 @@ public class KeyDAODynamoDB implements KeyDAO {
 
     @Override
     public Optional<Key> load(final KeyIdentifier identifier) {
-        LOGGER.debug("loadKey({})", identifier);
+        LOGGER.debug("load({})", identifier);
         return Optional.empty();
     }
 
@@ -121,5 +130,16 @@ public class KeyDAODynamoDB implements KeyDAO {
     public boolean delete(final OwnerIdentifier identifier) {
         LOGGER.debug("delete({})", identifier);
         return false;
+    }
+
+    private <T> T exceptionCheck(final String metricName, Supplier<T> supplier) {
+        try {
+            return metricsHelper.time(metricName, supplier);
+        } catch (ProvisionedThroughputExceededException | TransactionConflictException | RequestLimitExceededException |
+                 InternalServerErrorException e) {
+            throw new RetryableException(e);
+        } catch (RuntimeException e) {
+            throw new DependencyException(e);
+        }
     }
 }

@@ -66,36 +66,4 @@ public interface Metrics extends Closeable {
      */
     <R> R time(String name, Supplier<R> supplier);
 
-    /**
-     * Concatenates a class name and elements to form a dotted name, eliding any null values or
-     * empty strings.
-     *
-     * @param klass the first element of the name
-     * @param names the remaining elements of the name
-     * @return {@code klass} and {@code names} concatenated by periods
-     */
-    default String name(Class<?> klass, String... names) {
-        return name(klass.getName(), names);
-    }
-
-    /**
-     * Concatenates elements to form a dotted name, eliding any null values or empty strings.
-     *
-     * @param name  the first element of the name
-     * @param names the remaining elements of the name
-     * @return {@code name} and {@code names} concatenated by periods
-     */
-    default String name(final String name, final String... names) {
-        final StringBuilder builder = new StringBuilder(name);
-        if (names != null) {
-            for (String s : names) {
-                if (s != null && !s.isEmpty()) {
-                    builder.append('.');
-                    builder.append(s);
-                }
-            }
-        }
-        return builder.toString();
-    }
-
 }

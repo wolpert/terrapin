@@ -20,6 +20,7 @@ configurations {
 dependencies {
     implementation project(":keyservice-dao")
     implementation project(":keyservice-common")
+    implementation project(":metrics")
     implementation "org.slf4j:slf4j-api:${slf4jVersion}"
 
     implementation "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}"

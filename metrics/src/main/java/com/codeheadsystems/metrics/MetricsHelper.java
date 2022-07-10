@@ -18,6 +18,7 @@ package com.codeheadsystems.metrics;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * MetricsHelper is a thread-safe class that gives you the ability for a top-level method to call the 'with' method
@@ -44,4 +45,19 @@ public interface MetricsHelper {
     }
 
     Metrics get();
+
+    /**
+     * Helper to just use the current metrics so you don't have to grab it yourself.
+     */
+    default void count(String name, long value) {
+        get().count(name, value);
+    }
+
+    /**
+     * Helper to just use the current metrics so you don't have to grab it yourself.
+     */
+    default <R> R time(String name, Supplier<R> supplier) {
+        return get().time(name, supplier);
+    }
+
 }

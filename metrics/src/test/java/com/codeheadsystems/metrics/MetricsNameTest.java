@@ -14,26 +14,19 @@
  *    limitations under the License.
  */
 
-package com.codeheadsystems.terrapin.server.dao.manager;
+package com.codeheadsystems.metrics;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.Random;
 import org.junit.jupiter.api.Test;
 
-class Base64ManagerTest {
+class MetricsNameTest {
 
     @Test
-    public void testRoundTrip() {
-        final Random random = new Random();
-        byte[] src = new byte[20];
-        random.nextBytes(src);
-        final Base64Manager manager = new Base64Manager();
-        final String encoded = manager.to(src);
-        final byte[]dest = manager.from(encoded);
-        assertThat(dest)
-                .isEqualTo(src);
-
+    public void testName() {
+        assertThat(MetricsName.name(MetricsNameTest.class, "one", "two"))
+                .isNotNull()
+                .isEqualTo("com.codeheadsystems.metrics.MetricsNameTest.one.two");
     }
 
 }

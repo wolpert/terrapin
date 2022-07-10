@@ -36,7 +36,7 @@ class KeyDAODynamoDBTest extends KeyDAOTest {
 
     @Override
     protected KeyDAO keyDAO() {
-        return new KeyDAODynamoDB(client, tableConfiguration, new KeyConverter(tableConfiguration));
+        return new KeyDAODynamoDB(client, tableConfiguration, new KeyConverter(tableConfiguration), metricsHelper);
     }
 
     @BeforeEach

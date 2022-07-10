@@ -14,30 +14,33 @@
  *    limitations under the License.
  */
 
-package com.codeheadsystems.terrapin.server.dao.manager;
+package com.codeheadsystems.metrics.helper;
 
-import java.util.Base64;
+import com.codeheadsystems.metrics.Metrics;
+import com.codeheadsystems.metrics.MetricsHelper;
+import com.codeheadsystems.metrics.impl.NullMetrics;
+import java.util.function.Function;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class Base64Manager {
+public class NullMetricsHelper implements MetricsHelper {
 
-    private final Base64.Encoder encoder;
-    private final Base64.Decoder decoder;
+    public static final Metrics NULL_METRICS = new NullMetrics();
 
     @Inject
-    public Base64Manager() {
-        encoder = Base64.getEncoder();
-        decoder = Base64.getDecoder();
+    public NullMetricsHelper() {
+
     }
 
-    public byte[] from(final String string) {
-        return decoder.decode(string);
+
+    @Override
+    public <R> R with(final Function<Metrics, R> function) {
+        return function.apply(NULL_METRICS);
     }
 
-    public String to(final byte[] bytes) {
-        return encoder.encodeToString(bytes);
+    @Override
+    public Metrics get() {
+        return NULL_METRICS;
     }
-
 }
