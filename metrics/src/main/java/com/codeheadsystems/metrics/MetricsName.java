@@ -34,7 +34,7 @@ public class MetricsName {
      * @return {@code klass} and {@code names} concatenated by periods
      */
     public static String name(Class<?> klass, String... names) {
-        return name(klass.getName(), names);
+        return name(klass.getSimpleName(), names);
     }
 
     /**

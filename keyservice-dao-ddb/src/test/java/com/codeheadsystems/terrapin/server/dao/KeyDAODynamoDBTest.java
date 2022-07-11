@@ -21,6 +21,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.codeheadsystems.terrapin.server.dao.converter.KeyConverter;
 import com.codeheadsystems.test.datastore.DataStore;
 import com.codeheadsystems.test.datastore.DynamoDBExtension;
+import io.github.resilience4j.retry.Retry;
+import io.github.resilience4j.retry.RetryRegistry;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,7 +38,10 @@ class KeyDAODynamoDBTest extends KeyDAOTest {
 
     @Override
     protected KeyDAO keyDAO() {
-        return new KeyDAODynamoDB(client, tableConfiguration, new KeyConverter(tableConfiguration), metricsHelper);
+        final RetryRegistry registry = RetryRegistry.ofDefaults();
+        final Retry retry = registry.retry("KeyDAODynamoDBTest");
+        final DynamoDbClientAccessor accessor = new DynamoDbClientAccessor(client, metricsHelper, retry);
+        return new KeyDAODynamoDB(accessor, tableConfiguration, new KeyConverter(tableConfiguration), metricsHelper);
     }
 
     @BeforeEach

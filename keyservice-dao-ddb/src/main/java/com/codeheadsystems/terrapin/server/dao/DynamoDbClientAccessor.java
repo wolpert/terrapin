@@ -1,0 +1,76 @@
+/*
+ *    Copyright (c) 2022 Ned Wolpert <ned.wolpert@gmail.com>
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
+package com.codeheadsystems.terrapin.server.dao;
+
+import com.codeheadsystems.metrics.MetricsHelper;
+import com.codeheadsystems.metrics.MetricsName;
+import com.codeheadsystems.terrapin.server.exception.DependencyException;
+import com.codeheadsystems.terrapin.server.exception.RetryableException;
+import io.github.resilience4j.retry.Retry;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+import software.amazon.awssdk.services.dynamodb.model.*;
+
+/**
+ * A wrapper around the DDBClient so that we can do retries, metrics, convert exceptions, etc.
+ */
+public class DynamoDbClientAccessor {
+
+    public static final String PUT_ITEM_METRIC = MetricsName.name(DynamoDbClientAccessor.class, "putItem");
+    public static final String GET_ITEM_METRIC = MetricsName.name(DynamoDbClientAccessor.class, "getItem");
+    private static final Logger LOGGER = LoggerFactory.getLogger(DynamoDbClientAccessor.class);
+    private final MetricsHelper metricsHelper;
+
+    // --- function list ---
+    private final Function<PutItemRequest, PutItemResponse> putItem;
+    private final Function<GetItemRequest, GetItemResponse> getItem;
+
+    public DynamoDbClientAccessor(final DynamoDbClient dynamoDbClient,
+                                  final MetricsHelper metricsHelper,
+                                  final Retry retry) {
+        LOGGER.info("DynamoDbClientAccessor({},{},{})", dynamoDbClient, metricsHelper, retry);
+        this.metricsHelper = metricsHelper;
+        putItem = Retry.decorateFunction(retry,                  // retries
+                (request) -> exceptionCheck(PUT_ITEM_METRIC,     // exception check and metrics
+                        () -> dynamoDbClient.putItem(request))); // the actual function
+        getItem = Retry.decorateFunction(retry,
+                (request) -> exceptionCheck(GET_ITEM_METRIC,
+                        () -> dynamoDbClient.getItem(request)));
+    }
+
+    public PutItemResponse putItem(final PutItemRequest request) {
+        return putItem.apply(request);
+    }
+
+    public GetItemResponse getItem(final GetItemRequest request) {
+        return getItem.apply(request);
+    }
+
+    private <T> T exceptionCheck(final String metricName, final Supplier<T> supplier) {
+        try {
+            return metricsHelper.time(metricName, supplier);
+        } catch (ProvisionedThroughputExceededException | TransactionConflictException | RequestLimitExceededException |
+                 InternalServerErrorException e) {
+            throw new RetryableException(e);
+        } catch (RuntimeException e) {
+            throw new DependencyException(e);
+        }
+    }
+}

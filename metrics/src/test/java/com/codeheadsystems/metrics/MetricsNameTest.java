@@ -26,7 +26,7 @@ class MetricsNameTest {
     public void testName() {
         assertThat(MetricsName.name(MetricsNameTest.class, "one", "two"))
                 .isNotNull()
-                .isEqualTo("com.codeheadsystems.metrics.MetricsNameTest.one.two");
+                .isEqualTo("MetricsNameTest.one.two");
     }
 
 }
