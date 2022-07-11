@@ -16,10 +16,11 @@
 
 package com.codeheadsystems.terrapin.server.dao.dagger;
 
-import com.codeheadsystems.metrics.MetricsHelper;
-import com.codeheadsystems.terrapin.server.dao.DynamoDbClientAccessor;
+import com.codeheadsystems.metrics.Metrics;
+import com.codeheadsystems.metrics.dagger.MetricsModule;
 import com.codeheadsystems.terrapin.server.dao.KeyDAO;
 import com.codeheadsystems.terrapin.server.dao.KeyDAODynamoDB;
+import com.codeheadsystems.terrapin.server.dao.accessor.DynamoDbClientAccessor;
 import com.codeheadsystems.terrapin.server.exception.RetryableException;
 import dagger.Module;
 import dagger.Provides;
@@ -31,7 +32,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
-@Module(includes = DDBModule.Binder.class)
+@Module(includes = {DDBModule.Binder.class, MetricsModule.class})
 public class DDBModule {
 
     public static final String DDB_DAO_RETRY = "DDB_DAO_RETRY";
@@ -54,8 +55,8 @@ public class DDBModule {
     @Singleton
     public DynamoDbClientAccessor accessor(@Named(DDB_DAO_RETRY) final Retry retry,
                                            final DynamoDbClient client,
-                                           final MetricsHelper metricsHelper) {
-        return new DynamoDbClientAccessor(client, metricsHelper, retry);
+                                           final Metrics metrics) {
+        return new DynamoDbClientAccessor(client, metrics, retry);
     }
 
     @Module

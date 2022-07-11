@@ -18,6 +18,7 @@ package com.codeheadsystems.terrapin.server.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.codeheadsystems.terrapin.server.dao.accessor.DynamoDbClientAccessor;
 import com.codeheadsystems.terrapin.server.dao.converter.KeyConverter;
 import com.codeheadsystems.test.datastore.DataStore;
 import com.codeheadsystems.test.datastore.DynamoDBExtension;
@@ -31,7 +32,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
 
 @ExtendWith(DynamoDBExtension.class)
-class KeyDAODynamoDBTest extends KeyDAOTest {
+public class KeyDAODynamoDBTest extends KeyDAOTest {
 
     @DataStore private DynamoDbClient client;
     private TableConfiguration tableConfiguration = ImmutableTableConfiguration.builder().build();
@@ -40,8 +41,8 @@ class KeyDAODynamoDBTest extends KeyDAOTest {
     protected KeyDAO keyDAO() {
         final RetryRegistry registry = RetryRegistry.ofDefaults();
         final Retry retry = registry.retry("KeyDAODynamoDBTest");
-        final DynamoDbClientAccessor accessor = new DynamoDbClientAccessor(client, metricsHelper, retry);
-        return new KeyDAODynamoDB(accessor, tableConfiguration, new KeyConverter(tableConfiguration), metricsHelper);
+        final DynamoDbClientAccessor accessor = new DynamoDbClientAccessor(client, metrics, retry);
+        return new KeyDAODynamoDB(accessor, tableConfiguration, new KeyConverter(tableConfiguration));
     }
 
     @BeforeEach

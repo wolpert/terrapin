@@ -40,6 +40,7 @@ def pomConfig = {
 
 dependencies {
     implementation project(":metrics")
+    implementation "io.micrometer:micrometer-core:${micrometerVersion}"
     implementation "com.google.dagger:dagger:${daggerVersion}" // Common files for runtime
     annotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
     implementation("org.junit.jupiter:junit-jupiter-api:${jupiterVersion}")

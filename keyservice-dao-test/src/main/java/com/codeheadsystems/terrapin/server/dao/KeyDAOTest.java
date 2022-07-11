@@ -18,8 +18,7 @@ package com.codeheadsystems.terrapin.server.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.codeheadsystems.metrics.MetricsHelper;
-import com.codeheadsystems.metrics.helper.NullMetricsHelper;
+import com.codeheadsystems.metrics.test.BaseMetricTest;
 import com.codeheadsystems.terrapin.common.factory.ObjectMapperFactory;
 import com.codeheadsystems.terrapin.server.dao.model.ImmutableKey;
 import com.codeheadsystems.terrapin.server.dao.model.Key;
@@ -31,11 +30,10 @@ import java.util.Random;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public abstract class KeyDAOTest {
+public abstract class KeyDAOTest extends BaseMetricTest {
 
     protected final Random random = new Random();
     protected final ObjectMapper mapper = new ObjectMapperFactory().generate();
-    protected final MetricsHelper metricsHelper = new NullMetricsHelper();
     protected KeyDAO dao;
 
     protected abstract KeyDAO keyDAO();

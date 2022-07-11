@@ -16,54 +16,51 @@
 
 package com.codeheadsystems.metrics;
 
-import java.io.Closeable;
-import java.util.Map;
+import static com.codeheadsystems.metrics.dagger.MetricsModule.METER_REGISTRY;
+
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import java.util.function.Supplier;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 
 /**
- * Metrics are designed to NOT report metrics until the object itself is closed. You MUST close
- * the metrics object.
+ * Provides helper methods for micrometer metrics.
  */
-public interface Metrics extends Closeable {
+@Singleton
+public class Metrics {
+
+    private final MeterRegistry registry;
+
+    @Inject
+    public Metrics(@Named(METER_REGISTRY) final MeterRegistry registry) {
+        this.registry = registry;
+    }
+
+    public MeterRegistry registry() {
+        return registry;
+    }
 
     /**
-     * You can set the dimensions for a metric. It is valid as long as it is open. We reset the
-     * dimensions when the metric is closed. It is optional to use. If you use this method, we
-     * clear out the old dimensions and replace them with this map.
-     *
-     * @param dimensions
+     * TODO: Make this not report the metrics until they are closed.
      */
-    void setDimensions(Map<String, String> dimensions);
-
-    /**
-     * This adds the dimensions to the existing set. Note, if an entry is already listed, it will
-     * overwrite the dimensions.
-     *
-     * @param dimensions
-     */
-    void addDimensions(Map<String, String> dimensions);
-
-    void addDimension(String dimensionName, String dimensionValue);
-
-    /**
-     * Counts the value into the metric. Can be any positive/negative number including zero.
-     * Note, in dropwizard metrics, this is likely just a histogram. Note, if the metrics
-     * implementation does not support dimensions they will be ignored.
-     *
-     * @param name  of the metric.
-     * @param value for the counter.
-     */
-    void count(String name, long value);
-
-    /**
-     * Default latency check. Note that this does not automatically track exceptions.Note, if the metrics
-     * * implementation does not support dimensions they will be ignored.
-     *
-     * @param name     of the metric.
-     * @param supplier function to call. Should return a value.
-     * @param <R>      return type.
-     * @return a value.
-     */
-    <R> R time(String name, Supplier<R> supplier);
+    public <R> R time(final String name,
+                      final Timer timer,
+                      final Supplier<R> supplier) {
+        final Counter success = registry.counter(name, "success", "true");
+        final Counter failure = registry.counter(name, "success", "false");
+        try {
+            final R result = timer.record(supplier);
+            success.increment(1);
+            failure.increment(0);
+            return result;
+        } catch (RuntimeException re) {
+            success.increment(0);
+            failure.increment(1);
+            throw re;
+        }
+    }
 
 }

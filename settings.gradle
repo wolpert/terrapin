@@ -3,6 +3,6 @@
  */
 
 include 'codehead-test', 'datastore-test', 'statemachine',
-        'metrics', 'metrics-test', 'metrics-drop-impl',
+        'metrics', 'metrics-test',
         'oop-mock-common', 'oop-mock-client', 'oop-mock', 'oop-mock-dynamodb', 'oop-mock-tests',
 	'keyservice-common', 'keyservice-dao', 'keyservice-dao-test', 'keyservice-dao-ddb'

@@ -14,13 +14,13 @@
  *    limitations under the License.
  */
 
-package com.codeheadsystems.terrapin.server.dao;
+package com.codeheadsystems.terrapin.server.dao.accessor;
 
-import com.codeheadsystems.metrics.MetricsHelper;
-import com.codeheadsystems.metrics.MetricsName;
+import com.codeheadsystems.metrics.Metrics;
 import com.codeheadsystems.terrapin.server.exception.DependencyException;
 import com.codeheadsystems.terrapin.server.exception.RetryableException;
 import io.github.resilience4j.retry.Retry;
+import io.micrometer.core.instrument.Timer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import org.slf4j.Logger;
@@ -33,20 +33,20 @@ import software.amazon.awssdk.services.dynamodb.model.*;
  */
 public class DynamoDbClientAccessor {
 
-    public static final String PUT_ITEM_METRIC = MetricsName.name(DynamoDbClientAccessor.class, "putItem");
-    public static final String GET_ITEM_METRIC = MetricsName.name(DynamoDbClientAccessor.class, "getItem");
+    public static final String PUT_ITEM_METRIC = "ddbaccessor.putitem";
+    public static final String GET_ITEM_METRIC = "ddbaccessor.getitem";
     private static final Logger LOGGER = LoggerFactory.getLogger(DynamoDbClientAccessor.class);
-    private final MetricsHelper metricsHelper;
+    private final Metrics metrics;
 
     // --- function list ---
     private final Function<PutItemRequest, PutItemResponse> putItem;
     private final Function<GetItemRequest, GetItemResponse> getItem;
 
     public DynamoDbClientAccessor(final DynamoDbClient dynamoDbClient,
-                                  final MetricsHelper metricsHelper,
+                                  final Metrics metrics,
                                   final Retry retry) {
-        LOGGER.info("DynamoDbClientAccessor({},{},{})", dynamoDbClient, metricsHelper, retry);
-        this.metricsHelper = metricsHelper;
+        LOGGER.info("DynamoDbClientAccessor({},{},{})", dynamoDbClient, metrics, retry);
+        this.metrics = metrics;
         putItem = Retry.decorateFunction(retry,                  // retries
                 (request) -> exceptionCheck(PUT_ITEM_METRIC,     // exception check and metrics
                         () -> dynamoDbClient.putItem(request))); // the actual function
@@ -65,7 +65,8 @@ public class DynamoDbClientAccessor {
 
     private <T> T exceptionCheck(final String metricName, final Supplier<T> supplier) {
         try {
-            return metricsHelper.time(metricName, supplier);
+            final Timer timer = metrics.registry().timer(metricName);
+            return metrics.time(metricName, timer, supplier);
         } catch (ProvisionedThroughputExceededException | TransactionConflictException | RequestLimitExceededException |
                  InternalServerErrorException e) {
             throw new RetryableException(e);

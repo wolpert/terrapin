@@ -17,37 +17,19 @@
 package com.codeheadsystems.metrics.test;
 
 import com.codeheadsystems.metrics.Metrics;
-import com.codeheadsystems.metrics.MetricsHelper;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 public abstract class BaseMetricTest {
 
-    protected MetricsHelper metricsHelper;
-
-    abstract protected MetricsHelper metricsHelper();
+    protected Metrics metrics;
+    protected MeterRegistry meterRegistry;
 
     @BeforeEach
     void setup() {
-        metricsHelper = metricsHelper();
-    }
-
-    @Test
-    public void basicRun() {
-        metricsHelper.with(() -> {
-            final Metrics metrics = metricsHelper.get();
-            metrics.addDimension("this", "good");
-            metrics.count("something", 4);
-            metrics.count("something", 1);
-            metrics.time("a thing", () -> {
-                try {
-                    Thread.sleep(222);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-                return null;
-            });
-        });
+        meterRegistry = new SimpleMeterRegistry();
+        metrics = new Metrics(meterRegistry);
     }
 
 }

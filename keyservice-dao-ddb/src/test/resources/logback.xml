@@ -24,6 +24,7 @@
     </appender>
 
     <logger name="com.codeheadsystems" level="DEBUG"/>
+    <logger name="software.amazon" level="INFO"/>
 
     <root level="debug">
         <appender-ref ref="STDOUT"/>

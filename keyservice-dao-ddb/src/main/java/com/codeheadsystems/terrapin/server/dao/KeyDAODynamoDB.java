@@ -16,8 +16,7 @@
 
 package com.codeheadsystems.terrapin.server.dao;
 
-import com.codeheadsystems.metrics.MetricsHelper;
-import com.codeheadsystems.metrics.MetricsName;
+import com.codeheadsystems.terrapin.server.dao.accessor.DynamoDbClientAccessor;
 import com.codeheadsystems.terrapin.server.dao.converter.KeyConverter;
 import com.codeheadsystems.terrapin.server.dao.model.Batch;
 import com.codeheadsystems.terrapin.server.dao.model.Key;
@@ -37,26 +36,20 @@ import software.amazon.awssdk.services.dynamodb.model.PutItemResponse;
 
 @Singleton
 public class KeyDAODynamoDB implements KeyDAO {
-    public static final String STORE_KEY_METRIC = MetricsName.name(KeyDAODynamoDB.class, "store", "key");
-    public static final String LOAD_KEY_VERSION_METRIC = MetricsName.name(KeyDAODynamoDB.class, "load", "key", "version");
-
     private static final Logger LOGGER = LoggerFactory.getLogger(KeyDAODynamoDB.class);
 
     private final TableConfiguration tableConfiguration;
     private final DynamoDbClientAccessor dynamoDbClientAccessor;
     private final KeyConverter keyConverter;
-    private final MetricsHelper metricsHelper;
 
     @Inject
     public KeyDAODynamoDB(final DynamoDbClientAccessor dynamoDbClientAccessor,
                           final TableConfiguration tableConfiguration,
-                          final KeyConverter keyConverter,
-                          final MetricsHelper metricsHelper) {
+                          final KeyConverter keyConverter) {
         LOGGER.info("KeyDAODynamoDB({},{},{})", dynamoDbClientAccessor, tableConfiguration, keyConverter);
         this.tableConfiguration = tableConfiguration;
         this.dynamoDbClientAccessor = dynamoDbClientAccessor;
         this.keyConverter = keyConverter;
-        this.metricsHelper = metricsHelper;
     }
 
     @Override
