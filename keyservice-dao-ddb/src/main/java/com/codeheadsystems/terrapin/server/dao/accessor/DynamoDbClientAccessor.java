@@ -45,7 +45,7 @@ public class DynamoDbClientAccessor {
     public DynamoDbClientAccessor(final DynamoDbClient dynamoDbClient,
                                   final Metrics metrics,
                                   final Retry retry) {
-        LOGGER.info("DynamoDbClientAccessor({},{},{})", dynamoDbClient, metrics, retry);
+        LOGGER.info("DynamoDbClientAccessor({},{},{})", dynamoDbClient, metrics, retry.getName());
         this.metrics = metrics;
         putItem = Retry.decorateFunction(retry,                  // retries
                 (request) -> exceptionCheck(PUT_ITEM_METRIC,     // exception check and metrics

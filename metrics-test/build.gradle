@@ -49,4 +49,5 @@ dependencies {
     implementation("org.mockito:mockito-core:${mockitoVersion}")
     // Use JUnit Jupiter Engine for testing.
     implementation("org.junit.jupiter:junit-jupiter-engine:${jupiterVersion}")
+    implementation("io.dropwizard.metrics:metrics-core:${metricsVersion}")
 }

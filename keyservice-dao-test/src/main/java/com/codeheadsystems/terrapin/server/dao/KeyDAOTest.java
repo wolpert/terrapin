@@ -76,7 +76,7 @@ public abstract class KeyDAOTest extends BaseMetricTest {
         final InputStream stream = KeyDAOTest.class.getClassLoader().getResourceAsStream("fixture/Key.json");
         try {
             final Key key = mapper.readValue(stream, Key.class);
-            byte[] value = new byte[32];
+            final byte[] value = new byte[32];
             random.nextBytes(value);
             return ImmutableKey.copyOf(key).withValue(value);
         } catch (IOException e) {

@@ -26,7 +26,7 @@
     <logger name="com.codeheadsystems" level="DEBUG"/>
     <logger name="software.amazon" level="INFO"/>
 
-    <root level="debug">
+    <root level="info">
         <appender-ref ref="STDOUT"/>
     </root>
 </configuration>

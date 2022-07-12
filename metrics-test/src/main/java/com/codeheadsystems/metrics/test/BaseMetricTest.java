@@ -16,19 +16,60 @@
 
 package com.codeheadsystems.metrics.test;
 
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.Reporter;
+import com.codahale.metrics.Slf4jReporter;
 import com.codeheadsystems.metrics.Metrics;
+import io.micrometer.core.instrument.Clock;
 import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
+import io.micrometer.core.instrument.dropwizard.DropwizardConfig;
+import io.micrometer.core.instrument.dropwizard.DropwizardMeterRegistry;
+import io.micrometer.core.instrument.util.HierarchicalNameMapper;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
 public abstract class BaseMetricTest {
 
+    protected static MeterRegistry meterRegistry;
+    protected static Reporter reporter;
     protected Metrics metrics;
-    protected MeterRegistry meterRegistry;
+
+    @BeforeAll
+    protected static void setupDropWizard() {
+        final MetricRegistry metricRegistry = new MetricRegistry();
+        reporter = Slf4jReporter.forRegistry(metricRegistry)
+                .convertRatesTo(TimeUnit.SECONDS)
+                .convertDurationsTo(TimeUnit.MILLISECONDS)
+                .build();
+        final DropwizardConfig config = new DropwizardConfig() {
+            @Override
+            public String prefix() {
+                return "slf4j";
+            }
+
+            @Override
+            public String get(final String key) {
+                return null;
+            }
+        };
+        meterRegistry = new DropwizardMeterRegistry(config, metricRegistry, HierarchicalNameMapper.DEFAULT, Clock.SYSTEM) {
+            @Override
+            protected Double nullGaugeValue() {
+                return null;
+            }
+        };
+    }
+
+    @AfterAll
+    protected static void report() throws IOException {
+        reporter.close();
+    }
 
     @BeforeEach
-    void setup() {
-        meterRegistry = new SimpleMeterRegistry();
+    protected void setup() {
         metrics = new Metrics(meterRegistry);
     }
 

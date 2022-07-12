@@ -40,7 +40,7 @@ public class KeyDAODynamoDBTest extends KeyDAOTest {
     @Override
     protected KeyDAO keyDAO() {
         final RetryRegistry registry = RetryRegistry.ofDefaults();
-        final Retry retry = registry.retry("KeyDAODynamoDBTest");
+        final Retry retry = registry.retry("retry.KeyDAODynamoDBTest");
         final DynamoDbClientAccessor accessor = new DynamoDbClientAccessor(client, metrics, retry);
         return new KeyDAODynamoDB(accessor, tableConfiguration, new KeyConverter(tableConfiguration));
     }

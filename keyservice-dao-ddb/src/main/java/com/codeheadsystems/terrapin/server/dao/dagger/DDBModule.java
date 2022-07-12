@@ -35,7 +35,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 @Module(includes = {DDBModule.Binder.class, MetricsModule.class})
 public class DDBModule {
 
-    public static final String DDB_DAO_RETRY = "DDB_DAO_RETRY";
+    private static final String DDB_DAO_RETRY = "DDB_DAO_RETRY";
 
     @Named(DDB_DAO_RETRY)
     @Provides
