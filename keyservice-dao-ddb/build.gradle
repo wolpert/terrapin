@@ -34,6 +34,7 @@ dependencies {
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:${jacksonVersion}"
     implementation "io.github.resilience4j:resilience4j-retry:${resilience4jVersion}"
     implementation "io.micrometer:micrometer-core:${micrometerVersion}"
+    implementation "io.github.resilience4j:resilience4j-micrometer:${resilience4jVersion}"
 
     implementation "com.google.dagger:dagger:${daggerVersion}" // Common files for runtime
     annotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"

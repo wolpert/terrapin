@@ -9,9 +9,8 @@ targetCompatibility = 1.8
 
 ext {
     appName = "codehead-test"
-    version = "0.9"
+    version = "1.0.0"
 }
-
 configurations {
     project.archivesBaseName = "${appName}"
     jar.baseName = "${appName}"

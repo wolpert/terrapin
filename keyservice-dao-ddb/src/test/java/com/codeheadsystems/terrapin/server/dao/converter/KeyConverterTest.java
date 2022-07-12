@@ -61,6 +61,7 @@ class KeyConverterTest {
                         ACTIVE,
                         TYPE,
                         CREATE,
+                        ACTIVE_HASH,
                         UPDATE);
         ;
     }
@@ -79,6 +80,7 @@ class KeyConverterTest {
                         KEY_VALUE,
                         TYPE,
                         ACTIVE,
+                        ACTIVE_HASH,
                         CREATE);
         ;
     }

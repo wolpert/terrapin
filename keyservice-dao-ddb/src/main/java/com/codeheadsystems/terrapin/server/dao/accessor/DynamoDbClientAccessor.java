@@ -35,12 +35,14 @@ public class DynamoDbClientAccessor {
 
     public static final String PUT_ITEM_METRIC = "ddbaccessor.putitem";
     public static final String GET_ITEM_METRIC = "ddbaccessor.getitem";
+    public static final String BATCH_WRITE_ITEM_METRIC = "ddbaccessor.batchwriteitem";
     private static final Logger LOGGER = LoggerFactory.getLogger(DynamoDbClientAccessor.class);
     private final Metrics metrics;
 
     // --- function list ---
     private final Function<PutItemRequest, PutItemResponse> putItem;
     private final Function<GetItemRequest, GetItemResponse> getItem;
+    private final Function<BatchWriteItemRequest, BatchWriteItemResponse> batchWriteItem;
 
     public DynamoDbClientAccessor(final DynamoDbClient dynamoDbClient,
                                   final Metrics metrics,
@@ -53,6 +55,13 @@ public class DynamoDbClientAccessor {
         getItem = Retry.decorateFunction(retry,
                 (request) -> exceptionCheck(GET_ITEM_METRIC,
                         () -> dynamoDbClient.getItem(request)));
+        batchWriteItem = Retry.decorateFunction(retry,
+                (request) -> exceptionCheck(BATCH_WRITE_ITEM_METRIC,
+                        () -> dynamoDbClient.batchWriteItem(request)));
+    }
+
+    public BatchWriteItemResponse batchWriteItem(final BatchWriteItemRequest request) {
+        return batchWriteItem.apply(request);
     }
 
     public PutItemResponse putItem(final PutItemRequest request) {

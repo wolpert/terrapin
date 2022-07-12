@@ -22,9 +22,11 @@ import com.codeheadsystems.terrapin.server.dao.accessor.DynamoDbClientAccessor;
 import com.codeheadsystems.terrapin.server.dao.converter.KeyConverter;
 import com.codeheadsystems.test.datastore.DataStore;
 import com.codeheadsystems.test.datastore.DynamoDBExtension;
+import io.github.resilience4j.micrometer.tagged.TaggedRetryMetrics;
 import io.github.resilience4j.retry.Retry;
 import io.github.resilience4j.retry.RetryRegistry;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,12 +37,20 @@ import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
 public class KeyDAODynamoDBTest extends KeyDAOTest {
 
     @DataStore private DynamoDbClient client;
-    private TableConfiguration tableConfiguration = ImmutableTableConfiguration.builder().build();
+    private final TableConfiguration tableConfiguration = ImmutableTableConfiguration.builder().build();
+
+    private static Retry retry;
+
+    @BeforeAll
+    public static void setupRetry() {
+        final RetryRegistry registry = RetryRegistry.ofDefaults();
+        retry = registry.retry("retry.KeyDAODynamoDBTest");
+        TaggedRetryMetrics.ofRetryRegistry(registry)
+                .bindTo(meterRegistry);
+    }
 
     @Override
     protected KeyDAO keyDAO() {
-        final RetryRegistry registry = RetryRegistry.ofDefaults();
-        final Retry retry = registry.retry("retry.KeyDAODynamoDBTest");
         final DynamoDbClientAccessor accessor = new DynamoDbClientAccessor(client, metrics, retry);
         return new KeyDAODynamoDB(accessor, tableConfiguration, new KeyConverter(tableConfiguration));
     }

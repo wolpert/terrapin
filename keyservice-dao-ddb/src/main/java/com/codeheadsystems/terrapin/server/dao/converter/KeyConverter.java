@@ -47,8 +47,9 @@ public class KeyConverter {
     public static final String ACTIVE = "active";
     public static final String CREATE = "create";
     public static final String UPDATE = "update";
-    private static final Logger LOGGER = LoggerFactory.getLogger(KeyConverter.class);
     public static final String TYPE = "type";
+    public static final String ACTIVE_HASH = "activeHashKey";
+    private static final Logger LOGGER = LoggerFactory.getLogger(KeyConverter.class);
     private final TableConfiguration configuration;
 
     @Inject
@@ -61,12 +62,14 @@ public class KeyConverter {
         final KeyVersionIdentifier identifier = key.keyIdentifier();
         LOGGER.debug("toPutItemRequest({})", identifier);
         final ImmutableMap.Builder<String, AttributeValue> builder = ImmutableMap.builder();
-        builder.put(configuration.hashKey(), fromS(hashKey(identifier)));
+        final String hashKey = hashKey(identifier);
+        builder.put(configuration.hashKey(), fromS(hashKey));
         builder.put(configuration.rangeKey(), fromS(rangeKey(identifier)));
         builder.put(KEY_VALUE, fromB(SdkBytes.fromByteArray(key.value())));
         builder.put(TYPE, fromS(key.type()));
         builder.put(ACTIVE, fromBool(key.active()));
         builder.put(CREATE, fromN(Long.toString(key.createDate().getTime())));
+        builder.put(ACTIVE_HASH, key.active() ? fromS(hashKey) : null); // index
         key.updateDate().ifPresent(date -> builder.put(UPDATE, fromN(Long.toString(date.getTime()))));
         return PutItemRequest.builder()
                 .tableName(configuration.tableName())
@@ -109,7 +112,15 @@ public class KeyConverter {
         if (item.containsKey(UPDATE)) {
             builder.updateDate(new Date(Long.parseLong(item.get(CREATE).n())));
         }
-        return builder.build();
+        final Key key = builder.build();
+        // Verification
+        final boolean hasActiveHash = item.containsKey(ACTIVE_HASH);
+        if (hasActiveHash && !key.active()) {
+            LOGGER.error("Key is listed as active by not searchable that way! {}", key.keyIdentifier());
+        } else if (!hasActiveHash && key.active()) {
+            LOGGER.error("Key is searchable as active but is itself not active! {}", key.keyIdentifier());
+        }
+        return key;
     }
 
     private KeyVersionIdentifier versionIdentifierFrom(final Map<String, AttributeValue> item) {

@@ -23,10 +23,16 @@ buildscript {
         classpath 'com.android.tools.build:gradle:4.0.1'
         classpath 'com.google.gms:google-services:4.3.3'
         classpath 'org.gretty:gretty:3.0.2'
+        classpath 'io.github.gradle-nexus:publish-plugin:1.1.0'
     }
 }
 
-
+apply plugin: 'io.github.gradle-nexus.publish-plugin'
+nexusPublishing {
+    repositories {
+        sonatype()
+    }
+}
 // gradle :<project>:bintrayUpload
 
 allprojects {
@@ -108,9 +114,8 @@ allprojects {
     }
 }
 
-
 group 'com.codeheadsystems.terrapin'
-version '1.0-SNAPSHOT'
+version '1.0.0-SNAPSHOT'
 
 ext {
     awsLocalDDB = "1.15.0" // https://mvnrepository.com/artifact/com.amazonaws/DynamoDBLocal

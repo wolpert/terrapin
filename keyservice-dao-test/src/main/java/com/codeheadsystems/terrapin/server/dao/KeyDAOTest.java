@@ -72,6 +72,32 @@ public abstract class KeyDAOTest extends BaseMetricTest {
                 .isEmpty();
     }
 
+    @Test
+    public void change_active_key() {
+        final Key key = getKey();
+        final boolean initialActiveState = key.active();
+        dao.store(key);
+        assertThat(dao.load(key.keyIdentifier()))
+                .isNotEmpty()
+                .get()
+                .hasFieldOrPropertyWithValue("active", initialActiveState);
+
+        final boolean newActiveState = !initialActiveState;
+        final Key firstUpdatedKey = ImmutableKey.copyOf(key).withActive(newActiveState);
+        dao.store(firstUpdatedKey);
+        assertThat(dao.load(key.keyIdentifier()))
+                .isNotEmpty()
+                .get()
+                .hasFieldOrPropertyWithValue("active", newActiveState);
+
+        final Key secondUpdatedKey = ImmutableKey.copyOf(firstUpdatedKey).withActive(initialActiveState);
+        dao.store(secondUpdatedKey);
+        assertThat(dao.load(key.keyIdentifier()))
+                .isNotEmpty()
+                .get()
+                .hasFieldOrPropertyWithValue("active", initialActiveState);
+    }
+
     protected Key getKey() {
         final InputStream stream = KeyDAOTest.class.getClassLoader().getResourceAsStream("fixture/Key.json");
         try {

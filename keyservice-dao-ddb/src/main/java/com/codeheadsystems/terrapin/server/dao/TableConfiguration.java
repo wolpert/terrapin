@@ -52,4 +52,10 @@ public interface TableConfiguration {
         return "ttl";
     }
 
+    @Value.Default
+    @JsonProperty("activeIndex")
+    default String activeIndex() {
+        return "activeIndex";
+    }
+
 }

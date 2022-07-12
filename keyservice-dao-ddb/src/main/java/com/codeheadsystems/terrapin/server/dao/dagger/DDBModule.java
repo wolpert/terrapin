@@ -25,6 +25,7 @@ import com.codeheadsystems.terrapin.server.exception.RetryableException;
 import dagger.Module;
 import dagger.Provides;
 import io.github.resilience4j.core.IntervalFunction;
+import io.github.resilience4j.micrometer.tagged.TaggedRetryMetrics;
 import io.github.resilience4j.retry.Retry;
 import io.github.resilience4j.retry.RetryConfig;
 import io.github.resilience4j.retry.RetryRegistry;
@@ -32,6 +33,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
+// TODO add a circuit breaker to the retry.
 @Module(includes = {DDBModule.Binder.class, MetricsModule.class})
 public class DDBModule {
 
@@ -40,7 +42,7 @@ public class DDBModule {
     @Named(DDB_DAO_RETRY)
     @Provides
     @Singleton
-    public Retry retry() {
+    public Retry retry(final Metrics metrics) {
         final RetryConfig config = RetryConfig.custom()
                 .maxAttempts(3)
                 .retryExceptions(RetryableException.class)
@@ -48,6 +50,8 @@ public class DDBModule {
                 .failAfterMaxAttempts(true)
                 .build();
         final RetryRegistry registry = RetryRegistry.of(config);
+        TaggedRetryMetrics.ofRetryRegistry(registry)
+                .bindTo(metrics.registry());
         return registry.retry(DDB_DAO_RETRY);
     }
 

@@ -16,6 +16,8 @@
 
 package com.codeheadsystems.terrapin.server.dao;
 
+import static com.codeheadsystems.terrapin.server.dao.converter.KeyConverter.ACTIVE_HASH;
+
 import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -50,17 +52,28 @@ public class AWSManager {
                 AttributeDefinition.builder()
                         .attributeName(tableConfiguration.hashKey()).attributeType(ScalarAttributeType.S).build(),
                 AttributeDefinition.builder()
-                        .attributeName(tableConfiguration.rangeKey()).attributeType(ScalarAttributeType.S).build()
+                        .attributeName(tableConfiguration.rangeKey()).attributeType(ScalarAttributeType.S).build(),
+                AttributeDefinition.builder()
+                        .attributeName(ACTIVE_HASH).attributeType(ScalarAttributeType.S).build()
         );
 
+        final GlobalSecondaryIndex activeIndex = GlobalSecondaryIndex.builder()
+                .indexName(tableConfiguration.activeIndex())
+                .projection(Projection.builder().projectionType(ProjectionType.ALL).build())
+                .keySchema(
+                        KeySchemaElement.builder().keyType(KeyType.HASH).attributeName(ACTIVE_HASH).build(),
+                        KeySchemaElement.builder().keyType(KeyType.RANGE).attributeName(tableConfiguration.rangeKey()).build()
+                ).build();
 
         return CreateTableRequest.builder()
                 .tableName(tableConfiguration.tableName())
                 .billingMode(BillingMode.PAY_PER_REQUEST)
                 .keySchema(hashKey, rangeKey)
                 .attributeDefinitions(attributeDefinitions)
+                .globalSecondaryIndexes(activeIndex)
                 .build();
     }
+
 
     public void createTable() {
         client.createTable(createTableRequest());
