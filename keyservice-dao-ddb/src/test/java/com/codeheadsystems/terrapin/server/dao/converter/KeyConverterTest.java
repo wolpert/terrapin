@@ -20,29 +20,55 @@ import static com.codeheadsystems.terrapin.server.dao.converter.KeyConverter.*;
 import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.map;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static software.amazon.awssdk.services.dynamodb.model.AttributeValue.fromB;
+import static software.amazon.awssdk.services.dynamodb.model.AttributeValue.fromBool;
+import static software.amazon.awssdk.services.dynamodb.model.AttributeValue.fromN;
+import static software.amazon.awssdk.services.dynamodb.model.AttributeValue.fromS;
 
+import com.codeheadsystems.metrics.Metrics;
 import com.codeheadsystems.terrapin.common.factory.ObjectMapperFactory;
 import com.codeheadsystems.terrapin.server.dao.ImmutableTableConfiguration;
 import com.codeheadsystems.terrapin.server.dao.TableConfiguration;
+import com.codeheadsystems.terrapin.server.dao.model.ImmutableKeyVersionIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.Key;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import java.io.IOException;
 import java.io.InputStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.GetItemResponse;
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
+import software.amazon.awssdk.utils.ImmutableMap;
 
-class KeyConverterTest {
+@ExtendWith(MockitoExtension.class)
+public class KeyConverterTest {
 
+    public static final String HASHKEY = "owner:key";
+    public static final String RANGEKEY = "10";
     private static final TableConfiguration TABLE_CONFIGURATION = ImmutableTableConfiguration.builder().build();
+    @Mock private Metrics metrics;
+    @Mock private MeterRegistry registry;
+    @Mock private Counter activeCounter;
+    @Mock private Counter inactiveCounter;
 
     private KeyConverter converter;
     private ObjectMapper objectMapper;
 
     @BeforeEach
     public void setup() {
-        converter = new KeyConverter(TABLE_CONFIGURATION);
+        when(metrics.registry()).thenReturn(registry);
+        when(registry.counter(KEYCONVERTER_ACTIVEINDEX, INVALID_INDEX, MISSING_BUT_EXPECTED)).thenReturn(activeCounter);
+        when(registry.counter(KEYCONVERTER_ACTIVEINDEX, INVALID_INDEX, FOUND_UNEXPECTEDLY)).thenReturn(inactiveCounter);
+        converter = new KeyConverter(TABLE_CONFIGURATION, metrics);
         objectMapper = new ObjectMapperFactory().generate();
     }
 
@@ -85,4 +111,76 @@ class KeyConverterTest {
         ;
     }
 
+    @Test
+    void fromRequest() {
+        final ImmutableMap.Builder<String, AttributeValue> builder = ImmutableMap.builder();
+        builder.put(TABLE_CONFIGURATION.hashKey(), fromS(HASHKEY));
+        builder.put(TABLE_CONFIGURATION.rangeKey(), fromS(RANGEKEY));
+        builder.put(KEY_VALUE, fromB(SdkBytes.fromByteArray(new byte[]{0, 1, 2})));
+        builder.put(TYPE, fromS("type"));
+        builder.put(ACTIVE, fromBool(true));
+        builder.put(CREATE, fromN(Long.toString(100)));
+        builder.put(ACTIVE_HASH, fromS(HASHKEY)); // index
+        final GetItemResponse response = GetItemResponse.builder()
+                .item(builder.build())
+                .build();
+        final Key generatedKey = converter.from(response);
+
+        assertThat(generatedKey)
+                .isNotNull()
+                .hasFieldOrPropertyWithValue("keyIdentifier",
+                        ImmutableKeyVersionIdentifier.builder().owner("owner").key("key").version(10L).build())
+                .hasFieldOrPropertyWithValue("active", true);
+        verify(activeCounter).increment(0);
+        verify(inactiveCounter).increment(0);
+    }
+
+    @Test
+    void fromRequest_inactiveKey_withIndex() {
+        final ImmutableMap.Builder<String, AttributeValue> builder = ImmutableMap.builder();
+        builder.put(TABLE_CONFIGURATION.hashKey(), fromS(HASHKEY));
+        builder.put(TABLE_CONFIGURATION.rangeKey(), fromS(RANGEKEY));
+        builder.put(KEY_VALUE, fromB(SdkBytes.fromByteArray(new byte[]{0, 1, 2})));
+        builder.put(TYPE, fromS("type"));
+        builder.put(ACTIVE, fromBool(false));
+        builder.put(CREATE, fromN(Long.toString(100)));
+        builder.put(ACTIVE_HASH, fromS(HASHKEY)); // index
+        final GetItemResponse response = GetItemResponse.builder()
+                .item(builder.build())
+                .build();
+        final Key generatedKey = converter.from(response);
+
+        assertThat(generatedKey)
+                .isNotNull()
+                .hasFieldOrPropertyWithValue("keyIdentifier",
+                        ImmutableKeyVersionIdentifier.builder().owner("owner").key("key").version(10L).build())
+                .hasFieldOrPropertyWithValue("active", false);
+        verify(activeCounter).increment(0);
+        verify(inactiveCounter).increment(1);
+
+    }
+
+    @Test
+    void fromRequest_activeKey_noIndex() {
+        final ImmutableMap.Builder<String, AttributeValue> builder = ImmutableMap.builder();
+        builder.put(TABLE_CONFIGURATION.hashKey(), fromS(HASHKEY));
+        builder.put(TABLE_CONFIGURATION.rangeKey(), fromS(RANGEKEY));
+        builder.put(KEY_VALUE, fromB(SdkBytes.fromByteArray(new byte[]{0, 1, 2})));
+        builder.put(TYPE, fromS("type"));
+        builder.put(ACTIVE, fromBool(true));
+        builder.put(CREATE, fromN(Long.toString(100)));
+        final GetItemResponse response = GetItemResponse.builder()
+                .item(builder.build())
+                .build();
+        final Key generatedKey = converter.from(response);
+
+        assertThat(generatedKey)
+                .isNotNull()
+                .hasFieldOrPropertyWithValue("keyIdentifier",
+                        ImmutableKeyVersionIdentifier.builder().owner("owner").key("key").version(10L).build())
+                .hasFieldOrPropertyWithValue("active", true);
+        verify(activeCounter).increment(1);
+        verify(inactiveCounter).increment(0);
+
+    }
 }

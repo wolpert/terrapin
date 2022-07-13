@@ -21,11 +21,14 @@ import static software.amazon.awssdk.services.dynamodb.model.AttributeValue.from
 import static software.amazon.awssdk.services.dynamodb.model.AttributeValue.fromN;
 import static software.amazon.awssdk.services.dynamodb.model.AttributeValue.fromS;
 
+import com.codeheadsystems.metrics.Metrics;
 import com.codeheadsystems.terrapin.server.dao.TableConfiguration;
 import com.codeheadsystems.terrapin.server.dao.model.ImmutableKey;
 import com.codeheadsystems.terrapin.server.dao.model.ImmutableKeyVersionIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.Key;
 import com.codeheadsystems.terrapin.server.dao.model.KeyVersionIdentifier;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import java.util.Date;
 import java.util.Map;
 import javax.inject.Inject;
@@ -49,12 +52,22 @@ public class KeyConverter {
     public static final String UPDATE = "update";
     public static final String TYPE = "type";
     public static final String ACTIVE_HASH = "activeHashKey";
+    public static final String INVALID_INDEX = "invalid.index";
+    public static final String KEYCONVERTER_ACTIVEINDEX = "keyconverter.activeindex";
+    public static final String MISSING_BUT_EXPECTED = "missing.but.expected";
+    public static final String FOUND_UNEXPECTEDLY = "found.unexpectedly";
     private static final Logger LOGGER = LoggerFactory.getLogger(KeyConverter.class);
     private final TableConfiguration configuration;
+    private final Counter activeWithoutIndexCounter;
+    private final Counter inactiveWithIndexCounter;
 
     @Inject
-    public KeyConverter(final TableConfiguration configuration) {
+    public KeyConverter(final TableConfiguration configuration,
+                        final Metrics metrics) {
         this.configuration = configuration;
+        final MeterRegistry registry = metrics.registry();
+        activeWithoutIndexCounter = registry.counter(KEYCONVERTER_ACTIVEINDEX, INVALID_INDEX, MISSING_BUT_EXPECTED);
+        inactiveWithIndexCounter = registry.counter(KEYCONVERTER_ACTIVEINDEX, INVALID_INDEX, FOUND_UNEXPECTEDLY);
         LOGGER.info("KeyConverter({})", configuration);
     }
 
@@ -114,13 +127,25 @@ public class KeyConverter {
         }
         final Key key = builder.build();
         // Verification
+        verifyActiveKeyIndex(item, key);
+        return key;
+    }
+
+    private void verifyActiveKeyIndex(final Map<String, AttributeValue> item,
+                                      final Key key) {
         final boolean hasActiveHash = item.containsKey(ACTIVE_HASH);
         if (hasActiveHash && !key.active()) {
             LOGGER.error("Key is listed as active by not searchable that way! {}", key.keyIdentifier());
+            inactiveWithIndexCounter.increment(1);
+            activeWithoutIndexCounter.increment(0);
         } else if (!hasActiveHash && key.active()) {
             LOGGER.error("Key is searchable as active but is itself not active! {}", key.keyIdentifier());
+            activeWithoutIndexCounter.increment(1);
+            inactiveWithIndexCounter.increment(0);
+        } else {
+            activeWithoutIndexCounter.increment(0);
+            inactiveWithIndexCounter.increment(0);
         }
-        return key;
     }
 
     private KeyVersionIdentifier versionIdentifierFrom(final Map<String, AttributeValue> item) {

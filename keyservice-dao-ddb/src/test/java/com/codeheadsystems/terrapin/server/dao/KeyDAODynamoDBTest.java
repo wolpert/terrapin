@@ -52,7 +52,7 @@ public class KeyDAODynamoDBTest extends KeyDAOTest {
     @Override
     protected KeyDAO keyDAO() {
         final DynamoDbClientAccessor accessor = new DynamoDbClientAccessor(client, metrics, retry);
-        return new KeyDAODynamoDB(accessor, tableConfiguration, new KeyConverter(tableConfiguration));
+        return new KeyDAODynamoDB(accessor, tableConfiguration, new KeyConverter(tableConfiguration, metrics));
     }
 
     @BeforeEach
