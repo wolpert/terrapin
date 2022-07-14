@@ -26,6 +26,7 @@ import com.codeheadsystems.terrapin.server.dao.TableConfiguration;
 import com.codeheadsystems.terrapin.server.dao.model.ImmutableKey;
 import com.codeheadsystems.terrapin.server.dao.model.ImmutableKeyVersionIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.Key;
+import com.codeheadsystems.terrapin.server.dao.model.KeyIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.KeyVersionIdentifier;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -36,11 +37,7 @@ import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.core.SdkBytes;
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
-import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.GetItemResponse;
-import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.ReturnConsumedCapacity;
+import software.amazon.awssdk.services.dynamodb.model.*;
 import software.amazon.awssdk.utils.ImmutableMap;
 
 @Singleton
@@ -95,7 +92,7 @@ public class KeyConverter {
         return identifier.version().toString();
     }
 
-    private String hashKey(final KeyVersionIdentifier identifier) {
+    private String hashKey(final KeyIdentifier identifier) {
         return String.format("%s:%s", identifier.owner(), identifier.key());
     }
 
@@ -116,6 +113,10 @@ public class KeyConverter {
     public Key from(final GetItemResponse response) {
         LOGGER.debug("GetItemResponse()"); // don't log the response since it has the key itself
         final Map<String, AttributeValue> item = response.item();
+        return from(item);
+    }
+
+    public Key from(final Map<String, AttributeValue> item) {
         final ImmutableKey.Builder builder = ImmutableKey.builder()
                 .keyIdentifier(versionIdentifierFrom(item))
                 .value(item.get(KEY_VALUE).b().asByteArray())
@@ -159,4 +160,21 @@ public class KeyConverter {
                 .version(Long.parseLong(item.get(configuration.rangeKey()).s()))
                 .build();
     }
+
+    public QueryRequest toActiveQueryRequest(final KeyIdentifier identifier) {
+        LOGGER.debug("toActiveQueryRequest({})", identifier);
+        return QueryRequest.builder()
+                .tableName(configuration.tableName())
+                .indexName(configuration.activeIndex())
+                .returnConsumedCapacity(ReturnConsumedCapacity.TOTAL)
+                .scanIndexForward(false) // reverse the result set
+                .limit(1) // this actually works because we are using the index, and will only get the first result.
+                .keyConditions(Map.of(ACTIVE_HASH, Condition.builder()
+                        .comparisonOperator(ComparisonOperator.EQ)
+                        .attributeValueList(fromS(hashKey(identifier)))
+                        .build()))
+
+                .build();
+    }
+
 }

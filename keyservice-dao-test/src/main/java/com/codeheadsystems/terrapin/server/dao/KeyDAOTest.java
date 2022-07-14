@@ -21,7 +21,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.codeheadsystems.metrics.test.BaseMetricTest;
 import com.codeheadsystems.terrapin.common.factory.ObjectMapperFactory;
 import com.codeheadsystems.terrapin.server.dao.model.ImmutableKey;
+import com.codeheadsystems.terrapin.server.dao.model.ImmutableKeyIdentifier;
+import com.codeheadsystems.terrapin.server.dao.model.ImmutableKeyVersionIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.Key;
+import com.codeheadsystems.terrapin.server.dao.model.KeyIdentifier;
+import com.codeheadsystems.terrapin.server.dao.model.KeyVersionIdentifier;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.InputStream;
@@ -73,6 +77,86 @@ public abstract class KeyDAOTest extends BaseMetricTest {
     }
 
     @Test
+    public void loadActive_oneKey() {
+        final Key key = getKey(true, 2);
+        final KeyIdentifier keyIdentifier = getKeyIdentifier(key);
+        dao.store(key);
+        final Optional<Key> result = dao.load(keyIdentifier);
+        assertThat(result)
+                .isNotNull()
+                .isNotEmpty()
+                .get()
+                .isEqualTo(key);
+    }
+
+    private KeyIdentifier getKeyIdentifier(final Key key) {
+        final KeyIdentifier keyIdentifier = ImmutableKeyIdentifier.builder()
+                .owner(key.keyIdentifier().owner())
+                .key(key.keyIdentifier().key())
+                .build();
+        return keyIdentifier;
+    }
+
+    @Test
+    public void loadActive_oneKey_notActive() {
+        final Key key = getKey(false, 1);
+        final KeyIdentifier keyIdentifier = getKeyIdentifier(key);
+        dao.store(key);
+        final Optional<Key> result = dao.load(keyIdentifier);
+        assertThat(result)
+                .isNotNull()
+                .isEmpty();
+    }
+
+    public Key getAndStoreKey(final boolean active,
+                              final long version) {
+        final Key key = getKey(active, version);
+        dao.store(key);
+        return key;
+    }
+
+    @Test
+    public void loadActive_threeKeys_twoActive() {
+        final Key key1 = getAndStoreKey(true, 3);
+        final Key key2 = getAndStoreKey(true, 2);
+        final Key key3 = getAndStoreKey(false, 1);
+        final KeyIdentifier keyIdentifier = getKeyIdentifier(key3);
+        final Optional<Key> result = dao.load(keyIdentifier);
+        assertThat(result)
+                .isNotNull()
+                .isNotEmpty()
+                .get()
+                .isEqualTo(key1);
+    }
+
+    @Test
+    public void loadActive_threeKeys_twoActive_diffOrder() {
+        final Key key3 = getAndStoreKey(false, 1);
+        final Key key1 = getAndStoreKey(true, 3);
+        final Key key2 = getAndStoreKey(true, 2);
+        final KeyIdentifier keyIdentifier = getKeyIdentifier(key3);
+        final Optional<Key> result = dao.load(keyIdentifier);
+        assertThat(result)
+                .isNotNull()
+                .isNotEmpty()
+                .get()
+                .isEqualTo(key1);
+    }
+
+    @Test
+    public void loadActive_threeKeys_zeroActive() {
+        final Key key3 = getAndStoreKey(false, 1);
+        final Key key1 = getAndStoreKey(false, 3);
+        final Key key2 = getAndStoreKey(false, 2);
+        final KeyIdentifier keyIdentifier = getKeyIdentifier(key3);
+        final Optional<Key> result = dao.load(keyIdentifier);
+        assertThat(result)
+                .isNotNull()
+                .isEmpty();
+    }
+
+
+    @Test
     public void change_active_key() {
         final Key key = getKey();
         final boolean initialActiveState = key.active();
@@ -98,16 +182,26 @@ public abstract class KeyDAOTest extends BaseMetricTest {
                 .hasFieldOrPropertyWithValue("active", initialActiveState);
     }
 
-    protected Key getKey() {
+    private Key getKey(final boolean active,
+                       final long version) {
         final InputStream stream = KeyDAOTest.class.getClassLoader().getResourceAsStream("fixture/Key.json");
         try {
             final Key key = mapper.readValue(stream, Key.class);
             final byte[] value = new byte[32];
             random.nextBytes(value);
-            return ImmutableKey.copyOf(key).withValue(value);
+            final KeyVersionIdentifier identifier = ImmutableKeyVersionIdentifier.copyOf(key.keyIdentifier())
+                    .withVersion(version);
+            return ImmutableKey.copyOf(key)
+                    .withValue(value)
+                    .withActive(active)
+                    .withKeyIdentifier(identifier);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    protected Key getKey() {
+        return getKey(true, 2);
     }
 
 }

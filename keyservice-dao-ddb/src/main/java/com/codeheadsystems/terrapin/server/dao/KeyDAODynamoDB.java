@@ -36,6 +36,8 @@ import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.GetItemResponse;
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.PutItemResponse;
+import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
+import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
 @Singleton
 public class KeyDAODynamoDB implements KeyDAO {
@@ -89,6 +91,8 @@ public class KeyDAODynamoDB implements KeyDAO {
         return time("loadversion", identifier.owner(), () -> {
             final GetItemRequest request = keyConverter.toGetItemRequest(identifier);
             final GetItemResponse response = dynamoDbClientAccessor.getItem(request);
+            final ConsumedCapacity consumedCapacity = response.consumedCapacity();
+            LOGGER.debug("load:{}", consumedCapacity);
             if (response.hasItem()) {
                 return Optional.of(keyConverter.from(response));
             } else {
@@ -97,11 +101,22 @@ public class KeyDAODynamoDB implements KeyDAO {
         });
     }
 
+    /**
+     * Query against the active hash, returning the key with the greatest number.
+     * Empty optional if there is no active key or if there is no keys in general.
+     */
     @Override
     public Optional<Key> load(final KeyIdentifier identifier) {
         LOGGER.debug("load({})", identifier);
         return time("loadkey", identifier.owner(), () -> {
-            return Optional.empty();
+            final QueryRequest request = keyConverter.toActiveQueryRequest(identifier);
+            final QueryResponse response = dynamoDbClientAccessor.query(request);
+            LOGGER.debug("load:{}", response.consumedCapacity());
+            if (response.hasItems() && response.items().size() > 0) {
+                return Optional.of(keyConverter.from(response.items().get(0))); // first on the list is newest.
+            } else {
+                return Optional.empty();
+            }
         });
     }
 

@@ -37,12 +37,14 @@ public class DynamoDbClientAccessor {
     public static final String GET_ITEM_METRIC = "ddbaccessor.getitem";
     public static final String BATCH_WRITE_ITEM_METRIC = "ddbaccessor.batchwriteitem";
     private static final Logger LOGGER = LoggerFactory.getLogger(DynamoDbClientAccessor.class);
+    private static final String QUERY_METRIC = "ddbaccessor.query";
     private final Metrics metrics;
 
     // --- function list ---
     private final Function<PutItemRequest, PutItemResponse> putItem;
     private final Function<GetItemRequest, GetItemResponse> getItem;
     private final Function<BatchWriteItemRequest, BatchWriteItemResponse> batchWriteItem;
+    private final Function<QueryRequest, QueryResponse> query;
 
     public DynamoDbClientAccessor(final DynamoDbClient dynamoDbClient,
                                   final Metrics metrics,
@@ -58,6 +60,9 @@ public class DynamoDbClientAccessor {
         batchWriteItem = Retry.decorateFunction(retry,
                 (request) -> exceptionCheck(BATCH_WRITE_ITEM_METRIC,
                         () -> dynamoDbClient.batchWriteItem(request)));
+        query = Retry.decorateFunction(retry,
+                (request) -> exceptionCheck(QUERY_METRIC,
+                        () -> dynamoDbClient.query(request)));
     }
 
     public BatchWriteItemResponse batchWriteItem(final BatchWriteItemRequest request) {
@@ -82,5 +87,9 @@ public class DynamoDbClientAccessor {
         } catch (RuntimeException e) {
             throw new DependencyException(e);
         }
+    }
+
+    public QueryResponse query(final QueryRequest request) {
+        return query.apply(request);
     }
 }
