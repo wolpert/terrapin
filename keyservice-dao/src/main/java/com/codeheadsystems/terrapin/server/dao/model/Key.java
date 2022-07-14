@@ -43,8 +43,8 @@ public interface Key {
      *
      * @return key identifier.
      */
-    @JsonProperty("keyIdentifier")
-    KeyVersionIdentifier keyIdentifier();
+    @JsonProperty("keyVersionIdentifier")
+    KeyVersionIdentifier keyVersionIdentifier();
 
     /**
      * The value of the key.

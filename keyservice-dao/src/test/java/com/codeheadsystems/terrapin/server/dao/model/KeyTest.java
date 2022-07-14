@@ -33,7 +33,7 @@ public class KeyTest extends BaseJacksonTest<Key> {
                 .type("a type")
                 .createDate(new Date())
                 .updateDate(new Date())
-                .keyIdentifier(ImmutableKeyVersionIdentifier.builder()
+                .keyVersionIdentifier(ImmutableKeyVersionIdentifier.builder()
                         .key("id")
                         .owner("owner")
                         .version(2L)

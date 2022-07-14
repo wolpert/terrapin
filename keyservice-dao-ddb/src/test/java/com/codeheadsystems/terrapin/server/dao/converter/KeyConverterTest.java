@@ -128,7 +128,7 @@ public class KeyConverterTest {
 
         assertThat(generatedKey)
                 .isNotNull()
-                .hasFieldOrPropertyWithValue("keyIdentifier",
+                .hasFieldOrPropertyWithValue("keyVersionIdentifier",
                         ImmutableKeyVersionIdentifier.builder().owner("owner").key("key").version(10L).build())
                 .hasFieldOrPropertyWithValue("active", true);
         verify(activeCounter).increment(0);
@@ -152,7 +152,7 @@ public class KeyConverterTest {
 
         assertThat(generatedKey)
                 .isNotNull()
-                .hasFieldOrPropertyWithValue("keyIdentifier",
+                .hasFieldOrPropertyWithValue("keyVersionIdentifier",
                         ImmutableKeyVersionIdentifier.builder().owner("owner").key("key").version(10L).build())
                 .hasFieldOrPropertyWithValue("active", false);
         verify(activeCounter).increment(0);
@@ -176,7 +176,7 @@ public class KeyConverterTest {
 
         assertThat(generatedKey)
                 .isNotNull()
-                .hasFieldOrPropertyWithValue("keyIdentifier",
+                .hasFieldOrPropertyWithValue("keyVersionIdentifier",
                         ImmutableKeyVersionIdentifier.builder().owner("owner").key("key").version(10L).build())
                 .hasFieldOrPropertyWithValue("active", true);
         verify(activeCounter).increment(1);

@@ -69,7 +69,7 @@ public class KeyConverter {
     }
 
     public PutItemRequest toPutItemRequest(final Key key) {
-        final KeyVersionIdentifier identifier = key.keyIdentifier();
+        final KeyVersionIdentifier identifier = key.keyVersionIdentifier();
         LOGGER.debug("toPutItemRequest({})", identifier);
         final ImmutableMap.Builder<String, AttributeValue> builder = ImmutableMap.builder();
         final String hashKey = hashKey(identifier);
@@ -118,7 +118,7 @@ public class KeyConverter {
 
     public Key from(final Map<String, AttributeValue> item) {
         final ImmutableKey.Builder builder = ImmutableKey.builder()
-                .keyIdentifier(versionIdentifierFrom(item))
+                .keyVersionIdentifier(versionIdentifierFrom(item))
                 .value(item.get(KEY_VALUE).b().asByteArray())
                 .active(item.get(ACTIVE).bool())
                 .type(item.get(TYPE).s())
@@ -136,11 +136,11 @@ public class KeyConverter {
                                       final Key key) {
         final boolean hasActiveHash = item.containsKey(ACTIVE_HASH);
         if (hasActiveHash && !key.active()) {
-            LOGGER.error("Key is listed as active by not searchable that way! {}", key.keyIdentifier());
+            LOGGER.error("Key is listed as active by not searchable that way! {}", key.keyVersionIdentifier());
             inactiveWithIndexCounter.increment(1);
             activeWithoutIndexCounter.increment(0);
         } else if (!hasActiveHash && key.active()) {
-            LOGGER.error("Key is searchable as active but is itself not active! {}", key.keyIdentifier());
+            LOGGER.error("Key is searchable as active but is itself not active! {}", key.keyVersionIdentifier());
             activeWithoutIndexCounter.increment(1);
             inactiveWithIndexCounter.increment(0);
         } else {

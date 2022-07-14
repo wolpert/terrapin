@@ -75,8 +75,8 @@ public class KeyDAODynamoDB implements KeyDAO {
 
     @Override
     public void store(final Key key) {
-        LOGGER.debug("store({})", key.keyIdentifier());
-        time("store", key.keyIdentifier().owner(), () -> {
+        LOGGER.debug("store({})", key.keyVersionIdentifier());
+        time("store", key.keyVersionIdentifier().owner(), () -> {
             final PutItemRequest request = keyConverter.toPutItemRequest(key);
             final PutItemResponse response = dynamoDbClientAccessor.putItem(request);
             final ConsumedCapacity consumedCapacity = response.consumedCapacity();

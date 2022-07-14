@@ -57,7 +57,7 @@ public abstract class KeyDAOTest extends BaseMetricTest {
     public void store_load() {
         final Key key = getKey();
         dao.store(key);
-        final Optional<Key> result = dao.load(key.keyIdentifier());
+        final Optional<Key> result = dao.load(key.keyVersionIdentifier()); // key version identifier
 
         assertThat(result)
                 .isNotNull()
@@ -69,7 +69,7 @@ public abstract class KeyDAOTest extends BaseMetricTest {
     @Test
     public void load_notFound() {
         final Key key = getKey();
-        final Optional<Key> result = dao.load(key.keyIdentifier());
+        final Optional<Key> result = dao.load(key.keyVersionIdentifier()); // key version identifier
 
         assertThat(result)
                 .isNotNull()
@@ -81,20 +81,7 @@ public abstract class KeyDAOTest extends BaseMetricTest {
         final Key key = getKey(true, 2);
         final KeyIdentifier keyIdentifier = getKeyIdentifier(key);
         dao.store(key);
-        final Optional<Key> result = dao.load(keyIdentifier);
-        assertThat(result)
-                .isNotNull()
-                .isNotEmpty()
-                .get()
-                .isEqualTo(key);
-    }
-
-    private KeyIdentifier getKeyIdentifier(final Key key) {
-        final KeyIdentifier keyIdentifier = ImmutableKeyIdentifier.builder()
-                .owner(key.keyIdentifier().owner())
-                .key(key.keyIdentifier().key())
-                .build();
-        return keyIdentifier;
+        assertQueryReturnsKey(key);
     }
 
     @Test
@@ -120,27 +107,23 @@ public abstract class KeyDAOTest extends BaseMetricTest {
         final Key key1 = getAndStoreKey(true, 3);
         final Key key2 = getAndStoreKey(true, 2);
         final Key key3 = getAndStoreKey(false, 1);
-        final KeyIdentifier keyIdentifier = getKeyIdentifier(key3);
-        final Optional<Key> result = dao.load(keyIdentifier);
-        assertThat(result)
-                .isNotNull()
-                .isNotEmpty()
-                .get()
-                .isEqualTo(key1);
+        assertQueryReturnsKey(key1);
     }
 
     @Test
     public void loadActive_threeKeys_twoActive_diffOrder() {
+        final Key key2 = getAndStoreKey(true, 2);
         final Key key3 = getAndStoreKey(false, 1);
         final Key key1 = getAndStoreKey(true, 3);
-        final Key key2 = getAndStoreKey(true, 2);
-        final KeyIdentifier keyIdentifier = getKeyIdentifier(key3);
-        final Optional<Key> result = dao.load(keyIdentifier);
-        assertThat(result)
-                .isNotNull()
-                .isNotEmpty()
-                .get()
-                .isEqualTo(key1);
+        assertQueryReturnsKey(key1);
+    }
+
+    @Test
+    public void loadActive_threeKeys_oneActive() {
+        final Key key2 = getAndStoreKey(false, 3);
+        final Key key1 = getAndStoreKey(true, 2);
+        final Key key3 = getAndStoreKey(false, 1);
+        assertQueryReturnsKey(key1);
     }
 
     @Test
@@ -161,7 +144,7 @@ public abstract class KeyDAOTest extends BaseMetricTest {
         final Key key = getKey();
         final boolean initialActiveState = key.active();
         dao.store(key);
-        assertThat(dao.load(key.keyIdentifier()))
+        assertThat(dao.load(key.keyVersionIdentifier()))
                 .isNotEmpty()
                 .get()
                 .hasFieldOrPropertyWithValue("active", initialActiveState);
@@ -169,14 +152,14 @@ public abstract class KeyDAOTest extends BaseMetricTest {
         final boolean newActiveState = !initialActiveState;
         final Key firstUpdatedKey = ImmutableKey.copyOf(key).withActive(newActiveState);
         dao.store(firstUpdatedKey);
-        assertThat(dao.load(key.keyIdentifier()))
+        assertThat(dao.load(key.keyVersionIdentifier()))
                 .isNotEmpty()
                 .get()
                 .hasFieldOrPropertyWithValue("active", newActiveState);
 
         final Key secondUpdatedKey = ImmutableKey.copyOf(firstUpdatedKey).withActive(initialActiveState);
         dao.store(secondUpdatedKey);
-        assertThat(dao.load(key.keyIdentifier()))
+        assertThat(dao.load(key.keyVersionIdentifier()))
                 .isNotEmpty()
                 .get()
                 .hasFieldOrPropertyWithValue("active", initialActiveState);
@@ -189,12 +172,12 @@ public abstract class KeyDAOTest extends BaseMetricTest {
             final Key key = mapper.readValue(stream, Key.class);
             final byte[] value = new byte[32];
             random.nextBytes(value);
-            final KeyVersionIdentifier identifier = ImmutableKeyVersionIdentifier.copyOf(key.keyIdentifier())
+            final KeyVersionIdentifier identifier = ImmutableKeyVersionIdentifier.copyOf(key.keyVersionIdentifier())
                     .withVersion(version);
             return ImmutableKey.copyOf(key)
                     .withValue(value)
                     .withActive(active)
-                    .withKeyIdentifier(identifier);
+                    .withKeyVersionIdentifier(identifier);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -204,4 +187,21 @@ public abstract class KeyDAOTest extends BaseMetricTest {
         return getKey(true, 2);
     }
 
+    private KeyIdentifier getKeyIdentifier(final Key key) {
+        final KeyIdentifier keyIdentifier = ImmutableKeyIdentifier.builder()
+                .owner(key.keyVersionIdentifier().owner())
+                .key(key.keyVersionIdentifier().key())
+                .build();
+        return keyIdentifier;
+    }
+
+    private void assertQueryReturnsKey(final Key key) {
+        final KeyIdentifier keyIdentifier = getKeyIdentifier(key);
+        final Optional<Key> result = dao.load(keyIdentifier);
+        assertThat(result)
+                .isNotNull()
+                .isNotEmpty()
+                .get()
+                .isEqualTo(key);
+    }
 }
