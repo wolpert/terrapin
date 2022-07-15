@@ -20,6 +20,7 @@ import com.codeheadsystems.metrics.Metrics;
 import com.codeheadsystems.terrapin.server.dao.accessor.DynamoDbClientAccessor;
 import com.codeheadsystems.terrapin.server.dao.converter.KeyConverter;
 import com.codeheadsystems.terrapin.server.dao.model.Batch;
+import com.codeheadsystems.terrapin.server.dao.model.ImmutableOwnerIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.Key;
 import com.codeheadsystems.terrapin.server.dao.model.KeyIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.KeyVersionIdentifier;
@@ -124,7 +125,14 @@ public class KeyDAODynamoDB implements KeyDAO {
     public Optional<OwnerIdentifier> loadOwner(final String ownerName) {
         LOGGER.debug("loadOwner({})", ownerName);
         return time("loadowner", ownerName, () -> {
-            return Optional.empty();
+            final QueryRequest request = keyConverter.toOwnerQueryRequest(ownerName);
+            final QueryResponse response = dynamoDbClientAccessor.query(request);
+            LOGGER.debug("loadOwner:{}", response.consumedCapacity());
+            if (response.hasItems() && response.items().size() > 0) {
+                return Optional.of(ImmutableOwnerIdentifier.builder().owner(ownerName).build()); // all we need is one entry
+            } else {
+                return Optional.empty();
+            }
         });
     }
 

@@ -58,4 +58,10 @@ public interface TableConfiguration {
         return "activeIndex";
     }
 
+    @Value.Default
+    @JsonProperty("ownerIndex")
+    default String ownerIndex() {
+        return "ownerIndex";
+    }
+
 }

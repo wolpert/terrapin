@@ -49,6 +49,7 @@ public class KeyConverter {
     public static final String UPDATE = "update";
     public static final String TYPE = "type";
     public static final String ACTIVE_HASH = "activeHashKey";
+    public static final String OWNER_HASH = "ownerHashKey";
     public static final String INVALID_INDEX = "invalid.index";
     public static final String KEYCONVERTER_ACTIVEINDEX = "keyconverter.activeindex";
     public static final String MISSING_BUT_EXPECTED = "missing.but.expected";
@@ -79,6 +80,7 @@ public class KeyConverter {
         builder.put(TYPE, fromS(key.type()));
         builder.put(ACTIVE, fromBool(key.active()));
         builder.put(CREATE, fromN(Long.toString(key.createDate().getTime())));
+        builder.put(OWNER_HASH, fromS(key.keyVersionIdentifier().owner()));
         builder.put(ACTIVE_HASH, key.active() ? fromS(hashKey) : null); // index
         key.updateDate().ifPresent(date -> builder.put(UPDATE, fromN(Long.toString(date.getTime()))));
         return PutItemRequest.builder()
@@ -173,7 +175,21 @@ public class KeyConverter {
                         .comparisonOperator(ComparisonOperator.EQ)
                         .attributeValueList(fromS(hashKey(identifier)))
                         .build()))
+                .build();
+    }
 
+    public QueryRequest toOwnerQueryRequest(final String owner) {
+        LOGGER.debug("toOwnerQueryRequest({})", owner);
+        return QueryRequest.builder()
+                .tableName(configuration.tableName())
+                .indexName(configuration.ownerIndex())
+                .returnConsumedCapacity(ReturnConsumedCapacity.TOTAL)
+                .scanIndexForward(false) // reverse the result set
+                .limit(1) // this actually works because we are using the index, and will only get the first result.
+                .keyConditions(Map.of(OWNER_HASH, Condition.builder()
+                        .comparisonOperator(ComparisonOperator.EQ)
+                        .attributeValueList(fromS(owner))
+                        .build()))
                 .build();
     }
 

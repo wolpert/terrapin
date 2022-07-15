@@ -17,6 +17,7 @@
 package com.codeheadsystems.terrapin.server.dao;
 
 import static com.codeheadsystems.terrapin.server.dao.converter.KeyConverter.ACTIVE_HASH;
+import static com.codeheadsystems.terrapin.server.dao.converter.KeyConverter.OWNER_HASH;
 
 import java.util.List;
 import javax.inject.Inject;
@@ -54,7 +55,9 @@ public class AWSManager {
                 AttributeDefinition.builder()
                         .attributeName(tableConfiguration.rangeKey()).attributeType(ScalarAttributeType.S).build(),
                 AttributeDefinition.builder()
-                        .attributeName(ACTIVE_HASH).attributeType(ScalarAttributeType.S).build()
+                        .attributeName(ACTIVE_HASH).attributeType(ScalarAttributeType.S).build(),
+                AttributeDefinition.builder()
+                        .attributeName(OWNER_HASH).attributeType(ScalarAttributeType.S).build()
         );
 
         final GlobalSecondaryIndex activeIndex = GlobalSecondaryIndex.builder()
@@ -65,12 +68,20 @@ public class AWSManager {
                         KeySchemaElement.builder().keyType(KeyType.RANGE).attributeName(tableConfiguration.rangeKey()).build()
                 ).build();
 
+        final GlobalSecondaryIndex ownerIndex = GlobalSecondaryIndex.builder()
+                .indexName(tableConfiguration.ownerIndex())
+                .projection(Projection.builder().projectionType(ProjectionType.ALL).build())
+                .keySchema(
+                        KeySchemaElement.builder().keyType(KeyType.HASH).attributeName(OWNER_HASH).build(),
+                        KeySchemaElement.builder().keyType(KeyType.RANGE).attributeName(tableConfiguration.hashKey()).build()
+                ).build();
+
         return CreateTableRequest.builder()
                 .tableName(tableConfiguration.tableName())
                 .billingMode(BillingMode.PAY_PER_REQUEST)
                 .keySchema(hashKey, rangeKey)
                 .attributeDefinitions(attributeDefinitions)
-                .globalSecondaryIndexes(activeIndex)
+                .globalSecondaryIndexes(activeIndex, ownerIndex)
                 .build();
     }
 

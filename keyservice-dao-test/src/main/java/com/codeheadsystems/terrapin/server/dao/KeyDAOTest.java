@@ -26,6 +26,7 @@ import com.codeheadsystems.terrapin.server.dao.model.ImmutableKeyVersionIdentifi
 import com.codeheadsystems.terrapin.server.dao.model.Key;
 import com.codeheadsystems.terrapin.server.dao.model.KeyIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.KeyVersionIdentifier;
+import com.codeheadsystems.terrapin.server.dao.model.OwnerIdentifier;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.InputStream;
@@ -133,6 +134,28 @@ public abstract class KeyDAOTest extends BaseMetricTest {
         final Key key2 = getAndStoreKey(false, 2);
         final KeyIdentifier keyIdentifier = getKeyIdentifier(key3);
         final Optional<Key> result = dao.load(keyIdentifier);
+        assertThat(result)
+                .isNotNull()
+                .isEmpty();
+    }
+
+    @Test
+    public void loadOwner_found() {
+        final Key key = getAndStoreKey(true, 1);
+        final String owner = key.keyVersionIdentifier().owner();
+        final Optional<OwnerIdentifier> result = dao.loadOwner(owner);
+        assertThat(result)
+                .isNotNull()
+                .isNotEmpty()
+                .get()
+                .hasFieldOrPropertyWithValue("owner", owner);
+    }
+
+    @Test
+    public void loadOwner_notfound() {
+        final Key key = getAndStoreKey(true, 1);
+        final String owner = key.keyVersionIdentifier().owner() + "someoneelse";
+        final Optional<OwnerIdentifier> result = dao.loadOwner(owner);
         assertThat(result)
                 .isNotNull()
                 .isEmpty();
