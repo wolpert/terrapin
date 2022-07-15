@@ -52,7 +52,7 @@ import software.amazon.awssdk.utils.ImmutableMap;
 @ExtendWith(MockitoExtension.class)
 public class KeyConverterTest {
 
-    public static final String HASHKEY = "owner:key";
+    public static final String HASHKEY = "k:owner:key";
     public static final String RANGEKEY = "10";
     private static final TableConfiguration TABLE_CONFIGURATION = ImmutableTableConfiguration.builder().build();
     @Mock private Metrics metrics;

@@ -28,6 +28,7 @@ import com.codeheadsystems.terrapin.server.dao.model.ImmutableKeyVersionIdentifi
 import com.codeheadsystems.terrapin.server.dao.model.Key;
 import com.codeheadsystems.terrapin.server.dao.model.KeyIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.KeyVersionIdentifier;
+import com.codeheadsystems.terrapin.server.exception.DatalayerException;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import java.util.Date;
@@ -55,6 +56,7 @@ public class KeyConverter {
     public static final String MISSING_BUT_EXPECTED = "missing.but.expected";
     public static final String FOUND_UNEXPECTEDLY = "found.unexpectedly";
     private static final Logger LOGGER = LoggerFactory.getLogger(KeyConverter.class);
+    public static final String KEY_VERSION_HASH = "keyVersion:%s:%s";
     private final TableConfiguration configuration;
     private final Counter activeWithoutIndexCounter;
     private final Counter inactiveWithIndexCounter;
@@ -95,7 +97,7 @@ public class KeyConverter {
     }
 
     private String hashKey(final KeyIdentifier identifier) {
-        return String.format("%s:%s", identifier.owner(), identifier.key());
+        return String.format(KEY_VERSION_HASH, identifier.owner(), identifier.key());
     }
 
     public GetItemRequest toGetItemRequest(final KeyVersionIdentifier identifier) {
@@ -154,8 +156,12 @@ public class KeyConverter {
     private KeyVersionIdentifier versionIdentifierFrom(final Map<String, AttributeValue> item) {
         final String hash = item.get(configuration.hashKey()).s();
         final String[] tokens = hash.split(":");
-        final String owner = tokens[0];
-        final String key = tokens[1];
+        if (tokens.length!=3) {
+            LOGGER.error("Token lookup failed, badly encoded: {}", hash);
+            throw new DatalayerException("Token lookup has incorrect length: " + hash);
+        }
+        final String owner = tokens[1];
+        final String key = tokens[2];
         return ImmutableKeyVersionIdentifier.builder()
                 .owner(owner)
                 .key(key)
