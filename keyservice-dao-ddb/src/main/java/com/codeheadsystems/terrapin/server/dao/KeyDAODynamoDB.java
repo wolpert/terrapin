@@ -19,12 +19,15 @@ package com.codeheadsystems.terrapin.server.dao;
 import com.codeheadsystems.metrics.Metrics;
 import com.codeheadsystems.terrapin.server.dao.accessor.DynamoDbClientAccessor;
 import com.codeheadsystems.terrapin.server.dao.converter.KeyConverter;
+import com.codeheadsystems.terrapin.server.dao.converter.OwnerConverter;
 import com.codeheadsystems.terrapin.server.dao.model.Batch;
 import com.codeheadsystems.terrapin.server.dao.model.ImmutableOwnerIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.Key;
 import com.codeheadsystems.terrapin.server.dao.model.KeyIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.KeyVersionIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.OwnerIdentifier;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -44,32 +47,43 @@ import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 public class KeyDAODynamoDB implements KeyDAO {
     public static final String OWNER = "owner";
     private static final Logger LOGGER = LoggerFactory.getLogger(KeyDAODynamoDB.class);
+    public static final String PREFIX = "ddbdao.";
     private final TableConfiguration tableConfiguration;
     private final DynamoDbClientAccessor dynamoDbClientAccessor;
     private final KeyConverter keyConverter;
+    private final OwnerConverter ownerConverter;
     private final Metrics metrics;
+    private final Counter counterKeyVersion;
+    private final Counter counterKey;
+    private final Counter counterOwner;
 
     @Inject
     public KeyDAODynamoDB(final DynamoDbClientAccessor dynamoDbClientAccessor,
                           final TableConfiguration tableConfiguration,
                           final KeyConverter keyConverter,
+                          final OwnerConverter ownerConverter,
                           final Metrics metrics) {
         LOGGER.info("KeyDAODynamoDB({},{},{})", dynamoDbClientAccessor, tableConfiguration, keyConverter);
         this.tableConfiguration = tableConfiguration;
         this.dynamoDbClientAccessor = dynamoDbClientAccessor;
         this.keyConverter = keyConverter;
+        this.ownerConverter = ownerConverter;
         this.metrics = metrics;
+        final MeterRegistry registry = metrics.registry();
+        counterKeyVersion = registry.counter(PREFIX + "found.key.version");
+        counterKey = registry.counter(PREFIX + "found.key");
+        counterOwner = registry.counter(PREFIX + "found.owner");
     }
 
     private <T> T time(final String methodName,
                        final String owner,
                        final Supplier<T> supplier) {
-        final String name = "ddbdao." + methodName;
+        final String name = PREFIX + methodName;
         final Timer timer;
         if (owner != null) {
             timer = metrics.registry().timer(name, OWNER, owner); // TODO: Vet cardinality. Set by configuration?
         } else {
-            timer = metrics.registry().timer(name);
+            timer = metrics.registry().timer(name, OWNER, "null");
         }
         return metrics.time(name, timer, supplier);
     }
@@ -77,26 +91,42 @@ public class KeyDAODynamoDB implements KeyDAO {
     @Override
     public void store(final Key key) {
         LOGGER.debug("store({})", key.keyVersionIdentifier());
-        time("store", key.keyVersionIdentifier().owner(), () -> {
-            final PutItemRequest request = keyConverter.toPutItemRequest(key);
-            final PutItemResponse response = dynamoDbClientAccessor.putItem(request);
-            final ConsumedCapacity consumedCapacity = response.consumedCapacity();
-            LOGGER.debug("store:{}", consumedCapacity);
+        time("storeKey", key.keyVersionIdentifier().owner(), () -> {
+            storeKey(key);
+            storeOwner(key);
             return null;
         });
+    }
+
+    private void storeKey(final Key key) {
+        LOGGER.debug("storeKey({})", key.keyVersionIdentifier());
+        final PutItemRequest request = keyConverter.toPutItemRequest(key);
+        final PutItemResponse response = dynamoDbClientAccessor.putItem(request);
+        final ConsumedCapacity consumedCapacity = response.consumedCapacity();
+        LOGGER.debug("storeKey:{}", consumedCapacity);
+    }
+
+    private void storeOwner(final Key key) {
+        LOGGER.debug("storeOwner({})", key.keyVersionIdentifier());
+        final PutItemRequest request = ownerConverter.toPutItemRequest(key.keyVersionIdentifier());
+        final PutItemResponse response = dynamoDbClientAccessor.putItem(request);
+        final ConsumedCapacity consumedCapacity = response.consumedCapacity();
+        LOGGER.debug("storeOwner:{}", consumedCapacity);
     }
 
     @Override
     public Optional<Key> load(final KeyVersionIdentifier identifier) {
         LOGGER.debug("load({})", identifier);
-        return time("loadversion", identifier.owner(), () -> {
+        return time("loadKeyVersion", identifier.owner(), () -> {
             final GetItemRequest request = keyConverter.toGetItemRequest(identifier);
             final GetItemResponse response = dynamoDbClientAccessor.getItem(request);
             final ConsumedCapacity consumedCapacity = response.consumedCapacity();
             LOGGER.debug("load:{}", consumedCapacity);
             if (response.hasItem()) {
+                counterKeyVersion.increment(1);
                 return Optional.of(keyConverter.from(response));
             } else {
+                counterKeyVersion.increment(0);
                 return Optional.empty();
             }
         });
@@ -109,13 +139,15 @@ public class KeyDAODynamoDB implements KeyDAO {
     @Override
     public Optional<Key> load(final KeyIdentifier identifier) {
         LOGGER.debug("load({})", identifier);
-        return time("loadkey", identifier.owner(), () -> {
+        return time("loadKey", identifier.owner(), () -> {
             final QueryRequest request = keyConverter.toActiveQueryRequest(identifier);
             final QueryResponse response = dynamoDbClientAccessor.query(request);
             LOGGER.debug("load:{}", response.consumedCapacity());
             if (response.hasItems() && response.items().size() > 0) {
+                counterKey.increment(1);
                 return Optional.of(keyConverter.from(response.items().get(0))); // first on the list is newest.
             } else {
+                counterKey.increment(0);
                 return Optional.empty();
             }
         });
@@ -124,13 +156,16 @@ public class KeyDAODynamoDB implements KeyDAO {
     @Override
     public Optional<OwnerIdentifier> loadOwner(final String ownerName) {
         LOGGER.debug("loadOwner({})", ownerName);
-        return time("loadowner", ownerName, () -> {
-            final QueryRequest request = keyConverter.toOwnerQueryRequest(ownerName);
+        return time("loadOwner", ownerName, () -> {
+            final QueryRequest request = ownerConverter.toOwnerQueryRequest(ImmutableOwnerIdentifier.builder()
+                    .owner(ownerName).build());
             final QueryResponse response = dynamoDbClientAccessor.query(request);
             LOGGER.debug("loadOwner:{}", response.consumedCapacity());
             if (response.hasItems() && response.items().size() > 0) {
+                counterOwner.increment(1);
                 return Optional.of(ImmutableOwnerIdentifier.builder().owner(ownerName).build()); // all we need is one entry
             } else {
+                counterOwner.increment(0);
                 return Optional.empty();
             }
         });

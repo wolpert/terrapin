@@ -33,11 +33,12 @@ import software.amazon.awssdk.services.dynamodb.model.*;
  */
 public class DynamoDbClientAccessor {
 
-    public static final String PUT_ITEM_METRIC = "ddbaccessor.putitem";
-    public static final String GET_ITEM_METRIC = "ddbaccessor.getitem";
-    public static final String BATCH_WRITE_ITEM_METRIC = "ddbaccessor.batchwriteitem";
+    public static final String DDBACCESSOR = "ddbaccessor.";
+    public static final String PUT_ITEM_METRIC = DDBACCESSOR + "putItem";
+    public static final String GET_ITEM_METRIC = DDBACCESSOR + "getItem";
+    public static final String BATCH_WRITE_ITEM_METRIC = DDBACCESSOR + "batchWriteItem";
     private static final Logger LOGGER = LoggerFactory.getLogger(DynamoDbClientAccessor.class);
-    private static final String QUERY_METRIC = "ddbaccessor.query";
+    private static final String QUERY_METRIC = DDBACCESSOR + "query";
     private final Metrics metrics;
 
     // --- function list ---

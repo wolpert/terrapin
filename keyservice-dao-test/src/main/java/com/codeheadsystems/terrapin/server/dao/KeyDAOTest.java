@@ -189,14 +189,16 @@ public abstract class KeyDAOTest extends BaseMetricTest {
     }
 
     private Key getKey(final boolean active,
-                       final long version) {
+                       final long version,
+                       final String owner) {
         final InputStream stream = KeyDAOTest.class.getClassLoader().getResourceAsStream("fixture/Key.json");
         try {
             final Key key = mapper.readValue(stream, Key.class);
             final byte[] value = new byte[32];
             random.nextBytes(value);
             final KeyVersionIdentifier identifier = ImmutableKeyVersionIdentifier.copyOf(key.keyVersionIdentifier())
-                    .withVersion(version);
+                    .withVersion(version)
+                    .withOwner(owner);
             return ImmutableKey.copyOf(key)
                     .withValue(value)
                     .withActive(active)
@@ -208,6 +210,10 @@ public abstract class KeyDAOTest extends BaseMetricTest {
 
     protected Key getKey() {
         return getKey(true, 2);
+    }
+
+    private Key getKey(final boolean active, final long version) {
+        return getKey(active, version, "owner");
     }
 
     private KeyIdentifier getKeyIdentifier(final Key key) {
