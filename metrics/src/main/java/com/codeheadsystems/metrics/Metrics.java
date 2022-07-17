@@ -44,7 +44,7 @@ public class Metrics {
     }
 
     /**
-     * TODO: Make this not report the metrics until they are closed.
+     * Helper method to time a request and include the success counters.
      */
     public <R> R time(final String name,
                       final Timer timer,
