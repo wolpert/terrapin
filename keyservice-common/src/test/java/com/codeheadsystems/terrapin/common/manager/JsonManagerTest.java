@@ -21,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,8 +35,8 @@ class JsonManagerTest {
   private static final String JSON = "{this is json, really}";
   private static final Object FROM_JSON = new Object();
 
-  @Mock
-  private ObjectMapper mapper;
+  @Mock private ObjectMapper mapper;
+  @Mock private TypeReference<Object> typeReference;
 
   private JsonManager manager;
 
@@ -45,14 +46,32 @@ class JsonManagerTest {
   }
 
   @Test
+  public void testObjectMapper() {
+    final ObjectMapper result = manager.objectMapper();
+    assertThat(result)
+            .isEqualTo(mapper);
+  }
+
+  @Test
   void readValue_success() throws JsonProcessingException {
     when(mapper.readValue(JSON, Object.class)).thenReturn(FROM_JSON);
 
     final Object result = manager.readValue(JSON, Object.class);
 
     assertThat(result)
-        .isNotNull()
-        .isEqualTo(FROM_JSON);
+            .isNotNull()
+            .isEqualTo(FROM_JSON);
+  }
+
+  @Test
+  void readValue_success_typeref() throws JsonProcessingException {
+    when(mapper.readValue(JSON, typeReference)).thenReturn(FROM_JSON);
+
+    final Object result = manager.readValue(JSON, typeReference);
+
+    assertThat(result)
+            .isNotNull()
+            .isEqualTo(FROM_JSON);
   }
 
   @Test
@@ -62,6 +81,15 @@ class JsonManagerTest {
     assertThatExceptionOfType(IllegalArgumentException.class)
         .isThrownBy(() -> manager.readValue(JSON, Object.class))
         .withMessageContaining("Unable to read value");
+  }
+
+  @Test
+  void readValue_exception_typeRef() throws JsonProcessingException {
+    when(mapper.readValue(JSON, typeReference)).thenThrow(new FakeException("this is a test"));
+
+    assertThatExceptionOfType(IllegalArgumentException.class)
+            .isThrownBy(() -> manager.readValue(JSON, typeReference))
+            .withMessageContaining("Unable to read value");
   }
 
   @Test

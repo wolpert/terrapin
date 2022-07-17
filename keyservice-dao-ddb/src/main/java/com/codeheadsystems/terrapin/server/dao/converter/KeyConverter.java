@@ -23,6 +23,8 @@ import static software.amazon.awssdk.services.dynamodb.model.AttributeValue.from
 
 import com.codeheadsystems.metrics.Metrics;
 import com.codeheadsystems.terrapin.server.dao.TableConfiguration;
+import com.codeheadsystems.terrapin.server.dao.model.Batch;
+import com.codeheadsystems.terrapin.server.dao.model.ImmutableBatch;
 import com.codeheadsystems.terrapin.server.dao.model.ImmutableKey;
 import com.codeheadsystems.terrapin.server.dao.model.ImmutableKeyVersionIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.Key;
@@ -44,19 +46,41 @@ import software.amazon.awssdk.utils.ImmutableMap;
 @Singleton
 public class KeyConverter {
 
+    /**
+     * The data that makes up the key itself; used for encryption/decryption.
+     */
     public static final String KEY_VALUE = "key_value";
+    /**
+     * Is this key veresion active?
+     */
     public static final String ACTIVE = "active";
+    /**
+     * What type of key is it.
+     */
+    public static final String TYPE = "type";
     public static final String CREATE = "create";
     public static final String UPDATE = "update";
-    public static final String TYPE = "type";
+    /**
+     * The info record for a key. Parent object if you will.
+     */
+    public static final String INFO = "info";
+    /**
+     * Used to search for active key versions.
+     */
     public static final String ACTIVE_HASH = "activeHashKey";
-    public static final String OWNER_HASH = "ownerHashKey";
+    /**
+     * Used to search for all key versions that belong to an owner.
+     */
+    public static final String OWNER_HASH = "ownerHashKeyVersion";
+    /**
+     * The format for the hashkey for a key.
+     */
+    public static final String KEY_VERSION_HASH = "keyVersion:%s:%s";
     public static final String INVALID_INDEX = "invalid.index";
     public static final String KEYCONVERTER_ACTIVEINDEX = "keyconverter.activeindex";
     public static final String MISSING_BUT_EXPECTED = "missing.but.expected";
     public static final String FOUND_UNEXPECTEDLY = "found.unexpectedly";
     private static final Logger LOGGER = LoggerFactory.getLogger(KeyConverter.class);
-    public static final String KEY_VERSION_HASH = "keyVersion:%s:%s";
     private final TableConfiguration configuration;
     private final Counter activeWithoutIndexCounter;
     private final Counter inactiveWithIndexCounter;
@@ -183,20 +207,4 @@ public class KeyConverter {
                         .build()))
                 .build();
     }
-
-    public QueryRequest toOwnerQueryRequest(final String owner) {
-        LOGGER.debug("toOwnerQueryRequest({})", owner);
-        return QueryRequest.builder()
-                .tableName(configuration.tableName())
-                .indexName(configuration.ownerIndex())
-                .returnConsumedCapacity(ReturnConsumedCapacity.TOTAL)
-                .scanIndexForward(false) // reverse the result set
-                .limit(1) // this actually works because we are using the index, and will only get the first result.
-                .keyConditions(Map.of(OWNER_HASH, Condition.builder()
-                        .comparisonOperator(ComparisonOperator.EQ)
-                        .attributeValueList(fromS(owner))
-                        .build()))
-                .build();
-    }
-
 }

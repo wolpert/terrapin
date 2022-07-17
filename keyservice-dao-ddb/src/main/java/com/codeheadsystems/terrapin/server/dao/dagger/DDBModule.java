@@ -18,10 +18,14 @@ package com.codeheadsystems.terrapin.server.dao.dagger;
 
 import com.codeheadsystems.metrics.Metrics;
 import com.codeheadsystems.metrics.dagger.MetricsModule;
+import com.codeheadsystems.terrapin.common.dagger.JsonModule;
+import com.codeheadsystems.terrapin.server.dao.ImmutableTableConfiguration;
 import com.codeheadsystems.terrapin.server.dao.KeyDAO;
 import com.codeheadsystems.terrapin.server.dao.KeyDAODynamoDB;
+import com.codeheadsystems.terrapin.server.dao.TableConfiguration;
 import com.codeheadsystems.terrapin.server.dao.accessor.DynamoDbClientAccessor;
 import com.codeheadsystems.terrapin.server.exception.RetryableException;
+import dagger.Binds;
 import dagger.Module;
 import dagger.Provides;
 import io.github.resilience4j.core.IntervalFunction;
@@ -33,9 +37,39 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
-// TODO add a circuit breaker to the retry.
-@Module(includes = {DDBModule.Binder.class, MetricsModule.class})
+/**
+ * Basic DDB module.
+ * Use this to create a KeyDAO. You'll need the DynamoDBClient.
+ *
+ * TODO add a circuit breaker to the retry.
+ */
+@Module(includes = {DDBModule.Binder.class, MetricsModule.class, JsonModule.class})
 public class DDBModule {
+
+    private final DynamoDbClient client;
+    private final TableConfiguration tableConfiguration;
+
+    public DDBModule(final DynamoDbClient dynamoDbClient) {
+        this(dynamoDbClient, ImmutableTableConfiguration.builder().build());
+    }
+
+    public DDBModule(final DynamoDbClient dynamoDbClient,
+                     final TableConfiguration tableConfiguration) {
+        this.client = dynamoDbClient;
+        this.tableConfiguration = tableConfiguration;
+    }
+
+    @Provides
+    @Singleton
+    public DynamoDbClient dynamoDbClient() {
+        return client;
+    }
+
+    @Provides
+    @Singleton
+    public TableConfiguration tableConfiguration() {
+        return tableConfiguration;
+    }
 
     private static final String DDB_DAO_RETRY = "DDB_DAO_RETRY";
 
@@ -66,6 +100,7 @@ public class DDBModule {
     @Module
     public interface Binder {
 
+        @Binds
         KeyDAO dao(KeyDAODynamoDB dao);
 
     }

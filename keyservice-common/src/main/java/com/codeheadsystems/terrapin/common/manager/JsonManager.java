@@ -17,7 +17,9 @@
 package com.codeheadsystems.terrapin.common.manager;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +31,7 @@ public class JsonManager {
 
   private final ObjectMapper objectMapper;
 
+  @Inject
   public JsonManager(final ObjectMapper objectMapper) {
     LOGGER.info("JsonManager({})", objectMapper);
     this.objectMapper = objectMapper;
@@ -48,6 +51,28 @@ public class JsonManager {
       return objectMapper.readValue(json, clazz);
     } catch (JsonProcessingException e) {
       LOGGER.error("Unable to read value for class: {}", clazz, e);
+      throw new IllegalArgumentException("Unable to read value", e);
+    }
+  }
+
+  public ObjectMapper objectMapper() {
+    return objectMapper;
+  }
+
+  /**
+   * Wrapper so no one has to catch the JSON processing exception. Safe logging, only logs the class, not the json.
+   *
+   * @param json  to convert.
+   * @param typeReference to convert.
+   * @param <T>   the type.
+   * @return an instance of the type.
+   */
+  public <T> T readValue(final String json, final TypeReference<T> typeReference) {
+    LOGGER.debug("readValue(json,{})", typeReference);
+    try {
+      return objectMapper.readValue(json, typeReference);
+    } catch (JsonProcessingException e) {
+      LOGGER.error("Unable to read value for class: {}", typeReference, e);
       throw new IllegalArgumentException("Unable to read value", e);
     }
   }

@@ -18,6 +18,7 @@ package com.codeheadsystems.terrapin.server.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.codeheadsystems.terrapin.server.dao.manager.AWSManager;
 import com.codeheadsystems.test.datastore.DataStore;
 import com.codeheadsystems.test.datastore.DynamoDBExtension;
 import org.junit.jupiter.api.AfterEach;

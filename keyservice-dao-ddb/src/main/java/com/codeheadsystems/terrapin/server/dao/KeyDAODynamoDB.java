@@ -174,7 +174,7 @@ public class KeyDAODynamoDB implements KeyDAO {
     @Override
     public Batch<OwnerIdentifier> listOwners() {
         LOGGER.debug("listOwners()");
-        return time("listowners", null, () -> {
+        return time("listOwners", null, () -> {
             return null;
         });
     }
@@ -183,8 +183,10 @@ public class KeyDAODynamoDB implements KeyDAO {
     @Override
     public Batch<KeyIdentifier> listKeys(final OwnerIdentifier identifier) {
         LOGGER.debug("listKeys({})", identifier);
-        return time("listkeys", identifier.owner(), () -> {
-            return null;
+        return time("listKeys", identifier.owner(), () -> {
+            final QueryRequest request = ownerConverter.toOwnerQueryKeysRequest(identifier);
+            final QueryResponse response = dynamoDbClientAccessor.query(request);
+            return ownerConverter.toBatchKeyIdentifier(response);
         });
     }
 

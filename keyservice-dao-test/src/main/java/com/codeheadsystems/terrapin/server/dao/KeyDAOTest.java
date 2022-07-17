@@ -16,20 +16,17 @@
 
 package com.codeheadsystems.terrapin.server.dao;
 
+import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
 
 import com.codeheadsystems.metrics.test.BaseMetricTest;
 import com.codeheadsystems.terrapin.common.factory.ObjectMapperFactory;
-import com.codeheadsystems.terrapin.server.dao.model.ImmutableKey;
-import com.codeheadsystems.terrapin.server.dao.model.ImmutableKeyIdentifier;
-import com.codeheadsystems.terrapin.server.dao.model.ImmutableKeyVersionIdentifier;
-import com.codeheadsystems.terrapin.server.dao.model.Key;
-import com.codeheadsystems.terrapin.server.dao.model.KeyIdentifier;
-import com.codeheadsystems.terrapin.server.dao.model.KeyVersionIdentifier;
-import com.codeheadsystems.terrapin.server.dao.model.OwnerIdentifier;
+import com.codeheadsystems.terrapin.server.dao.model.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import org.junit.jupiter.api.BeforeEach;
@@ -94,13 +91,6 @@ public abstract class KeyDAOTest extends BaseMetricTest {
         assertThat(result)
                 .isNotNull()
                 .isEmpty();
-    }
-
-    public Key getAndStoreKey(final boolean active,
-                              final long version) {
-        final Key key = getKey(active, version);
-        dao.store(key);
-        return key;
     }
 
     @Test
@@ -188,6 +178,19 @@ public abstract class KeyDAOTest extends BaseMetricTest {
                 .hasFieldOrPropertyWithValue("active", initialActiveState);
     }
 
+    @Test
+    public void listKeys() {
+        getAndStoreKey(true, 1, "fred");
+        getAndStoreKey(true, 2, "fred");
+        final Batch<KeyIdentifier> keys = dao.listKeys(ImmutableOwnerIdentifier.builder().owner("fred").build());
+        assertThat(keys)
+                .isNotNull()
+                .hasFieldOrPropertyWithValue("nextToken", null)
+                .extracting("list", as(LIST))
+                .isNotEmpty()
+                .hasSize(1);
+    }
+
     private Key getKey(final boolean active,
                        final long version,
                        final String owner) {
@@ -214,6 +217,21 @@ public abstract class KeyDAOTest extends BaseMetricTest {
 
     private Key getKey(final boolean active, final long version) {
         return getKey(active, version, "owner");
+    }
+
+    public Key getAndStoreKey(final boolean active,
+                              final long version,
+                              final String owner) {
+        final Key key = getKey(active, version, owner);
+        dao.store(key);
+        return key;
+    }
+
+    public Key getAndStoreKey(final boolean active,
+                              final long version) {
+        final Key key = getKey(active, version);
+        dao.store(key);
+        return key;
     }
 
     private KeyIdentifier getKeyIdentifier(final Key key) {

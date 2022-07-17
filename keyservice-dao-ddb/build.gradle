@@ -36,12 +36,14 @@ dependencies {
     implementation "io.micrometer:micrometer-core:${micrometerVersion}"
     implementation "io.github.resilience4j:resilience4j-micrometer:${resilience4jVersion}"
 
-    implementation "com.google.dagger:dagger:${daggerVersion}" // Common files for runtime
-    annotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
-
     compileOnly "org.immutables:value:${immutablesVersion}"
     annotationProcessor "org.immutables:value:${immutablesVersion}"
 
+    implementation "com.google.dagger:dagger:${daggerVersion}" // Common files for runtime
+    annotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
+
+    testAnnotationProcessor "org.immutables:value:${immutablesVersion}"
+    testAnnotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
     testImplementation project(":codehead-test")
     testImplementation project(":datastore-test")
     testImplementation project(":keyservice-dao-test")

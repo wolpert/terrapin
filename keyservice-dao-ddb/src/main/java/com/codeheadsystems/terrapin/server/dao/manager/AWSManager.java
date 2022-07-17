@@ -14,11 +14,12 @@
  *    limitations under the License.
  */
 
-package com.codeheadsystems.terrapin.server.dao;
+package com.codeheadsystems.terrapin.server.dao.manager;
 
 import static com.codeheadsystems.terrapin.server.dao.converter.KeyConverter.ACTIVE_HASH;
 import static com.codeheadsystems.terrapin.server.dao.converter.KeyConverter.OWNER_HASH;
 
+import com.codeheadsystems.terrapin.server.dao.TableConfiguration;
 import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;

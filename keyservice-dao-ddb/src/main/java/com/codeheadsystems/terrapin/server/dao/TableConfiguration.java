@@ -52,12 +52,18 @@ public interface TableConfiguration {
         return "ttl";
     }
 
+    /**
+     * The index for all active key versions.
+     */
     @Value.Default
     @JsonProperty("activeIndex")
     default String activeIndex() {
         return "activeIndex";
     }
 
+    /**
+     * The index for every key record that is owned.
+     */
     @Value.Default
     @JsonProperty("ownerIndex")
     default String ownerIndex() {
