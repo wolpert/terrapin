@@ -39,10 +39,6 @@ public class SerializerManager {
                              final JsonManager mapper) {
         this.dataHelper = dataHelper;
         this.mapper = mapper;
-        // TODO: find a better way to do this.
-        final SimpleModule simpleModule = new SimpleModule();
-        simpleModule.addAbstractTypeMapping(AttributeValue.Builder.class, AttributeValue.serializableBuilderClass());
-        mapper.objectMapper().registerModule(simpleModule);
     }
 
     public String serialize(final Map<String, AttributeValue> map) {

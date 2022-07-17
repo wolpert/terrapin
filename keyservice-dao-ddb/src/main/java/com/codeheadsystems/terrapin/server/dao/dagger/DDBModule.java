@@ -18,13 +18,14 @@ package com.codeheadsystems.terrapin.server.dao.dagger;
 
 import com.codeheadsystems.metrics.Metrics;
 import com.codeheadsystems.metrics.dagger.MetricsModule;
-import com.codeheadsystems.terrapin.common.dagger.JsonModule;
+import com.codeheadsystems.terrapin.server.dao.DdbObjectMapperFactory;
 import com.codeheadsystems.terrapin.server.dao.ImmutableTableConfiguration;
 import com.codeheadsystems.terrapin.server.dao.KeyDAO;
 import com.codeheadsystems.terrapin.server.dao.KeyDAODynamoDB;
 import com.codeheadsystems.terrapin.server.dao.TableConfiguration;
 import com.codeheadsystems.terrapin.server.dao.accessor.DynamoDbClientAccessor;
 import com.codeheadsystems.terrapin.server.exception.RetryableException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dagger.Binds;
 import dagger.Module;
 import dagger.Provides;
@@ -43,7 +44,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
  *
  * TODO add a circuit breaker to the retry.
  */
-@Module(includes = {DDBModule.Binder.class, MetricsModule.class, JsonModule.class})
+@Module(includes = {DDBModule.Binder.class, MetricsModule.class})
 public class DDBModule {
 
     private final DynamoDbClient client;
@@ -57,6 +58,12 @@ public class DDBModule {
                      final TableConfiguration tableConfiguration) {
         this.client = dynamoDbClient;
         this.tableConfiguration = tableConfiguration;
+    }
+
+    @Provides
+    @Singleton
+    public ObjectMapper objectMapper(final DdbObjectMapperFactory factory) {
+        return factory.generate();
     }
 
     @Provides

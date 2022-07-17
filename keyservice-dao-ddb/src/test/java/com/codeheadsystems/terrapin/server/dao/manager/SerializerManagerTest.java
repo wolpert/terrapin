@@ -21,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.codeheadsystems.terrapin.common.factory.ObjectMapperFactory;
 import com.codeheadsystems.terrapin.common.helper.DataHelper;
 import com.codeheadsystems.terrapin.common.manager.JsonManager;
+import com.codeheadsystems.terrapin.server.dao.DdbObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,9 +37,12 @@ class SerializerManagerTest {
 
     private SerializerManager serializerManager;
 
+    /**
+     * We set this us with real internals to ensure we are getting the serialization right.
+     */
     @BeforeEach
     void setup() {
-        final ObjectMapper objectMapper = new ObjectMapperFactory().generate();
+        final ObjectMapper objectMapper = new DdbObjectMapperFactory(new ObjectMapperFactory()).generate();
         final JsonManager jsonManager = new JsonManager(objectMapper);
         final DataHelper dataHelper = new DataHelper();
         serializerManager = new SerializerManager(dataHelper, jsonManager);
