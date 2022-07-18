@@ -47,6 +47,7 @@ public class TokenManager {
         map.forEach((k, v) -> serializedMap.put(k, v.toBuilder()));
         final String json = mapper.writeValue(serializedMap);
         final String base64 = dataHelper.toBase64(json);
+        serializedMap.clear();
         return ImmutableToken.builder().value(base64).build();
     }
 
@@ -55,6 +56,7 @@ public class TokenManager {
         final HashMap<String, AttributeValue.Builder> serializedMap = mapper.readValue(json, TYPE_REFERENCE);
         final HashMap<String, AttributeValue> map = new HashMap<>();
         serializedMap.forEach((k, v) -> map.put(k, v.build()));
+        serializedMap.clear();
         return map;
     }
 
