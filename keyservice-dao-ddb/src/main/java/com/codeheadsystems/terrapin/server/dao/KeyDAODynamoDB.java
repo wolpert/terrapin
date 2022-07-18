@@ -26,6 +26,7 @@ import com.codeheadsystems.terrapin.server.dao.model.Key;
 import com.codeheadsystems.terrapin.server.dao.model.KeyIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.KeyVersionIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.OwnerIdentifier;
+import com.codeheadsystems.terrapin.server.dao.model.Token;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
@@ -172,7 +173,7 @@ public class KeyDAODynamoDB implements KeyDAO {
     }
 
     @Override
-    public Batch<OwnerIdentifier> listOwners() {
+    public Batch<OwnerIdentifier> listOwners(final Token nextToken) {
         LOGGER.debug("listOwners()");
         return time("listOwners", null, () -> {
             return null;
@@ -181,17 +182,19 @@ public class KeyDAODynamoDB implements KeyDAO {
 
 
     @Override
-    public Batch<KeyIdentifier> listKeys(final OwnerIdentifier identifier) {
+    public Batch<KeyIdentifier> listKeys(final OwnerIdentifier identifier,
+                                         final Token nextToken) {
         LOGGER.debug("listKeys({})", identifier);
         return time("listKeys", identifier.owner(), () -> {
-            final QueryRequest request = ownerConverter.toOwnerQueryKeysRequest(identifier);
+            final QueryRequest request = ownerConverter.toOwnerQueryKeysRequest(identifier, nextToken);
             final QueryResponse response = dynamoDbClientAccessor.query(request);
             return ownerConverter.toBatchKeyIdentifier(response);
         });
     }
 
     @Override
-    public Batch<KeyVersionIdentifier> listVersions(final KeyIdentifier identifier) {
+    public Batch<KeyVersionIdentifier> listVersions(final KeyIdentifier identifier,
+                                                    final Token nextToken) {
         LOGGER.debug("listVersions({})", identifier);
         return time("listversions", identifier.owner(), () -> {
             return null;

@@ -21,6 +21,7 @@ import com.codeheadsystems.terrapin.server.dao.model.Key;
 import com.codeheadsystems.terrapin.server.dao.model.KeyIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.KeyVersionIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.OwnerIdentifier;
+import com.codeheadsystems.terrapin.server.dao.model.Token;
 import java.util.Optional;
 
 /**
@@ -39,11 +40,31 @@ public interface KeyDAO {
 
     Optional<OwnerIdentifier> loadOwner(String ownerName);
 
-    Batch<OwnerIdentifier> listOwners();
+    /**
+     * Gets all the owners.
+     *
+     * @param nextToken nullable.
+     * @return owners
+     */
+    Batch<OwnerIdentifier> listOwners(Token nextToken);
 
-    Batch<KeyIdentifier> listKeys(OwnerIdentifier identifier);
+    /**
+     * Gets all the keys for an owner.
+     *
+     * @param identifier
+     * @param nextToken nullable.
+     * @return
+     */
+    Batch<KeyIdentifier> listKeys(OwnerIdentifier identifier, Token nextToken);
 
-    Batch<KeyVersionIdentifier> listVersions(KeyIdentifier identifier);
+    /**
+     * Gets all the versions for a key.
+     *
+     * @param identifier
+     * @param nextToken nullable.
+     * @return
+     */
+    Batch<KeyVersionIdentifier> listVersions(KeyIdentifier identifier, Token nextToken);
 
     // These exist for completeness, but need caution when using.
 

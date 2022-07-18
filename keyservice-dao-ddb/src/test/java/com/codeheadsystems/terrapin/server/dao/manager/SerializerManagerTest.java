@@ -22,6 +22,7 @@ import com.codeheadsystems.terrapin.common.factory.ObjectMapperFactory;
 import com.codeheadsystems.terrapin.common.helper.DataHelper;
 import com.codeheadsystems.terrapin.common.manager.JsonManager;
 import com.codeheadsystems.terrapin.server.dao.DdbObjectMapperFactory;
+import com.codeheadsystems.terrapin.server.dao.model.Token;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
@@ -50,7 +51,7 @@ class SerializerManagerTest {
 
     @Test
     public void roundTrip() {
-        final String token = serializerManager.serialize(MAP);
+        final Token token = serializerManager.serialize(MAP);
         final Map<String, AttributeValue> result = serializerManager.deserialize(token);
         assertThat(result)
                 .isEqualTo(MAP);

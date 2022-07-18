@@ -16,21 +16,24 @@
 
 package com.codeheadsystems.terrapin.server.dao.model;
 
-import java.util.List;
-import java.util.Optional;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.immutables.value.Value;
 
+/**
+ * A value wrapper for a token. To ensure it doesn't get lost in the shuffle.
+ * Tokens may contain data results and should be treated as such. So creating this
+ * class to manage tokens correctly.
+ */
 @Value.Immutable
-public interface Batch<T>{
+@JsonSerialize(as = ImmutableToken.class)
+@JsonDeserialize(builder = ImmutableToken.Builder.class)
+@JsonIgnoreProperties(ignoreUnknown = true)
+public interface Token {
 
-    List<T> list();
-
-    /**
-     * If empty, there is no more keys. WARNING: This will potentially contain result data. Treat it as you would table
-     * results.
-     *
-     * @return optional token for the next request.
-     */
-    Optional<Token> nextToken();
+    @JsonProperty("value")
+    String value();
 
 }

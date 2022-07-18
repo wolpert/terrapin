@@ -182,7 +182,7 @@ public abstract class KeyDAOTest extends BaseMetricTest {
     public void listKeys() {
         getAndStoreKey(true, 1, "fred");
         getAndStoreKey(true, 2, "fred");
-        final Batch<KeyIdentifier> keys = dao.listKeys(ImmutableOwnerIdentifier.builder().owner("fred").build());
+        final Batch<KeyIdentifier> keys = dao.listKeys(ImmutableOwnerIdentifier.builder().owner("fred").build(), null);
         assertThat(keys)
                 .isNotNull()
                 .hasFieldOrPropertyWithValue("nextToken", null)

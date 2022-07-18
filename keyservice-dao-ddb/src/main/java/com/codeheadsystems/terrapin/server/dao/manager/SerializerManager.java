@@ -18,6 +18,8 @@ package com.codeheadsystems.terrapin.server.dao.manager;
 
 import com.codeheadsystems.terrapin.common.helper.DataHelper;
 import com.codeheadsystems.terrapin.common.manager.JsonManager;
+import com.codeheadsystems.terrapin.server.dao.model.ImmutableToken;
+import com.codeheadsystems.terrapin.server.dao.model.Token;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import java.util.HashMap;
@@ -41,15 +43,16 @@ public class SerializerManager {
         this.mapper = mapper;
     }
 
-    public String serialize(final Map<String, AttributeValue> map) {
+    public Token serialize(final Map<String, AttributeValue> map) {
         final HashMap<String, AttributeValue.Builder> serializedMap = new HashMap<>();
         map.forEach((k, v) -> serializedMap.put(k, v.toBuilder()));
         final String json = mapper.writeValue(serializedMap);
-        return dataHelper.toBase64(json);
+        final String base64 = dataHelper.toBase64(json);
+        return ImmutableToken.builder().value(base64).build();
     }
 
-    public Map<String, AttributeValue> deserialize(final String base64) {
-        final String json = dataHelper.toStringFromBase64(base64);
+    public Map<String, AttributeValue> deserialize(final Token token) {
+        final String json = dataHelper.toStringFromBase64(token.value());
         final HashMap<String, AttributeValue.Builder> serializedMap = mapper.readValue(json, TYPE_REFERENCE);
         final HashMap<String, AttributeValue> map = new HashMap<>();
         serializedMap.forEach((k, v) -> map.put(k, v.build()));

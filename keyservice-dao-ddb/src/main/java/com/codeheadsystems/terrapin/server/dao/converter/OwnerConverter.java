@@ -25,6 +25,7 @@ import com.codeheadsystems.terrapin.server.dao.model.ImmutableBatch;
 import com.codeheadsystems.terrapin.server.dao.model.ImmutableKeyIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.KeyIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.OwnerIdentifier;
+import com.codeheadsystems.terrapin.server.dao.model.Token;
 import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -77,7 +78,7 @@ public class OwnerConverter {
      */
     public QueryRequest toOwnerQueryRequest(final OwnerIdentifier identifier) {
         LOGGER.debug("toOwnerQueryRequest({})", identifier);
-        return toOwnerQueryKeysRequest(identifier).toBuilder()
+        return toOwnerQueryKeysRequest(identifier, null).toBuilder()
                 .limit(1)
                 .scanIndexForward(false) // reverse the result set, the newest first.
                 .build();
@@ -87,19 +88,24 @@ public class OwnerConverter {
     /**
      * returns a request to get the first (the newest by sort) record
      *
-     * @param identifier
+     * @param identifier to search for.
+     * @param nextToken  can be null.
      * @return
      */
-    public QueryRequest toOwnerQueryKeysRequest(final OwnerIdentifier identifier) {
+    public QueryRequest toOwnerQueryKeysRequest(final OwnerIdentifier identifier,
+                                                final Token nextToken) {
         LOGGER.debug("toOwnerQueryKeysRequest({})", identifier);
-        return QueryRequest.builder()
+        final QueryRequest.Builder builder = QueryRequest.builder()
                 .tableName(configuration.tableName())
                 .returnConsumedCapacity(ReturnConsumedCapacity.TOTAL)
                 .keyConditions(Map.of(configuration.hashKey(), Condition.builder()
                         .comparisonOperator(ComparisonOperator.EQ)
                         .attributeValueList(fromS(String.format(HASH, identifier.owner())))
-                        .build()))
-                .build();
+                        .build()));
+        if (nextToken != null) {
+            builder.exclusiveStartKey(serializerManager.deserialize(nextToken));
+        }
+        return builder.build();
     }
 
     public Batch<KeyIdentifier> toBatchKeyIdentifier(final QueryResponse response) {
