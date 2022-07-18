@@ -23,6 +23,7 @@ import com.codeheadsystems.terrapin.server.dao.model.Token;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
@@ -43,8 +44,9 @@ public class TokenManager {
     }
 
     public Token serialize(final Map<String, AttributeValue> map) {
-        final HashMap<String, AttributeValue.Builder> serializedMap = new HashMap<>();
-        map.forEach((k, v) -> serializedMap.put(k, v.toBuilder()));
+        final Map<String, AttributeValue.Builder> serializedMap = map.entrySet().stream()
+                .map(e -> Map.entry(e.getKey(), e.getValue().toBuilder()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         final String json = mapper.writeValue(serializedMap);
         final String base64 = dataHelper.toBase64(json);
         serializedMap.clear();
@@ -53,11 +55,9 @@ public class TokenManager {
 
     public Map<String, AttributeValue> deserialize(final Token token) {
         final String json = dataHelper.toStringFromBase64(token.value());
-        final HashMap<String, AttributeValue.Builder> serializedMap = mapper.readValue(json, TYPE_REFERENCE);
-        final HashMap<String, AttributeValue> map = new HashMap<>();
-        serializedMap.forEach((k, v) -> map.put(k, v.build()));
-        serializedMap.clear();
-        return map;
+        return mapper.readValue(json, TYPE_REFERENCE).entrySet().stream()
+                .map(e -> Map.entry(e.getKey(), e.getValue().build()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
 }
