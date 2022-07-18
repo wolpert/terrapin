@@ -19,7 +19,7 @@ package com.codeheadsystems.terrapin.server.dao.converter;
 import static software.amazon.awssdk.services.dynamodb.model.AttributeValue.fromS;
 
 import com.codeheadsystems.terrapin.server.dao.TableConfiguration;
-import com.codeheadsystems.terrapin.server.dao.manager.SerializerManager;
+import com.codeheadsystems.terrapin.server.dao.manager.TokenManager;
 import com.codeheadsystems.terrapin.server.dao.model.Batch;
 import com.codeheadsystems.terrapin.server.dao.model.ImmutableBatch;
 import com.codeheadsystems.terrapin.server.dao.model.ImmutableKeyIdentifier;
@@ -46,12 +46,12 @@ public class OwnerConverter {
     public static final String HASH = "owner:%s";
     private static final Logger LOGGER = LoggerFactory.getLogger(OwnerConverter.class);
     private final TableConfiguration configuration;
-    private final SerializerManager serializerManager;
+    private final TokenManager tokenManager;
 
     @Inject
     public OwnerConverter(final TableConfiguration configuration,
-                          final SerializerManager serializerManager) {
-        this.serializerManager = serializerManager;
+                          final TokenManager tokenManager) {
+        this.tokenManager = tokenManager;
         LOGGER.info("OwnerConverter({})", configuration);
         this.configuration = configuration;
     }
@@ -103,7 +103,7 @@ public class OwnerConverter {
                         .attributeValueList(fromS(String.format(HASH, identifier.owner())))
                         .build()));
         if (nextToken != null) {
-            builder.exclusiveStartKey(serializerManager.deserialize(nextToken));
+            builder.exclusiveStartKey(tokenManager.deserialize(nextToken));
         }
         return builder.build();
     }
@@ -115,7 +115,7 @@ public class OwnerConverter {
             response.items().forEach(item -> builder.addList(toKeyVersion(item)));
         }
         if (response.hasLastEvaluatedKey()) { // get the token.
-            builder.nextToken(serializerManager.serialize(response.lastEvaluatedKey()));
+            builder.nextToken(tokenManager.serialize(response.lastEvaluatedKey()));
         }
         return builder.build();
     }

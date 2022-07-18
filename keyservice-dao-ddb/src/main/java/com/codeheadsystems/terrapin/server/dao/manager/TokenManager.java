@@ -21,7 +21,6 @@ import com.codeheadsystems.terrapin.common.manager.JsonManager;
 import com.codeheadsystems.terrapin.server.dao.model.ImmutableToken;
 import com.codeheadsystems.terrapin.server.dao.model.Token;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import java.util.HashMap;
 import java.util.Map;
 import javax.inject.Inject;
@@ -29,7 +28,7 @@ import javax.inject.Singleton;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
 @Singleton
-public class SerializerManager {
+public class TokenManager {
 
     public static final TypeReference<HashMap<String, AttributeValue.Builder>> TYPE_REFERENCE = new TypeReference<>() {
     };
@@ -37,8 +36,8 @@ public class SerializerManager {
     private final JsonManager mapper;
 
     @Inject
-    public SerializerManager(final DataHelper dataHelper,
-                             final JsonManager mapper) {
+    public TokenManager(final DataHelper dataHelper,
+                        final JsonManager mapper) {
         this.dataHelper = dataHelper;
         this.mapper = mapper;
     }

@@ -29,14 +29,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
-class SerializerManagerTest {
+class TokenManagerTest {
 
     private static final String KEY = "KEY";
     private static final String OWNER = "OWNER";
     private static final AttributeValue VALUE = AttributeValue.builder().s(OWNER).build();
     private static final Map<String, AttributeValue> MAP = Map.of(KEY, VALUE);
 
-    private SerializerManager serializerManager;
+    private TokenManager tokenManager;
 
     /**
      * We set this us with real internals to ensure we are getting the serialization right.
@@ -46,13 +46,13 @@ class SerializerManagerTest {
         final ObjectMapper objectMapper = new DdbObjectMapperFactory(new ObjectMapperFactory()).generate();
         final JsonManager jsonManager = new JsonManager(objectMapper);
         final DataHelper dataHelper = new DataHelper();
-        serializerManager = new SerializerManager(dataHelper, jsonManager);
+        tokenManager = new TokenManager(dataHelper, jsonManager);
     }
 
     @Test
     public void roundTrip() {
-        final Token token = serializerManager.serialize(MAP);
-        final Map<String, AttributeValue> result = serializerManager.deserialize(token);
+        final Token token = tokenManager.serialize(MAP);
+        final Map<String, AttributeValue> result = tokenManager.deserialize(token);
         assertThat(result)
                 .isEqualTo(MAP);
     }
