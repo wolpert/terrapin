@@ -180,7 +180,8 @@ public abstract class KeyDAOTest extends BaseMetricTest {
 
     @Test
     public void listKeys() {
-        getAndStoreKey(true, 1, "fred");
+        final Key key1 = getAndStoreKey(true, 1, "fred");
+        final KeyIdentifier identifier = ImmutableKeyIdentifier.copyOf(key1.keyVersionIdentifier());
         getAndStoreKey(true, 2, "fred");
         final Batch<KeyIdentifier> keys = dao.listKeys(ImmutableOwnerIdentifier.builder().owner("fred").build(), null);
         assertThat(keys)
@@ -188,7 +189,8 @@ public abstract class KeyDAOTest extends BaseMetricTest {
                 .hasFieldOrPropertyWithValue("nextToken", null)
                 .extracting("list", as(LIST))
                 .isNotEmpty()
-                .hasSize(1);
+                .hasSize(1)
+                .containsExactly(identifier);
     }
 
     private Key getKey(final boolean active,

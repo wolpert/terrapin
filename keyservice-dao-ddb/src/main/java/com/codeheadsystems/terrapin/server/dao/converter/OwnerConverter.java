@@ -27,6 +27,7 @@ import com.codeheadsystems.terrapin.server.dao.model.KeyIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.OwnerIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.Token;
 import java.util.Map;
+import java.util.regex.Pattern;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.slf4j.Logger;
@@ -44,7 +45,9 @@ import software.amazon.awssdk.utils.ImmutableMap;
 public class OwnerConverter {
 
     public static final String HASH = "owner:%s";
+    public static final String INFO_RANGE = "info";
     private static final Logger LOGGER = LoggerFactory.getLogger(OwnerConverter.class);
+    public static final String KEY_RANGE_FORMAT = "key:%s";
     private final TableConfiguration configuration;
     private final TokenManager tokenManager;
 
@@ -123,7 +126,7 @@ public class OwnerConverter {
     private KeyIdentifier toKeyVersion(final Map<String, AttributeValue> item) {
         return ImmutableKeyIdentifier.builder()
                 .owner(getOwnerFrom(item.get(configuration.hashKey())))
-                .key(item.get(configuration.rangeKey()).s())
+                .key(getKeyFrom(item.get(configuration.rangeKey())))
                 .build();
     }
 
@@ -133,8 +136,13 @@ public class OwnerConverter {
         return tokens[1];
     }
 
+    private String getKeyFrom(final AttributeValue attributeValue) {
+        final String value = attributeValue.s();
+        return value.substring(4); // length of 'key:'
+    }
+
     private String getRangeKey(final KeyIdentifier identifier) {
-        return identifier.key();
+        return String.format(KEY_RANGE_FORMAT, identifier.key());
     }
 
     private String getOwnerHashKey(final OwnerIdentifier identifier) {
