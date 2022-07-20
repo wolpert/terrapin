@@ -30,6 +30,7 @@ import java.util.Optional;
 public interface KeyDAO {
 
     void store(Key key);
+    OwnerIdentifier storeOwner(String owner);
 
     Optional<Key> load(KeyVersionIdentifier identifier);
 

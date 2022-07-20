@@ -23,22 +23,16 @@ import com.codeheadsystems.terrapin.server.dao.manager.TokenManager;
 import com.codeheadsystems.terrapin.server.dao.model.Batch;
 import com.codeheadsystems.terrapin.server.dao.model.ImmutableBatch;
 import com.codeheadsystems.terrapin.server.dao.model.ImmutableKeyIdentifier;
+import com.codeheadsystems.terrapin.server.dao.model.ImmutableOwnerIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.KeyIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.OwnerIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.Token;
 import java.util.Map;
-import java.util.regex.Pattern;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
-import software.amazon.awssdk.services.dynamodb.model.ComparisonOperator;
-import software.amazon.awssdk.services.dynamodb.model.Condition;
-import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
-import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
-import software.amazon.awssdk.services.dynamodb.model.ReturnConsumedCapacity;
+import software.amazon.awssdk.services.dynamodb.model.*;
 import software.amazon.awssdk.utils.ImmutableMap;
 
 @Singleton
@@ -73,6 +67,19 @@ public class OwnerConverter {
                 .build();
     }
 
+    public PutItemRequest toOwnerPutItemRequest(final OwnerIdentifier identifier) {
+        LOGGER.debug("toOwnerPutItemRequest({})", identifier);
+        final ImmutableMap.Builder<String, AttributeValue> builder = ImmutableMap.builder();
+        final String hashKey = getOwnerHashKey(identifier);
+        builder.put(configuration.hashKey(), fromS(hashKey));
+        builder.put(configuration.rangeKey(), fromS(INFO_RANGE));
+        return PutItemRequest.builder()
+                .tableName(configuration.tableName())
+                .returnConsumedCapacity(ReturnConsumedCapacity.TOTAL)
+                .item(builder.build())
+                .build();
+    }
+
     /**
      * returns a request to get the first (the newest by sort) record
      *
@@ -85,7 +92,24 @@ public class OwnerConverter {
                 .limit(1)
                 .scanIndexForward(false) // reverse the result set, the newest first.
                 .build();
+    }
 
+    public GetItemRequest toOwnerGetItemRequest(final OwnerIdentifier identifier) {
+        LOGGER.debug("toOwnerGetItemRequest({})", identifier);
+        final ImmutableMap.Builder<String, AttributeValue> builder = ImmutableMap.builder();
+        builder.put(configuration.hashKey(), fromS(getOwnerHashKey(identifier)));
+        builder.put(configuration.rangeKey(), fromS(INFO_RANGE));
+        return GetItemRequest.builder()
+                .tableName(configuration.tableName())
+                .returnConsumedCapacity(ReturnConsumedCapacity.TOTAL)
+                .key(builder.build())
+                .build();
+    }
+
+    public OwnerIdentifier toOwnerIdentifier(final Map<String, AttributeValue> item) {
+        return ImmutableOwnerIdentifier.builder()
+                .owner(getOwnerFrom(item.get(configuration.hashKey())))
+                .build();
     }
 
     /**
@@ -148,5 +172,4 @@ public class OwnerConverter {
     private String getOwnerHashKey(final OwnerIdentifier identifier) {
         return String.format(HASH, identifier.owner());
     }
-
 }

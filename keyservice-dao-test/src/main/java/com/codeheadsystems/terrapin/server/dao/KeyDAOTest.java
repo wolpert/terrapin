@@ -34,6 +34,7 @@ import org.junit.jupiter.api.Test;
 
 public abstract class KeyDAOTest extends BaseMetricTest {
 
+    public static final String OWNER = "I am an owner";
     protected final Random random = new Random();
     protected final ObjectMapper mapper = new ObjectMapperFactory().generate();
     protected KeyDAO dao;
@@ -131,21 +132,19 @@ public abstract class KeyDAOTest extends BaseMetricTest {
 
     @Test
     public void loadOwner_found() {
-        final Key key = getAndStoreKey(true, 1);
-        final String owner = key.keyVersionIdentifier().owner();
-        final Optional<OwnerIdentifier> result = dao.loadOwner(owner);
+        final OwnerIdentifier owner = dao.storeOwner(OWNER);
+        final Optional<OwnerIdentifier> result = dao.loadOwner(OWNER);
         assertThat(result)
                 .isNotNull()
                 .isNotEmpty()
                 .get()
-                .hasFieldOrPropertyWithValue("owner", owner);
+                .hasFieldOrPropertyWithValue("owner", OWNER)
+                .isEqualTo(owner);
     }
 
     @Test
     public void loadOwner_notfound() {
-        final Key key = getAndStoreKey(true, 1);
-        final String owner = key.keyVersionIdentifier().owner() + "someoneelse";
-        final Optional<OwnerIdentifier> result = dao.loadOwner(owner);
+        final Optional<OwnerIdentifier> result = dao.loadOwner(OWNER);
         assertThat(result)
                 .isNotNull()
                 .isEmpty();
