@@ -26,7 +26,6 @@ import com.codeheadsystems.terrapin.server.dao.model.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import org.junit.jupiter.api.BeforeEach;
@@ -190,6 +189,25 @@ public abstract class KeyDAOTest extends BaseMetricTest {
                 .isNotEmpty()
                 .hasSize(1)
                 .containsExactly(identifier);
+    }
+
+    @Test
+    public void listOwners() {
+        final Key key1 = getAndStoreKey(true, 1, "fred");
+        final Key key2 = getAndStoreKey(true, 1, "barney");
+        final Key key3 = getAndStoreKey(true, 1, "smith");
+        final OwnerIdentifier o1 = dao.storeOwner("fred");
+        final OwnerIdentifier o2 = dao.storeOwner("barney");
+        final OwnerIdentifier o3 = dao.storeOwner("smith");
+        final OwnerIdentifier o4 = dao.storeOwner(OWNER);
+        final Batch<OwnerIdentifier> ownerIdentifierBatch = dao.listOwners(null);
+        assertThat(ownerIdentifierBatch)
+                .isNotNull()
+                .hasFieldOrPropertyWithValue("nextToken", null)
+                .extracting("list", as(LIST))
+                .isNotEmpty()
+                .hasSize(4)
+                .containsOnly(o1, o2, o3, o4);
     }
 
     private Key getKey(final boolean active,

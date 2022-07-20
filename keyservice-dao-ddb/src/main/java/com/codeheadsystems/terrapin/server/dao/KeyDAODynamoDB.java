@@ -186,7 +186,9 @@ public class KeyDAODynamoDB implements KeyDAO {
     public Batch<OwnerIdentifier> listOwners(final Token nextToken) {
         LOGGER.debug("listOwners()");
         return time("listOwners", null, () -> {
-            return null;
+            final QueryRequest request = ownerConverter.toOwnerSearchQueryRequest(nextToken);
+            final QueryResponse response = dynamoDbClientAccessor.query(request);
+            return ownerConverter.toBatchOwnerIdentifier(response);
         });
     }
 

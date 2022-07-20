@@ -40,6 +40,7 @@ public class OwnerConverter {
 
     public static final String HASH = "owner:%s";
     public static final String INFO_RANGE = "info";
+    public static final String OWNER_SEARCH_IDX = "ownerSearchIdx";
     private static final Logger LOGGER = LoggerFactory.getLogger(OwnerConverter.class);
     public static final String KEY_RANGE_FORMAT = "key:%s";
     private final TableConfiguration configuration;
@@ -73,24 +74,11 @@ public class OwnerConverter {
         final String hashKey = getOwnerHashKey(identifier);
         builder.put(configuration.hashKey(), fromS(hashKey));
         builder.put(configuration.rangeKey(), fromS(INFO_RANGE));
+        builder.put(OWNER_SEARCH_IDX, fromS(INFO_RANGE)); // used to search for all owners.
         return PutItemRequest.builder()
                 .tableName(configuration.tableName())
                 .returnConsumedCapacity(ReturnConsumedCapacity.TOTAL)
                 .item(builder.build())
-                .build();
-    }
-
-    /**
-     * returns a request to get the first (the newest by sort) record
-     *
-     * @param identifier
-     * @return
-     */
-    public QueryRequest toOwnerQueryRequest(final OwnerIdentifier identifier) {
-        LOGGER.debug("toOwnerQueryRequest({})", identifier);
-        return toOwnerQueryKeysRequest(identifier, null).toBuilder()
-                .limit(1)
-                .scanIndexForward(false) // reverse the result set, the newest first.
                 .build();
     }
 
@@ -113,7 +101,7 @@ public class OwnerConverter {
     }
 
     /**
-     * returns a request to get the first (the newest by sort) record
+     * returns a request to get the first (the newest by sort) record.
      *
      * @param identifier to search for.
      * @param nextToken  can be null.
@@ -135,11 +123,34 @@ public class OwnerConverter {
         return builder.build();
     }
 
+    /**
+     * returns a request to get the owners in the system.
+     *
+     * @param nextToken can be null.
+     * @return query request
+     */
+    public QueryRequest toOwnerSearchQueryRequest(final Token nextToken) {
+        LOGGER.debug("toOwnerSearchQueryRequest()");
+        final QueryRequest.Builder builder = QueryRequest.builder()
+                .tableName(configuration.tableName())
+                .indexName(configuration.ownerSearchIndex())
+                .returnConsumedCapacity(ReturnConsumedCapacity.TOTAL)
+                .keyConditions(Map.of(OWNER_SEARCH_IDX, Condition.builder()
+                        .comparisonOperator(ComparisonOperator.EQ)
+                        .attributeValueList(fromS(INFO_RANGE))
+                        .build()));
+        if (nextToken != null) {
+            builder.exclusiveStartKey(tokenManager.deserialize(nextToken));
+        }
+        return builder.build();
+    }
+
     public Batch<KeyIdentifier> toBatchKeyIdentifier(final QueryResponse response) {
         LOGGER.debug("toBatchKeyIdentifier()");
         final ImmutableBatch.Builder<KeyIdentifier> builder = ImmutableBatch.builder();
         if (response.hasItems()) { // get the key identifiers
-            response.items().forEach(item -> builder.addList(toKeyVersion(item)));
+            // TODO: ERROR, this needs to ignore Owner INFO rows now.
+            response.items().forEach(item -> builder.addList(toKeyIdentifier(item)));
         }
         if (response.hasLastEvaluatedKey()) { // get the token.
             builder.nextToken(tokenManager.serialize(response.lastEvaluatedKey()));
@@ -147,7 +158,19 @@ public class OwnerConverter {
         return builder.build();
     }
 
-    private KeyIdentifier toKeyVersion(final Map<String, AttributeValue> item) {
+    public Batch<OwnerIdentifier> toBatchOwnerIdentifier(final QueryResponse response) {
+        LOGGER.debug("toBatchOwnerIdentifier()");
+        final ImmutableBatch.Builder<OwnerIdentifier> builder = ImmutableBatch.builder();
+        if (response.hasItems()) { // get the key identifiers
+            response.items().forEach(item -> builder.addList(toOwnerIdentifier(item)));
+        }
+        if (response.hasLastEvaluatedKey()) { // get the token.
+            builder.nextToken(tokenManager.serialize(response.lastEvaluatedKey()));
+        }
+        return builder.build();
+    }
+
+    private KeyIdentifier toKeyIdentifier(final Map<String, AttributeValue> item) {
         return ImmutableKeyIdentifier.builder()
                 .owner(getOwnerFrom(item.get(configuration.hashKey())))
                 .key(getKeyFrom(item.get(configuration.rangeKey())))
@@ -172,4 +195,5 @@ public class OwnerConverter {
     private String getOwnerHashKey(final OwnerIdentifier identifier) {
         return String.format(HASH, identifier.owner());
     }
+
 }

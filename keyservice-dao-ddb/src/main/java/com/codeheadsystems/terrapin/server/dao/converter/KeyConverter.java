@@ -23,8 +23,6 @@ import static software.amazon.awssdk.services.dynamodb.model.AttributeValue.from
 
 import com.codeheadsystems.metrics.Metrics;
 import com.codeheadsystems.terrapin.server.dao.TableConfiguration;
-import com.codeheadsystems.terrapin.server.dao.model.Batch;
-import com.codeheadsystems.terrapin.server.dao.model.ImmutableBatch;
 import com.codeheadsystems.terrapin.server.dao.model.ImmutableKey;
 import com.codeheadsystems.terrapin.server.dao.model.ImmutableKeyVersionIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.Key;
@@ -71,7 +69,7 @@ public class KeyConverter {
     /**
      * Used to search for all key versions that belong to an owner.
      */
-    public static final String OWNER_HASH = "ownerHashKeyVersion";
+    public static final String OWNER_HASH_KEY_VERSION_IDX = "ownerHashKeyVersion";
     /**
      * The format for the hashkey for a key.
      */
@@ -106,7 +104,7 @@ public class KeyConverter {
         builder.put(TYPE, fromS(key.type()));
         builder.put(ACTIVE, fromBool(key.active()));
         builder.put(CREATE, fromN(Long.toString(key.createDate().getTime())));
-        builder.put(OWNER_HASH, fromS(key.keyVersionIdentifier().owner()));
+        builder.put(OWNER_HASH_KEY_VERSION_IDX, fromS(key.keyVersionIdentifier().owner()));
         builder.put(ACTIVE_HASH, key.active() ? fromS(hashKey) : null); // index
         key.updateDate().ifPresent(date -> builder.put(UPDATE, fromN(Long.toString(date.getTime()))));
         return PutItemRequest.builder()

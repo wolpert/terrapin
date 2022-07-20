@@ -88,7 +88,7 @@ public class KeyConverterTest {
                         TYPE,
                         CREATE,
                         ACTIVE_HASH,
-                        OWNER_HASH,
+                        OWNER_HASH_KEY_VERSION_IDX,
                         UPDATE);
         ;
     }
@@ -108,7 +108,7 @@ public class KeyConverterTest {
                         TYPE,
                         ACTIVE,
                         ACTIVE_HASH,
-                        OWNER_HASH,
+                        OWNER_HASH_KEY_VERSION_IDX,
                         CREATE);
         ;
     }

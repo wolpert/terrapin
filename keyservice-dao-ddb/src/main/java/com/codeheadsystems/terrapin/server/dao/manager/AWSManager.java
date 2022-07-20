@@ -17,7 +17,8 @@
 package com.codeheadsystems.terrapin.server.dao.manager;
 
 import static com.codeheadsystems.terrapin.server.dao.converter.KeyConverter.ACTIVE_HASH;
-import static com.codeheadsystems.terrapin.server.dao.converter.KeyConverter.OWNER_HASH;
+import static com.codeheadsystems.terrapin.server.dao.converter.KeyConverter.OWNER_HASH_KEY_VERSION_IDX;
+import static com.codeheadsystems.terrapin.server.dao.converter.OwnerConverter.OWNER_SEARCH_IDX;
 
 import com.codeheadsystems.terrapin.server.dao.TableConfiguration;
 import java.util.List;
@@ -58,9 +59,12 @@ public class AWSManager {
                 AttributeDefinition.builder()
                         .attributeName(ACTIVE_HASH).attributeType(ScalarAttributeType.S).build(),
                 AttributeDefinition.builder()
-                        .attributeName(OWNER_HASH).attributeType(ScalarAttributeType.S).build()
+                        .attributeName(OWNER_HASH_KEY_VERSION_IDX).attributeType(ScalarAttributeType.S).build(),
+                AttributeDefinition.builder()
+                        .attributeName(OWNER_SEARCH_IDX).attributeType(ScalarAttributeType.S).build()
         );
 
+        // Index for active keys for a version.
         final GlobalSecondaryIndex activeIndex = GlobalSecondaryIndex.builder()
                 .indexName(tableConfiguration.activeIndex())
                 .projection(Projection.builder().projectionType(ProjectionType.ALL).build())
@@ -69,11 +73,21 @@ public class AWSManager {
                         KeySchemaElement.builder().keyType(KeyType.RANGE).attributeName(tableConfiguration.rangeKey()).build()
                 ).build();
 
+        // Index for all keys of an owner.
         final GlobalSecondaryIndex ownerIndex = GlobalSecondaryIndex.builder()
                 .indexName(tableConfiguration.ownerIndex())
                 .projection(Projection.builder().projectionType(ProjectionType.ALL).build())
                 .keySchema(
-                        KeySchemaElement.builder().keyType(KeyType.HASH).attributeName(OWNER_HASH).build(),
+                        KeySchemaElement.builder().keyType(KeyType.HASH).attributeName(OWNER_HASH_KEY_VERSION_IDX).build(),
+                        KeySchemaElement.builder().keyType(KeyType.RANGE).attributeName(tableConfiguration.hashKey()).build()
+                ).build();
+
+        // Index for all owners.
+        final GlobalSecondaryIndex ownerSearchIndex = GlobalSecondaryIndex.builder()
+                .indexName(tableConfiguration.ownerSearchIndex())
+                .projection(Projection.builder().projectionType(ProjectionType.ALL).build())
+                .keySchema(
+                        KeySchemaElement.builder().keyType(KeyType.HASH).attributeName(OWNER_SEARCH_IDX).build(),
                         KeySchemaElement.builder().keyType(KeyType.RANGE).attributeName(tableConfiguration.hashKey()).build()
                 ).build();
 
@@ -82,7 +96,7 @@ public class AWSManager {
                 .billingMode(BillingMode.PAY_PER_REQUEST)
                 .keySchema(hashKey, rangeKey)
                 .attributeDefinitions(attributeDefinitions)
-                .globalSecondaryIndexes(activeIndex, ownerIndex)
+                .globalSecondaryIndexes(activeIndex, ownerIndex, ownerSearchIndex)
                 .build();
     }
 

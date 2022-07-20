@@ -70,4 +70,13 @@ public interface TableConfiguration {
         return "ownerIndex";
     }
 
+    /**
+     * The index for every owner.
+     */
+    @Value.Default
+    @JsonProperty("ownerSearchIndex")
+    default String ownerSearchIndex() {
+        return "ownerSearchIndex";
+    }
+
 }
