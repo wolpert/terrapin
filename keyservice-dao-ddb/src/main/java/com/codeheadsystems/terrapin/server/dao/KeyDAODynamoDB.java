@@ -77,12 +77,7 @@ public class KeyDAODynamoDB implements KeyDAO {
                        final String owner,
                        final Supplier<T> supplier) {
         final String name = PREFIX + methodName;
-        final Timer timer;
-        if (owner != null) {
-            timer = metrics.registry().timer(name, OWNER, owner); // TODO: Vet cardinality. Set by configuration?
-        } else {
-            timer = metrics.registry().timer(name, OWNER, "null");
-        }
+        final Timer timer = metrics.registry().timer(name, OWNER, (owner == null ? "null" : owner)); // TODO: Vet cardinality. Set by configuration?
         return metrics.time(name, timer, supplier);
     }
 

@@ -119,8 +119,8 @@ version '1.0.0-SNAPSHOT'
 
 ext {
     awsLocalDDB = "1.15.0" // https://mvnrepository.com/artifact/com.amazonaws/DynamoDBLocal
-    awsSDK = "1.12.257" // https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-dynamodb
-    awsSDK2 = "2.17.228" // https://mvnrepository.com/artifact/software.amazon.awssdk/dynamodb
+    awsSDK = "1.12.267" // https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-dynamodb
+    awsSDK2 = "2.17.238" // https://mvnrepository.com/artifact/software.amazon.awssdk/dynamodb
     aiVersion = '1.8.2' // https://mvnrepository.com/artifact/com.badlogicgames.gdx/gdx-ai
     ashleyVersion = '1.7.4' // https://mvnrepository.com/artifact/com.badlogicgames.ashley/ashley
     assertjVersion = '3.23.1' // https://mvnrepository.com/artifact/org.assertj/assertj-core
@@ -130,7 +130,7 @@ ext {
     cassandraUnitVersion = '4.3.1.0' // https://mvnrepository.com/artifact/org.cassandraunit/cassandra-unit
     commonsIoVersion = '2.11.0' // https://mvnrepository.com/artifact/commons-io/commons-io
     commonsLangVersion = '3.12.0' // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
-    daggerVersion = '2.42' // https://mvnrepository.com/artifact/com.google.dagger/dagger
+    daggerVersion = '2.43' // https://mvnrepository.com/artifact/com.google.dagger/dagger
     dropwizardVersion = '2.1.1' // https://mvnrepository.com/artifact/io.dropwizard/dropwizard-core
     gdxVersion = '1.11.0' // https://mvnrepository.com/artifact/com.badlogicgames.gdx/gdx
     guavaVersion = '31.1-jre' // https://mvnrepository.com/artifact/com.google.guava/guava
@@ -143,9 +143,9 @@ ext {
     log4jVersion = '2.18.0' //  https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core
     logbackVersion = '1.2.11' // https://mvnrepository.com/artifact/ch.qos.logback/logback-core
     metricsVersion = '4.2.10' // https://mvnrepository.com/artifact/io.dropwizard.metrics/metrics-core
-    micrometerVersion = '1.9.1' // https://mvnrepository.com/artifact/io.micrometer/micrometer-core
+    micrometerVersion = '1.9.2' // https://mvnrepository.com/artifact/io.micrometer/micrometer-core
     mockitoVersion = '4.6.1' // https://mvnrepository.com/artifact/org.mockito/mockito-core
-    openfeign = '11.9' // https://mvnrepository.com/artifact/io.github.openfeign/feign-core
+    openfeign = '11.9.1' // https://mvnrepository.com/artifact/io.github.openfeign/feign-core
     resilience4jVersion = '1.7.1' // https://mvnrepository.com/artifact/io.github.resilience4j/resilience4j-retry
     slf4jVersion = '1.7.36' // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
 }

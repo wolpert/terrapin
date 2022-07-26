@@ -33,12 +33,13 @@ import software.amazon.awssdk.services.dynamodb.model.*;
  */
 public class DynamoDbClientAccessor {
 
-    public static final String DDBACCESSOR = "ddbaccessor.";
-    public static final String PUT_ITEM_METRIC = DDBACCESSOR + "putItem";
-    public static final String GET_ITEM_METRIC = DDBACCESSOR + "getItem";
-    public static final String BATCH_WRITE_ITEM_METRIC = DDBACCESSOR + "batchWriteItem";
+    public static final String DDB_ACCESSOR = "ddbAccessor.";
+    public static final String PUT_ITEM_METRIC = DDB_ACCESSOR + "putItem";
+    public static final String GET_ITEM_METRIC = DDB_ACCESSOR + "getItem";
+    public static final String DELETE_ITEM_METRIC = DDB_ACCESSOR + "deleteItem";
+    public static final String BATCH_WRITE_ITEM_METRIC = DDB_ACCESSOR + "batchWriteItem";
     private static final Logger LOGGER = LoggerFactory.getLogger(DynamoDbClientAccessor.class);
-    private static final String QUERY_METRIC = DDBACCESSOR + "query";
+    private static final String QUERY_METRIC = DDB_ACCESSOR + "query";
     private final Metrics metrics;
 
     // --- function list ---
@@ -46,6 +47,7 @@ public class DynamoDbClientAccessor {
     private final Function<GetItemRequest, GetItemResponse> getItem;
     private final Function<BatchWriteItemRequest, BatchWriteItemResponse> batchWriteItem;
     private final Function<QueryRequest, QueryResponse> query;
+    private final Function<DeleteItemRequest, DeleteItemResponse> deleteItem;
 
     public DynamoDbClientAccessor(final DynamoDbClient dynamoDbClient,
                                   final Metrics metrics,
@@ -64,10 +66,17 @@ public class DynamoDbClientAccessor {
         query = Retry.decorateFunction(retry,
                 (request) -> exceptionCheck(QUERY_METRIC,
                         () -> dynamoDbClient.query(request)));
+        deleteItem = Retry.decorateFunction(retry,
+                (request) -> exceptionCheck(DELETE_ITEM_METRIC,
+                        () -> dynamoDbClient.deleteItem(request)));
     }
 
     public BatchWriteItemResponse batchWriteItem(final BatchWriteItemRequest request) {
         return batchWriteItem.apply(request);
+    }
+
+    public DeleteItemResponse deleteItem(final DeleteItemRequest request) {
+        return deleteItem.apply(request);
     }
 
     public PutItemResponse putItem(final PutItemRequest request) {
@@ -78,7 +87,7 @@ public class DynamoDbClientAccessor {
         return getItem.apply(request);
     }
 
-    private <T> T exceptionCheck(final String metricName, final Supplier<T> supplier) {
+    private <T extends DynamoDbResponse> T exceptionCheck(final String metricName, final Supplier<T> supplier) {
         try {
             final Timer timer = metrics.registry().timer(metricName);
             return metrics.time(metricName, timer, supplier);
