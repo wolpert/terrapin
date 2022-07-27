@@ -257,6 +257,38 @@ public abstract class KeyDAOTest extends BaseMetricTest {
                 .containsOnly(key2.keyVersionIdentifier(), key3.keyVersionIdentifier());
     }
 
+    // Disabled because this is really a batch process.
+    //@Test
+    public void deleteAllKeyVersions() {
+        final Key key1 = getAndStoreKey(false, 1);
+        final Key key2 = getAndStoreKey(true, 2);
+        final Key key3 = getAndStoreKey(true, 3);
+        final KeyIdentifier identifier = ImmutableKeyIdentifier.copyOf(key1.keyVersionIdentifier());
+        final Batch<KeyVersionIdentifier> result = dao.listVersions(key1.keyVersionIdentifier(), null);
+        assertThat(result)
+                .isNotNull()
+                .hasFieldOrPropertyWithValue("nextToken", null)
+                .extracting("list", as(LIST))
+                .isNotEmpty()
+                .hasSize(3)
+                .containsOnly(key1.keyVersionIdentifier(), key2.keyVersionIdentifier(), key3.keyVersionIdentifier());
+
+        dao.delete(identifier);
+        assertThat(dao.load(key1.keyVersionIdentifier()))
+                .isEmpty();
+        assertThat(dao.load(key2.keyVersionIdentifier()))
+                .isEmpty();
+        assertThat(dao.load(key3.keyVersionIdentifier()))
+                .isEmpty();
+
+        final Batch<KeyVersionIdentifier> result2 = dao.listVersions(key1.keyVersionIdentifier(), null);
+        assertThat(result2)
+                .isNotNull()
+                .hasFieldOrPropertyWithValue("nextToken", null)
+                .extracting("list", as(LIST))
+                .isEmpty();
+    }
+
     private Key getKey(final boolean active,
                        final long version,
                        final String owner) {
