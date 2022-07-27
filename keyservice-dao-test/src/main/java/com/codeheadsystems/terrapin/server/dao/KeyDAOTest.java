@@ -210,6 +210,21 @@ public abstract class KeyDAOTest extends BaseMetricTest {
                 .containsOnly(o1, o2, o3, o4);
     }
 
+    @Test
+    public void listKeyVersions() {
+        final Key key1 = getAndStoreKey(false, 1);
+        final Key key2 = getAndStoreKey(true, 2);
+        final Key key3 = getAndStoreKey(true, 3);
+        final Batch<KeyVersionIdentifier> result = dao.listVersions(key1.keyVersionIdentifier(), null);
+        assertThat(result)
+                .isNotNull()
+                .hasFieldOrPropertyWithValue("nextToken", null)
+                .extracting("list", as(LIST))
+                .isNotEmpty()
+                .hasSize(3)
+                .containsOnly(key1.keyVersionIdentifier(), key2.keyVersionIdentifier(), key3.keyVersionIdentifier());
+    }
+
     private Key getKey(final boolean active,
                        final long version,
                        final String owner) {

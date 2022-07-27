@@ -203,15 +203,17 @@ public class KeyDAODynamoDB implements KeyDAO {
     public Batch<KeyVersionIdentifier> listVersions(final KeyIdentifier identifier,
                                                     final Token nextToken) {
         LOGGER.debug("listVersions({})", identifier);
-        return time("listversions", identifier.owner(), () -> {
-            return null;
+        return time("listVersions", identifier.owner(), () -> {
+            final QueryRequest request = keyConverter.toKeyVersionsQueryRequest(identifier, nextToken);
+            final QueryResponse response = dynamoDbClientAccessor.query(request);
+            return keyConverter.toBatchKeyVersionIdentifier(response);
         });
     }
 
     @Override
     public boolean delete(final KeyVersionIdentifier identifier) {
         LOGGER.debug("delete({})", identifier);
-        return time("deleteversions", identifier.owner(), () -> {
+        return time("deleteVersions", identifier.owner(), () -> {
             return false;
         });
     }
@@ -219,7 +221,7 @@ public class KeyDAODynamoDB implements KeyDAO {
     @Override
     public boolean delete(final KeyIdentifier identifier) {
         LOGGER.debug("delete({})", identifier);
-        return time("deletekey", identifier.owner(), () -> {
+        return time("deleteKey", identifier.owner(), () -> {
             return false;
         });
     }
@@ -227,7 +229,7 @@ public class KeyDAODynamoDB implements KeyDAO {
     @Override
     public boolean delete(final OwnerIdentifier identifier) {
         LOGGER.debug("delete({})", identifier);
-        return time("deleteowner", identifier.owner(), () -> {
+        return time("deleteOwner", identifier.owner(), () -> {
             return false;
         });
     }

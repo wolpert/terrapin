@@ -23,11 +23,8 @@ import static software.amazon.awssdk.services.dynamodb.model.AttributeValue.from
 
 import com.codeheadsystems.metrics.Metrics;
 import com.codeheadsystems.terrapin.server.dao.TableConfiguration;
-import com.codeheadsystems.terrapin.server.dao.model.ImmutableKey;
-import com.codeheadsystems.terrapin.server.dao.model.ImmutableKeyVersionIdentifier;
-import com.codeheadsystems.terrapin.server.dao.model.Key;
-import com.codeheadsystems.terrapin.server.dao.model.KeyIdentifier;
-import com.codeheadsystems.terrapin.server.dao.model.KeyVersionIdentifier;
+import com.codeheadsystems.terrapin.server.dao.manager.TokenManager;
+import com.codeheadsystems.terrapin.server.dao.model.*;
 import com.codeheadsystems.terrapin.server.exception.DatalayerException;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -80,17 +77,20 @@ public class KeyConverter {
     public static final String FOUND_UNEXPECTEDLY = "found.unexpectedly";
     private static final Logger LOGGER = LoggerFactory.getLogger(KeyConverter.class);
     private final TableConfiguration configuration;
+    private final TokenManager tokenManager;
     private final Counter activeWithoutIndexCounter;
     private final Counter inactiveWithIndexCounter;
 
     @Inject
     public KeyConverter(final TableConfiguration configuration,
-                        final Metrics metrics) {
+                        final Metrics metrics,
+                        final TokenManager tokenManager) {
+        LOGGER.info("KeyConverter({})", configuration);
         this.configuration = configuration;
+        this.tokenManager = tokenManager;
         final MeterRegistry registry = metrics.registry();
         activeWithoutIndexCounter = registry.counter(KEYCONVERTER_ACTIVEINDEX, INVALID_INDEX, MISSING_BUT_EXPECTED);
         inactiveWithIndexCounter = registry.counter(KEYCONVERTER_ACTIVEINDEX, INVALID_INDEX, FOUND_UNEXPECTEDLY);
-        LOGGER.info("KeyConverter({})", configuration);
     }
 
     public PutItemRequest toPutItemRequest(final Key key) {
@@ -204,5 +204,32 @@ public class KeyConverter {
                         .attributeValueList(fromS(hashKey(identifier)))
                         .build()))
                 .build();
+    }
+
+    public QueryRequest toKeyVersionsQueryRequest(final KeyIdentifier identifier,
+                                                  final Token nextToken) {
+        LOGGER.debug("toOwnerSearchQueryRequest()");
+        final QueryRequest.Builder builder = QueryRequest.builder()
+                .tableName(configuration.tableName())
+                .returnConsumedCapacity(ReturnConsumedCapacity.TOTAL)
+                .keyConditions(Map.of(configuration.hashKey(), Condition.builder()
+                        .comparisonOperator(ComparisonOperator.EQ)
+                        .attributeValueList(fromS(hashKey(identifier)))
+                        .build()));
+        if (nextToken != null) {
+            builder.exclusiveStartKey(tokenManager.deserialize(nextToken));
+        }
+        return builder.build();
+    }
+
+    public Batch<KeyVersionIdentifier> toBatchKeyVersionIdentifier(final QueryResponse response) {
+        final ImmutableBatch.Builder<KeyVersionIdentifier> builder = ImmutableBatch.builder();
+        if (response.hasItems()) { // get the key identifiers
+            response.items().forEach(item -> builder.addList(versionIdentifierFrom(item)));
+        }
+        if (response.hasLastEvaluatedKey()) { // get the token.
+            builder.nextToken(tokenManager.serialize(response.lastEvaluatedKey()));
+        }
+        return builder.build();
     }
 }

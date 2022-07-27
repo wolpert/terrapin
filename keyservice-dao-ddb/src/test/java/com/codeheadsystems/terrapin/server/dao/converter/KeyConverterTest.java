@@ -31,6 +31,7 @@ import com.codeheadsystems.metrics.Metrics;
 import com.codeheadsystems.terrapin.common.factory.ObjectMapperFactory;
 import com.codeheadsystems.terrapin.server.dao.ImmutableTableConfiguration;
 import com.codeheadsystems.terrapin.server.dao.TableConfiguration;
+import com.codeheadsystems.terrapin.server.dao.manager.TokenManager;
 import com.codeheadsystems.terrapin.server.dao.model.ImmutableKeyVersionIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.Key;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -59,6 +60,7 @@ public class KeyConverterTest {
     @Mock private MeterRegistry registry;
     @Mock private Counter activeCounter;
     @Mock private Counter inactiveCounter;
+    @Mock private TokenManager tokenManager;
 
     private KeyConverter converter;
     private ObjectMapper objectMapper;
@@ -68,7 +70,7 @@ public class KeyConverterTest {
         when(metrics.registry()).thenReturn(registry);
         when(registry.counter(KEYCONVERTER_ACTIVEINDEX, INVALID_INDEX, MISSING_BUT_EXPECTED)).thenReturn(activeCounter);
         when(registry.counter(KEYCONVERTER_ACTIVEINDEX, INVALID_INDEX, FOUND_UNEXPECTEDLY)).thenReturn(inactiveCounter);
-        converter = new KeyConverter(TABLE_CONFIGURATION, metrics);
+        converter = new KeyConverter(TABLE_CONFIGURATION, metrics, tokenManager);
         objectMapper = new ObjectMapperFactory().generate();
     }
 
