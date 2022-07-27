@@ -36,13 +36,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.amazon.awssdk.services.dynamodb.model.ConsumedCapacity;
-import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.GetItemResponse;
-import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.PutItemResponse;
-import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
-import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
+import software.amazon.awssdk.services.dynamodb.model.*;
 
 @Singleton
 public class KeyDAODynamoDB implements KeyDAO {
@@ -183,6 +177,7 @@ public class KeyDAODynamoDB implements KeyDAO {
         return time("listOwners", null, () -> {
             final QueryRequest request = ownerConverter.toOwnerSearchQueryRequest(nextToken);
             final QueryResponse response = dynamoDbClientAccessor.query(request);
+            LOGGER.debug("listOwners:{}", response.consumedCapacity());
             return ownerConverter.toBatchOwnerIdentifier(response);
         });
     }
@@ -195,6 +190,7 @@ public class KeyDAODynamoDB implements KeyDAO {
         return time("listKeys", identifier.owner(), () -> {
             final QueryRequest request = ownerConverter.toOwnerQueryKeysRequest(identifier, nextToken);
             final QueryResponse response = dynamoDbClientAccessor.query(request);
+            LOGGER.debug("listKeys:{}", response.consumedCapacity());
             return ownerConverter.toBatchKeyIdentifier(response);
         });
     }
@@ -206,6 +202,7 @@ public class KeyDAODynamoDB implements KeyDAO {
         return time("listVersions", identifier.owner(), () -> {
             final QueryRequest request = keyConverter.toKeyVersionsQueryRequest(identifier, nextToken);
             final QueryResponse response = dynamoDbClientAccessor.query(request);
+            LOGGER.debug("listVersions:{}", response.consumedCapacity());
             return keyConverter.toBatchKeyVersionIdentifier(response);
         });
     }
@@ -214,7 +211,10 @@ public class KeyDAODynamoDB implements KeyDAO {
     public boolean delete(final KeyVersionIdentifier identifier) {
         LOGGER.debug("delete({})", identifier);
         return time("deleteVersions", identifier.owner(), () -> {
-            return false;
+            final DeleteItemRequest request = keyConverter.toDeleteRequest(identifier);
+            final DeleteItemResponse response = dynamoDbClientAccessor.deleteItem(request);
+            LOGGER.debug("deleteVersions:{}", response.consumedCapacity());
+            return true;
         });
     }
 

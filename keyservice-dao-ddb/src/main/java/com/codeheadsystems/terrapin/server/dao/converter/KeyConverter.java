@@ -208,14 +208,15 @@ public class KeyConverter {
 
     public QueryRequest toKeyVersionsQueryRequest(final KeyIdentifier identifier,
                                                   final Token nextToken) {
-        LOGGER.debug("toOwnerSearchQueryRequest()");
+        LOGGER.debug("toKeyVersionsQueryRequest({})", identifier);
         final QueryRequest.Builder builder = QueryRequest.builder()
                 .tableName(configuration.tableName())
                 .returnConsumedCapacity(ReturnConsumedCapacity.TOTAL)
                 .keyConditions(Map.of(configuration.hashKey(), Condition.builder()
                         .comparisonOperator(ComparisonOperator.EQ)
                         .attributeValueList(fromS(hashKey(identifier)))
-                        .build()));
+                        .build()))
+                .attributesToGet(configuration.hashKey(), configuration.rangeKey()); // just the basics
         if (nextToken != null) {
             builder.exclusiveStartKey(tokenManager.deserialize(nextToken));
         }
@@ -223,6 +224,7 @@ public class KeyConverter {
     }
 
     public Batch<KeyVersionIdentifier> toBatchKeyVersionIdentifier(final QueryResponse response) {
+        LOGGER.debug("toBatchKeyVersionIdentifier()");
         final ImmutableBatch.Builder<KeyVersionIdentifier> builder = ImmutableBatch.builder();
         if (response.hasItems()) { // get the key identifiers
             response.items().forEach(item -> builder.addList(versionIdentifierFrom(item)));
@@ -231,5 +233,17 @@ public class KeyConverter {
             builder.nextToken(tokenManager.serialize(response.lastEvaluatedKey()));
         }
         return builder.build();
+    }
+
+    public DeleteItemRequest toDeleteRequest(final KeyVersionIdentifier identifier) {
+        LOGGER.debug("toDeleteRequest({})", identifier);
+        final ImmutableMap.Builder<String, AttributeValue> builder = ImmutableMap.builder();
+        builder.put(configuration.hashKey(), fromS(hashKey(identifier)));
+        builder.put(configuration.rangeKey(), fromS(rangeKey(identifier)));
+        return DeleteItemRequest.builder()
+                .tableName(configuration.tableName())
+                .returnConsumedCapacity(ReturnConsumedCapacity.TOTAL)
+                .key(builder.build())
+                .build();
     }
 }
