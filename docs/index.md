@@ -18,6 +18,13 @@ forces execution of all the tests to ensure compatibility.
 These subprojects were developed to provide specific features that were reusable across software
 within CodeHead Systems. THe original projects and new ones being developed are all open-sourced.
 
+## Key Store
+
+Key Store (KeyService) is a micro-Service that provides the ability create, store and 
+rotate keys. They can be shared, enabled and disabled. Key generation has a pluggable 
+model for random number generator. (For our purposes, we only use SecureRandom from
+Java by default.)
+
 ## Out-of-process mock
 
 [OopMock](https://github.com/wolpert/terrapin/tree/main/oop-mock) is a way to configure
