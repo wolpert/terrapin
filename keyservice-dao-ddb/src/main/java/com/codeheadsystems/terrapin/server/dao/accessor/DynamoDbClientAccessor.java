@@ -16,13 +16,20 @@
 
 package com.codeheadsystems.terrapin.server.dao.accessor;
 
+import static com.codeheadsystems.terrapin.server.dao.dagger.DDBModule.DDB_DAO_RETRY;
+
 import com.codeheadsystems.metrics.Metrics;
+import com.codeheadsystems.terrapin.server.dao.converter.BatchWriteConverter;
 import com.codeheadsystems.terrapin.server.exception.DependencyException;
 import com.codeheadsystems.terrapin.server.exception.RetryableException;
 import io.github.resilience4j.retry.Retry;
 import io.micrometer.core.instrument.Timer;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
@@ -31,6 +38,7 @@ import software.amazon.awssdk.services.dynamodb.model.*;
 /**
  * A wrapper around the DDBClient so that we can do retries, metrics, convert exceptions, etc.
  */
+@Singleton
 public class DynamoDbClientAccessor {
 
     public static final String DDB_ACCESSOR = "ddbAccessor.";
@@ -41,6 +49,7 @@ public class DynamoDbClientAccessor {
     private static final Logger LOGGER = LoggerFactory.getLogger(DynamoDbClientAccessor.class);
     private static final String QUERY_METRIC = DDB_ACCESSOR + "query";
     private final Metrics metrics;
+    private final BatchWriteConverter batchWriteConverter;
 
     // --- function list ---
     private final Function<PutItemRequest, PutItemResponse> putItem;
@@ -49,11 +58,14 @@ public class DynamoDbClientAccessor {
     private final Function<QueryRequest, QueryResponse> query;
     private final Function<DeleteItemRequest, DeleteItemResponse> deleteItem;
 
+    @Inject
     public DynamoDbClientAccessor(final DynamoDbClient dynamoDbClient,
                                   final Metrics metrics,
-                                  final Retry retry) {
+                                  final BatchWriteConverter batchWriteConverter,
+                                  @Named(DDB_DAO_RETRY) final Retry retry) {
         LOGGER.info("DynamoDbClientAccessor({},{},{})", dynamoDbClient, metrics, retry.getName());
         this.metrics = metrics;
+        this.batchWriteConverter = batchWriteConverter;
         putItem = Retry.decorateFunction(retry,                  // retries
                 (request) -> exceptionCheck(PUT_ITEM_METRIC,     // exception check and metrics
                         () -> dynamoDbClient.putItem(request))); // the actual function
@@ -75,6 +87,15 @@ public class DynamoDbClientAccessor {
         return batchWriteItem.apply(request);
     }
 
+    /**
+     * Processes a request. Returns a non-empty request containing unprocessed items.
+     */
+    public Optional<BatchWriteItemRequest> batchWriteItemProcessor(final BatchWriteItemRequest request) {
+        final BatchWriteItemResponse response = batchWriteItem(request);
+        LOGGER.debug("batchWriteItemProcessor : " + response.consumedCapacity());
+        return batchWriteConverter.unprocessedRequest(response);
+    }
+
     public DeleteItemResponse deleteItem(final DeleteItemRequest request) {
         return deleteItem.apply(request);
     }
@@ -87,6 +108,10 @@ public class DynamoDbClientAccessor {
         return getItem.apply(request);
     }
 
+    public QueryResponse query(final QueryRequest request) {
+        return query.apply(request);
+    }
+
     private <T extends DynamoDbResponse> T exceptionCheck(final String metricName, final Supplier<T> supplier) {
         try {
             final Timer timer = metrics.registry().timer(metricName);
@@ -97,9 +122,5 @@ public class DynamoDbClientAccessor {
         } catch (RuntimeException e) {
             throw new DependencyException(e);
         }
-    }
-
-    public QueryResponse query(final QueryRequest request) {
-        return query.apply(request);
     }
 }

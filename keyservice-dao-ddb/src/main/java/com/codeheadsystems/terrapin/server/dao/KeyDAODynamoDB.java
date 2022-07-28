@@ -18,6 +18,7 @@ package com.codeheadsystems.terrapin.server.dao;
 
 import com.codeheadsystems.metrics.Metrics;
 import com.codeheadsystems.terrapin.server.dao.accessor.DynamoDbClientAccessor;
+import com.codeheadsystems.terrapin.server.dao.converter.BatchWriteConverter;
 import com.codeheadsystems.terrapin.server.dao.converter.KeyConverter;
 import com.codeheadsystems.terrapin.server.dao.converter.OwnerConverter;
 import com.codeheadsystems.terrapin.server.dao.model.Batch;
@@ -30,6 +31,7 @@ import com.codeheadsystems.terrapin.server.dao.model.Token;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 import javax.inject.Inject;
@@ -43,20 +45,25 @@ public class KeyDAODynamoDB implements KeyDAO {
     public static final String OWNER = "owner";
     private static final Logger LOGGER = LoggerFactory.getLogger(KeyDAODynamoDB.class);
     public static final String PREFIX = "ddbdao.";
+    public static final int MAX_TIMES_KEY_STORE = 5;
     private final DynamoDbClientAccessor dynamoDbClientAccessor;
     private final KeyConverter keyConverter;
     private final OwnerConverter ownerConverter;
+    private final BatchWriteConverter batchWriteConverter;
     private final Metrics metrics;
     private final Counter counterKeyVersion;
     private final Counter counterKey;
     private final Counter counterOwner;
+    private final Counter counterBatchWriteRanOut;
 
     @Inject
     public KeyDAODynamoDB(final DynamoDbClientAccessor dynamoDbClientAccessor,
                           final KeyConverter keyConverter,
                           final OwnerConverter ownerConverter,
+                          final BatchWriteConverter batchWriteConverter,
                           final Metrics metrics) {
         LOGGER.info("KeyDAODynamoDB({},{},{})", dynamoDbClientAccessor, keyConverter, ownerConverter);
+        this.batchWriteConverter = batchWriteConverter;
         this.dynamoDbClientAccessor = dynamoDbClientAccessor;
         this.keyConverter = keyConverter;
         this.ownerConverter = ownerConverter;
@@ -65,6 +72,7 @@ public class KeyDAODynamoDB implements KeyDAO {
         counterKeyVersion = registry.counter(PREFIX + "found.key.version");
         counterKey = registry.counter(PREFIX + "found.key");
         counterOwner = registry.counter(PREFIX + "found.owner");
+        counterBatchWriteRanOut = registry.counter(PREFIX + "batchWrite.ran.out");
     }
 
     private <T> T time(final String methodName,
@@ -79,8 +87,34 @@ public class KeyDAODynamoDB implements KeyDAO {
     public void store(final Key key) {
         LOGGER.debug("store({})", key.keyVersionIdentifier());
         time("storeKey", key.keyVersionIdentifier().owner(), () -> {
-            storeKey(key);
-            storeOwner(key);
+            final PutItemRequest keyPutItemRequest = keyConverter.toPutItemRequest(key);
+            final PutItemRequest ownerPutItemRequest = ownerConverter.toPutItemRequest(key.keyVersionIdentifier());
+            final BatchWriteItemRequest request = batchWriteConverter.fromPutItemRequests(keyPutItemRequest, ownerPutItemRequest);
+            reProcessor(request, MAX_TIMES_KEY_STORE); // should not take this long for sure.
+            return null;
+        });
+    }
+
+    /**
+     * This method will reprocess a batch write up to X times, as long as there are items that need processing.
+     *
+     * @param request  the request
+     * @param maxTimes max times to process.
+     */
+    private void reProcessor(final BatchWriteItemRequest request,
+                             final int maxTimes) {
+        LOGGER.debug("reProcessor({}", maxTimes);
+        time("reProcessor", null, () -> {
+            Optional<BatchWriteItemRequest> nextRequest = Optional.of(request);
+            int times = 0;
+            do {
+                times++;
+                nextRequest = dynamoDbClientAccessor.batchWriteItemProcessor(nextRequest.get());
+            } while (times < maxTimes && nextRequest.isPresent());
+            counterBatchWriteRanOut.increment(nextRequest.isPresent() ? 1 : 0);
+            nextRequest.ifPresent((n) -> {
+                throw new IllegalStateException("Unable to fully process request:" + request.requestItems());
+            });
             return null;
         });
     }

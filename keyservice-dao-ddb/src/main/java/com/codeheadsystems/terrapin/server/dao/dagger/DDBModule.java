@@ -78,7 +78,7 @@ public class DDBModule {
         return tableConfiguration;
     }
 
-    private static final String DDB_DAO_RETRY = "DDB_DAO_RETRY";
+    public static final String DDB_DAO_RETRY = "DDB_DAO_RETRY";
 
     @Named(DDB_DAO_RETRY)
     @Provides
@@ -94,14 +94,6 @@ public class DDBModule {
         TaggedRetryMetrics.ofRetryRegistry(registry)
                 .bindTo(metrics.registry());
         return registry.retry(DDB_DAO_RETRY);
-    }
-
-    @Provides
-    @Singleton
-    public DynamoDbClientAccessor accessor(@Named(DDB_DAO_RETRY) final Retry retry,
-                                           final DynamoDbClient client,
-                                           final Metrics metrics) {
-        return new DynamoDbClientAccessor(client, metrics, retry);
     }
 
     @Module
