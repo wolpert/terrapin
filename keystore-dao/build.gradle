@@ -7,7 +7,7 @@ apply plugin: 'java-library'
 apply plugin: 'idea'
 
 ext {
-    appName = "keyservice-dao"
+    appName = "keystore-dao"
 }
 
 configurations {
@@ -18,7 +18,7 @@ configurations {
 jacocoTestReport.finalizedBy jacocoTestCoverageVerification
 
 dependencies {
-    implementation project(':keyservice-common')
+    implementation project(':keystore-common')
     implementation "org.slf4j:slf4j-api:${slf4jVersion}"
 
     implementation "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}"

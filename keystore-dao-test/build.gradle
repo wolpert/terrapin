@@ -7,7 +7,7 @@ apply plugin: 'java-library'
 apply plugin: 'idea'
 
 ext {
-    appName = "keyservice-dao-test"
+    appName = "keystore-dao-test"
 }
 
 configurations {
@@ -18,8 +18,8 @@ configurations {
 //jacocoTestReport.finalizedBy jacocoTestCoverageVerification
 
 dependencies {
-    implementation project(":keyservice-dao")
-    implementation project(":keyservice-common")
+    implementation project(":keystore-dao")
+    implementation project(":keystore-common")
     implementation project(":metrics")
     implementation project(":metrics-test")
     implementation "org.slf4j:slf4j-api:${slf4jVersion}"
