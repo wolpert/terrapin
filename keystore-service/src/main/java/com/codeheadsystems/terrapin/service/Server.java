@@ -16,7 +16,7 @@
 
 package com.codeheadsystems.terrapin.service;
 
-import com.codeheadsystems.terrapin.service.model.TerrapinConfiguration;
+import com.codeheadsystems.terrapin.service.model.KeyStoreConfiguration;
 import com.codeheadsystems.terrapin.service.module.RNGModule;
 import com.codeheadsystems.terrapin.service.module.ResourceModule;
 import com.codeheadsystems.terrapin.service.resource.KeyStoreResource;
@@ -30,13 +30,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Singleton
-public class Server extends Application<TerrapinConfiguration> {
+public class Server extends Application<KeyStoreConfiguration> {
     private static final Logger LOGGER = LoggerFactory.getLogger(Server.class);
     private final Set<KeyStoreResource> resources;
 
     @Inject
     public Server(final Set<KeyStoreResource> resources) {
-        LOGGER.info("TerrapinServer({})", resources);
+        LOGGER.info("Server({})", resources);
         this.resources = resources;
     }
 
@@ -44,7 +44,7 @@ public class Server extends Application<TerrapinConfiguration> {
      * Run the world.
      *
      * @param args from the command line.
-     * @throws Exception
+     * @throws Exception if we could not start the server.
      */
     public static void main(String[] args) throws Exception {
         LOGGER.info("main({})", (Object) args);
@@ -55,7 +55,7 @@ public class Server extends Application<TerrapinConfiguration> {
     }
 
     @Override
-    public void run(final TerrapinConfiguration configuration,
+    public void run(final KeyStoreConfiguration configuration,
                     final Environment environment) throws Exception {
 
         LOGGER.info("run({},{})", configuration, environment);

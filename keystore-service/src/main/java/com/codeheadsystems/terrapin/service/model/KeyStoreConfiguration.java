@@ -23,8 +23,8 @@ import io.dropwizard.Configuration;
 import org.immutables.value.Value;
 
 @Value.Immutable
-@JsonSerialize(as = ImmutableTerrapinConfiguration.class)
-@JsonDeserialize(builder = ImmutableTerrapinConfiguration.Builder.class)
+@JsonSerialize(as = ImmutableKeyStoreConfiguration.class)
+@JsonDeserialize(builder = ImmutableKeyStoreConfiguration.Builder.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public abstract class TerrapinConfiguration extends Configuration {
+public abstract class KeyStoreConfiguration extends Configuration {
 }
