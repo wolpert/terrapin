@@ -17,7 +17,13 @@
 package com.codeheadsystems.terrapin.keystore.api;
 
 import com.codahale.metrics.annotation.Timed;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -27,7 +33,7 @@ import javax.ws.rs.core.Response;
 @Path("/key")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public interface KeyService {
+public interface KeyManagerService {
 
   /**
    * Creates a new key with the id given. Note that the resulting key identifier includes the owner of the key.
@@ -39,41 +45,6 @@ public interface KeyService {
   @Timed
   @Path("/")
   Key create(@QueryParam("id") String keyId);
-
-  /**
-   * Gets the latest version of this key.
-   *
-   * @param keyId to be found.
-   * @return Key.
-   */
-  @GET
-  @Timed
-  @Path("/{id}")
-  Key get(@PathParam("id") String keyId);
-
-  /**
-   * Gets a specific version of this key.
-   *
-   * @param keyId   to be found.
-   * @param version to be found.
-   * @return Key.
-   */
-  @GET
-  @Timed
-  @Path("/{id}/version/{version}")
-  Key get(@PathParam("id") String keyId, @PathParam("version") Integer version);
-
-
-  /**
-   * Rotates the current key. New version, old version will expire out.
-   *
-   * @param keyId that needs rotating.
-   * @return a new key based on the old one.
-   */
-  @POST
-  @Timed
-  @Path("/{id}/rotate")
-  Key rotate(@PathParam("id") String keyId);
 
   /**
    * Deletes all the versions of this key. No version of the key can be used after this.
