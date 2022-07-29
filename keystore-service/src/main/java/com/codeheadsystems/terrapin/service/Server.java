@@ -17,8 +17,10 @@
 package com.codeheadsystems.terrapin.service;
 
 import com.codeheadsystems.terrapin.service.model.TerrapinConfiguration;
-import com.codeheadsystems.terrapin.service.module.DaggerServerComponent;
+import com.codeheadsystems.terrapin.service.module.RNGModule;
+import com.codeheadsystems.terrapin.service.module.ResourceModule;
 import com.codeheadsystems.terrapin.service.resource.KeyStoreResource;
+import dagger.Component;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Environment;
 import java.util.Set;
@@ -28,12 +30,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Singleton
-public class TerrapinServer extends Application<TerrapinConfiguration> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TerrapinServer.class);
+public class Server extends Application<TerrapinConfiguration> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Server.class);
     private final Set<KeyStoreResource> resources;
 
     @Inject
-    public TerrapinServer(final Set<KeyStoreResource> resources) {
+    public Server(final Set<KeyStoreResource> resources) {
         LOGGER.info("TerrapinServer({})", resources);
         this.resources = resources;
     }
@@ -46,9 +48,9 @@ public class TerrapinServer extends Application<TerrapinConfiguration> {
      */
     public static void main(String[] args) throws Exception {
         LOGGER.info("main({})", (Object) args);
-        final TerrapinServer server = DaggerServerComponent.builder()
+        final Server server = DaggerServer_ServerComponent.builder()
                 .build()
-                .terrapinServer();
+                .server();
         server.run(args);
     }
 
@@ -65,4 +67,13 @@ public class TerrapinServer extends Application<TerrapinConfiguration> {
             environment.jersey().register(resource);
         }
     }
+
+    @Singleton
+    @Component(modules = {RNGModule.class, ResourceModule.class})
+    public interface ServerComponent {
+
+        Server server();
+
+    }
+
 }
