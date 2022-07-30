@@ -14,10 +14,10 @@
  *    limitations under the License.
  */
 
-package com.codeheadsystems.terrapin.service.resource;
+package com.codeheadsystems.terrapin.keystore.resource;
 
 /**
  * Used to identify Jersery resources.
  */
-public interface KeyStoreResource {
+public interface JettyResource {
 }

@@ -14,9 +14,9 @@
  *    limitations under the License.
  */
 
-package com.codeheadsystems.terrapin.service.module;
+package com.codeheadsystems.terrapin.keystore.module;
 
-import com.codeheadsystems.terrapin.service.model.RNG;
+import com.codeheadsystems.terrapin.keystore.model.RNG;
 import dagger.BindsOptionalOf;
 import dagger.Module;
 import dagger.Provides;

@@ -14,34 +14,41 @@
  *    limitations under the License.
  */
 
-package com.codeheadsystems.terrapin.service.resource;
+package com.codeheadsystems.terrapin.keystore.resource;
 
 import com.codeheadsystems.terrapin.keystore.api.Key;
-import com.codeheadsystems.terrapin.keystore.api.KeyReaderService;
+import com.codeheadsystems.terrapin.keystore.api.KeyManagerService;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Singleton
-public class KeyReaderResource implements KeyReaderService, KeyStoreResource {
+public class KeyManagerResource implements KeyManagerService, JettyResource {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(KeyReaderResource.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(KeyManagerResource.class);
 
     @Inject
-    public KeyReaderResource() {
-        LOGGER.info("KeyReaderResource()");
+    public KeyManagerResource(){
+        LOGGER.info("KeyManagerResource()");
     }
 
     @Override
-    public Key get(final String keyId) {
-        LOGGER.debug("get({})", keyId);
+    public Key create(final String keyId) {
+        LOGGER.debug("create({})", keyId);
         return null;
     }
 
     @Override
-    public Key get(final String keyId, final Long version) {
-        LOGGER.debug("get({},{})", keyId, version);
+    public Response delete(final String keyId) {
+        LOGGER.debug("delete({})", keyId);
+        return null;
+    }
+
+    @Override
+    public Response delete(final String keyId, final Long version) {
+        LOGGER.debug("delete({},{})", keyId, version);
         return null;
     }
 }

@@ -14,41 +14,28 @@
  *    limitations under the License.
  */
 
-package com.codeheadsystems.terrapin.service.resource;
+package com.codeheadsystems.terrapin.keystore.resource;
 
 import com.codeheadsystems.terrapin.keystore.api.Key;
-import com.codeheadsystems.terrapin.keystore.api.KeyManagerService;
+import com.codeheadsystems.terrapin.keystore.api.KeyRotationService;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Singleton
-public class KeyManagerResource implements KeyManagerService, KeyStoreResource {
+public class KeyRotationResource implements KeyRotationService, JettyResource {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(KeyManagerResource.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(KeyRotationResource.class);
 
     @Inject
-    public KeyManagerResource(){
-        LOGGER.info("KeyManagerResource()");
+    public KeyRotationResource() {
+        LOGGER.info("KeyRotationResource()");
     }
 
     @Override
-    public Key create(final String keyId) {
-        LOGGER.debug("create({})", keyId);
-        return null;
-    }
-
-    @Override
-    public Response delete(final String keyId) {
-        LOGGER.debug("delete({})", keyId);
-        return null;
-    }
-
-    @Override
-    public Response delete(final String keyId, final Long version) {
-        LOGGER.debug("delete({},{})", keyId, version);
+    public Key rotate(final String keyId) {
+        LOGGER.debug("rotate({})", keyId);
         return null;
     }
 }

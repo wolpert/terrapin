@@ -14,9 +14,16 @@
  *    limitations under the License.
  */
 
-package com.codeheadsystems.terrapin.service;
+package com.codeheadsystems.terrapin.keystore.module;
 
-import io.dropwizard.Configuration;
+import com.codeheadsystems.metrics.dagger.MetricsModule;
+import dagger.Module;
 
-public class KeyStoreConfiguration extends Configuration {
+@Module(includes = {
+        HealthCheckModule.class,
+        MetricsModule.class,
+        ResourceModule.class,
+        RNGModule.class
+})
+public interface KeyStoreModule {
 }

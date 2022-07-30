@@ -14,16 +14,27 @@
  *    limitations under the License.
  */
 
-package com.codeheadsystems.terrapin.service.model;
+package com.codeheadsystems.terrapin.keystore.healthchecks;
 
-@FunctionalInterface
-public interface RNG {
+import com.codahale.metrics.health.HealthCheck;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-    /**
-     * Fill the array with random values.
-     *
-     * @param array to fill.
-     */
-    void random(byte[] array);
+@Singleton
+public class BasicHealthCheck extends HealthCheck {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(BasicHealthCheck.class);
+
+    @Inject
+    public BasicHealthCheck() {
+        LOGGER.info("BasicHealthCheck()");
+    }
+
+    @Override
+    protected Result check() throws Exception {
+        LOGGER.debug("check()");
+        return Result.healthy();
+    }
 }

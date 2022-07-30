@@ -66,5 +66,5 @@ dependencies {
 
 run {
     args 'server', configPath + 'dev-config.yaml'
-    mainClassName = "com.codeheadsystems.terrapin.service.Server"
+    mainClassName = "com.codeheadsystems.terrapin.keystore.Server"
 }

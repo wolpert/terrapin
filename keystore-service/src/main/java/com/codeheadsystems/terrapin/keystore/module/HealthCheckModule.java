@@ -14,28 +14,19 @@
  *    limitations under the License.
  */
 
-package com.codeheadsystems.terrapin.service.module;
+package com.codeheadsystems.terrapin.keystore.module;
 
-import com.codeheadsystems.terrapin.service.resource.KeyManagerResource;
-import com.codeheadsystems.terrapin.service.resource.KeyReaderResource;
-import com.codeheadsystems.terrapin.service.resource.KeyRotationResource;
-import com.codeheadsystems.terrapin.service.resource.KeyStoreResource;
+import com.codahale.metrics.health.HealthCheck;
+import com.codeheadsystems.terrapin.keystore.healthchecks.BasicHealthCheck;
 import dagger.Binds;
 import dagger.Module;
 import dagger.multibindings.IntoSet;
 
 @Module
-public interface ResourceModule {
+public interface HealthCheckModule {
 
     @Binds
     @IntoSet
-    KeyStoreResource keyManagerResource(KeyManagerResource resource);
+    HealthCheck basicHealthCheck(final BasicHealthCheck healthCheck);
 
-    @Binds
-    @IntoSet
-    KeyStoreResource keyReaderResource(KeyReaderResource resource);
-
-    @Binds
-    @IntoSet
-    KeyStoreResource keyRotationResource(KeyRotationResource resource);
 }

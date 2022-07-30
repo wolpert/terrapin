@@ -14,29 +14,35 @@
  *    limitations under the License.
  */
 
-package com.codeheadsystems.terrapin.service;
+package com.codeheadsystems.terrapin.keystore;
 
-import com.codeheadsystems.terrapin.service.module.RNGModule;
-import com.codeheadsystems.terrapin.service.module.ResourceModule;
-import com.codeheadsystems.terrapin.service.resource.KeyStoreResource;
+import static com.codeheadsystems.metrics.dagger.MetricsModule.METER_REGISTRY;
+
+import com.codahale.metrics.health.HealthCheck;
+import com.codeheadsystems.terrapin.keystore.module.KeyStoreModule;
+import com.codeheadsystems.terrapin.keystore.resource.JettyResource;
 import dagger.Component;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Environment;
+import io.micrometer.core.instrument.MeterRegistry;
 import java.util.Set;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * We use dagger to create the resources (and etc.) needed for the server before we initialize the server.
+ * That way we can see initialization issues before dropwizard issues.
+ */
 @Singleton
 public class Server extends Application<KeyStoreConfiguration> {
     private static final Logger LOGGER = LoggerFactory.getLogger(Server.class);
-    private final Set<KeyStoreResource> resources;
 
     @Inject
-    public Server(final ServerComponent component) {
-        LOGGER.info("Server({})", component);
-        this.resources = component.resources();
+    public Server() {
+        LOGGER.info("Server()");
     }
 
     /**
@@ -46,13 +52,8 @@ public class Server extends Application<KeyStoreConfiguration> {
      * @throws Exception if we could not start the server.
      */
     public static void main(String[] args) throws Exception {
-        // TODO: The server configuration depends on the arguments.
-        // So we need to get the configuration and use it to get the resources, metrics, healthchecks, etc.
-        // Not build the server yet.
         LOGGER.info("main({})", (Object) args);
-        final ServerComponent component = DaggerServer_ServerComponent.builder()
-                .build();
-        final Server server = new Server(component);
+        final Server server = new Server();
         server.run(args);
     }
 
@@ -61,20 +62,29 @@ public class Server extends Application<KeyStoreConfiguration> {
                     final Environment environment) throws Exception {
 
         LOGGER.info("run({},{})", configuration, environment);
-        // TODO: Add health checks.
-        // TODO: Add metrics
-        //environment.healthChecks().register("template", healthCheck);
-        for (Object resource : resources) {
+        // TODO: setup metrics
+        final KeystoreComponent component = DaggerServer_KeystoreComponent.builder()
+                .build();
+        for (Object resource : component.resources()) {
             LOGGER.info("Registering resource: " + resource.getClass().getSimpleName());
             environment.jersey().register(resource);
+        }
+        for (HealthCheck healthCheck : component.healthChecks()) {
+            LOGGER.info("Registering healthCheck: " + healthCheck.getClass().getSimpleName());
+            environment.healthChecks().register(healthCheck.getClass().getSimpleName(), healthCheck);
         }
     }
 
     @Singleton
-    @Component(modules = {RNGModule.class, ResourceModule.class})
-    public interface ServerComponent {
-        Set<KeyStoreResource> resources();
+    @Component(modules = {KeyStoreModule.class})
+    public interface KeystoreComponent {
 
+        Set<JettyResource> resources();
+
+        Set<HealthCheck> healthChecks();
+
+        @Named(METER_REGISTRY)
+        MeterRegistry metricRegistry();
     }
 
 }
