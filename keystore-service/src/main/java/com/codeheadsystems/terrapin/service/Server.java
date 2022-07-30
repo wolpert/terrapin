@@ -16,7 +16,6 @@
 
 package com.codeheadsystems.terrapin.service;
 
-import com.codeheadsystems.terrapin.service.model.KeyStoreConfiguration;
 import com.codeheadsystems.terrapin.service.module.RNGModule;
 import com.codeheadsystems.terrapin.service.module.ResourceModule;
 import com.codeheadsystems.terrapin.service.resource.KeyStoreResource;
@@ -35,9 +34,9 @@ public class Server extends Application<KeyStoreConfiguration> {
     private final Set<KeyStoreResource> resources;
 
     @Inject
-    public Server(final Set<KeyStoreResource> resources) {
-        LOGGER.info("Server({})", resources);
-        this.resources = resources;
+    public Server(final ServerComponent component) {
+        LOGGER.info("Server({})", component);
+        this.resources = component.resources();
     }
 
     /**
@@ -51,9 +50,9 @@ public class Server extends Application<KeyStoreConfiguration> {
         // So we need to get the configuration and use it to get the resources, metrics, healthchecks, etc.
         // Not build the server yet.
         LOGGER.info("main({})", (Object) args);
-        final Server server = DaggerServer_ServerComponent.builder()
-                .build()
-                .server();
+        final ServerComponent component = DaggerServer_ServerComponent.builder()
+                .build();
+        final Server server = new Server(component);
         server.run(args);
     }
 
@@ -74,8 +73,7 @@ public class Server extends Application<KeyStoreConfiguration> {
     @Singleton
     @Component(modules = {RNGModule.class, ResourceModule.class})
     public interface ServerComponent {
-
-        Server server();
+        Set<KeyStoreResource> resources();
 
     }
 

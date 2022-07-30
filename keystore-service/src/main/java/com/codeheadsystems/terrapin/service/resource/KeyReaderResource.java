@@ -36,7 +36,6 @@ public class KeyReaderResource implements KeyReaderService, KeyStoreResource {
     @Override
     public Key get(final String keyId) {
         LOGGER.debug("get({})", keyId);
-        LOGGER.info("get({})", keyId);
         return null;
     }
 

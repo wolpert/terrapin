@@ -1,9 +1,8 @@
 
-
 logging:
   level: INFO
   loggers:
-    com.codeheadsystems: INFO
+    com.codeheadsystems: DEBUG
     software.amazon: INFO
   appenders:
     - type: console

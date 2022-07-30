@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package com.codeheadsystems.terrapin.service.model;
+package com.codeheadsystems.terrapin.service;
 
 import io.dropwizard.Configuration;
 
