@@ -7,3 +7,35 @@ logging:
   appenders:
     - type: console
       logFormat: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+metrics:
+  frequency: 1 minute
+  reportOnStop: true
+  reporters:
+    - type: log
+      logger: metrics
+      markerName: SLF4j
+
+health:
+  healthCheckUrlPaths: ["/health-check"]
+  healthChecks:
+    - name: deadlocks
+      type: alive
+      critical: true
+      initialState: true
+      schedule:
+        checkInterval: 10s
+        downtimeInterval: 2s
+        initialDelay: 5s
+        failureAttempts: 1
+        successAttempts: 2
+    - name: BasicHealthCheck
+      type: alive
+      critical: true
+      initialState: false
+      schedule:
+        checkInterval: 60s
+        downtimeInterval: 2s
+        initialDelay: 5s
+        failureAttempts: 1
+        successAttempts: 2

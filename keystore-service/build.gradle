@@ -42,6 +42,7 @@ dependencies {
     implementation "io.github.resilience4j:resilience4j-retry:${resilience4jVersion}"
     implementation "io.micrometer:micrometer-core:${micrometerVersion}"
     implementation "io.github.resilience4j:resilience4j-micrometer:${resilience4jVersion}"
+    implementation "io.dropwizard.metrics:metrics-core:${metricsVersion}"
 
     compileOnly "org.immutables:value:${immutablesVersion}"
     annotationProcessor "org.immutables:value:${immutablesVersion}"

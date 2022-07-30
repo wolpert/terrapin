@@ -20,11 +20,8 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Reporter;
 import com.codahale.metrics.Slf4jReporter;
 import com.codeheadsystems.metrics.Metrics;
-import io.micrometer.core.instrument.Clock;
+import com.codeheadsystems.metrics.helper.DropwizardMetricsHelper;
 import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.dropwizard.DropwizardConfig;
-import io.micrometer.core.instrument.dropwizard.DropwizardMeterRegistry;
-import io.micrometer.core.instrument.util.HierarchicalNameMapper;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.AfterAll;
@@ -44,23 +41,7 @@ public abstract class BaseMetricTest {
                 .convertRatesTo(TimeUnit.SECONDS)
                 .convertDurationsTo(TimeUnit.MILLISECONDS)
                 .build();
-        final DropwizardConfig config = new DropwizardConfig() {
-            @Override
-            public String prefix() {
-                return "slf4j";
-            }
-
-            @Override
-            public String get(final String key) {
-                return null;
-            }
-        };
-        meterRegistry = new DropwizardMeterRegistry(config, metricRegistry, HierarchicalNameMapper.DEFAULT, Clock.SYSTEM) {
-            @Override
-            protected Double nullGaugeValue() {
-                return null;
-            }
-        };
+        meterRegistry = new DropwizardMetricsHelper().instrument(metricRegistry);
     }
 
     @AfterAll

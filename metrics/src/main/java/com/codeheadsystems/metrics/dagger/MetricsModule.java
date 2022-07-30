@@ -36,12 +36,27 @@ public class MetricsModule {
     public static final String METER_REGISTRY = "Meter Registry";
     private static final Logger LOGGER = LoggerFactory.getLogger(MetricsModule.class);
 
+    private final MeterRegistry override;
+
+    public MetricsModule() {
+        this(null);
+    }
+
+    public MetricsModule(final MeterRegistry override) {
+        this.override = override;
+    }
+
     @Provides
     @Singleton
     @Named(METER_REGISTRY)
     public MeterRegistry meterRegistry(@Named(PROVIDED_METER_REGISTRY) Optional<MeterRegistry> optionalMeterRegistry) {
         LOGGER.info("Provided metric: {}", optionalMeterRegistry.isPresent());
-        return optionalMeterRegistry.orElseGet(SimpleMeterRegistry::new);
+        if (override != null) {
+            LOGGER.info("Override: {}", override);
+            return override;
+        } else {
+            return optionalMeterRegistry.orElseGet(SimpleMeterRegistry::new);
+        }
     }
 
     @Module

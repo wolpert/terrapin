@@ -19,6 +19,8 @@ package com.codeheadsystems.terrapin.keystore;
 import static com.codeheadsystems.metrics.dagger.MetricsModule.METER_REGISTRY;
 
 import com.codahale.metrics.health.HealthCheck;
+import com.codeheadsystems.metrics.dagger.MetricsModule;
+import com.codeheadsystems.metrics.helper.DropwizardMetricsHelper;
 import com.codeheadsystems.terrapin.keystore.module.KeyStoreModule;
 import com.codeheadsystems.terrapin.keystore.resource.JettyResource;
 import dagger.Component;
@@ -60,10 +62,10 @@ public class Server extends Application<KeyStoreConfiguration> {
     @Override
     public void run(final KeyStoreConfiguration configuration,
                     final Environment environment) throws Exception {
-
         LOGGER.info("run({},{})", configuration, environment);
-        // TODO: setup metrics
+        final MeterRegistry meterRegistry = new DropwizardMetricsHelper().instrument(environment.metrics());
         final KeystoreComponent component = DaggerServer_KeystoreComponent.builder()
+                .metricsModule(new MetricsModule(meterRegistry))
                 .build();
         for (Object resource : component.resources()) {
             LOGGER.info("Registering resource: " + resource.getClass().getSimpleName());
