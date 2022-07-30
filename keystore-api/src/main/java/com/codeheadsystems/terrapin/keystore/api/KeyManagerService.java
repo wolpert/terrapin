@@ -43,8 +43,8 @@ public interface KeyManagerService {
    */
   @PUT
   @Timed
-  @Path("/{owner}")
-  Key create(@PathParam("owner") String owner, @QueryParam("id") String keyId);
+  @Path("/{owner}/{id}")
+  Key create(@PathParam("owner") String owner, @PathParam("id") String keyId);
 
   /**
    * Deletes all the versions of this key. No version of the key can be used after this.

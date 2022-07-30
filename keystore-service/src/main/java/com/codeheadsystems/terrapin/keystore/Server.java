@@ -128,8 +128,6 @@ public class Server extends Application<KeyStoreConfiguration> {
 
         Set<HealthCheck> healthChecks();
 
-        @Named(METER_REGISTRY)
-        MeterRegistry metricRegistry();
     }
 
 }

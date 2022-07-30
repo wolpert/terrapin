@@ -31,11 +31,11 @@ import javax.inject.Singleton;
 @Module(includes = {RNGModule.Binder.class})
 public class RNGModule {
 
-    public static final String RNG = "RNG";
+    public static final String PROVIDED_RNG = "RNG";
 
     @Provides
     @Singleton
-    @Named(RNG)
+    @Named(PROVIDED_RNG)
     public RNG rng(@Named(Binder.RNG_IMPL) final Optional<RNG> rng) {
         return rng.orElseGet(this::defaultRNG);
     }
