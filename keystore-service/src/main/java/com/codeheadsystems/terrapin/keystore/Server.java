@@ -23,7 +23,9 @@ import com.codeheadsystems.metrics.dagger.MetricsModule;
 import com.codeheadsystems.metrics.helper.DropwizardMetricsHelper;
 import com.codeheadsystems.terrapin.keystore.module.KeyStoreModule;
 import com.codeheadsystems.terrapin.keystore.resource.JettyResource;
+import com.codeheadsystems.terrapin.server.dao.ImmutableTableConfiguration;
 import com.codeheadsystems.terrapin.server.dao.dagger.DDBModule;
+import com.codeheadsystems.terrapin.server.dao.manager.AWSManager;
 import dagger.Component;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Environment;
@@ -68,17 +70,32 @@ public class Server extends Application<KeyStoreConfiguration> {
         server.run(args);
     }
 
+    /**
+     * Temporary ... need a better dev env to test the db.
+     * For this to work, you need to:
+     * <ol>
+     *     <li>wget https://s3.us-west-2.amazonaws.com/dynamodb-local/dynamodb_local_latest.tar.gz</li>
+     *     <li>tar xf dynamodb_local_latest.tar.gz</li>
+     *     <li>java -Djava.library.path=./DynamoDBLocal_lib -jar DynamoDBLocal.jar -sharedDb</li>
+     * </ol>
+     * To be replaced soon... so it works from gradle automatically
+     * @return
+     */
     DynamoDbClient localClient() {
-
         final AwsCredentials credentials = AwsBasicCredentials.create("one", "two");
         final AwsCredentialsProvider credentialsProvider = StaticCredentialsProvider.create(credentials);
-
         try {
-            return DynamoDbClient.builder()
+            final DynamoDbClient client = DynamoDbClient.builder()
                     .credentialsProvider(credentialsProvider)
                     .region(Region.US_EAST_1)
                     .endpointOverride(new URI("http://localhost:8000"))
                     .build();
+            try {
+                new AWSManager(client, ImmutableTableConfiguration.builder().build()).createTable();
+            } catch (RuntimeException e) {
+                e.printStackTrace();
+            }
+            return client;
         } catch (URISyntaxException e) {
             throw new IllegalStateException("Should not have happened given the hardcoded url", e);
         }

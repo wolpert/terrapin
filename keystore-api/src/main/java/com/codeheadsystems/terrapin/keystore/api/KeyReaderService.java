@@ -52,7 +52,7 @@ public interface KeyReaderService {
    */
   @GET
   @Timed
-  @Path("/{owner}/{id}/version/{version}")
+  @Path("/{owner}/{id}/{version}")
   Key get(@PathParam("owner") String owner, @PathParam("id") String keyId, @PathParam("version") Long version);
 
 }
