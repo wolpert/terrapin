@@ -47,6 +47,9 @@ public class Server extends Application<KeyStoreConfiguration> {
      * @throws Exception if we could not start the server.
      */
     public static void main(String[] args) throws Exception {
+        // TODO: The server configuration depends on the arguments.
+        // So we need to get the configuration and use it to get the resources, metrics, healthchecks, etc.
+        // Not build the server yet.
         LOGGER.info("main({})", (Object) args);
         final Server server = DaggerServer_ServerComponent.builder()
                 .build()

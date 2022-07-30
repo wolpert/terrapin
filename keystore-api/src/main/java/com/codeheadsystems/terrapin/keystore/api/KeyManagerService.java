@@ -65,6 +65,6 @@ public interface KeyManagerService {
   @DELETE
   @Timed
   @Path("/{id}/version/{version}")
-  Response delete(@PathParam("id") String keyId, @PathParam("version") Integer version);
+  Response delete(@PathParam("id") String keyId, @PathParam("version") Long version);
 
 }

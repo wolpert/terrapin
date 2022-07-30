@@ -35,6 +35,7 @@ public class KeyRotationResource implements KeyRotationService, KeyStoreResource
 
     @Override
     public Key rotate(final String keyId) {
+        LOGGER.debug("rotate({})", keyId);
         return null;
     }
 }

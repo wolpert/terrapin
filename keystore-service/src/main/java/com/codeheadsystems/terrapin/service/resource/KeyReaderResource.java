@@ -35,11 +35,14 @@ public class KeyReaderResource implements KeyReaderService, KeyStoreResource {
 
     @Override
     public Key get(final String keyId) {
+        LOGGER.debug("get({})", keyId);
+        LOGGER.info("get({})", keyId);
         return null;
     }
 
     @Override
-    public Key get(final String keyId, final Integer version) {
+    public Key get(final String keyId, final Long version) {
+        LOGGER.debug("get({},{})", keyId, version);
         return null;
     }
 }

@@ -1,0 +1,10 @@
+
+
+logging:
+  level: INFO
+  loggers:
+    com.codeheadsystems: DEBUG
+    software.amazon: DEBUG
+  appenders:
+    - type: console
+      logFormat: OTHER %d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n

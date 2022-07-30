@@ -36,16 +36,19 @@ public class KeyManagerResource implements KeyManagerService, KeyStoreResource {
 
     @Override
     public Key create(final String keyId) {
+        LOGGER.debug("create({})", keyId);
         return null;
     }
 
     @Override
     public Response delete(final String keyId) {
+        LOGGER.debug("delete({})", keyId);
         return null;
     }
 
     @Override
-    public Response delete(final String keyId, final Integer version) {
+    public Response delete(final String keyId, final Long version) {
+        LOGGER.debug("delete({},{})", keyId, version);
         return null;
     }
 }

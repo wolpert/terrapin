@@ -53,7 +53,7 @@ public interface KeyReaderService {
   @GET
   @Timed
   @Path("/{id}/version/{version}")
-  Key get(@PathParam("id") String keyId, @PathParam("version") Integer version);
+  Key get(@PathParam("id") String keyId, @PathParam("version") Long version);
 
 
 }

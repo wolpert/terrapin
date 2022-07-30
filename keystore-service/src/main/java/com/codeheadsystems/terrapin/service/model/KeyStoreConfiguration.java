@@ -16,15 +16,7 @@
 
 package com.codeheadsystems.terrapin.service.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.dropwizard.Configuration;
-import org.immutables.value.Value;
 
-@Value.Immutable
-@JsonSerialize(as = ImmutableKeyStoreConfiguration.class)
-@JsonDeserialize(builder = ImmutableKeyStoreConfiguration.Builder.class)
-@JsonIgnoreProperties(ignoreUnknown = true)
-public abstract class KeyStoreConfiguration extends Configuration {
+public class KeyStoreConfiguration extends Configuration {
 }
