@@ -23,7 +23,6 @@ import com.codeheadsystems.terrapin.server.dao.ImmutableTableConfiguration;
 import com.codeheadsystems.terrapin.server.dao.KeyDAO;
 import com.codeheadsystems.terrapin.server.dao.KeyDAODynamoDB;
 import com.codeheadsystems.terrapin.server.dao.TableConfiguration;
-import com.codeheadsystems.terrapin.server.dao.accessor.DynamoDbClientAccessor;
 import com.codeheadsystems.terrapin.server.exception.RetryableException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dagger.Binds;
@@ -49,6 +48,10 @@ public class DDBModule {
 
     private final DynamoDbClient client;
     private final TableConfiguration tableConfiguration;
+
+    public DDBModule() {
+        this(DynamoDbClient.create());
+    }
 
     public DDBModule(final DynamoDbClient dynamoDbClient) {
         this(dynamoDbClient, ImmutableTableConfiguration.builder().build());

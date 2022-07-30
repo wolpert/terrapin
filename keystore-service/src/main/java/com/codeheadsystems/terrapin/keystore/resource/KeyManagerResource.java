@@ -35,20 +35,20 @@ public class KeyManagerResource implements KeyManagerService, JettyResource {
     }
 
     @Override
-    public Key create(final String keyId) {
-        LOGGER.debug("create({})", keyId);
+    public Key create(final String owner, final String keyId) {
+        LOGGER.debug("create({},{})", owner, keyId);
         return null;
     }
 
     @Override
-    public Response delete(final String keyId) {
-        LOGGER.debug("delete({})", keyId);
+    public Response delete(final String owner, final String keyId) {
+        LOGGER.debug("delete({},{})", owner, keyId);
         return null;
     }
 
     @Override
-    public Response delete(final String keyId, final Long version) {
-        LOGGER.debug("delete({},{})", keyId, version);
+    public Response delete(final String owner, final String keyId, final Long version) {
+        LOGGER.debug("delete({},{},{})", owner, keyId, version);
         return null;
     }
 }

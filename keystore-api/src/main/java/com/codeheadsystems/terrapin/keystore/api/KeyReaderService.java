@@ -40,8 +40,8 @@ public interface KeyReaderService {
    */
   @GET
   @Timed
-  @Path("/{id}")
-  Key get(@PathParam("id") String keyId);
+  @Path("/{owner}/{id}")
+  Key get(@PathParam("owner") String owner, @PathParam("id") String keyId);
 
   /**
    * Gets a specific version of this key.
@@ -52,8 +52,7 @@ public interface KeyReaderService {
    */
   @GET
   @Timed
-  @Path("/{id}/version/{version}")
-  Key get(@PathParam("id") String keyId, @PathParam("version") Long version);
-
+  @Path("/{owner}/{id}/version/{version}")
+  Key get(@PathParam("owner") String owner, @PathParam("id") String keyId, @PathParam("version") Long version);
 
 }

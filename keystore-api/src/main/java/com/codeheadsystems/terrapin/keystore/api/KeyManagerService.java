@@ -43,8 +43,8 @@ public interface KeyManagerService {
    */
   @PUT
   @Timed
-  @Path("/")
-  Key create(@QueryParam("id") String keyId);
+  @Path("/{owner}")
+  Key create(@PathParam("owner") String owner, @QueryParam("id") String keyId);
 
   /**
    * Deletes all the versions of this key. No version of the key can be used after this.
@@ -53,8 +53,8 @@ public interface KeyManagerService {
    */
   @DELETE
   @Timed
-  @Path("/{id}")
-  Response delete(@PathParam("id") String keyId);
+  @Path("/{owner}/{id}")
+  Response delete(@PathParam("owner") String owner, @PathParam("id") String keyId);
 
   /**
    * Deletes a specific versions of this key. This version of the key can no longer be used after this.
@@ -64,7 +64,7 @@ public interface KeyManagerService {
    */
   @DELETE
   @Timed
-  @Path("/{id}/version/{version}")
-  Response delete(@PathParam("id") String keyId, @PathParam("version") Long version);
+  @Path("/{owner}/{id}/version/{version}")
+  Response delete(@PathParam("owner") String owner, @PathParam("id") String keyId, @PathParam("version") Long version);
 
 }

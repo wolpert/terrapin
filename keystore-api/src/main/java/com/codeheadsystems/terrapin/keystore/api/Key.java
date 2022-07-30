@@ -28,15 +28,17 @@ import org.immutables.value.Value;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public interface Key {
 
+  @JsonProperty("owner")
+  String owner();
+
   @JsonProperty("id")
   String id();
 
   @JsonProperty("version")
-  Integer version();
+  Long version();
 
   @JsonProperty("status")
   String status();
-
 
   @JsonProperty("key")
   byte[] key();

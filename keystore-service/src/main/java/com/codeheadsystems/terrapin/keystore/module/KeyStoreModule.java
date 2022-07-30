@@ -17,9 +17,11 @@
 package com.codeheadsystems.terrapin.keystore.module;
 
 import com.codeheadsystems.metrics.dagger.MetricsModule;
+import com.codeheadsystems.terrapin.server.dao.dagger.DDBModule;
 import dagger.Module;
 
 @Module(includes = {
+        DDBModule.class,
         HealthCheckModule.class,
         MetricsModule.class,
         ResourceModule.class,

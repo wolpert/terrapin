@@ -23,16 +23,25 @@ import com.codeheadsystems.metrics.dagger.MetricsModule;
 import com.codeheadsystems.metrics.helper.DropwizardMetricsHelper;
 import com.codeheadsystems.terrapin.keystore.module.KeyStoreModule;
 import com.codeheadsystems.terrapin.keystore.resource.JettyResource;
+import com.codeheadsystems.terrapin.server.dao.dagger.DDBModule;
 import dagger.Component;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Environment;
 import io.micrometer.core.instrument.MeterRegistry;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.AwsCredentials;
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 /**
  * We use dagger to create the resources (and etc.) needed for the server before we initialize the server.
@@ -59,6 +68,22 @@ public class Server extends Application<KeyStoreConfiguration> {
         server.run(args);
     }
 
+    DynamoDbClient localClient() {
+
+        final AwsCredentials credentials = AwsBasicCredentials.create("one", "two");
+        final AwsCredentialsProvider credentialsProvider = StaticCredentialsProvider.create(credentials);
+
+        try {
+            return DynamoDbClient.builder()
+                    .credentialsProvider(credentialsProvider)
+                    .region(Region.US_EAST_1)
+                    .endpointOverride(new URI("http://localhost:8000"))
+                    .build();
+        } catch (URISyntaxException e) {
+            throw new IllegalStateException("Should not have happened given the hardcoded url", e);
+        }
+    }
+
     @Override
     public void run(final KeyStoreConfiguration configuration,
                     final Environment environment) throws Exception {
@@ -66,6 +91,7 @@ public class Server extends Application<KeyStoreConfiguration> {
         final MeterRegistry meterRegistry = new DropwizardMetricsHelper().instrument(environment.metrics());
         final KeystoreComponent component = DaggerServer_KeystoreComponent.builder()
                 .metricsModule(new MetricsModule(meterRegistry))
+                .dDBModule(new DDBModule(localClient()))
                 .build();
         for (Object resource : component.resources()) {
             LOGGER.info("Registering resource: " + resource.getClass().getSimpleName());

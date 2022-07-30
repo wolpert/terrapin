@@ -18,30 +18,48 @@ package com.codeheadsystems.terrapin.keystore.resource;
 
 import com.codeheadsystems.terrapin.keystore.api.Key;
 import com.codeheadsystems.terrapin.keystore.api.KeyReaderService;
+import com.codeheadsystems.terrapin.keystore.converter.ApiConverter;
+import com.codeheadsystems.terrapin.keystore.manager.KeyManager;
+import com.codeheadsystems.terrapin.server.dao.model.KeyIdentifier;
+import com.codeheadsystems.terrapin.server.dao.model.KeyVersionIdentifier;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Singleton
 public class KeyReaderResource implements KeyReaderService, JettyResource {
 
+    private final ApiConverter apiConverter;
+    private final KeyManager keyManager;
+
     public static final Logger LOGGER = LoggerFactory.getLogger(KeyReaderResource.class);
 
     @Inject
-    public KeyReaderResource() {
-        LOGGER.info("KeyReaderResource()");
+    public KeyReaderResource(final ApiConverter apiConverter,
+                             final KeyManager keyManager) {
+        LOGGER.info("KeyReaderResource({},{})", apiConverter, keyManager);
+        this.apiConverter = apiConverter;
+        this.keyManager = keyManager;
     }
 
     @Override
-    public Key get(final String keyId) {
-        LOGGER.debug("get({})", keyId);
-        return null;
+    public Key get(final String owner, final String keyId) {
+        LOGGER.debug("get({},{})", owner, keyId);
+        final KeyIdentifier identifier = apiConverter.toDaoKeyIdentifier(owner, keyId);
+        return keyManager.getKey(identifier)
+                .map(apiConverter::toApiKey)
+                .orElseThrow(() -> new WebApplicationException(Response.Status.NOT_FOUND));
     }
 
     @Override
-    public Key get(final String keyId, final Long version) {
-        LOGGER.debug("get({},{})", keyId, version);
-        return null;
+    public Key get(final String owner, final String keyId, final Long version) {
+        LOGGER.debug("get({},{},{})", owner, keyId, version);
+        final KeyVersionIdentifier identifier = apiConverter.toDaoKeyVersionIdentifier(owner, keyId, version);
+        return keyManager.getKey(identifier)
+                .map(apiConverter::toApiKey)
+                .orElseThrow(() -> new WebApplicationException(Response.Status.NOT_FOUND));
     }
 }

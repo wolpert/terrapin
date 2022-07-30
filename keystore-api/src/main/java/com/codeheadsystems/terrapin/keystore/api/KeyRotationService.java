@@ -40,7 +40,7 @@ public interface KeyRotationService {
    */
   @POST
   @Timed
-  @Path("/{id}/rotate")
-  Key rotate(@PathParam("id") String keyId);
+  @Path("/{owner}/{id}/rotate")
+  Key rotate(@PathParam("owner") String owner, @PathParam("id") String keyId);
 
 }

@@ -34,8 +34,8 @@ public class KeyRotationResource implements KeyRotationService, JettyResource {
     }
 
     @Override
-    public Key rotate(final String keyId) {
-        LOGGER.debug("rotate({})", keyId);
+    public Key rotate(final String owner, final String keyId) {
+        LOGGER.debug("rotate({},{})", owner, keyId);
         return null;
     }
 }
