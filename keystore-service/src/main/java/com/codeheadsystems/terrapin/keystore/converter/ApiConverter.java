@@ -31,14 +31,12 @@ import org.slf4j.LoggerFactory;
 public class ApiConverter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ApiConverter.class);
+    public static final String ACTIVE = "active";
+    public static final String INACTIVE = "inactive";
 
     @Inject
     public ApiConverter() {
         LOGGER.info("ApiConverter()");
-    }
-
-    public KeyVersionIdentifier toDaoKeyVersionIdentifier(final com.codeheadsystems.terrapin.keystore.api.Key apiKey) {
-        return toDaoKeyVersionIdentifier(apiKey.owner(), apiKey.id(), apiKey.version());
     }
 
     public KeyVersionIdentifier toDaoKeyVersionIdentifier(final String owner,
@@ -66,7 +64,7 @@ public class ApiConverter {
                 .id(identifier.key())
                 .version(identifier.version())
                 .key(daoKey.value())
-                .status(daoKey.active() ? "active" : "inactive")
+                .status(daoKey.active() ? ACTIVE : INACTIVE)
                 .build();
     }
 }

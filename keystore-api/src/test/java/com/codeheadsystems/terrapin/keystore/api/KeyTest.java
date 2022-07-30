@@ -16,31 +16,23 @@
 
 package com.codeheadsystems.terrapin.keystore.api;
 
-import com.codahale.metrics.annotation.Timed;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+import com.codeheadsystems.test.model.BaseJacksonTest;
 
-/**
- * Manages the keys available for the service.
- */
-@Path("/v1/key")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
-public interface KeyRotationService {
+class KeyTest extends BaseJacksonTest<Key> {
 
-  /**
-   * Rotates the current key. New version, old version will expire out.
-   *
-   * @param keyId that needs rotating.
-   * @return a new key based on the old one.
-   */
-  @POST
-  @Timed
-  @Path("/{owner}/{id}/rotate")
-  Key rotate(@PathParam("owner") String owner, @PathParam("id") String keyId);
+    @Override
+    protected Class<Key> getBaseClass() {
+        return Key.class;
+    }
 
+    @Override
+    protected Key getInstance() {
+        return ImmutableKey.builder()
+                .owner("owner")
+                .id("id")
+                .version(2L)
+                .status("status")
+                .key(new byte[]{5, 6, 7})
+                .build();
+    }
 }

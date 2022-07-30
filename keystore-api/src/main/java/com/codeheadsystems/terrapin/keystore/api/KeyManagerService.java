@@ -30,7 +30,7 @@ import javax.ws.rs.core.Response;
 /**
  * Manages the keys available for the service.
  */
-@Path("/key")
+@Path("/v1/key")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public interface KeyManagerService {
