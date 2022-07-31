@@ -41,8 +41,8 @@ public class OwnerConverter {
     public static final String HASH = "owner:%s";
     public static final String INFO_RANGE = "info";
     public static final String OWNER_SEARCH_IDX = "ownerSearchIdx";
-    private static final Logger LOGGER = LoggerFactory.getLogger(OwnerConverter.class);
     public static final String KEY_RANGE_FORMAT = "key:%s";
+    private static final Logger LOGGER = LoggerFactory.getLogger(OwnerConverter.class);
     private final TableConfiguration configuration;
     private final TokenManager tokenManager;
 

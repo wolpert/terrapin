@@ -1,6 +1,6 @@
 # Metrics
 
-Provide a wrapper around metric implementations so we can switch depending on our 
+Provide a wrapper around metric implementations so we can switch depending on our
 running environment.
 
 # Usage

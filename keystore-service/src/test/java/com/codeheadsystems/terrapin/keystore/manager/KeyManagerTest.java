@@ -16,7 +16,6 @@
 
 package com.codeheadsystems.terrapin.keystore.manager;
 
-import static com.codeheadsystems.terrapin.server.dao.converter.KeyConverter.ACTIVE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.verify;

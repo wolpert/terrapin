@@ -178,7 +178,7 @@ public class KeyConverter {
     private KeyVersionIdentifier versionIdentifierFrom(final Map<String, AttributeValue> item) {
         final String hash = item.get(configuration.hashKey()).s();
         final String[] tokens = hash.split(":");
-        if (tokens.length!=3) {
+        if (tokens.length != 3) {
             LOGGER.error("Token lookup failed, badly encoded: {}", hash);
             throw new DatalayerException("Token lookup has incorrect length: " + hash);
         }

@@ -31,7 +31,6 @@ import com.codeheadsystems.terrapin.server.dao.model.Token;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 import javax.inject.Inject;
@@ -43,9 +42,9 @@ import software.amazon.awssdk.services.dynamodb.model.*;
 @Singleton
 public class KeyDAODynamoDB implements KeyDAO {
     public static final String OWNER = "owner";
-    private static final Logger LOGGER = LoggerFactory.getLogger(KeyDAODynamoDB.class);
     public static final String PREFIX = "ddbdao.";
     public static final int MAX_TIMES_KEY_STORE = 5;
+    private static final Logger LOGGER = LoggerFactory.getLogger(KeyDAODynamoDB.class);
     private final DynamoDbClientAccessor dynamoDbClientAccessor;
     private final KeyConverter keyConverter;
     private final OwnerConverter ownerConverter;

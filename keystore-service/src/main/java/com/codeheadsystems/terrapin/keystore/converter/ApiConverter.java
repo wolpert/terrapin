@@ -30,9 +30,9 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class ApiConverter {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ApiConverter.class);
     public static final String ACTIVE = "active";
     public static final String INACTIVE = "inactive";
+    private static final Logger LOGGER = LoggerFactory.getLogger(ApiConverter.class);
 
     @Inject
     public ApiConverter() {

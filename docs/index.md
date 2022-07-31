@@ -20,8 +20,8 @@ within CodeHead Systems. THe original projects and new ones being developed are 
 
 ## Key Store
 
-Key Store (KeyService) is a micro-Service that provides the ability create, store and 
-rotate keys. They can be shared, enabled and disabled. Key generation has a pluggable 
+Key Store (KeyService) is a micro-Service that provides the ability create, store and
+rotate keys. They can be shared, enabled and disabled. Key generation has a pluggable
 model for random number generator. (For our purposes, we only use SecureRandom from
 Java by default.)
 

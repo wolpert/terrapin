@@ -16,5 +16,5 @@
 
 package com.codeheadsystems.terrapin.keystore.exception;
 
-public class AlreadyExistsException extends Exception{
+public class AlreadyExistsException extends Exception {
 }

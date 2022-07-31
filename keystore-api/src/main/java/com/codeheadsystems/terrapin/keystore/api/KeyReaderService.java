@@ -32,27 +32,27 @@ import javax.ws.rs.core.MediaType;
 @Consumes(MediaType.APPLICATION_JSON)
 public interface KeyReaderService {
 
-  /**
-   * Gets the latest version of this key.
-   *
-   * @param keyId to be found.
-   * @return Key.
-   */
-  @GET
-  @Timed
-  @Path("/{owner}/{id}")
-  Key get(@PathParam("owner") String owner, @PathParam("id") String keyId);
+    /**
+     * Gets the latest version of this key.
+     *
+     * @param keyId to be found.
+     * @return Key.
+     */
+    @GET
+    @Timed
+    @Path("/{owner}/{id}")
+    Key get(@PathParam("owner") String owner, @PathParam("id") String keyId);
 
-  /**
-   * Gets a specific version of this key.
-   *
-   * @param keyId   to be found.
-   * @param version to be found.
-   * @return Key.
-   */
-  @GET
-  @Timed
-  @Path("/{owner}/{id}/{version}")
-  Key get(@PathParam("owner") String owner, @PathParam("id") String keyId, @PathParam("version") Long version);
+    /**
+     * Gets a specific version of this key.
+     *
+     * @param keyId   to be found.
+     * @param version to be found.
+     * @return Key.
+     */
+    @GET
+    @Timed
+    @Path("/{owner}/{id}/{version}")
+    Key get(@PathParam("owner") String owner, @PathParam("id") String keyId, @PathParam("version") Long version);
 
 }

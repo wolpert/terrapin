@@ -21,7 +21,7 @@ import java.util.Optional;
 import org.immutables.value.Value;
 
 @Value.Immutable
-public interface Batch<T>{
+public interface Batch<T> {
 
     List<T> list();
 

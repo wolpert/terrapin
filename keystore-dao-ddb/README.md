@@ -5,6 +5,7 @@ DAO as implemented for DynamoDB
 ## Database Model
 
 We are only using one table.
+
 * Key hashkeys = keyVersion:%s:%s (first is owner name, second is key name )
 * Key rangeKeys are versions. (As strings, zero-padded with 10 zeros)
 * Key's have sparse index for active keys and owners.

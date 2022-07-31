@@ -8,6 +8,7 @@ for OopMock calls.
 ### oopMockConfiguration.json
 
 This file, of course, should be in your path. A minimal configuration would look like
+
 ```json
 {
   "enabled": "true",
@@ -25,11 +26,13 @@ it was just easier to have the user setup a DynamoDB mapper object as
 needed, and pass it into the factory builder.
 
 * OopMockFactory
+
 ```java
 OopMockFactoryBuilder.generate(ImmutableMap.of(DynamoDBMapper.class, mapper));`
 ```
 
 * OopMockClientFactory
+
 ```java
 OopMockClientFactoryBuilder.generate(ImmutableMap.of(DynamoDBMapper.class, mapper));`
 ```
@@ -40,6 +43,7 @@ You can configure your DynamoDB database manually through the scripting mechanis
 choice. (CDK, Terraform, Pulumi, etc)
 
 Currently, the names are hard-coded. They include:
+
 * TableName: oop_mock_data
 * HashKey: hash
 * RangeKey: range

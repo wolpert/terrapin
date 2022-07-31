@@ -24,56 +24,56 @@ import org.junit.jupiter.api.Test;
 
 class DataHelperTest {
 
-  private static final String TEST_KNOWN_DATA = "This is not a test 78493242342 .fdlsaf 4$$#5432\nfdsaf5";
+    private static final String TEST_KNOWN_DATA = "This is not a test 78493242342 .fdlsaf 4$$#5432\nfdsaf5";
 
-  private DataHelper helper;
-  private Random random;
+    private DataHelper helper;
+    private Random random;
 
-  @BeforeEach
-  void setUp() {
-    helper = new DataHelper();
-    random = new Random();
-  }
+    @BeforeEach
+    void setUp() {
+        helper = new DataHelper();
+        random = new Random();
+    }
 
-  @Test
-  void toByteAndToString() {
-    final byte[] bytes = helper.toByte(TEST_KNOWN_DATA);
-    final String result = helper.toString(bytes);
-    assertThat(result)
-        .isNotEmpty()
-        .isEqualTo(TEST_KNOWN_DATA);
-  }
+    @Test
+    void toByteAndToString() {
+        final byte[] bytes = helper.toByte(TEST_KNOWN_DATA);
+        final String result = helper.toString(bytes);
+        assertThat(result)
+                .isNotEmpty()
+                .isEqualTo(TEST_KNOWN_DATA);
+    }
 
-  @Test
-  void clear() {
-    final byte[] bytes = {0x1, 0x2, 0x3, 0x4, 0x5, 0x6};
-    assertThat(bytes)
-        .doesNotContain((byte) 0);
-    helper.clear(bytes);
-    assertThat(bytes)
-        .containsOnly((byte) 0);
-  }
+    @Test
+    void clear() {
+        final byte[] bytes = {0x1, 0x2, 0x3, 0x4, 0x5, 0x6};
+        assertThat(bytes)
+                .doesNotContain((byte) 0);
+        helper.clear(bytes);
+        assertThat(bytes)
+                .containsOnly((byte) 0);
+    }
 
-  @Test
-  void base64RoundTrip_string() {
-    final String base64 = helper.toBase64(TEST_KNOWN_DATA);
-    assertThat(base64)
-        .isNotEqualTo(TEST_KNOWN_DATA);
-    final String result = helper.toStringFromBase64(base64);
-    assertThat(result)
-        .isEqualTo(TEST_KNOWN_DATA);
-  }
+    @Test
+    void base64RoundTrip_string() {
+        final String base64 = helper.toBase64(TEST_KNOWN_DATA);
+        assertThat(base64)
+                .isNotEqualTo(TEST_KNOWN_DATA);
+        final String result = helper.toStringFromBase64(base64);
+        assertThat(result)
+                .isEqualTo(TEST_KNOWN_DATA);
+    }
 
-  @Test
-  void base64RoundTrip_bytes() {
-    final byte[] bytes = new byte[64];
-    random.nextBytes(bytes);
+    @Test
+    void base64RoundTrip_bytes() {
+        final byte[] bytes = new byte[64];
+        random.nextBytes(bytes);
 
-    final String base64 = helper.toBase64(bytes);
-    final byte[] result = helper.toBytesFromBase64(base64);
-    assertThat(result)
-        .containsExactly(bytes)
-        .isEqualTo(bytes);
-  }
+        final String base64 = helper.toBase64(bytes);
+        final byte[] result = helper.toBytesFromBase64(base64);
+        assertThat(result)
+                .containsExactly(bytes)
+                .isEqualTo(bytes);
+    }
 
 }

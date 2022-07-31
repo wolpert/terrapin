@@ -30,6 +30,7 @@ import java.util.Optional;
 public interface KeyDAO {
 
     void store(Key key);
+
     OwnerIdentifier storeOwner(String owner);
 
     Optional<Key> load(KeyVersionIdentifier identifier);
@@ -53,7 +54,7 @@ public interface KeyDAO {
      * Gets all the keys for an owner.
      *
      * @param identifier
-     * @param nextToken nullable.
+     * @param nextToken  nullable.
      * @return
      */
     Batch<KeyIdentifier> listKeys(OwnerIdentifier identifier, Token nextToken);
@@ -62,7 +63,7 @@ public interface KeyDAO {
      * Gets all the versions for a key.
      *
      * @param identifier
-     * @param nextToken nullable.
+     * @param nextToken  nullable.
      * @return
      */
     Batch<KeyVersionIdentifier> listVersions(KeyIdentifier identifier, Token nextToken);
@@ -71,16 +72,16 @@ public interface KeyDAO {
 
     /**
      * Deletes a specific key version.
-     * @param identifier
      *
+     * @param identifier
      * @return boolean if anything was deleted.
      */
     boolean delete(KeyVersionIdentifier identifier);
 
     /**
      * Deletes all versions for a key
-     * @param identifier
      *
+     * @param identifier
      * @return boolean if anything was deleted.
      */
     boolean delete(KeyIdentifier identifier);

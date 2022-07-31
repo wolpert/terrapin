@@ -32,9 +32,9 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class KeyManagerResource implements KeyManagerService, JettyResource {
 
+    public static final Logger LOGGER = LoggerFactory.getLogger(KeyManagerResource.class);
     private final ApiConverter apiConverter;
     private final KeyManager keyManager;
-    public static final Logger LOGGER = LoggerFactory.getLogger(KeyManagerResource.class);
 
     @Inject
     public KeyManagerResource(final ApiConverter apiConverter,

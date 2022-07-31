@@ -40,12 +40,13 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 /**
  * Basic DDB module.
  * Use this to create a KeyDAO. You'll need the DynamoDBClient.
- *
+ * <p>
  * TODO add a circuit breaker to the retry.
  */
 @Module(includes = {DDBModule.Binder.class, MetricsModule.class})
 public class DDBModule {
 
+    public static final String DDB_DAO_RETRY = "DDB_DAO_RETRY";
     private final DynamoDbClient client;
     private final TableConfiguration tableConfiguration;
 
@@ -80,8 +81,6 @@ public class DDBModule {
     public TableConfiguration tableConfiguration() {
         return tableConfiguration;
     }
-
-    public static final String DDB_DAO_RETRY = "DDB_DAO_RETRY";
 
     @Named(DDB_DAO_RETRY)
     @Provides

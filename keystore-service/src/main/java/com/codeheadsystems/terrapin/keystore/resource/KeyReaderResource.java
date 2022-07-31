@@ -32,10 +32,9 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class KeyReaderResource implements KeyReaderService, JettyResource {
 
+    public static final Logger LOGGER = LoggerFactory.getLogger(KeyReaderResource.class);
     private final ApiConverter apiConverter;
     private final KeyManager keyManager;
-
-    public static final Logger LOGGER = LoggerFactory.getLogger(KeyReaderResource.class);
 
     @Inject
     public KeyReaderResource(final ApiConverter apiConverter,

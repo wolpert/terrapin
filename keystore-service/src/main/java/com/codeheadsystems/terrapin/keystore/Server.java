@@ -16,8 +16,6 @@
 
 package com.codeheadsystems.terrapin.keystore;
 
-import static com.codeheadsystems.metrics.dagger.MetricsModule.METER_REGISTRY;
-
 import com.codahale.metrics.health.HealthCheck;
 import com.codeheadsystems.metrics.dagger.MetricsModule;
 import com.codeheadsystems.metrics.helper.DropwizardMetricsHelper;
@@ -34,7 +32,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Set;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,6 +76,7 @@ public class Server extends Application<KeyStoreConfiguration> {
      *     <li>java -Djava.library.path=./DynamoDBLocal_lib -jar DynamoDBLocal.jar -sharedDb</li>
      * </ol>
      * To be replaced soon... so it works from gradle automatically
+     *
      * @return
      */
     DynamoDbClient localClient() {

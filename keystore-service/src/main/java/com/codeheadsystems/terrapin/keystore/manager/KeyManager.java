@@ -38,9 +38,8 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class KeyManager {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(KeyManager.class);
     public static final int KEY_SIZE = 32;
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(KeyManager.class);
     private final KeyDAO keyDAO;
     private final RNG rng;
     private final DataHelper dataHelper;

@@ -23,16 +23,16 @@ import org.junit.jupiter.api.Test;
 
 class ObjectMapperFactoryTest {
 
-  private ObjectMapperFactory factory;
+    private ObjectMapperFactory factory;
 
-  @BeforeEach
-  void setUp() {
-    factory = new ObjectMapperFactory();
-  }
+    @BeforeEach
+    void setUp() {
+        factory = new ObjectMapperFactory();
+    }
 
-  @Test
-  void generate() {
-    assertThat(factory.generate())
-        .isNotNull();
-  }
+    @Test
+    void generate() {
+        assertThat(factory.generate())
+                .isNotNull();
+    }
 }

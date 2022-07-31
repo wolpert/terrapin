@@ -16,8 +16,6 @@
 
 package com.codeheadsystems.terrapin.server.dao.model;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.codeheadsystems.test.model.BaseJacksonTest;
 
 class KeyVersionIdentifierTest extends BaseJacksonTest<KeyVersionIdentifier> {

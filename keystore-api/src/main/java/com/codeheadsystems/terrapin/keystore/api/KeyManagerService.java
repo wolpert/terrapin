@@ -23,7 +23,6 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -35,36 +34,36 @@ import javax.ws.rs.core.Response;
 @Consumes(MediaType.APPLICATION_JSON)
 public interface KeyManagerService {
 
-  /**
-   * Creates a new key with the id given. Note that the resulting key identifier includes the owner of the key.
-   *
-   * @param keyId to create for this owner.
-   * @return key.
-   */
-  @PUT
-  @Timed
-  @Path("/{owner}/{id}")
-  Key create(@PathParam("owner") String owner, @PathParam("id") String keyId);
+    /**
+     * Creates a new key with the id given. Note that the resulting key identifier includes the owner of the key.
+     *
+     * @param keyId to create for this owner.
+     * @return key.
+     */
+    @PUT
+    @Timed
+    @Path("/{owner}/{id}")
+    Key create(@PathParam("owner") String owner, @PathParam("id") String keyId);
 
-  /**
-   * Deletes all the versions of this key. No version of the key can be used after this.
-   *
-   * @param keyId to be deleted.
-   */
-  @DELETE
-  @Timed
-  @Path("/{owner}/{id}")
-  Response delete(@PathParam("owner") String owner, @PathParam("id") String keyId);
+    /**
+     * Deletes all the versions of this key. No version of the key can be used after this.
+     *
+     * @param keyId to be deleted.
+     */
+    @DELETE
+    @Timed
+    @Path("/{owner}/{id}")
+    Response delete(@PathParam("owner") String owner, @PathParam("id") String keyId);
 
-  /**
-   * Deletes a specific versions of this key. This version of the key can no longer be used after this.
-   *
-   * @param keyId   to be deleted.
-   * @param version to be deleted.
-   */
-  @DELETE
-  @Timed
-  @Path("/{owner}/{id}/{version}")
-  Response delete(@PathParam("owner") String owner, @PathParam("id") String keyId, @PathParam("version") Long version);
+    /**
+     * Deletes a specific versions of this key. This version of the key can no longer be used after this.
+     *
+     * @param keyId   to be deleted.
+     * @param version to be deleted.
+     */
+    @DELETE
+    @Timed
+    @Path("/{owner}/{id}/{version}")
+    Response delete(@PathParam("owner") String owner, @PathParam("id") String keyId, @PathParam("version") Long version);
 
 }

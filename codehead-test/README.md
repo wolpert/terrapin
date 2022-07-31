@@ -11,6 +11,7 @@ I've seen variations of this from different places and made my own version that 
 ## Release
 
 gradle
+
 ```groovy
 repositories {
     jcenter()
@@ -45,7 +46,6 @@ public class StandardImmutableModelTest extends BaseJacksonTest<StandardImmutabl
     }
 }
 ```
-
 
 ## Features
 

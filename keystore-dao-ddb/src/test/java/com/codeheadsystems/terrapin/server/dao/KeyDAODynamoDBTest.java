@@ -36,10 +36,9 @@ import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
 @ExtendWith(DynamoDBExtension.class)
 public class KeyDAODynamoDBTest extends KeyDAOTest {
 
-    @DataStore private DynamoDbClient client;
-    private final TableConfiguration tableConfiguration = ImmutableTableConfiguration.builder().build();
-
     private static Retry retry;
+    private final TableConfiguration tableConfiguration = ImmutableTableConfiguration.builder().build();
+    @DataStore private DynamoDbClient client;
 
     @BeforeAll
     public static void setupRetry() {

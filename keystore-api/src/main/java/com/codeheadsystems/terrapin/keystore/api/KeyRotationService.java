@@ -32,15 +32,15 @@ import javax.ws.rs.core.MediaType;
 @Consumes(MediaType.APPLICATION_JSON)
 public interface KeyRotationService {
 
-  /**
-   * Rotates the current key. New version, old version will expire out.
-   *
-   * @param keyId that needs rotating.
-   * @return a new key based on the old one.
-   */
-  @POST
-  @Timed
-  @Path("/{owner}/{id}/rotate")
-  Key rotate(@PathParam("owner") String owner, @PathParam("id") String keyId);
+    /**
+     * Rotates the current key. New version, old version will expire out.
+     *
+     * @param keyId that needs rotating.
+     * @return a new key based on the old one.
+     */
+    @POST
+    @Timed
+    @Path("/{owner}/{id}/rotate")
+    Key rotate(@PathParam("owner") String owner, @PathParam("id") String keyId);
 
 }
