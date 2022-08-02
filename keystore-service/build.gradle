@@ -39,8 +39,10 @@ dependencies {
     implementation "io.dropwizard:dropwizard-auth:${dropwizardVersion}"
     implementation "io.dropwizard:dropwizard-core:${dropwizardVersion}"
     implementation "io.dropwizard:dropwizard-jackson:${dropwizardVersion}"
+    implementation "io.dropwizard:dropwizard-metrics-graphite:${dropwizardVersion}"
     implementation "io.github.resilience4j:resilience4j-retry:${resilience4jVersion}"
     implementation "io.micrometer:micrometer-core:${micrometerVersion}"
+    implementation "io.micrometer:micrometer-registry-graphite:${micrometerVersion}"
     implementation "io.github.resilience4j:resilience4j-micrometer:${resilience4jVersion}"
     implementation "io.dropwizard.metrics:metrics-core:${metricsVersion}"
 

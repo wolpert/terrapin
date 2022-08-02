@@ -87,20 +87,6 @@ public class CassandraExtension extends DataStoreExtension implements BeforeAllC
         withStore(context, s -> {
             s.put(SESSION, session);
         });
-
-//        context.getRequiredTestInstances().getAllInstances().forEach(o -> {
-//            Arrays.stream(o.getClass().getDeclaredFields())
-//                    .filter(f -> f.isAnnotationPresent(Keyspace.class))
-//                    .forEach(field -> {
-//                        enableSettingTheField(field);
-//                        try {
-//                            final String keyspace = field.get(o).toString();
-//                            //new CQLDataLoader(session).load(new ClassPathCQLDataSet(keyspace + ".cql", keyspace));
-//                        } catch (IllegalAccessException e) {
-//                            throw new RuntimeException(e);
-//                        }
-//                    });
-//        });
     }
 
     @Override
