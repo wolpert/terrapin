@@ -36,32 +36,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Singleton
-public class KeyManager {
+public class KeyStoreAdminManager {
 
     public static final int KEY_SIZE = 32;
-    private static final Logger LOGGER = LoggerFactory.getLogger(KeyManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(KeyStoreAdminManager.class);
     private final KeyDAO keyDAO;
     private final RNG rng;
     private final DataHelper dataHelper;
 
     @Inject
-    public KeyManager(final KeyDAO keyDAO,
-                      @Named(PROVIDED_RNG) final RNG rng,
-                      final DataHelper dataHelper) {
+    public KeyStoreAdminManager(final KeyDAO keyDAO,
+                                @Named(PROVIDED_RNG) final RNG rng,
+                                final DataHelper dataHelper) {
         LOGGER.info("KeyManager({},{},{})", keyDAO, rng, dataHelper);
         this.keyDAO = keyDAO;
         this.rng = rng;
         this.dataHelper = dataHelper;
-    }
-
-    public Optional<Key> getKey(final KeyVersionIdentifier identifier) {
-        LOGGER.debug("getKey({})", identifier);
-        return keyDAO.load(identifier);
-    }
-
-    public Optional<Key> getKey(final KeyIdentifier identifier) {
-        LOGGER.debug("getKey({})", identifier);
-        return keyDAO.load(identifier);
     }
 
     public Key create(final KeyIdentifier identifier) throws AlreadyExistsException {

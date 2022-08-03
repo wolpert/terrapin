@@ -20,7 +20,7 @@ import com.codeheadsystems.terrapin.keystore.api.Key;
 import com.codeheadsystems.terrapin.keystore.api.KeyManagerService;
 import com.codeheadsystems.terrapin.keystore.converter.ApiConverter;
 import com.codeheadsystems.terrapin.keystore.exception.AlreadyExistsException;
-import com.codeheadsystems.terrapin.keystore.manager.KeyManager;
+import com.codeheadsystems.terrapin.keystore.manager.KeyStoreAdminManager;
 import com.codeheadsystems.terrapin.server.dao.model.KeyIdentifier;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -34,14 +34,14 @@ public class KeyManagerResource implements KeyManagerService, JettyResource {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(KeyManagerResource.class);
     private final ApiConverter apiConverter;
-    private final KeyManager keyManager;
+    private final KeyStoreAdminManager keyStoreAdminManager;
 
     @Inject
     public KeyManagerResource(final ApiConverter apiConverter,
-                              final KeyManager keyManager) {
-        LOGGER.info("KeyManagerResource({},{})", apiConverter, keyManager);
+                              final KeyStoreAdminManager keyStoreAdminManager) {
+        LOGGER.info("KeyManagerResource({},{})", apiConverter, keyStoreAdminManager);
         this.apiConverter = apiConverter;
-        this.keyManager = keyManager;
+        this.keyStoreAdminManager = keyStoreAdminManager;
     }
 
     @Override
@@ -49,7 +49,7 @@ public class KeyManagerResource implements KeyManagerService, JettyResource {
         LOGGER.debug("create({},{})", owner, keyId);
         final KeyIdentifier identifier = apiConverter.toDaoKeyIdentifier(owner, keyId);
         try {
-            return apiConverter.toApiKey(keyManager.create(identifier));
+            return apiConverter.toApiKey(keyStoreAdminManager.create(identifier));
         } catch (AlreadyExistsException e) {
             throw new WebApplicationException("The key already exists", Response.Status.CONFLICT);
         }

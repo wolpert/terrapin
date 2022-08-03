@@ -38,25 +38,21 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class KeyManagerTest {
-    public static final String OWNER = "fred";
-    public static final String KEY_ID = "somekey";
+class KeyStoreReaderManagerTest {
 
     @Mock private KeyDAO keyDAO;
-    @Mock private RNG rng;
 
     @Mock private KeyVersionIdentifier keyVersionIdentifier;
     @Mock private KeyIdentifier keyIdentifier;
     @Mock private Key key;
-    @Mock private DataHelper dataHelper;
 
     @Captor private ArgumentCaptor<byte[]> byteCapture;
 
-    private KeyManager manager;
+    private KeyStoreReaderManager manager;
 
     @BeforeEach
     public void setup() {
-        manager = new KeyManager(keyDAO, rng, dataHelper);
+        manager = new KeyStoreReaderManager(keyDAO);
     }
 
     @Test
@@ -75,33 +71,6 @@ class KeyManagerTest {
                 .isNotEmpty()
                 .get()
                 .isEqualTo(key);
-    }
-
-    @Test
-    void create_existingKey() {
-        when(keyDAO.load(keyIdentifier)).thenReturn(Optional.of(key));
-
-        assertThatExceptionOfType(AlreadyExistsException.class)
-                .isThrownBy(() -> manager.create(keyIdentifier));
-    }
-
-    @Test
-    void create_newKey() throws AlreadyExistsException {
-        when(keyDAO.load(keyIdentifier)).thenReturn(Optional.empty());
-        when(keyIdentifier.owner()).thenReturn(OWNER);
-        when(keyIdentifier.key()).thenReturn(KEY_ID);
-
-        final Key result = manager.create(keyIdentifier);
-
-        assertThat(result)
-                .isNotNull()
-                .hasFieldOrPropertyWithValue("active", true)
-                .extracting("keyVersionIdentifier")
-                .hasFieldOrPropertyWithValue("owner", OWNER)
-                .hasFieldOrPropertyWithValue("key", KEY_ID)
-                .hasFieldOrPropertyWithValue("version", 1L);
-        verify(rng).random(byteCapture.capture());
-        verify(dataHelper).clear(byteCapture.capture());
     }
 
 }

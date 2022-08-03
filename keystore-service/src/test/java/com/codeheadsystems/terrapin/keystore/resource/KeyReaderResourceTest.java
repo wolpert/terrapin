@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.when;
 
 import com.codeheadsystems.terrapin.keystore.converter.ApiConverter;
-import com.codeheadsystems.terrapin.keystore.manager.KeyManager;
+import com.codeheadsystems.terrapin.keystore.manager.KeyStoreReaderManager;
 import com.codeheadsystems.terrapin.server.dao.model.Key;
 import com.codeheadsystems.terrapin.server.dao.model.KeyIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.KeyVersionIdentifier;
@@ -41,7 +41,7 @@ public class KeyReaderResourceTest {
     public static final long VERSION = 10L;
 
     @Mock private ApiConverter apiConverter;
-    @Mock private KeyManager keyManager;
+    @Mock private KeyStoreReaderManager keyStoreReaderManager;
 
     @Mock private Key daoKey;
     @Mock private KeyIdentifier keyIdentifier;
@@ -52,13 +52,13 @@ public class KeyReaderResourceTest {
 
     @BeforeEach
     void setup() {
-        resource = new KeyReaderResource(apiConverter, keyManager);
+        resource = new KeyReaderResource(apiConverter, keyStoreReaderManager);
     }
 
     @Test
     void get_ownerKey_found() {
         when(apiConverter.toDaoKeyIdentifier(OWNER, KEY_ID)).thenReturn(keyIdentifier);
-        when(keyManager.getKey(keyIdentifier)).thenReturn(Optional.of(daoKey));
+        when(keyStoreReaderManager.getKey(keyIdentifier)).thenReturn(Optional.of(daoKey));
         when(apiConverter.toApiKey(daoKey)).thenReturn(apiKey);
 
         assertThat(resource.get(OWNER, KEY_ID))
@@ -79,7 +79,7 @@ public class KeyReaderResourceTest {
     @Test
     void get_ownerKeyVersion_found() {
         when(apiConverter.toDaoKeyVersionIdentifier(OWNER, KEY_ID, VERSION)).thenReturn(keyVersionIdentifier);
-        when(keyManager.getKey(keyVersionIdentifier)).thenReturn(Optional.of(daoKey));
+        when(keyStoreReaderManager.getKey(keyVersionIdentifier)).thenReturn(Optional.of(daoKey));
         when(apiConverter.toApiKey(daoKey)).thenReturn(apiKey);
 
         assertThat(resource.get(OWNER, KEY_ID, VERSION))
