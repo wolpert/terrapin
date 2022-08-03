@@ -17,6 +17,7 @@
 package com.codeheadsystems.terrapin.server.dao;
 
 import com.codeheadsystems.metrics.Metrics;
+import com.codeheadsystems.terrapin.server.dao.accessor.CassandraAccessor;
 import com.codeheadsystems.terrapin.server.dao.model.Batch;
 import com.codeheadsystems.terrapin.server.dao.model.ImmutableOwnerIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.Key;
@@ -24,7 +25,6 @@ import com.codeheadsystems.terrapin.server.dao.model.KeyIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.KeyVersionIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.OwnerIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.Token;
-import com.datastax.oss.driver.api.core.CqlSession;
 import io.micrometer.core.instrument.Timer;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -41,14 +41,14 @@ public class CassandraKeyDAO implements KeyDAO {
     public static final String OWNER = "owner";
     public static final String PREFIX = "ddbdao.";
     public static final int MAX_TIMES_KEY_STORE = 5;
-    private final CqlSession session;
+    private final CassandraAccessor cassandraAccessor;
     private final Metrics metrics;
 
     @Inject
-    public CassandraKeyDAO(final CqlSession session,
+    public CassandraKeyDAO(final CassandraAccessor cassandraAccessor,
                            final Metrics metrics) {
-        LOGGER.info("CassandraKeyDAO({},{})", session, metrics);
-        this.session = session;
+        LOGGER.info("CassandraKeyDAO({},{})", cassandraAccessor, metrics);
+        this.cassandraAccessor = cassandraAccessor;
         this.metrics = metrics;
     }
 

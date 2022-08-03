@@ -16,23 +16,76 @@
 
 package com.codeheadsystems.terrapin.server.dao.dagger;
 
+import com.codeheadsystems.metrics.Metrics;
+import com.codeheadsystems.metrics.dagger.MetricsModule;
+import com.codeheadsystems.terrapin.server.dao.CassandraKeyDAO;
+import com.codeheadsystems.terrapin.server.dao.ImmutableTableConfiguration;
+import com.codeheadsystems.terrapin.server.dao.KeyDAO;
+import com.codeheadsystems.terrapin.server.dao.TableConfiguration;
+import com.codeheadsystems.terrapin.server.exception.RetryableException;
 import com.datastax.oss.driver.api.core.CqlSession;
+import dagger.Binds;
 import dagger.Module;
 import dagger.Provides;
+import io.github.resilience4j.core.IntervalFunction;
+import io.github.resilience4j.micrometer.tagged.TaggedRetryMetrics;
+import io.github.resilience4j.retry.Retry;
+import io.github.resilience4j.retry.RetryConfig;
+import io.github.resilience4j.retry.RetryRegistry;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
-@Module
+@Module(includes = {CassandraModule.Binder.class, MetricsModule.class})
 public class CassandraModule {
 
+    public static final String CASSANDRA_RETRY = "CASSANDRA_RETRY";
+
     private final CqlSession cqlSession;
+    private final TableConfiguration tableConfiguration;
 
     public CassandraModule(final CqlSession cqlSession) {
+        this(cqlSession, ImmutableTableConfiguration.builder().build());
+    }
+
+    public CassandraModule(final CqlSession cqlSession,
+                           final TableConfiguration tableConfiguration) {
         this.cqlSession = cqlSession;
+        this.tableConfiguration = tableConfiguration;
     }
 
     @Provides
     @Singleton
     public CqlSession cqlSession() {
         return cqlSession;
+    }
+
+    @Provides
+    @Singleton
+    public TableConfiguration tableConfiguration() {
+        return tableConfiguration;
+    }
+
+    @Named(CASSANDRA_RETRY)
+    @Provides
+    @Singleton
+    public Retry retry(final Metrics metrics) {
+        final RetryConfig config = RetryConfig.custom()
+                .maxAttempts(3)
+                .retryExceptions(RetryableException.class)
+                .intervalFunction(IntervalFunction.ofExponentialBackoff(100, 2))
+                .failAfterMaxAttempts(true)
+                .build();
+        final RetryRegistry registry = RetryRegistry.of(config);
+        TaggedRetryMetrics.ofRetryRegistry(registry)
+                .bindTo(metrics.registry());
+        return registry.retry(CASSANDRA_RETRY);
+    }
+
+    @Module
+    public interface Binder {
+
+        @Binds
+        KeyDAO dao(CassandraKeyDAO dao);
+
     }
 }
