@@ -146,6 +146,7 @@ ext {
     micrometerVersion = '1.9.2' // https://mvnrepository.com/artifact/io.micrometer/micrometer-core
     mockitoVersion = '4.6.1' // https://mvnrepository.com/artifact/org.mockito/mockito-core
     openfeign = '11.9.1' // https://mvnrepository.com/artifact/io.github.openfeign/feign-core
+    retrofitVersion = '2.9.0' // https://mvnrepository.com/artifact/com.squareup.retrofit2/retrofit
     resilience4jVersion = '1.7.1' // https://mvnrepository.com/artifact/io.github.resilience4j/resilience4j-retry
     slf4jVersion = '1.7.36' // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
 }
