@@ -5,5 +5,5 @@
 include 'codehead-test', 'datastore-test', 'statemachine',
         'metrics', 'metrics-test',
         'oop-mock-common', 'oop-mock-client', 'oop-mock', 'oop-mock-dynamodb', 'oop-mock-tests',
-        'keystore-common', 'keystore-dao', 'keystore-dao-test', 'keystore-dao-ddb', 'keystore-dao-cassandra',
+        'keystore-common', 'keystore-dao', 'keystore-dao-test', 'keystore-dao-ddb', 'keystore-dao-cassandra', 'keystore-dao-sql',
         'keystore-api', 'keystore-service', 'keystore-client'

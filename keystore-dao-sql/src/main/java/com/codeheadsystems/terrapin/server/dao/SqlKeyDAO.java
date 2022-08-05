@@ -16,17 +16,5 @@
 
 package com.codeheadsystems.terrapin.server.dao;
 
-import com.codeheadsystems.test.model.BaseJacksonTest;
-
-class TableConfigurationTest extends BaseJacksonTest<TableConfiguration> {
-
-    @Override
-    protected Class<TableConfiguration> getBaseClass() {
-        return TableConfiguration.class;
-    }
-
-    @Override
-    protected TableConfiguration getInstance() {
-        return ImmutableTableConfiguration.builder().build();
-    }
+public class SqlKeyDAO {
 }

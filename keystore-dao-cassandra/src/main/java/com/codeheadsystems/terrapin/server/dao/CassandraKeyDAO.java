@@ -17,9 +17,8 @@
 package com.codeheadsystems.terrapin.server.dao;
 
 import com.codeheadsystems.metrics.Metrics;
-import com.codeheadsystems.terrapin.server.dao.accessor.CassandraAccessor;
+import com.codeheadsystems.terrapin.server.dao.casssandra.accessor.CassandraAccessor;
 import com.codeheadsystems.terrapin.server.dao.model.Batch;
-import com.codeheadsystems.terrapin.server.dao.model.ImmutableOwnerIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.Key;
 import com.codeheadsystems.terrapin.server.dao.model.KeyIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.KeyVersionIdentifier;

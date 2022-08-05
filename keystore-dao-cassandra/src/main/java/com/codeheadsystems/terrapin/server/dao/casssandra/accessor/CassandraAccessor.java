@@ -14,9 +14,9 @@
  *    limitations under the License.
  */
 
-package com.codeheadsystems.terrapin.server.dao.accessor;
+package com.codeheadsystems.terrapin.server.dao.casssandra.accessor;
 
-import static com.codeheadsystems.terrapin.server.dao.dagger.CassandraModule.CASSANDRA_RETRY;
+import static com.codeheadsystems.terrapin.server.dao.casssandra.dagger.CassandraModule.CASSANDRA_RETRY;
 
 import com.codeheadsystems.metrics.Metrics;
 import com.datastax.oss.driver.api.core.CqlSession;

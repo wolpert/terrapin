@@ -14,14 +14,14 @@
  *    limitations under the License.
  */
 
-package com.codeheadsystems.terrapin.server.dao.dagger;
+package com.codeheadsystems.terrapin.server.dao.casssandra.dagger;
 
 import com.codeheadsystems.metrics.Metrics;
 import com.codeheadsystems.metrics.dagger.MetricsModule;
 import com.codeheadsystems.terrapin.server.dao.CassandraKeyDAO;
-import com.codeheadsystems.terrapin.server.dao.ImmutableTableConfiguration;
 import com.codeheadsystems.terrapin.server.dao.KeyDAO;
-import com.codeheadsystems.terrapin.server.dao.TableConfiguration;
+import com.codeheadsystems.terrapin.server.dao.casssandra.configuration.ImmutableTableConfiguration;
+import com.codeheadsystems.terrapin.server.dao.casssandra.configuration.TableConfiguration;
 import com.codeheadsystems.terrapin.server.exception.RetryableException;
 import com.datastax.oss.driver.api.core.CqlSession;
 import dagger.Binds;
