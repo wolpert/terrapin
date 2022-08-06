@@ -27,19 +27,19 @@ import javax.inject.Singleton;
 @Singleton
 public class NullMetricManager implements MetricManager {
 
-    @Inject
-    public NullMetricManager() {
+  @Inject
+  public NullMetricManager() {
 
-    }
+  }
 
-    @Override
-    public void meter(final String metricName,
-                      final long value) {
-        // empty.
-    }
+  @Override
+  public void meter(final String metricName,
+                    final long value) {
+    // empty.
+  }
 
-    @Override
-    public <R> R time(final String metricName, final Supplier<R> supplier) {
-        return supplier.get();
-    }
+  @Override
+  public <R> R time(final String metricName, final Supplier<R> supplier) {
+    return supplier.get();
+  }
 }

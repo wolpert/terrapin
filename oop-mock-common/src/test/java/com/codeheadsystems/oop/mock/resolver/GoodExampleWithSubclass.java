@@ -22,13 +22,13 @@ import javax.inject.Inject;
 
 public class GoodExampleWithSubclass implements MockDataResolver {
 
-    @Inject
-    public GoodExampleWithSubclass(final GoodExampleWithArg subclas) {
+  @Inject
+  public GoodExampleWithSubclass(final GoodExampleWithArg subclas) {
 
-    }
+  }
 
-    @Override
-    public Optional<MockedData> resolve(final String namespace, final String lookup, final String discriminator) {
-        return Optional.empty();
-    }
+  @Override
+  public Optional<MockedData> resolve(final String namespace, final String lookup, final String discriminator) {
+    return Optional.empty();
+  }
 }

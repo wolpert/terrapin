@@ -22,6 +22,6 @@ import dagger.assisted.AssistedFactory;
 @AssistedFactory
 public interface ClassOopMockFactory {
 
-    ClassOopMock create(final Class<?> clazz);
+  ClassOopMock create(final Class<?> clazz);
 
 }

@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.codeheadsystems.terrapin.server.dao.manager.AWSManager;
 import com.codeheadsystems.test.datastore.DataStore;
-import com.codeheadsystems.test.datastore.DynamoDBExtension;
+import com.codeheadsystems.test.datastore.DynamoDbExtension;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,32 +28,32 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
 
-@ExtendWith(DynamoDBExtension.class)
+@ExtendWith(DynamoDbExtension.class)
 class AWSManagerTest {
 
-    @DataStore private DynamoDbClient client;
-    private TableConfiguration tableConfiguration = ImmutableTableConfiguration.builder().build();
-    private AWSManager manager;
+  @DataStore private DynamoDbClient client;
+  private TableConfiguration tableConfiguration = ImmutableTableConfiguration.builder().build();
+  private AWSManager manager;
 
-    @BeforeEach
-    public void setup() {
-        manager = new AWSManager(client, tableConfiguration);
-    }
+  @BeforeEach
+  public void setup() {
+    manager = new AWSManager(client, tableConfiguration);
+  }
 
-    @AfterEach
-    public void cleanup() {
-        client.deleteTable(DeleteTableRequest.builder()
-                .tableName(tableConfiguration.tableName())
-                .build());
-    }
+  @AfterEach
+  public void cleanup() {
+    client.deleteTable(DeleteTableRequest.builder()
+        .tableName(tableConfiguration.tableName())
+        .build());
+  }
 
-    @Test
-    public void createTable() {
-        manager.createTable();
+  @Test
+  public void createTable() {
+    manager.createTable();
 
-        assertThat(client.listTables().tableNames())
-                .hasSize(1)
-                .containsExactly(tableConfiguration.tableName());
-    }
+    assertThat(client.listTables().tableNames())
+        .hasSize(1)
+        .containsExactly(tableConfiguration.tableName());
+  }
 
 }

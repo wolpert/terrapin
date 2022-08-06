@@ -28,12 +28,12 @@ import org.immutables.value.Value;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public interface KeyIdentifier extends OwnerIdentifier {
 
-    /**
-     * The id of the key. Unique to the group.
-     *
-     * @return String.
-     */
-    @JsonProperty("key")
-    String key();
+  /**
+   * The id of the key. Unique to the group.
+   *
+   * @return String.
+   */
+  @JsonProperty("key")
+  String key();
 
 }

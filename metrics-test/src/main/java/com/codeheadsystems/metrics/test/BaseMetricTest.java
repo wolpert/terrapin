@@ -30,28 +30,28 @@ import org.junit.jupiter.api.BeforeEach;
 
 public abstract class BaseMetricTest {
 
-    protected static MeterRegistry meterRegistry;
-    protected static Reporter reporter;
-    protected Metrics metrics;
+  protected static MeterRegistry meterRegistry;
+  protected static Reporter reporter;
+  protected Metrics metrics;
 
-    @BeforeAll
-    protected static void setupDropWizard() {
-        final MetricRegistry metricRegistry = new MetricRegistry();
-        reporter = Slf4jReporter.forRegistry(metricRegistry)
-                .convertRatesTo(TimeUnit.SECONDS)
-                .convertDurationsTo(TimeUnit.MILLISECONDS)
-                .build();
-        meterRegistry = new DropwizardMetricsHelper().instrument(metricRegistry);
-    }
+  @BeforeAll
+  protected static void setupDropWizard() {
+    final MetricRegistry metricRegistry = new MetricRegistry();
+    reporter = Slf4jReporter.forRegistry(metricRegistry)
+        .convertRatesTo(TimeUnit.SECONDS)
+        .convertDurationsTo(TimeUnit.MILLISECONDS)
+        .build();
+    meterRegistry = new DropwizardMetricsHelper().instrument(metricRegistry);
+  }
 
-    @AfterAll
-    protected static void report() throws IOException {
-        reporter.close();
-    }
+  @AfterAll
+  protected static void report() throws IOException {
+    reporter.close();
+  }
 
-    @BeforeEach
-    protected void setup() {
-        metrics = new Metrics(meterRegistry);
-    }
+  @BeforeEach
+  protected void setup() {
+    metrics = new Metrics(meterRegistry);
+  }
 
 }

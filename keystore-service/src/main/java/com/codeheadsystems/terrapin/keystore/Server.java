@@ -48,84 +48,84 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
  */
 @Singleton
 public class Server extends Application<KeyStoreConfiguration> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Server.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(Server.class);
 
-    @Inject
-    public Server() {
-        LOGGER.info("Server()");
+  @Inject
+  public Server() {
+    LOGGER.info("Server()");
+  }
+
+  /**
+   * Run the world.
+   *
+   * @param args from the command line.
+   * @throws Exception if we could not start the server.
+   */
+  public static void main(String[] args) throws Exception {
+    LOGGER.info("main({})", (Object) args);
+    final Server server = new Server();
+    server.run(args);
+  }
+
+  /**
+   * Temporary ... need a better dev env to test the db.
+   * For this to work, you need to:
+   * <ol>
+   *     <li>wget https://s3.us-west-2.amazonaws.com/dynamodb-local/dynamodb_local_latest.tar.gz</li>
+   *     <li>tar xf dynamodb_local_latest.tar.gz</li>
+   *     <li>java -Djava.library.path=./DynamoDBLocal_lib -jar DynamoDBLocal.jar -sharedDb</li>
+   * </ol>
+   * To be replaced soon... so it works from gradle automatically
+   *
+   * @return
+   */
+  DynamoDbClient localClient() {
+    final AwsCredentials credentials = AwsBasicCredentials.create("one", "two");
+    final AwsCredentialsProvider credentialsProvider = StaticCredentialsProvider.create(credentials);
+    try {
+      final DynamoDbClient client = DynamoDbClient.builder()
+          .credentialsProvider(credentialsProvider)
+          .region(Region.US_EAST_1)
+          .endpointOverride(new URI("http://localhost:8000"))
+          .build();
+      try {
+        new AWSManager(client, ImmutableTableConfiguration.builder().build()).createTable();
+      } catch (RuntimeException e) {
+        e.printStackTrace();
+      }
+      return client;
+    } catch (URISyntaxException e) {
+      throw new IllegalStateException("Should not have happened given the hardcoded url", e);
     }
+  }
 
-    /**
-     * Run the world.
-     *
-     * @param args from the command line.
-     * @throws Exception if we could not start the server.
-     */
-    public static void main(String[] args) throws Exception {
-        LOGGER.info("main({})", (Object) args);
-        final Server server = new Server();
-        server.run(args);
+  @Override
+  public void run(final KeyStoreConfiguration configuration,
+                  final Environment environment) throws Exception {
+    LOGGER.info("run({},{})", configuration, environment);
+    final MeterRegistry meterRegistry = new DropwizardMetricsHelper().instrument(environment.metrics());
+    final KeystoreComponent component = DaggerServer_KeystoreComponent.builder()
+        .metricsModule(new MetricsModule(meterRegistry))
+        .dDBModule(new DDBModule(localClient()))
+        .build();
+    for (Object resource : component.resources()) {
+      LOGGER.info("Registering resource: " + resource.getClass().getSimpleName());
+      environment.jersey().register(resource);
     }
-
-    /**
-     * Temporary ... need a better dev env to test the db.
-     * For this to work, you need to:
-     * <ol>
-     *     <li>wget https://s3.us-west-2.amazonaws.com/dynamodb-local/dynamodb_local_latest.tar.gz</li>
-     *     <li>tar xf dynamodb_local_latest.tar.gz</li>
-     *     <li>java -Djava.library.path=./DynamoDBLocal_lib -jar DynamoDBLocal.jar -sharedDb</li>
-     * </ol>
-     * To be replaced soon... so it works from gradle automatically
-     *
-     * @return
-     */
-    DynamoDbClient localClient() {
-        final AwsCredentials credentials = AwsBasicCredentials.create("one", "two");
-        final AwsCredentialsProvider credentialsProvider = StaticCredentialsProvider.create(credentials);
-        try {
-            final DynamoDbClient client = DynamoDbClient.builder()
-                    .credentialsProvider(credentialsProvider)
-                    .region(Region.US_EAST_1)
-                    .endpointOverride(new URI("http://localhost:8000"))
-                    .build();
-            try {
-                new AWSManager(client, ImmutableTableConfiguration.builder().build()).createTable();
-            } catch (RuntimeException e) {
-                e.printStackTrace();
-            }
-            return client;
-        } catch (URISyntaxException e) {
-            throw new IllegalStateException("Should not have happened given the hardcoded url", e);
-        }
+    for (HealthCheck healthCheck : component.healthChecks()) {
+      LOGGER.info("Registering healthCheck: " + healthCheck.getClass().getSimpleName());
+      environment.healthChecks().register(healthCheck.getClass().getSimpleName(), healthCheck);
     }
+  }
 
-    @Override
-    public void run(final KeyStoreConfiguration configuration,
-                    final Environment environment) throws Exception {
-        LOGGER.info("run({},{})", configuration, environment);
-        final MeterRegistry meterRegistry = new DropwizardMetricsHelper().instrument(environment.metrics());
-        final KeystoreComponent component = DaggerServer_KeystoreComponent.builder()
-                .metricsModule(new MetricsModule(meterRegistry))
-                .dDBModule(new DDBModule(localClient()))
-                .build();
-        for (Object resource : component.resources()) {
-            LOGGER.info("Registering resource: " + resource.getClass().getSimpleName());
-            environment.jersey().register(resource);
-        }
-        for (HealthCheck healthCheck : component.healthChecks()) {
-            LOGGER.info("Registering healthCheck: " + healthCheck.getClass().getSimpleName());
-            environment.healthChecks().register(healthCheck.getClass().getSimpleName(), healthCheck);
-        }
-    }
+  @Singleton
+  @Component(modules = {KeyStoreModule.class})
+  public interface KeystoreComponent {
 
-    @Singleton
-    @Component(modules = {KeyStoreModule.class})
-    public interface KeystoreComponent {
+    Set<JettyResource> resources();
 
-        Set<JettyResource> resources();
+    Set<HealthCheck> healthChecks();
 
-        Set<HealthCheck> healthChecks();
-
-    }
+  }
 
 }

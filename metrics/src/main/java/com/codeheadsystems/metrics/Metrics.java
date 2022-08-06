@@ -32,35 +32,35 @@ import javax.inject.Singleton;
 @Singleton
 public class Metrics {
 
-    private final MeterRegistry registry;
+  private final MeterRegistry registry;
 
-    @Inject
-    public Metrics(@Named(METER_REGISTRY) final MeterRegistry registry) {
-        this.registry = registry;
-    }
+  @Inject
+  public Metrics(@Named(METER_REGISTRY) final MeterRegistry registry) {
+    this.registry = registry;
+  }
 
-    public MeterRegistry registry() {
-        return registry;
-    }
+  public MeterRegistry registry() {
+    return registry;
+  }
 
-    /**
-     * Helper method to time a request and include the success counters.
-     */
-    public <R> R time(final String name,
-                      final Timer timer,
-                      final Supplier<R> supplier) {
-        final Counter success = registry.counter(name, "success", "true");
-        final Counter failure = registry.counter(name, "success", "false");
-        try {
-            final R result = timer.record(supplier);
-            success.increment(1);
-            failure.increment(0);
-            return result;
-        } catch (RuntimeException re) {
-            success.increment(0);
-            failure.increment(1);
-            throw re;
-        }
+  /**
+   * Helper method to time a request and include the success counters.
+   */
+  public <R> R time(final String name,
+                    final Timer timer,
+                    final Supplier<R> supplier) {
+    final Counter success = registry.counter(name, "success", "true");
+    final Counter failure = registry.counter(name, "success", "false");
+    try {
+      final R result = timer.record(supplier);
+      success.increment(1);
+      failure.increment(0);
+      return result;
+    } catch (RuntimeException re) {
+      success.increment(0);
+      failure.increment(1);
+      throw re;
     }
+  }
 
 }

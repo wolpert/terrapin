@@ -20,17 +20,17 @@ import com.codeheadsystems.test.model.BaseJacksonTest;
 
 class MockedDataTest extends BaseJacksonTest<MockedData> {
 
-    @Override
-    protected Class<MockedData> getBaseClass() {
-        return MockedData.class;
-    }
+  @Override
+  protected Class<MockedData> getBaseClass() {
+    return MockedData.class;
+  }
 
-    @Override
-    protected MockedData getInstance() {
-        return ImmutableMockedData.builder()
-                .marshalledData("stuff")
-                .build();
-    }
+  @Override
+  protected MockedData getInstance() {
+    return ImmutableMockedData.builder()
+        .marshalledData("stuff")
+        .build();
+  }
 
 
 }

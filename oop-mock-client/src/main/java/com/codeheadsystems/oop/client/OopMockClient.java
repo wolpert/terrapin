@@ -27,35 +27,35 @@ import org.slf4j.LoggerFactory;
 
 public class OopMockClient {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OopMockClient.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(OopMockClient.class);
 
-    private final MockDataDAO dao;
-    private final Translator translator;
-    private final String namespace;
+  private final MockDataDAO dao;
+  private final Translator translator;
+  private final String namespace;
 
-    @AssistedInject
-    public OopMockClient(@Assisted final Class<?> clazz,
-                         final Hasher hasher,
-                         final MockDataDAO dao,
-                         final Translator translator) {
-        LOGGER.info("OopMockClient({})", clazz);
-        this.dao = dao;
-        this.namespace = hasher.namespace(clazz);
-        this.translator = translator;
-    }
+  @AssistedInject
+  public OopMockClient(@Assisted final Class<?> clazz,
+                       final Hasher hasher,
+                       final MockDataDAO dao,
+                       final Translator translator) {
+    LOGGER.info("OopMockClient({})", clazz);
+    this.dao = dao;
+    this.namespace = hasher.namespace(clazz);
+    this.translator = translator;
+  }
 
-    public <R> void mockSetup(final R mockData,
-                              final String lookup,
-                              final String id) {
-        LOGGER.info("mockSetup({},{})", lookup, id);
-        final MockedData storedMockData = translator.marshal(mockData);
-        dao.store(namespace, lookup, id, storedMockData);
-    }
+  public <R> void mockSetup(final R mockData,
+                            final String lookup,
+                            final String id) {
+    LOGGER.info("mockSetup({},{})", lookup, id);
+    final MockedData storedMockData = translator.marshal(mockData);
+    dao.store(namespace, lookup, id, storedMockData);
+  }
 
-    public void deleteMock(final String lookup,
-                           final String id) {
-        LOGGER.info("mockDelete({},{})", lookup, id);
-        dao.delete(namespace, lookup, id);
-    }
+  public void deleteMock(final String lookup,
+                         final String id) {
+    LOGGER.info("mockDelete({},{})", lookup, id);
+    dao.delete(namespace, lookup, id);
+  }
 
 }

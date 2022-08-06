@@ -30,11 +30,11 @@ import org.immutables.value.Value;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public interface MockedData {
 
-    String marshalledData();
+  String marshalledData();
 
-    @Value.Default
-    default long delayInMS() {
-        return 0;
-    }
+  @Value.Default
+  default long delayInMS() {
+    return 0;
+  }
 
 }

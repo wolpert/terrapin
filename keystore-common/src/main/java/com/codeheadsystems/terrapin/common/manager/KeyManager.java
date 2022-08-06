@@ -26,20 +26,20 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class KeyManager {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(KeyManager.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(KeyManager.class);
 
-    private final RNG rng;
+  private final RNG rng;
 
-    @Inject
-    public KeyManager(final RNG rng) {
-        LOGGER.info("KeyManager({})", rng);
-        this.rng = rng;
-    }
+  @Inject
+  public KeyManager(final RNG rng) {
+    LOGGER.info("KeyManager({})", rng);
+    this.rng = rng;
+  }
 
-    public byte[] generate(final CryptorType type) {
-        LOGGER.debug("generate({})", type);
-        final byte[] result = new byte[type.getKeyLength() + type.getIvLength()];
-        rng.random(result);
-        return result;
-    }
+  public byte[] generate(final CryptorType type) {
+    LOGGER.debug("generate({})", type);
+    final byte[] result = new byte[type.getKeyLength() + type.getIvLength()];
+    rng.random(result);
+    return result;
+  }
 }

@@ -25,23 +25,23 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class TimeManager {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TimeManager.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(TimeManager.class);
 
-    @Inject
-    public TimeManager() {
-        LOGGER.info("TimeManager()");
+  @Inject
+  public TimeManager() {
+    LOGGER.info("TimeManager()");
+  }
+
+  public <R> R logTimed(final Supplier<R> supplier) {
+    final long start = System.currentTimeMillis();
+    try {
+      return supplier.get();
+    } finally {
+      final long end = System.currentTimeMillis();
+      LOGGER.info("Execution MS: {}", end - start);
     }
 
-    public <R> R logTimed(final Supplier<R> supplier) {
-        final long start = System.currentTimeMillis();
-        try {
-            return supplier.get();
-        } finally {
-            final long end = System.currentTimeMillis();
-            LOGGER.info("Execution MS: {}", end - start);
-        }
-
-    }
+  }
 
 
 }

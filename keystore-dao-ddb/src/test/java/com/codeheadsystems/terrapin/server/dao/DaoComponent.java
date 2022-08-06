@@ -33,23 +33,23 @@ import javax.inject.Singleton;
 @Component(modules = {DDBModule.class, DaoComponent.OurMeterModule.class})
 public interface DaoComponent {
 
-    KeyDAO keyDao();
+  KeyDAO keyDao();
 
-    @Module
-    class OurMeterModule {
+  @Module
+  class OurMeterModule {
 
-        private final MeterRegistry meterRegistry;
+    private final MeterRegistry meterRegistry;
 
-        public OurMeterModule(final MeterRegistry meterRegistry) {
-            this.meterRegistry = meterRegistry;
-        }
-
-        @Provides
-        @Singleton
-        @Named(PROVIDED_METER_REGISTRY)
-        public MeterRegistry meterRegistry() {
-            return meterRegistry;
-        }
+    public OurMeterModule(final MeterRegistry meterRegistry) {
+      this.meterRegistry = meterRegistry;
     }
+
+    @Provides
+    @Singleton
+    @Named(PROVIDED_METER_REGISTRY)
+    public MeterRegistry meterRegistry() {
+      return meterRegistry;
+    }
+  }
 
 }

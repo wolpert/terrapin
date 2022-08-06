@@ -26,16 +26,16 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class KeyRotationResource implements KeyRotationService, JettyResource {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(KeyRotationResource.class);
+  public static final Logger LOGGER = LoggerFactory.getLogger(KeyRotationResource.class);
 
-    @Inject
-    public KeyRotationResource() {
-        LOGGER.info("KeyRotationResource()");
-    }
+  @Inject
+  public KeyRotationResource() {
+    LOGGER.info("KeyRotationResource()");
+  }
 
-    @Override
-    public Key rotate(final String owner, final String keyId) {
-        LOGGER.debug("rotate({},{})", owner, keyId);
-        return null;
-    }
+  @Override
+  public Key rotate(final String owner, final String keyId) {
+    LOGGER.debug("rotate({},{})", owner, keyId);
+    return null;
+  }
 }

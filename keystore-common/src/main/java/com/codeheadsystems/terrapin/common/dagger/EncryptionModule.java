@@ -32,13 +32,13 @@ import org.bouncycastle.crypto.modes.AEADCipher;
 @Module
 public class EncryptionModule {
 
-    @Provides
-    @Singleton
-    @Named(LOADING_CACHE)
-    public LoadingCache<CryptorType, AEADCipherCryptor<? extends AEADCipher>> cache() {
-        // Note, we really want a thread with each supplier, not type. But this works anyways.
-        // The memory hit isn't high.
-        return CacheBuilder.newBuilder().build(CacheLoader.from(type -> new AEADCipherCryptor<>(type.getSupplier())));
-    }
+  @Provides
+  @Singleton
+  @Named(LOADING_CACHE)
+  public LoadingCache<CryptorType, AEADCipherCryptor<? extends AEADCipher>> cache() {
+    // Note, we really want a thread with each supplier, not type. But this works anyways.
+    // The memory hit isn't high.
+    return CacheBuilder.newBuilder().build(CacheLoader.from(type -> new AEADCipherCryptor<>(type.getSupplier())));
+  }
 
 }

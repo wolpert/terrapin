@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.codeheadsystems.terrapin.server.dao.dagger.DDBModule;
 import com.codeheadsystems.terrapin.server.dao.manager.AWSManager;
 import com.codeheadsystems.test.datastore.DataStore;
-import com.codeheadsystems.test.datastore.DynamoDBExtension;
+import com.codeheadsystems.test.datastore.DynamoDbExtension;
 import io.github.resilience4j.micrometer.tagged.TaggedRetryMetrics;
 import io.github.resilience4j.retry.Retry;
 import io.github.resilience4j.retry.RetryRegistry;
@@ -33,48 +33,48 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
 
-@ExtendWith(DynamoDBExtension.class)
+@ExtendWith(DynamoDbExtension.class)
 public class KeyDAODynamoDBTest extends KeyDAOTest {
 
-    private static Retry retry;
-    private final TableConfiguration tableConfiguration = ImmutableTableConfiguration.builder().build();
-    @DataStore private DynamoDbClient client;
+  private static Retry retry;
+  private final TableConfiguration tableConfiguration = ImmutableTableConfiguration.builder().build();
+  @DataStore private DynamoDbClient client;
 
-    @BeforeAll
-    public static void setupRetry() {
-        final RetryRegistry registry = RetryRegistry.ofDefaults();
-        retry = registry.retry("retry.KeyDAODynamoDBTest");
-        TaggedRetryMetrics.ofRetryRegistry(registry)
-                .bindTo(meterRegistry);
-    }
+  @BeforeAll
+  public static void setupRetry() {
+    final RetryRegistry registry = RetryRegistry.ofDefaults();
+    retry = registry.retry("retry.KeyDAODynamoDBTest");
+    TaggedRetryMetrics.ofRetryRegistry(registry)
+        .bindTo(meterRegistry);
+  }
 
-    @Override
-    protected KeyDAO keyDAO() {
-        return DaggerDaoComponent.builder()
-                .dDBModule(new DDBModule(client, tableConfiguration))
-                .ourMeterModule(new DaoComponent.OurMeterModule(meterRegistry))
-                .build()
-                .keyDao();
-    }
+  @Override
+  protected KeyDAO keyDAO() {
+    return DaggerDaoComponent.builder()
+        .dDBModule(new DDBModule(client, tableConfiguration))
+        .ourMeterModule(new DaoComponent.OurMeterModule(meterRegistry))
+        .build()
+        .keyDao();
+  }
 
-    @BeforeEach
-    public void setupDatabase() {
-        new AWSManager(client, tableConfiguration).createTable();
-    }
+  @BeforeEach
+  public void setupDatabase() {
+    new AWSManager(client, tableConfiguration).createTable();
+  }
 
-    @AfterEach
-    public void cleanup() {
-        client.deleteTable(DeleteTableRequest.builder()
-                .tableName(tableConfiguration.tableName())
-                .build());
-    }
+  @AfterEach
+  public void cleanup() {
+    client.deleteTable(DeleteTableRequest.builder()
+        .tableName(tableConfiguration.tableName())
+        .build());
+  }
 
-    @Test
-    public void testClient() {
-        assertThat(client)
-                .isNotNull();
-        assertThat(client.listTables().tableNames())
-                .isNotEmpty();
-    }
+  @Test
+  public void testClient() {
+    assertThat(client)
+        .isNotNull();
+    assertThat(client.listTables().tableNames())
+        .isNotEmpty();
+  }
 
 }

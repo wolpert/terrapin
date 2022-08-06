@@ -32,39 +32,39 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class OopMockClientTest {
 
-    private static final String NAMESPACE = "namespace";
-    private static final String LOOKUP = "lookup";
-    private static final String ID = "id";
-    private static final Class<?> CLAZZ = Object.class;
-    private static final Object DATA = new Object();
+  private static final String NAMESPACE = "namespace";
+  private static final String LOOKUP = "lookup";
+  private static final String ID = "id";
+  private static final Class<?> CLAZZ = Object.class;
+  private static final Object DATA = new Object();
 
-    @Mock private MockedData mockedData;
-    @Mock private Hasher hasher;
-    @Mock private Translator translator;
-    @Mock private MockDataDAO dao;
+  @Mock private MockedData mockedData;
+  @Mock private Hasher hasher;
+  @Mock private Translator translator;
+  @Mock private MockDataDAO dao;
 
-    private OopMockClient client;
+  private OopMockClient client;
 
-    @BeforeEach
-    public void setup() {
-        when(hasher.namespace(CLAZZ)).thenReturn(NAMESPACE);
-        client = new OopMockClient(CLAZZ, hasher, dao, translator);
-    }
+  @BeforeEach
+  public void setup() {
+    when(hasher.namespace(CLAZZ)).thenReturn(NAMESPACE);
+    client = new OopMockClient(CLAZZ, hasher, dao, translator);
+  }
 
-    @Test
-    public void mockSetup() {
-        when(translator.marshal(DATA)).thenReturn(mockedData);
+  @Test
+  public void mockSetup() {
+    when(translator.marshal(DATA)).thenReturn(mockedData);
 
-        client.mockSetup(DATA, LOOKUP, ID);
+    client.mockSetup(DATA, LOOKUP, ID);
 
-        verify(dao).store(NAMESPACE, LOOKUP, ID, mockedData);
-    }
+    verify(dao).store(NAMESPACE, LOOKUP, ID, mockedData);
+  }
 
-    @Test
-    public void deleteMock() {
-        client.deleteMock(LOOKUP, ID);
+  @Test
+  public void deleteMock() {
+    client.deleteMock(LOOKUP, ID);
 
-        verify(dao).delete(NAMESPACE, LOOKUP, ID);
-    }
+    verify(dao).delete(NAMESPACE, LOOKUP, ID);
+  }
 
 }

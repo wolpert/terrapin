@@ -23,6 +23,10 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+/**
+ * Adding keyspace to a field will get the plugin setup the keyspace with the name given in the variable. We will
+ * search for the file 'keyspace'.cql.
+ */
 @Target({FIELD})
 @Retention(RUNTIME)
 @Documented

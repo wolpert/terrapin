@@ -53,138 +53,138 @@ import software.amazon.awssdk.utils.ImmutableMap;
 @ExtendWith(MockitoExtension.class)
 public class KeyConverterTest {
 
-    public static final String HASHKEY = "k:owner:key";
-    public static final String RANGEKEY = "10";
-    private static final TableConfiguration TABLE_CONFIGURATION = ImmutableTableConfiguration.builder().build();
-    @Mock private Metrics metrics;
-    @Mock private MeterRegistry registry;
-    @Mock private Counter activeCounter;
-    @Mock private Counter inactiveCounter;
-    @Mock private TokenManager tokenManager;
+  public static final String HASHKEY = "k:owner:key";
+  public static final String RANGEKEY = "10";
+  private static final TableConfiguration TABLE_CONFIGURATION = ImmutableTableConfiguration.builder().build();
+  @Mock private Metrics metrics;
+  @Mock private MeterRegistry registry;
+  @Mock private Counter activeCounter;
+  @Mock private Counter inactiveCounter;
+  @Mock private TokenManager tokenManager;
 
-    private KeyConverter converter;
-    private ObjectMapper objectMapper;
+  private KeyConverter converter;
+  private ObjectMapper objectMapper;
 
-    @BeforeEach
-    public void setup() {
-        when(metrics.registry()).thenReturn(registry);
-        when(registry.counter(KEYCONVERTER_ACTIVEINDEX, INVALID_INDEX, MISSING_BUT_EXPECTED)).thenReturn(activeCounter);
-        when(registry.counter(KEYCONVERTER_ACTIVEINDEX, INVALID_INDEX, FOUND_UNEXPECTEDLY)).thenReturn(inactiveCounter);
-        converter = new KeyConverter(TABLE_CONFIGURATION, metrics, tokenManager);
-        objectMapper = new ObjectMapperFactory().generate();
-    }
+  @BeforeEach
+  public void setup() {
+    when(metrics.registry()).thenReturn(registry);
+    when(registry.counter(KEYCONVERTER_ACTIVEINDEX, INVALID_INDEX, MISSING_BUT_EXPECTED)).thenReturn(activeCounter);
+    when(registry.counter(KEYCONVERTER_ACTIVEINDEX, INVALID_INDEX, FOUND_UNEXPECTEDLY)).thenReturn(inactiveCounter);
+    converter = new KeyConverter(TABLE_CONFIGURATION, metrics, tokenManager);
+    objectMapper = new ObjectMapperFactory().generate();
+  }
 
-    @Test
-    void toPutItemRequest() throws IOException {
-        final InputStream stream = KeyConverterTest.class.getClassLoader().getResourceAsStream("fixture/Key.json");
-        final Key key = objectMapper.readValue(stream, Key.class);
-        final PutItemRequest request = converter.toPutItemRequest(key);
-        assertThat(request)
-                .isNotNull()
-                .hasFieldOrPropertyWithValue("tableName", TABLE_CONFIGURATION.tableName())
-                .extracting("item", as(map(String.class, AttributeValue.class)))
-                .containsOnlyKeys(TABLE_CONFIGURATION.hashKey(),
-                        TABLE_CONFIGURATION.rangeKey(),
-                        KEY_VALUE,
-                        ACTIVE,
-                        TYPE,
-                        CREATE,
-                        ACTIVE_HASH,
-                        OWNER_HASH_KEY_VERSION_IDX,
-                        UPDATE);
-        ;
-    }
+  @Test
+  void toPutItemRequest() throws IOException {
+    final InputStream stream = KeyConverterTest.class.getClassLoader().getResourceAsStream("fixture/Key.json");
+    final Key key = objectMapper.readValue(stream, Key.class);
+    final PutItemRequest request = converter.toPutItemRequest(key);
+    assertThat(request)
+        .isNotNull()
+        .hasFieldOrPropertyWithValue("tableName", TABLE_CONFIGURATION.tableName())
+        .extracting("item", as(map(String.class, AttributeValue.class)))
+        .containsOnlyKeys(TABLE_CONFIGURATION.hashKey(),
+            TABLE_CONFIGURATION.rangeKey(),
+            KEY_VALUE,
+            ACTIVE,
+            TYPE,
+            CREATE,
+            ACTIVE_HASH,
+            OWNER_HASH_KEY_VERSION_IDX,
+            UPDATE);
+    ;
+  }
 
-    @Test
-    void toPutItemRequest_noUpdate() throws IOException {
-        final InputStream stream = KeyConverterTest.class.getClassLoader().getResourceAsStream("fixture/KeyNoUpdate.json");
-        final Key key = objectMapper.readValue(stream, Key.class);
-        final PutItemRequest request = converter.toPutItemRequest(key);
-        assertThat(request)
-                .isNotNull()
-                .hasFieldOrPropertyWithValue("tableName", TABLE_CONFIGURATION.tableName())
-                .extracting("item", as(map(String.class, AttributeValue.class)))
-                .containsOnlyKeys(TABLE_CONFIGURATION.hashKey(),
-                        TABLE_CONFIGURATION.rangeKey(),
-                        KEY_VALUE,
-                        TYPE,
-                        ACTIVE,
-                        ACTIVE_HASH,
-                        OWNER_HASH_KEY_VERSION_IDX,
-                        CREATE);
-        ;
-    }
+  @Test
+  void toPutItemRequest_noUpdate() throws IOException {
+    final InputStream stream = KeyConverterTest.class.getClassLoader().getResourceAsStream("fixture/KeyNoUpdate.json");
+    final Key key = objectMapper.readValue(stream, Key.class);
+    final PutItemRequest request = converter.toPutItemRequest(key);
+    assertThat(request)
+        .isNotNull()
+        .hasFieldOrPropertyWithValue("tableName", TABLE_CONFIGURATION.tableName())
+        .extracting("item", as(map(String.class, AttributeValue.class)))
+        .containsOnlyKeys(TABLE_CONFIGURATION.hashKey(),
+            TABLE_CONFIGURATION.rangeKey(),
+            KEY_VALUE,
+            TYPE,
+            ACTIVE,
+            ACTIVE_HASH,
+            OWNER_HASH_KEY_VERSION_IDX,
+            CREATE);
+    ;
+  }
 
-    @Test
-    void fromRequest() {
-        final ImmutableMap.Builder<String, AttributeValue> builder = ImmutableMap.builder();
-        builder.put(TABLE_CONFIGURATION.hashKey(), fromS(HASHKEY));
-        builder.put(TABLE_CONFIGURATION.rangeKey(), fromS(RANGEKEY));
-        builder.put(KEY_VALUE, fromB(SdkBytes.fromByteArray(new byte[]{0, 1, 2})));
-        builder.put(TYPE, fromS("type"));
-        builder.put(ACTIVE, fromBool(true));
-        builder.put(CREATE, fromN(Long.toString(100)));
-        builder.put(ACTIVE_HASH, fromS(HASHKEY)); // index
-        final GetItemResponse response = GetItemResponse.builder()
-                .item(builder.build())
-                .build();
-        final Key generatedKey = converter.from(response);
+  @Test
+  void fromRequest() {
+    final ImmutableMap.Builder<String, AttributeValue> builder = ImmutableMap.builder();
+    builder.put(TABLE_CONFIGURATION.hashKey(), fromS(HASHKEY));
+    builder.put(TABLE_CONFIGURATION.rangeKey(), fromS(RANGEKEY));
+    builder.put(KEY_VALUE, fromB(SdkBytes.fromByteArray(new byte[]{0, 1, 2})));
+    builder.put(TYPE, fromS("type"));
+    builder.put(ACTIVE, fromBool(true));
+    builder.put(CREATE, fromN(Long.toString(100)));
+    builder.put(ACTIVE_HASH, fromS(HASHKEY)); // index
+    final GetItemResponse response = GetItemResponse.builder()
+        .item(builder.build())
+        .build();
+    final Key generatedKey = converter.from(response);
 
-        assertThat(generatedKey)
-                .isNotNull()
-                .hasFieldOrPropertyWithValue("keyVersionIdentifier",
-                        ImmutableKeyVersionIdentifier.builder().owner("owner").key("key").version(10L).build())
-                .hasFieldOrPropertyWithValue("active", true);
-        verify(activeCounter).increment(0);
-        verify(inactiveCounter).increment(0);
-    }
+    assertThat(generatedKey)
+        .isNotNull()
+        .hasFieldOrPropertyWithValue("keyVersionIdentifier",
+            ImmutableKeyVersionIdentifier.builder().owner("owner").key("key").version(10L).build())
+        .hasFieldOrPropertyWithValue("active", true);
+    verify(activeCounter).increment(0);
+    verify(inactiveCounter).increment(0);
+  }
 
-    @Test
-    void fromRequest_inactiveKey_withIndex() {
-        final ImmutableMap.Builder<String, AttributeValue> builder = ImmutableMap.builder();
-        builder.put(TABLE_CONFIGURATION.hashKey(), fromS(HASHKEY));
-        builder.put(TABLE_CONFIGURATION.rangeKey(), fromS(RANGEKEY));
-        builder.put(KEY_VALUE, fromB(SdkBytes.fromByteArray(new byte[]{0, 1, 2})));
-        builder.put(TYPE, fromS("type"));
-        builder.put(ACTIVE, fromBool(false));
-        builder.put(CREATE, fromN(Long.toString(100)));
-        builder.put(ACTIVE_HASH, fromS(HASHKEY)); // index
-        final GetItemResponse response = GetItemResponse.builder()
-                .item(builder.build())
-                .build();
-        final Key generatedKey = converter.from(response);
+  @Test
+  void fromRequest_inactiveKey_withIndex() {
+    final ImmutableMap.Builder<String, AttributeValue> builder = ImmutableMap.builder();
+    builder.put(TABLE_CONFIGURATION.hashKey(), fromS(HASHKEY));
+    builder.put(TABLE_CONFIGURATION.rangeKey(), fromS(RANGEKEY));
+    builder.put(KEY_VALUE, fromB(SdkBytes.fromByteArray(new byte[]{0, 1, 2})));
+    builder.put(TYPE, fromS("type"));
+    builder.put(ACTIVE, fromBool(false));
+    builder.put(CREATE, fromN(Long.toString(100)));
+    builder.put(ACTIVE_HASH, fromS(HASHKEY)); // index
+    final GetItemResponse response = GetItemResponse.builder()
+        .item(builder.build())
+        .build();
+    final Key generatedKey = converter.from(response);
 
-        assertThat(generatedKey)
-                .isNotNull()
-                .hasFieldOrPropertyWithValue("keyVersionIdentifier",
-                        ImmutableKeyVersionIdentifier.builder().owner("owner").key("key").version(10L).build())
-                .hasFieldOrPropertyWithValue("active", false);
-        verify(activeCounter).increment(0);
-        verify(inactiveCounter).increment(1);
+    assertThat(generatedKey)
+        .isNotNull()
+        .hasFieldOrPropertyWithValue("keyVersionIdentifier",
+            ImmutableKeyVersionIdentifier.builder().owner("owner").key("key").version(10L).build())
+        .hasFieldOrPropertyWithValue("active", false);
+    verify(activeCounter).increment(0);
+    verify(inactiveCounter).increment(1);
 
-    }
+  }
 
-    @Test
-    void fromRequest_activeKey_noIndex() {
-        final ImmutableMap.Builder<String, AttributeValue> builder = ImmutableMap.builder();
-        builder.put(TABLE_CONFIGURATION.hashKey(), fromS(HASHKEY));
-        builder.put(TABLE_CONFIGURATION.rangeKey(), fromS(RANGEKEY));
-        builder.put(KEY_VALUE, fromB(SdkBytes.fromByteArray(new byte[]{0, 1, 2})));
-        builder.put(TYPE, fromS("type"));
-        builder.put(ACTIVE, fromBool(true));
-        builder.put(CREATE, fromN(Long.toString(100)));
-        final GetItemResponse response = GetItemResponse.builder()
-                .item(builder.build())
-                .build();
-        final Key generatedKey = converter.from(response);
+  @Test
+  void fromRequest_activeKey_noIndex() {
+    final ImmutableMap.Builder<String, AttributeValue> builder = ImmutableMap.builder();
+    builder.put(TABLE_CONFIGURATION.hashKey(), fromS(HASHKEY));
+    builder.put(TABLE_CONFIGURATION.rangeKey(), fromS(RANGEKEY));
+    builder.put(KEY_VALUE, fromB(SdkBytes.fromByteArray(new byte[]{0, 1, 2})));
+    builder.put(TYPE, fromS("type"));
+    builder.put(ACTIVE, fromBool(true));
+    builder.put(CREATE, fromN(Long.toString(100)));
+    final GetItemResponse response = GetItemResponse.builder()
+        .item(builder.build())
+        .build();
+    final Key generatedKey = converter.from(response);
 
-        assertThat(generatedKey)
-                .isNotNull()
-                .hasFieldOrPropertyWithValue("keyVersionIdentifier",
-                        ImmutableKeyVersionIdentifier.builder().owner("owner").key("key").version(10L).build())
-                .hasFieldOrPropertyWithValue("active", true);
-        verify(activeCounter).increment(1);
-        verify(inactiveCounter).increment(0);
+    assertThat(generatedKey)
+        .isNotNull()
+        .hasFieldOrPropertyWithValue("keyVersionIdentifier",
+            ImmutableKeyVersionIdentifier.builder().owner("owner").key("key").version(10L).build())
+        .hasFieldOrPropertyWithValue("active", true);
+    verify(activeCounter).increment(1);
+    verify(inactiveCounter).increment(0);
 
-    }
+  }
 }

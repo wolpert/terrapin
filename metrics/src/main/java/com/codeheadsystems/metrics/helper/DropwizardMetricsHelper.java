@@ -25,30 +25,30 @@ import io.micrometer.core.instrument.util.HierarchicalNameMapper;
 
 public class DropwizardMetricsHelper {
 
-    /**
-     * Use this to create a meter registry that works for drop wizard.
-     *
-     * @param metricRegistry from drop wizard.
-     * @return meter registry
-     */
-    public MeterRegistry instrument(final MetricRegistry metricRegistry) {
-        final DropwizardConfig config = new DropwizardConfig() {
-            @Override
-            public String prefix() {
-                return "slf4j";
-            }
+  /**
+   * Use this to create a meter registry that works for drop wizard.
+   *
+   * @param metricRegistry from drop wizard.
+   * @return meter registry
+   */
+  public MeterRegistry instrument(final MetricRegistry metricRegistry) {
+    final DropwizardConfig config = new DropwizardConfig() {
+      @Override
+      public String prefix() {
+        return "slf4j";
+      }
 
-            @Override
-            public String get(final String key) {
-                return null;
-            }
-        };
-        return new DropwizardMeterRegistry(config, metricRegistry, HierarchicalNameMapper.DEFAULT, Clock.SYSTEM) {
-            @Override
-            protected Double nullGaugeValue() {
-                return null;
-            }
-        };
-    }
+      @Override
+      public String get(final String key) {
+        return null;
+      }
+    };
+    return new DropwizardMeterRegistry(config, metricRegistry, HierarchicalNameMapper.DEFAULT, Clock.SYSTEM) {
+      @Override
+      protected Double nullGaugeValue() {
+        return null;
+      }
+    };
+  }
 
 }

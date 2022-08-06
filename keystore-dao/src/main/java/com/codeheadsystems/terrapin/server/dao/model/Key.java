@@ -38,53 +38,53 @@ import org.immutables.value.Value;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public interface Key {
 
-    /**
-     * The pieces that make up the identity of the key.
-     *
-     * @return key identifier.
-     */
-    @JsonProperty("keyVersionIdentifier")
-    KeyVersionIdentifier keyVersionIdentifier();
+  /**
+   * The pieces that make up the identity of the key.
+   *
+   * @return key identifier.
+   */
+  @JsonProperty("keyVersionIdentifier")
+  KeyVersionIdentifier keyVersionIdentifier();
 
-    /**
-     * The value of the key.
-     *
-     * @return byte array.
-     */
-    @JsonProperty("value")
-    byte[] value();
+  /**
+   * The value of the key.
+   *
+   * @return byte array.
+   */
+  @JsonProperty("value")
+  byte[] value();
 
-    /**
-     * Boolean if the key is active.
-     *
-     * @return boolean.
-     */
-    @JsonProperty("active")
-    @Changable
-    Boolean active();
+  /**
+   * Boolean if the key is active.
+   *
+   * @return boolean.
+   */
+  @JsonProperty("active")
+  @Changable
+  Boolean active();
 
-    /**
-     * Keys can have types. (AES-GCM-SIV) The type cannot change between versions.
-     *
-     * @return String
-     */
-    @JsonProperty("type")
-    String type();
+  /**
+   * Keys can have types. (AES-GCM-SIV) The type cannot change between versions.
+   *
+   * @return String
+   */
+  @JsonProperty("type")
+  String type();
 
-    /**
-     * Date the key was created.
-     *
-     * @return create date.
-     */
-    @JsonProperty("createDate")
-    Date createDate();
+  /**
+   * Date the key was created.
+   *
+   * @return create date.
+   */
+  @JsonProperty("createDate")
+  Date createDate();
 
-    /**
-     * Update date of the key, if ever updated. Only set when the key activation status is changed.
-     * Set by the dao.
-     *
-     * @return update date.
-     */
-    @JsonProperty("updateDate")
-    Optional<Date> updateDate();
+  /**
+   * Update date of the key, if ever updated. Only set when the key activation status is changed.
+   * Set by the dao.
+   *
+   * @return update date.
+   */
+  @JsonProperty("updateDate")
+  Optional<Date> updateDate();
 }

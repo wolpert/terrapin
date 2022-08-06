@@ -33,7 +33,7 @@ import org.immutables.value.Value;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public interface Token {
 
-    @JsonProperty("value")
-    String value();
+  @JsonProperty("value")
+  String value();
 
 }

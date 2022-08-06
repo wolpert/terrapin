@@ -20,16 +20,16 @@ import com.codeheadsystems.test.model.BaseJacksonTest;
 
 public class KeyIdentifierTest extends BaseJacksonTest<KeyIdentifier> {
 
-    @Override
-    protected Class<KeyIdentifier> getBaseClass() {
-        return KeyIdentifier.class;
-    }
+  @Override
+  protected Class<KeyIdentifier> getBaseClass() {
+    return KeyIdentifier.class;
+  }
 
-    @Override
-    protected KeyIdentifier getInstance() {
-        return ImmutableKeyIdentifier.builder()
-                .key("id")
-                .owner("owner")
-                .build();
-    }
+  @Override
+  protected KeyIdentifier getInstance() {
+    return ImmutableKeyIdentifier.builder()
+        .key("id")
+        .owner("owner")
+        .build();
+  }
 }

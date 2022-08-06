@@ -33,30 +33,30 @@ import org.slf4j.LoggerFactory;
  */
 public class BaseMetricTest {
 
-    protected static MetricRegistry metricRegistry;
-    protected static Slf4jReporter reporter;
-    protected MetricManager metricManager;
+  protected static MetricRegistry metricRegistry;
+  protected static Slf4jReporter reporter;
+  protected MetricManager metricManager;
 
-    @BeforeAll
-    public static void setMetricRegistry() {
-        metricRegistry = new MetricRegistry();
-        reporter = Slf4jReporter.forRegistry(metricRegistry)
-                .outputTo(LoggerFactory.getLogger(CodahaleMetricManager.class))
-                .convertRatesTo(SECONDS)
-                .convertDurationsTo(MILLISECONDS)
-                .build();
-        reporter.start(60, SECONDS);
-    }
+  @BeforeAll
+  public static void setMetricRegistry() {
+    metricRegistry = new MetricRegistry();
+    reporter = Slf4jReporter.forRegistry(metricRegistry)
+        .outputTo(LoggerFactory.getLogger(CodahaleMetricManager.class))
+        .convertRatesTo(SECONDS)
+        .convertDurationsTo(MILLISECONDS)
+        .build();
+    reporter.start(60, SECONDS);
+  }
 
-    @AfterAll
-    public static void afterEverything() {
-        reporter.close();
-    }
+  @AfterAll
+  public static void afterEverything() {
+    reporter.close();
+  }
 
-    @BeforeEach
-    public void setupMetricManager() {
-        metricManager = new CodahaleMetricManager(metricRegistry);
-    }
+  @BeforeEach
+  public void setupMetricManager() {
+    metricManager = new CodahaleMetricManager(metricRegistry);
+  }
 
 
 }

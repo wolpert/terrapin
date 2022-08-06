@@ -22,12 +22,12 @@ import javax.inject.Inject;
 
 public class NoArgGoodExample implements MockDataResolver {
 
-    @Inject
-    public NoArgGoodExample() {
-    }
+  @Inject
+  public NoArgGoodExample() {
+  }
 
-    @Override
-    public Optional<MockedData> resolve(final String namespace, final String lookup, final String discriminator) {
-        return Optional.empty();
-    }
+  @Override
+  public Optional<MockedData> resolve(final String namespace, final String lookup, final String discriminator) {
+    return Optional.empty();
+  }
 }

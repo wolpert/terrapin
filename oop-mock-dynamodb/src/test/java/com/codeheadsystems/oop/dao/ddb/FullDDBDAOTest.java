@@ -24,40 +24,40 @@ import com.codeheadsystems.oop.ResolverConfiguration;
 import com.codeheadsystems.oop.dao.ddb.model.DDBEntry;
 import com.codeheadsystems.oop.test.FullDAOTest;
 import com.codeheadsystems.test.datastore.DataStore;
-import com.codeheadsystems.test.datastore.DynamoDBExtension;
+import com.codeheadsystems.test.datastore.DynamoDbExtension;
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-@ExtendWith(DynamoDBExtension.class)
+@ExtendWith(DynamoDbExtension.class)
 public class FullDDBDAOTest extends FullDAOTest {
 
-    @DataStore private DynamoDBMapper mapper;
-    @DataStore private AmazonDynamoDB amazonDynamoDB;
+  @DataStore private DynamoDBMapper mapper;
+  @DataStore private AmazonDynamoDB amazonDynamoDB;
 
-    @BeforeEach
-    void setup() {
-        amazonDynamoDB.createTable(mapper.generateCreateTableRequest(DDBEntry.class)
-                .withBillingMode(BillingMode.PAY_PER_REQUEST));
-    }
+  @BeforeEach
+  void setup() {
+    amazonDynamoDB.createTable(mapper.generateCreateTableRequest(DDBEntry.class)
+        .withBillingMode(BillingMode.PAY_PER_REQUEST));
+  }
 
-    @AfterEach
-    void tearDown() {
-        // force the table empty
-        amazonDynamoDB.deleteTable(mapper.generateDeleteTableRequest(DDBEntry.class));
-    }
+  @AfterEach
+  void tearDown() {
+    // force the table empty
+    amazonDynamoDB.deleteTable(mapper.generateDeleteTableRequest(DDBEntry.class));
+  }
 
-    @Override
-    protected ResolverConfiguration resolverConfiguration() {
-        return ImmutableResolverConfiguration.builder()
-                .resolverClass(MockDataDDBDAO.class.getCanonicalName())
-                .build();
-    }
+  @Override
+  protected ResolverConfiguration resolverConfiguration() {
+    return ImmutableResolverConfiguration.builder()
+        .resolverClass(MockDataDDBDAO.class.getCanonicalName())
+        .build();
+  }
 
-    @Override
-    protected Map<Class<?>, Object> resolverDeps() {
-        return ImmutableMap.of(DynamoDBMapper.class, mapper);
-    }
+  @Override
+  protected Map<Class<?>, Object> resolverDeps() {
+    return ImmutableMap.of(DynamoDBMapper.class, mapper);
+  }
 }

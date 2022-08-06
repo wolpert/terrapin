@@ -21,19 +21,19 @@ package com.codeheadsystems.terrapin.server.exception;
  */
 public class DependencyException extends RuntimeException {
 
-    public DependencyException() {
-        super();
-    }
+  public DependencyException() {
+    super();
+  }
 
-    public DependencyException(final String message) {
-        super(message);
-    }
+  public DependencyException(final String message) {
+    super(message);
+  }
 
-    public DependencyException(final String message, final Throwable cause) {
-        super(message, cause);
-    }
+  public DependencyException(final String message, final Throwable cause) {
+    super(message, cause);
+  }
 
-    public DependencyException(final Throwable cause) {
-        super(cause);
-    }
+  public DependencyException(final Throwable cause) {
+    super(cause);
+  }
 }

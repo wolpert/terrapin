@@ -31,10 +31,10 @@ import org.immutables.value.Value;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public interface Transition {
 
-    @JsonProperty("name")
-    String name();
+  @JsonProperty("name")
+  String name();
 
-    @JsonProperty("nextState")
-    String nextState();
+  @JsonProperty("nextState")
+  String nextState();
 
 }

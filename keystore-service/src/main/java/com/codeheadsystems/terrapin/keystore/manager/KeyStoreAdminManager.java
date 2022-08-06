@@ -19,8 +19,8 @@ package com.codeheadsystems.terrapin.keystore.manager;
 import static com.codeheadsystems.terrapin.keystore.module.RNGModule.PROVIDED_RNG;
 
 import com.codeheadsystems.terrapin.common.helper.DataHelper;
-import com.codeheadsystems.terrapin.keystore.exception.AlreadyExistsException;
 import com.codeheadsystems.terrapin.common.model.RNG;
+import com.codeheadsystems.terrapin.keystore.exception.AlreadyExistsException;
 import com.codeheadsystems.terrapin.server.dao.KeyDAO;
 import com.codeheadsystems.terrapin.server.dao.model.ImmutableKey;
 import com.codeheadsystems.terrapin.server.dao.model.ImmutableKeyVersionIdentifier;
@@ -38,41 +38,41 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class KeyStoreAdminManager {
 
-    public static final int KEY_SIZE = 32;
-    private static final Logger LOGGER = LoggerFactory.getLogger(KeyStoreAdminManager.class);
-    private final KeyDAO keyDAO;
-    private final RNG rng;
-    private final DataHelper dataHelper;
+  public static final int KEY_SIZE = 32;
+  private static final Logger LOGGER = LoggerFactory.getLogger(KeyStoreAdminManager.class);
+  private final KeyDAO keyDAO;
+  private final RNG rng;
+  private final DataHelper dataHelper;
 
-    @Inject
-    public KeyStoreAdminManager(final KeyDAO keyDAO,
-                                @Named(PROVIDED_RNG) final RNG rng,
-                                final DataHelper dataHelper) {
-        LOGGER.info("KeyManager({},{},{})", keyDAO, rng, dataHelper);
-        this.keyDAO = keyDAO;
-        this.rng = rng;
-        this.dataHelper = dataHelper;
-    }
+  @Inject
+  public KeyStoreAdminManager(final KeyDAO keyDAO,
+                              @Named(PROVIDED_RNG) final RNG rng,
+                              final DataHelper dataHelper) {
+    LOGGER.info("KeyManager({},{},{})", keyDAO, rng, dataHelper);
+    this.keyDAO = keyDAO;
+    this.rng = rng;
+    this.dataHelper = dataHelper;
+  }
 
-    public Key create(final KeyIdentifier identifier) throws AlreadyExistsException {
-        LOGGER.debug("create({})", identifier);
-        final Optional<Key> currentKey = keyDAO.load(identifier);
-        if (currentKey.isPresent()) {
-            throw new AlreadyExistsException();
-        }
-        final KeyVersionIdentifier newKeyIdentifier = ImmutableKeyVersionIdentifier.builder()
-                .owner(identifier.owner()).key(identifier.key()).version(1L).build();
-        final byte[] secret = new byte[KEY_SIZE];
-        rng.random(secret);
-        final Key key = ImmutableKey.builder()
-                .keyVersionIdentifier(newKeyIdentifier)
-                .type("256")
-                .active(true)
-                .createDate(new Date())
-                .value(secret)
-                .build();
-        keyDAO.store(key);
-        dataHelper.clear(secret); // secret is copied to make the key.
-        return key;
+  public Key create(final KeyIdentifier identifier) throws AlreadyExistsException {
+    LOGGER.debug("create({})", identifier);
+    final Optional<Key> currentKey = keyDAO.load(identifier);
+    if (currentKey.isPresent()) {
+      throw new AlreadyExistsException();
     }
+    final KeyVersionIdentifier newKeyIdentifier = ImmutableKeyVersionIdentifier.builder()
+        .owner(identifier.owner()).key(identifier.key()).version(1L).build();
+    final byte[] secret = new byte[KEY_SIZE];
+    rng.random(secret);
+    final Key key = ImmutableKey.builder()
+        .keyVersionIdentifier(newKeyIdentifier)
+        .type("256")
+        .active(true)
+        .createDate(new Date())
+        .value(secret)
+        .build();
+    keyDAO.store(key);
+    dataHelper.clear(secret); // secret is copied to make the key.
+    return key;
+  }
 }

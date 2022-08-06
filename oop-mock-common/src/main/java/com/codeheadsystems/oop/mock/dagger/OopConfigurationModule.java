@@ -30,39 +30,39 @@ import org.slf4j.LoggerFactory;
 @Module
 public class OopConfigurationModule {
 
-    public static final String CONFIGURATION_FILENAME = "oopMockConfiguration.json";
-    private static final Logger LOGGER = LoggerFactory.getLogger(OopConfigurationModule.class);
-    private final String configurationFileName;
-    private final OopMockConfiguration configuration;
+  public static final String CONFIGURATION_FILENAME = "oopMockConfiguration.json";
+  private static final Logger LOGGER = LoggerFactory.getLogger(OopConfigurationModule.class);
+  private final String configurationFileName;
+  private final OopMockConfiguration configuration;
 
-    public OopConfigurationModule() {
-        this(CONFIGURATION_FILENAME);
-    }
+  public OopConfigurationModule() {
+    this(CONFIGURATION_FILENAME);
+  }
 
-    public OopConfigurationModule(final String configurationName) {
-        this.configurationFileName = configurationName;
-        this.configuration = null;
-    }
+  public OopConfigurationModule(final String configurationName) {
+    this.configurationFileName = configurationName;
+    this.configuration = null;
+  }
 
-    public OopConfigurationModule(final OopMockConfiguration configuration) {
-        this.configuration = configuration;
-        this.configurationFileName = null;
-    }
+  public OopConfigurationModule(final OopMockConfiguration configuration) {
+    this.configuration = configuration;
+    this.configurationFileName = null;
+  }
 
-    @Provides
-    @Singleton
-    public OopMockConfiguration configuration(final ResourceLookupManager manager,
-                                              final JsonConverter converter) {
-        if (configuration != null) {
-            return configuration;
-        }
-        return manager.inputStream(configurationFileName)
-                .map(is -> converter.convert(is, OopMockConfiguration.class))
-                .orElseGet(this::defaultOopMockConfiguration);
+  @Provides
+  @Singleton
+  public OopMockConfiguration configuration(final ResourceLookupManager manager,
+                                            final JsonConverter converter) {
+    if (configuration != null) {
+      return configuration;
     }
+    return manager.inputStream(configurationFileName)
+        .map(is -> converter.convert(is, OopMockConfiguration.class))
+        .orElseGet(this::defaultOopMockConfiguration);
+  }
 
-    private OopMockConfiguration defaultOopMockConfiguration() {
-        LOGGER.warn("No configuration found, using default disabled configuration");
-        return ImmutableOopMockConfiguration.builder().build();
-    }
+  private OopMockConfiguration defaultOopMockConfiguration() {
+    LOGGER.warn("No configuration found, using default disabled configuration");
+    return ImmutableOopMockConfiguration.builder().build();
+  }
 }

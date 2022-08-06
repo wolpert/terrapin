@@ -19,11 +19,11 @@ package com.codeheadsystems.terrapin.common.model;
 @FunctionalInterface
 public interface RNG {
 
-    /**
-     * Fill the array with random values.
-     *
-     * @param array to fill.
-     */
-    void random(byte[] array);
+  /**
+   * Fill the array with random values.
+   *
+   * @param array to fill.
+   */
+  void random(byte[] array);
 
 }

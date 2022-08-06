@@ -27,119 +27,119 @@ import org.junit.jupiter.api.Test;
 
 public class StandardImmutableModelTest extends BaseJacksonTest<StandardImmutableModel> {
 
-    @Override
-    protected Class<StandardImmutableModel> getBaseClass() {
-        return StandardImmutableModel.class;
-    }
+  @Override
+  protected Class<StandardImmutableModel> getBaseClass() {
+    return StandardImmutableModel.class;
+  }
 
-    @Override
-    protected StandardImmutableModel getInstance() {
-        return ImmutableStandardImmutableModel.builder()
-                .addBunchOfOtherString("onething", "leadsto", "another")
-                .addBunchOfString("string1", "string2")
-                .someInt(5)
-                .someString("this string")
-                .someWeirdString("weirdness")
-                .nullableString("nullable string")
-                .optionalString(Optional.of("a optional string"))
-                .putAMap("a", "b")
-                .putAMap("c", "d")
-                .build();
-    }
+  @Override
+  protected StandardImmutableModel getInstance() {
+    return ImmutableStandardImmutableModel.builder()
+        .addBunchOfOtherString("onething", "leadsto", "another")
+        .addBunchOfString("string1", "string2")
+        .someInt(5)
+        .someString("this string")
+        .someWeirdString("weirdness")
+        .nullableString("nullable string")
+        .optionalString(Optional.of("a optional string"))
+        .putAMap("a", "b")
+        .putAMap("c", "d")
+        .build();
+  }
 
-    /**
-     * This test verifies the core BaseJacksonTest finds not null methods correctly.
-     * Users of BaseJacksonTest do not need to implement this.
-     */
-    @Test
-    public void testNotNullMethodNamess() {
-        // Arrange
-        final List<String> names = getRequiredMethods()
-                .stream()
-                .map(Method::getName)
-                .collect(Collectors.toList());
+  /**
+   * This test verifies the core BaseJacksonTest finds not null methods correctly.
+   * Users of BaseJacksonTest do not need to implement this.
+   */
+  @Test
+  public void testNotNullMethodNamess() {
+    // Arrange
+    final List<String> names = getRequiredMethods()
+        .stream()
+        .map(Method::getName)
+        .collect(Collectors.toList());
 
-        // Assert
-        assertThat(names)
-                .containsExactlyInAnyOrderElementsOf(ImmutableList.of("someInt", "someString", "someWeirdString"));
-    }
+    // Assert
+    assertThat(names)
+        .containsExactlyInAnyOrderElementsOf(ImmutableList.of("someInt", "someString", "someWeirdString"));
+  }
 
-    /**
-     * This test verifies the core BaseJacksonTest finds collection methods correctly.
-     * Users of BaseJacksonTest do not need to implement this.
-     */
-    @Test
-    public void testCollectionMethodNamess() {
-        // Arrange
-        final List<String> names = getCollectionMethods()
-                .stream()
-                .map(Method::getName)
-                .collect(Collectors.toList());
+  /**
+   * This test verifies the core BaseJacksonTest finds collection methods correctly.
+   * Users of BaseJacksonTest do not need to implement this.
+   */
+  @Test
+  public void testCollectionMethodNamess() {
+    // Arrange
+    final List<String> names = getCollectionMethods()
+        .stream()
+        .map(Method::getName)
+        .collect(Collectors.toList());
 
-        // Assert
-        assertThat(names)
-                .containsExactlyInAnyOrderElementsOf(ImmutableList.of("bunchOfString", "bunchOfOtherString"));
-    }
+    // Assert
+    assertThat(names)
+        .containsExactlyInAnyOrderElementsOf(ImmutableList.of("bunchOfString", "bunchOfOtherString"));
+  }
 
-    /**
-     * This test verifies the core BaseJacksonTest finds collection methods correctly.
-     * Users of BaseJacksonTest do not need to implement this.
-     */
-    @Test
-    public void testMapMethodNamess() {
-        // Arrange
-        final List<String> names = getMapMethods()
-                .stream()
-                .map(Method::getName)
-                .collect(Collectors.toList());
+  /**
+   * This test verifies the core BaseJacksonTest finds collection methods correctly.
+   * Users of BaseJacksonTest do not need to implement this.
+   */
+  @Test
+  public void testMapMethodNamess() {
+    // Arrange
+    final List<String> names = getMapMethods()
+        .stream()
+        .map(Method::getName)
+        .collect(Collectors.toList());
 
-        // Assert
-        assertThat(names)
-                .containsExactly("aMap");
-    }
+    // Assert
+    assertThat(names)
+        .containsExactly("aMap");
+  }
 
-    /**
-     * This test verifies the core BaseJacksonTest finds nullable methods correctly.
-     * Users of BaseJacksonTest do not need to implement this.
-     */
-    @Test
-    public void testNullableMethodNames() {
-        // Arrange
-        final List<String> names = getNullableMethods()
-                .stream()
-                .map(Method::getName)
-                .collect(Collectors.toList());
+  /**
+   * This test verifies the core BaseJacksonTest finds nullable methods correctly.
+   * Users of BaseJacksonTest do not need to implement this.
+   */
+  @Test
+  public void testNullableMethodNames() {
+    // Arrange
+    final List<String> names = getNullableMethods()
+        .stream()
+        .map(Method::getName)
+        .collect(Collectors.toList());
 
-        // Assert
-        assertThat(names)
-                .containsExactly("nullableString");
-    }
+    // Assert
+    assertThat(names)
+        .containsExactly("nullableString");
+  }
 
-    @Test
-    public void testDefaultMethodNames() {
-        final List<String> names = getDefaultMethods()
-                .stream()
-                .map(Method::getName)
-                .collect(Collectors.toList());
-        // Assert
-        assertThat(names)
-                .containsExactly("defaultString");
-    }
+  @Test
+  public void testDefaultMethodNames() {
+    final List<String> names = getDefaultMethods()
+        .stream()
+        .map(Method::getName)
+        .collect(Collectors.toList());
+    // Assert
+    assertThat(names)
+        .containsExactly("defaultString");
+  }
 
-    /**
-     * This test verifies the core BaseJacksonTest finds optional methods correctly.
-     * Users of BaseJacksonTest do not need to implement this.
-     */
-    @Test
-    public void testOptionalMethodNames() {
-        // Arrange
-        final List<String> names = getOptionalMethods()
-                .stream()
-                .map(Method::getName)
-                .collect(Collectors.toList());
+  /**
+   * This test verifies the core BaseJacksonTest finds optional methods correctly.
+   * Users of BaseJacksonTest do not need to implement this.
+   */
+  @Test
+  public void testOptionalMethodNames() {
+    // Arrange
+    final List<String> names = getOptionalMethods()
+        .stream()
+        .map(Method::getName)
+        .collect(Collectors.toList());
 
-        // Assert
-        assertThat(names)
-                .containsExactly("optionalString");
-    }
+    // Assert
+    assertThat(names)
+        .containsExactly("optionalString");
+  }
 }

@@ -37,50 +37,50 @@ import javax.inject.Singleton;
 @Singleton
 public interface OopMockFactoryBuilder {
 
-    static OopMockFactory generate() {
-        return DaggerOopMockFactoryBuilder.create().factory();
+  static OopMockFactory generate() {
+    return DaggerOopMockFactoryBuilder.create().factory();
+  }
+
+  static OopMockFactory generate(final Map<Class<?>, Object> resolverDeps) {
+    return DaggerOopMockFactoryBuilder.builder()
+        .resolverConfigModule(new ResolverModule.ResolverConfigModule(resolverDeps))
+        .build().factory();
+  }
+
+  OopMockFactory factory();
+
+  @Module
+  class ServerResolverModule {
+
+    @Provides
+    @Singleton
+    public Clock clock() {
+      return Clock.systemUTC();
     }
 
-    static OopMockFactory generate(final Map<Class<?>, Object> resolverDeps) {
-        return DaggerOopMockFactoryBuilder.builder()
-                .resolverConfigModule(new ResolverModule.ResolverConfigModule(resolverDeps))
-                .build().factory();
+    @Provides
+    @Singleton
+    public MockDataResolver resolver(final ResolverFactory factory) {
+      try {
+        return factory.build();
+      } catch (ClassNotFoundException | InvocationTargetException | InstantiationException |
+               IllegalAccessException e) {
+        throw new RuntimeException(e);
+      }
     }
 
-    OopMockFactory factory();
-
-    @Module
-    class ServerResolverModule {
-
-        @Provides
-        @Singleton
-        public Clock clock() {
-            return Clock.systemUTC();
-        }
-
-        @Provides
-        @Singleton
-        public MockDataResolver resolver(final ResolverFactory factory) {
-            try {
-                return factory.build();
-            } catch (ClassNotFoundException | InvocationTargetException | InstantiationException |
-                     IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        /**
-         * We allow the server to use the inMemory resolver by default, which if nothing is defined will
-         * disable oopMock completely.
-         *
-         * @return InMemoryResolver classname.
-         */
-        @Named(DEFAULT_RESOLVER)
-        @Provides
-        @Singleton
-        String defaultResolver() {
-            return InMemoryResolver.class.getCanonicalName();
-        }
-
+    /**
+     * We allow the server to use the inMemory resolver by default, which if nothing is defined will
+     * disable oopMock completely.
+     *
+     * @return InMemoryResolver classname.
+     */
+    @Named(DEFAULT_RESOLVER)
+    @Provides
+    @Singleton
+    String defaultResolver() {
+      return InMemoryResolver.class.getCanonicalName();
     }
+
+  }
 }

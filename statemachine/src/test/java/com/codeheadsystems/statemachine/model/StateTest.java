@@ -23,19 +23,19 @@ import com.codeheadsystems.test.model.BaseJacksonTest;
  */
 class StateTest extends BaseJacksonTest<State> {
 
-    @Override
-    protected Class<State> getBaseClass() {
-        return State.class;
-    }
+  @Override
+  protected Class<State> getBaseClass() {
+    return State.class;
+  }
 
-    @Override
-    protected State getInstance() {
-        return ImmutableState.builder()
-                .name("name")
-                .putTransitions("t1", ImmutableTransition.builder().name("t1").nextState("s1").build())
-                .putTransitions("21", ImmutableTransition.builder().name("t2").nextState("s1").build())
-                .build();
-    }
+  @Override
+  protected State getInstance() {
+    return ImmutableState.builder()
+        .name("name")
+        .putTransitions("t1", ImmutableTransition.builder().name("t1").nextState("s1").build())
+        .putTransitions("21", ImmutableTransition.builder().name("t2").nextState("s1").build())
+        .build();
+  }
 
 
 }

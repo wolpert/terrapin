@@ -17,7 +17,6 @@
 package com.codeheadsystems.terrapin.keystore.manager;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.codeheadsystems.terrapin.server.dao.KeyDAO;
@@ -36,37 +35,37 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class KeyStoreReaderManagerTest {
 
-    @Mock private KeyDAO keyDAO;
+  @Mock private KeyDAO keyDAO;
 
-    @Mock private KeyVersionIdentifier keyVersionIdentifier;
-    @Mock private KeyIdentifier keyIdentifier;
-    @Mock private Key key;
+  @Mock private KeyVersionIdentifier keyVersionIdentifier;
+  @Mock private KeyIdentifier keyIdentifier;
+  @Mock private Key key;
 
-    @Captor private ArgumentCaptor<byte[]> byteCapture;
+  @Captor private ArgumentCaptor<byte[]> byteCapture;
 
-    private KeyStoreReaderManager manager;
+  private KeyStoreReaderManager manager;
 
-    @BeforeEach
-    public void setup() {
-        manager = new KeyStoreReaderManager(keyDAO);
-    }
+  @BeforeEach
+  public void setup() {
+    manager = new KeyStoreReaderManager(keyDAO);
+  }
 
-    @Test
-    void getKey_keyVersion() {
-        when(keyDAO.load(keyIdentifier)).thenReturn(Optional.of(key));
-        assertThat(manager.getKey(keyIdentifier))
-                .isNotEmpty()
-                .get()
-                .isEqualTo(key);
-    }
+  @Test
+  void getKey_keyVersion() {
+    when(keyDAO.load(keyIdentifier)).thenReturn(Optional.of(key));
+    assertThat(manager.getKey(keyIdentifier))
+        .isNotEmpty()
+        .get()
+        .isEqualTo(key);
+  }
 
-    @Test
-    void getKey_keyVersionIdentifier() {
-        when(keyDAO.load(keyVersionIdentifier)).thenReturn(Optional.of(key));
-        assertThat(manager.getKey(keyVersionIdentifier))
-                .isNotEmpty()
-                .get()
-                .isEqualTo(key);
-    }
+  @Test
+  void getKey_keyVersionIdentifier() {
+    when(keyDAO.load(keyVersionIdentifier)).thenReturn(Optional.of(key));
+    assertThat(manager.getKey(keyVersionIdentifier))
+        .isNotEmpty()
+        .get()
+        .isEqualTo(key);
+  }
 
 }

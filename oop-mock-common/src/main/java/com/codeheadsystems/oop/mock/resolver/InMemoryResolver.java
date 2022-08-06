@@ -33,39 +33,39 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class InMemoryResolver implements MockDataResolver {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryResolver.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryResolver.class);
 
-    protected final Hasher hasher;
-    protected final Map<String, Map<String, MockedData>> datastore;
+  protected final Hasher hasher;
+  protected final Map<String, Map<String, MockedData>> datastore;
 
-    @Inject
-    public InMemoryResolver(final OopMockConfiguration configuration,
-                            final JsonConverter converter,
-                            final ResourceLookupManager manager,
-                            final Hasher hasher) {
-        LOGGER.info("InMemoryResolver({})", configuration);
-        this.hasher = hasher;
-        final String filename = configuration.mockDataFileName()
-                .orElseThrow(() -> new IllegalArgumentException("No filename found for inMemoryResolver"));
-        final InputStream inputStream = manager.inputStream(filename)
-                .orElseThrow(() -> new IllegalArgumentException("No such file for data store:" + filename));
-        this.datastore = converter.convert(inputStream, InMemoryMockedDataStore.class).datastore();
+  @Inject
+  public InMemoryResolver(final OopMockConfiguration configuration,
+                          final JsonConverter converter,
+                          final ResourceLookupManager manager,
+                          final Hasher hasher) {
+    LOGGER.info("InMemoryResolver({})", configuration);
+    this.hasher = hasher;
+    final String filename = configuration.mockDataFileName()
+        .orElseThrow(() -> new IllegalArgumentException("No filename found for inMemoryResolver"));
+    final InputStream inputStream = manager.inputStream(filename)
+        .orElseThrow(() -> new IllegalArgumentException("No such file for data store:" + filename));
+    this.datastore = converter.convert(inputStream, InMemoryMockedDataStore.class).datastore();
+  }
+
+  @Override
+  public Optional<MockedData> resolve(final String namespace,
+                                      final String lookup,
+                                      final String discriminator) {
+    LOGGER.debug("resolve({},{},{})", namespace, lookup, discriminator);
+    final Map<String, MockedData> discriminatorMap = datastore.get(namespace);
+    if (discriminatorMap == null) {
+      LOGGER.debug("-> no namespace");
+      return Optional.empty();
+    } else {
+      final String aggregator = hasher.hash(lookup, discriminator);
+      final MockedData mockedData = discriminatorMap.get(aggregator);
+      LOGGER.debug("-> discriminator found: {}", mockedData != null);
+      return Optional.ofNullable(mockedData);
     }
-
-    @Override
-    public Optional<MockedData> resolve(final String namespace,
-                                        final String lookup,
-                                        final String discriminator) {
-        LOGGER.debug("resolve({},{},{})", namespace, lookup, discriminator);
-        final Map<String, MockedData> discriminatorMap = datastore.get(namespace);
-        if (discriminatorMap == null) {
-            LOGGER.debug("-> no namespace");
-            return Optional.empty();
-        } else {
-            final String aggregator = hasher.hash(lookup, discriminator);
-            final MockedData mockedData = discriminatorMap.get(aggregator);
-            LOGGER.debug("-> discriminator found: {}", mockedData != null);
-            return Optional.ofNullable(mockedData);
-        }
-    }
+  }
 }

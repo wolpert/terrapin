@@ -22,19 +22,19 @@ package com.codeheadsystems.terrapin.server.exception;
  */
 public class DatalayerException extends RuntimeException {
 
-    public DatalayerException() {
-        super();
-    }
+  public DatalayerException() {
+    super();
+  }
 
-    public DatalayerException(final String message) {
-        super(message);
-    }
+  public DatalayerException(final String message) {
+    super(message);
+  }
 
-    public DatalayerException(final String message, final Throwable cause) {
-        super(message, cause);
-    }
+  public DatalayerException(final String message, final Throwable cause) {
+    super(message, cause);
+  }
 
-    public DatalayerException(final Throwable cause) {
-        super(cause);
-    }
+  public DatalayerException(final Throwable cause) {
+    super(cause);
+  }
 }

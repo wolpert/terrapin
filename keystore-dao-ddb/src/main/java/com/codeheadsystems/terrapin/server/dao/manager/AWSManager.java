@@ -36,82 +36,82 @@ import software.amazon.awssdk.services.dynamodb.model.*;
 @Singleton
 public class AWSManager {
 
-    private final DynamoDbClient client;
-    private final TableConfiguration tableConfiguration;
+  private final DynamoDbClient client;
+  private final TableConfiguration tableConfiguration;
 
-    @Inject
-    public AWSManager(final DynamoDbClient client,
-                      final TableConfiguration tableConfiguration) {
-        this.client = client;
-        this.tableConfiguration = tableConfiguration;
-    }
+  @Inject
+  public AWSManager(final DynamoDbClient client,
+                    final TableConfiguration tableConfiguration) {
+    this.client = client;
+    this.tableConfiguration = tableConfiguration;
+  }
 
-    protected CreateTableRequest createTableRequest() {
-        final KeySchemaElement hashKey = KeySchemaElement.builder()
-                .keyType(KeyType.HASH).attributeName(tableConfiguration.hashKey()).build();
-        final KeySchemaElement rangeKey = KeySchemaElement.builder()
-                .keyType(KeyType.RANGE).attributeName(tableConfiguration.rangeKey()).build();
-        final List<AttributeDefinition> attributeDefinitions = List.of(
-                AttributeDefinition.builder()
-                        .attributeName(tableConfiguration.hashKey()).attributeType(ScalarAttributeType.S).build(),
-                AttributeDefinition.builder()
-                        .attributeName(tableConfiguration.rangeKey()).attributeType(ScalarAttributeType.S).build(),
-                AttributeDefinition.builder()
-                        .attributeName(ACTIVE_HASH).attributeType(ScalarAttributeType.S).build(),
-                AttributeDefinition.builder()
-                        .attributeName(OWNER_HASH_KEY_VERSION_IDX).attributeType(ScalarAttributeType.S).build(),
-                AttributeDefinition.builder()
-                        .attributeName(OWNER_SEARCH_IDX).attributeType(ScalarAttributeType.S).build()
-        );
+  protected CreateTableRequest createTableRequest() {
+    final KeySchemaElement hashKey = KeySchemaElement.builder()
+        .keyType(KeyType.HASH).attributeName(tableConfiguration.hashKey()).build();
+    final KeySchemaElement rangeKey = KeySchemaElement.builder()
+        .keyType(KeyType.RANGE).attributeName(tableConfiguration.rangeKey()).build();
+    final List<AttributeDefinition> attributeDefinitions = List.of(
+        AttributeDefinition.builder()
+            .attributeName(tableConfiguration.hashKey()).attributeType(ScalarAttributeType.S).build(),
+        AttributeDefinition.builder()
+            .attributeName(tableConfiguration.rangeKey()).attributeType(ScalarAttributeType.S).build(),
+        AttributeDefinition.builder()
+            .attributeName(ACTIVE_HASH).attributeType(ScalarAttributeType.S).build(),
+        AttributeDefinition.builder()
+            .attributeName(OWNER_HASH_KEY_VERSION_IDX).attributeType(ScalarAttributeType.S).build(),
+        AttributeDefinition.builder()
+            .attributeName(OWNER_SEARCH_IDX).attributeType(ScalarAttributeType.S).build()
+    );
 
-        // Index for active keys for a version.
-        final GlobalSecondaryIndex activeIndex = GlobalSecondaryIndex.builder()
-                .indexName(tableConfiguration.activeIndex())
-                .projection(Projection.builder().projectionType(ProjectionType.ALL).build())
-                .keySchema(
-                        KeySchemaElement.builder().keyType(KeyType.HASH).attributeName(ACTIVE_HASH).build(),
-                        KeySchemaElement.builder().keyType(KeyType.RANGE).attributeName(tableConfiguration.rangeKey()).build()
-                ).build();
+    // Index for active keys for a version.
+    final GlobalSecondaryIndex activeIndex = GlobalSecondaryIndex.builder()
+        .indexName(tableConfiguration.activeIndex())
+        .projection(Projection.builder().projectionType(ProjectionType.ALL).build())
+        .keySchema(
+            KeySchemaElement.builder().keyType(KeyType.HASH).attributeName(ACTIVE_HASH).build(),
+            KeySchemaElement.builder().keyType(KeyType.RANGE).attributeName(tableConfiguration.rangeKey()).build()
+        ).build();
 
-        // Index for all keys of an owner.
-        final GlobalSecondaryIndex ownerIndex = GlobalSecondaryIndex.builder()
-                .indexName(tableConfiguration.ownerIndex())
-                .projection(Projection.builder().projectionType(ProjectionType.ALL).build())
-                .keySchema(
-                        KeySchemaElement.builder().keyType(KeyType.HASH).attributeName(OWNER_HASH_KEY_VERSION_IDX).build(),
-                        KeySchemaElement.builder().keyType(KeyType.RANGE).attributeName(tableConfiguration.hashKey()).build()
-                ).build();
+    // Index for all keys of an owner.
+    final GlobalSecondaryIndex ownerIndex = GlobalSecondaryIndex.builder()
+        .indexName(tableConfiguration.ownerIndex())
+        .projection(Projection.builder().projectionType(ProjectionType.ALL).build())
+        .keySchema(
+            KeySchemaElement.builder().keyType(KeyType.HASH).attributeName(OWNER_HASH_KEY_VERSION_IDX).build(),
+            KeySchemaElement.builder().keyType(KeyType.RANGE).attributeName(tableConfiguration.hashKey()).build()
+        ).build();
 
-        // Index for all owners.
-        final GlobalSecondaryIndex ownerSearchIndex = GlobalSecondaryIndex.builder()
-                .indexName(tableConfiguration.ownerSearchIndex())
-                .projection(Projection.builder().projectionType(ProjectionType.ALL).build())
-                .keySchema(
-                        KeySchemaElement.builder().keyType(KeyType.HASH).attributeName(OWNER_SEARCH_IDX).build(),
-                        KeySchemaElement.builder().keyType(KeyType.RANGE).attributeName(tableConfiguration.hashKey()).build()
-                ).build();
+    // Index for all owners.
+    final GlobalSecondaryIndex ownerSearchIndex = GlobalSecondaryIndex.builder()
+        .indexName(tableConfiguration.ownerSearchIndex())
+        .projection(Projection.builder().projectionType(ProjectionType.ALL).build())
+        .keySchema(
+            KeySchemaElement.builder().keyType(KeyType.HASH).attributeName(OWNER_SEARCH_IDX).build(),
+            KeySchemaElement.builder().keyType(KeyType.RANGE).attributeName(tableConfiguration.hashKey()).build()
+        ).build();
 
-        return CreateTableRequest.builder()
-                .tableName(tableConfiguration.tableName())
-                .billingMode(BillingMode.PAY_PER_REQUEST)
-                .keySchema(hashKey, rangeKey)
-                .attributeDefinitions(attributeDefinitions)
-                .globalSecondaryIndexes(activeIndex, ownerIndex, ownerSearchIndex)
-                .build();
-    }
+    return CreateTableRequest.builder()
+        .tableName(tableConfiguration.tableName())
+        .billingMode(BillingMode.PAY_PER_REQUEST)
+        .keySchema(hashKey, rangeKey)
+        .attributeDefinitions(attributeDefinitions)
+        .globalSecondaryIndexes(activeIndex, ownerIndex, ownerSearchIndex)
+        .build();
+  }
 
 
-    public void createTable() {
-        client.createTable(createTableRequest());
-        client.updateTimeToLive(updateTimeToLiveRequest());
-    }
+  public void createTable() {
+    client.createTable(createTableRequest());
+    client.updateTimeToLive(updateTimeToLiveRequest());
+  }
 
-    protected UpdateTimeToLiveRequest updateTimeToLiveRequest() {
-        return UpdateTimeToLiveRequest.builder()
-                .tableName(tableConfiguration.tableName())
-                .timeToLiveSpecification(TimeToLiveSpecification.builder()
-                        .attributeName(tableConfiguration.ttlKey()).enabled(true).build())
-                .build();
-    }
+  protected UpdateTimeToLiveRequest updateTimeToLiveRequest() {
+    return UpdateTimeToLiveRequest.builder()
+        .tableName(tableConfiguration.tableName())
+        .timeToLiveSpecification(TimeToLiveSpecification.builder()
+            .attributeName(tableConfiguration.ttlKey()).enabled(true).build())
+        .build();
+  }
 
 }

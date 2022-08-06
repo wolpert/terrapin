@@ -42,89 +42,89 @@ import javax.inject.Singleton;
 @Module(includes = {ResolverModule.ResolverConfigModule.class})
 public interface ResolverModule {
 
-    String RESOLVER_MAP = "resolver_map";
-    String RESOLVER_INTERNAL_MAP = "resolver internal map";
-    String DEFAULT_RESOLVER = "DEFAULT RESOLVER";
-    String RESOLVER_CLASSNAME = "RESOLVER CLASSNAME";
-    String RESOLVER_ADDITIONAL_DEPS = "Additional_Dependencies";
+  String RESOLVER_MAP = "resolver_map";
+  String RESOLVER_INTERNAL_MAP = "resolver internal map";
+  String DEFAULT_RESOLVER = "DEFAULT RESOLVER";
+  String RESOLVER_CLASSNAME = "RESOLVER CLASSNAME";
+  String RESOLVER_ADDITIONAL_DEPS = "Additional_Dependencies";
 
-    @Named(RESOLVER_INTERNAL_MAP)
-    @Binds
-    @IntoMap
-    @ClassKey(OopMockConfiguration.class)
-    Object bindsOopMockConfiguration(OopMockConfiguration configuration);
+  @Named(RESOLVER_INTERNAL_MAP)
+  @Binds
+  @IntoMap
+  @ClassKey(OopMockConfiguration.class)
+  Object bindsOopMockConfiguration(OopMockConfiguration configuration);
 
-    @Named(RESOLVER_INTERNAL_MAP)
-    @Binds
-    @IntoMap
-    @ClassKey(JsonConverter.class)
-    Object bindsJsonConverter(JsonConverter converter);
+  @Named(RESOLVER_INTERNAL_MAP)
+  @Binds
+  @IntoMap
+  @ClassKey(JsonConverter.class)
+  Object bindsJsonConverter(JsonConverter converter);
 
-    @Named(RESOLVER_INTERNAL_MAP)
-    @Binds
-    @IntoMap
-    @ClassKey(ResourceLookupManager.class)
-    Object bindsResourceLookupManager(ResourceLookupManager manager);
+  @Named(RESOLVER_INTERNAL_MAP)
+  @Binds
+  @IntoMap
+  @ClassKey(ResourceLookupManager.class)
+  Object bindsResourceLookupManager(ResourceLookupManager manager);
 
-    @Named(RESOLVER_INTERNAL_MAP)
-    @Binds
-    @IntoMap
-    @ClassKey(Translator.class)
-    Object bindsTranslator(Translator translator);
+  @Named(RESOLVER_INTERNAL_MAP)
+  @Binds
+  @IntoMap
+  @ClassKey(Translator.class)
+  Object bindsTranslator(Translator translator);
 
-    @Named(RESOLVER_INTERNAL_MAP)
-    @Binds
-    @IntoMap
-    @ClassKey(Hasher.class)
-    Object bindsHasher(Hasher hasher);
+  @Named(RESOLVER_INTERNAL_MAP)
+  @Binds
+  @IntoMap
+  @ClassKey(Hasher.class)
+  Object bindsHasher(Hasher hasher);
 
-    @BindsOptionalOf
-    @Named(DEFAULT_RESOLVER)
-    String defaultResolver();
+  @BindsOptionalOf
+  @Named(DEFAULT_RESOLVER)
+  String defaultResolver();
 
-    @Module
-    class ResolverConfigModule {
+  @Module
+  class ResolverConfigModule {
 
-        private final Map<Class<?>, Object> additionalDependencies;
+    private final Map<Class<?>, Object> additionalDependencies;
 
-        public ResolverConfigModule() {
-            this(ImmutableMap.of());
-        }
-
-        public ResolverConfigModule(final Map<Class<?>, Object> additionalDependencies) {
-            this.additionalDependencies = additionalDependencies;
-        }
-
-        @Provides
-        @Singleton
-        @Named(RESOLVER_MAP)
-        public Map<Class<?>, Object> fullDependencies(@Named(RESOLVER_ADDITIONAL_DEPS) final Map<Class<?>, Object> addition,
-                                                      @Named(RESOLVER_INTERNAL_MAP) final Map<Class<?>, Object> internal,
-                                                      final OopMockConfiguration configuration) {
-            final ImmutableMap.Builder<Class<?>, Object> builder = ImmutableMap.builder();
-            builder.putAll(internal);
-            builder.putAll(addition);
-            configuration.resolverConfiguration().ifPresent(rc -> builder.put(ResolverConfiguration.class, rc));
-            return builder.build();
-        }
-
-        @Provides
-        @Singleton
-        @Named(RESOLVER_ADDITIONAL_DEPS)
-        public Map<Class<?>, Object> additionalDependencies() {
-            return additionalDependencies;
-        }
-
-        @Provides
-        @Singleton
-        @Named(RESOLVER_CLASSNAME)
-        public String resolverClassName(@Named(DEFAULT_RESOLVER) final Optional<String> defaultResolver,
-                                        final OopMockConfiguration configuration) {
-            return configuration.resolverConfiguration()
-                    .map(ResolverConfiguration::resolverClass)
-                    .orElseGet(() -> defaultResolver
-                            .orElseThrow(() -> new IllegalArgumentException("No resolver found in configuration")));
-        }
+    public ResolverConfigModule() {
+      this(ImmutableMap.of());
     }
+
+    public ResolverConfigModule(final Map<Class<?>, Object> additionalDependencies) {
+      this.additionalDependencies = additionalDependencies;
+    }
+
+    @Provides
+    @Singleton
+    @Named(RESOLVER_MAP)
+    public Map<Class<?>, Object> fullDependencies(@Named(RESOLVER_ADDITIONAL_DEPS) final Map<Class<?>, Object> addition,
+                                                  @Named(RESOLVER_INTERNAL_MAP) final Map<Class<?>, Object> internal,
+                                                  final OopMockConfiguration configuration) {
+      final ImmutableMap.Builder<Class<?>, Object> builder = ImmutableMap.builder();
+      builder.putAll(internal);
+      builder.putAll(addition);
+      configuration.resolverConfiguration().ifPresent(rc -> builder.put(ResolverConfiguration.class, rc));
+      return builder.build();
+    }
+
+    @Provides
+    @Singleton
+    @Named(RESOLVER_ADDITIONAL_DEPS)
+    public Map<Class<?>, Object> additionalDependencies() {
+      return additionalDependencies;
+    }
+
+    @Provides
+    @Singleton
+    @Named(RESOLVER_CLASSNAME)
+    public String resolverClassName(@Named(DEFAULT_RESOLVER) final Optional<String> defaultResolver,
+                                    final OopMockConfiguration configuration) {
+      return configuration.resolverConfiguration()
+          .map(ResolverConfiguration::resolverClass)
+          .orElseGet(() -> defaultResolver
+              .orElseThrow(() -> new IllegalArgumentException("No resolver found in configuration")));
+    }
+  }
 
 }

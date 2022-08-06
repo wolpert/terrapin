@@ -29,31 +29,31 @@ import org.slf4j.LoggerFactory;
  */
 public class ClassOopMock implements OopMock {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ClassOopMock.class);
-    private final String namespace;
-    private final ProxyManager proxyManager;
+  private static final Logger LOGGER = LoggerFactory.getLogger(ClassOopMock.class);
+  private final String namespace;
+  private final ProxyManager proxyManager;
 
-    @AssistedInject
-    public ClassOopMock(@Assisted final Class<?> clazz,
-                        final Hasher hasher,
-                        final ProxyManager proxyManager) {
-        this.proxyManager = proxyManager;
-        this.namespace = hasher.namespace(clazz);
-        LOGGER.info("ClassOpsMock({})", clazz);
-    }
+  @AssistedInject
+  public ClassOopMock(@Assisted final Class<?> clazz,
+                      final Hasher hasher,
+                      final ProxyManager proxyManager) {
+    this.proxyManager = proxyManager;
+    this.namespace = hasher.namespace(clazz);
+    LOGGER.info("ClassOpsMock({})", clazz);
+  }
 
-    @Override
-    public <R> R proxy(final Class<R> returnClass,
-                       final Supplier<R> supplier,
-                       final String lookup,
-                       final String id) {
-        return proxyManager.proxy(namespace, lookup, id, returnClass, supplier);
-    }
+  @Override
+  public <R> R proxy(final Class<R> returnClass,
+                     final Supplier<R> supplier,
+                     final String lookup,
+                     final String id) {
+    return proxyManager.proxy(namespace, lookup, id, returnClass, supplier);
+  }
 
-    @Override
-    public String toString() {
-        return "ClassOopMock{" +
-                "namespace='" + namespace + '\'' +
-                '}';
-    }
+  @Override
+  public String toString() {
+    return "ClassOopMock{" +
+        "namespace='" + namespace + '\'' +
+        '}';
+  }
 }

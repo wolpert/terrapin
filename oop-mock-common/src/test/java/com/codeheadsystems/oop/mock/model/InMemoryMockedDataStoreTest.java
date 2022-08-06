@@ -21,17 +21,17 @@ import com.google.common.collect.ImmutableMap;
 
 class InMemoryMockedDataStoreTest extends BaseJacksonTest<InMemoryMockedDataStore> {
 
-    @Override
-    protected Class<InMemoryMockedDataStore> getBaseClass() {
-        return InMemoryMockedDataStore.class;
-    }
+  @Override
+  protected Class<InMemoryMockedDataStore> getBaseClass() {
+    return InMemoryMockedDataStore.class;
+  }
 
-    @Override
-    protected InMemoryMockedDataStore getInstance() {
-        return ImmutableInMemoryMockedDataStore.builder()
-                .putDatastore("key",
-                        ImmutableMap.of("otherkey",
-                                ImmutableMockedData.builder().marshalledData("marshalled").build()))
-                .build();
-    }
+  @Override
+  protected InMemoryMockedDataStore getInstance() {
+    return ImmutableInMemoryMockedDataStore.builder()
+        .putDatastore("key",
+            ImmutableMap.of("otherkey",
+                ImmutableMockedData.builder().marshalledData("marshalled").build()))
+        .build();
+  }
 }

@@ -32,32 +32,32 @@ import javax.inject.Singleton;
 @Singleton
 public interface OopMockClientFactoryBuilder {
 
-    static OopMockClientFactory generate() {
-        return DaggerOopMockClientFactoryBuilder.create().factory();
+  static OopMockClientFactory generate() {
+    return DaggerOopMockClientFactoryBuilder.create().factory();
+  }
+
+  static OopMockClientFactory generate(final Map<Class<?>, Object> resolverDeps) {
+    return DaggerOopMockClientFactoryBuilder.builder()
+        .resolverConfigModule(new ResolverModule.ResolverConfigModule(resolverDeps))
+        .build().factory();
+  }
+
+  OopMockClientFactory factory();
+
+  @Module
+  class ClientModule {
+
+    @Provides
+    @Singleton
+    MockDataDAO dao(final ResolverFactory resolverFactory) {
+      try {
+        return resolverFactory.build();
+      } catch (ClassNotFoundException | InvocationTargetException | InstantiationException |
+               IllegalAccessException e) {
+        throw new RuntimeException(e);
+      }
     }
 
-    static OopMockClientFactory generate(final Map<Class<?>, Object> resolverDeps) {
-        return DaggerOopMockClientFactoryBuilder.builder()
-                .resolverConfigModule(new ResolverModule.ResolverConfigModule(resolverDeps))
-                .build().factory();
-    }
-
-    OopMockClientFactory factory();
-
-    @Module
-    class ClientModule {
-
-        @Provides
-        @Singleton
-        MockDataDAO dao(final ResolverFactory resolverFactory) {
-            try {
-                return resolverFactory.build();
-            } catch (ClassNotFoundException | InvocationTargetException | InstantiationException |
-                     IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-    }
+  }
 
 }

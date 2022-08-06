@@ -30,55 +30,55 @@ import org.junit.jupiter.api.Test;
 
 class ApiConverterTest {
 
-    public static final String OWNER = "fred";
-    public static final String KEY_ID = "somekey";
-    public static final long VERSION = 10L;
-    public static final byte[] BYTES = new byte[]{4, 5, 6};
-    private static final Key API_KEY = ImmutableKey.builder()
-            .keyVersionIdentifier(ImmutableKeyVersionIdentifier.builder()
-                    .owner(OWNER).key(KEY_ID).version(VERSION).build())
-            .active(true)
-            .createDate(new Date())
-            .type("AES")
-            .value(BYTES)
-            .build();
-    private ApiConverter converter;
+  public static final String OWNER = "fred";
+  public static final String KEY_ID = "somekey";
+  public static final long VERSION = 10L;
+  public static final byte[] BYTES = new byte[]{4, 5, 6};
+  private static final Key API_KEY = ImmutableKey.builder()
+      .keyVersionIdentifier(ImmutableKeyVersionIdentifier.builder()
+          .owner(OWNER).key(KEY_ID).version(VERSION).build())
+      .active(true)
+      .createDate(new Date())
+      .type("AES")
+      .value(BYTES)
+      .build();
+  private ApiConverter converter;
 
-    @BeforeEach
-    public void setup() {
-        converter = new ApiConverter();
-    }
+  @BeforeEach
+  public void setup() {
+    converter = new ApiConverter();
+  }
 
-    @Test
-    void toDaoKeyVersionIdentifier() {
-        final KeyVersionIdentifier result = converter.toDaoKeyVersionIdentifier(OWNER, KEY_ID, VERSION);
-        assertThat(result)
-                .isNotNull()
-                .hasFieldOrPropertyWithValue("owner", OWNER)
-                .hasFieldOrPropertyWithValue("key", KEY_ID)
-                .hasFieldOrPropertyWithValue("version", VERSION);
-    }
+  @Test
+  void toDaoKeyVersionIdentifier() {
+    final KeyVersionIdentifier result = converter.toDaoKeyVersionIdentifier(OWNER, KEY_ID, VERSION);
+    assertThat(result)
+        .isNotNull()
+        .hasFieldOrPropertyWithValue("owner", OWNER)
+        .hasFieldOrPropertyWithValue("key", KEY_ID)
+        .hasFieldOrPropertyWithValue("version", VERSION);
+  }
 
-    @Test
-    void toDaoKeyIdentifier() {
-        final KeyIdentifier result = converter.toDaoKeyIdentifier(OWNER, KEY_ID);
-        assertThat(result)
-                .isNotNull()
-                .hasFieldOrPropertyWithValue("owner", OWNER)
-                .hasFieldOrPropertyWithValue("key", KEY_ID);
-    }
+  @Test
+  void toDaoKeyIdentifier() {
+    final KeyIdentifier result = converter.toDaoKeyIdentifier(OWNER, KEY_ID);
+    assertThat(result)
+        .isNotNull()
+        .hasFieldOrPropertyWithValue("owner", OWNER)
+        .hasFieldOrPropertyWithValue("key", KEY_ID);
+  }
 
-    @Test
-    void toApiKey() {
-        final com.codeheadsystems.terrapin.keystore.api.Key result = converter.toApiKey(API_KEY);
-        assertThat(result)
-                .isNotNull()
-                .hasFieldOrPropertyWithValue("owner", OWNER)
-                .hasFieldOrPropertyWithValue("id", KEY_ID)
-                .hasFieldOrPropertyWithValue("version", VERSION)
-                .hasFieldOrPropertyWithValue("status", ACTIVE)
-                .hasFieldOrPropertyWithValue("key", BYTES);
+  @Test
+  void toApiKey() {
+    final com.codeheadsystems.terrapin.keystore.api.Key result = converter.toApiKey(API_KEY);
+    assertThat(result)
+        .isNotNull()
+        .hasFieldOrPropertyWithValue("owner", OWNER)
+        .hasFieldOrPropertyWithValue("id", KEY_ID)
+        .hasFieldOrPropertyWithValue("version", VERSION)
+        .hasFieldOrPropertyWithValue("status", ACTIVE)
+        .hasFieldOrPropertyWithValue("key", BYTES);
 
 
-    }
+  }
 }

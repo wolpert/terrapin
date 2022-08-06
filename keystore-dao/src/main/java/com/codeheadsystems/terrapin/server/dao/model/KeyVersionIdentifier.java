@@ -28,7 +28,7 @@ import org.immutables.value.Value;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public interface KeyVersionIdentifier extends KeyIdentifier {
 
-    @JsonProperty("version")
-    Long version();
+  @JsonProperty("version")
+  Long version();
 
 }

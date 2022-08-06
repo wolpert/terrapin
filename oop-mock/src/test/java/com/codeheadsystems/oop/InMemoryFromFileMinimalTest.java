@@ -29,97 +29,97 @@ import org.junit.jupiter.api.Test;
  */
 public class InMemoryFromFileMinimalTest {
 
-    public static final String METHOD_MOCK_NAME = "ATest";
-    public static final String ID = "id";
-    public static final String UNSET_ID = "UNSET";
-    private static final String FILENAME = "testDataStore.json";
+  public static final String METHOD_MOCK_NAME = "ATest";
+  public static final String ID = "id";
+  public static final String UNSET_ID = "UNSET";
+  private static final String FILENAME = "testDataStore.json";
 
-    /**
-     * Given an explicit enabled configuration,
-     * - mocked request with mock data set returns mocked data
-     * - mocked request with no mock data set gets configuration exception.
-     */
-    @Test
-    public void mockProxy_enabled() {
-        final OopMockConfiguration config = ImmutableOopMockConfiguration.builder()
-                .mockDataFileName(FILENAME)
-                .enabled(true)
-                .build();
-        final ThrowException throwException = getTestWith(config);
+  /**
+   * Given an explicit enabled configuration,
+   * - mocked request with mock data set returns mocked data
+   * - mocked request with no mock data set gets configuration exception.
+   */
+  @Test
+  public void mockProxy_enabled() {
+    final OopMockConfiguration config = ImmutableOopMockConfiguration.builder()
+        .mockDataFileName(FILENAME)
+        .enabled(true)
+        .build();
+    final ThrowException throwException = getTestWith(config);
 
-        assertThat(throwException.callMocked())
-                .isTrue();
-        assertThatExceptionOfType(IllegalStateException.class)
-                .isThrownBy(throwException::callNotMocked);
+    assertThat(throwException.callMocked())
+        .isTrue();
+    assertThatExceptionOfType(IllegalStateException.class)
+        .isThrownBy(throwException::callNotMocked);
+  }
+
+  /**
+   * Given an explicit DISABLED configuration,
+   * - mocked request with mock data set gets configuration exception.
+   * - mocked request with no mock data set gets configuration exception.
+   */
+  @Test
+  public void mockProxy_notEnabled_explicit() {
+    final OopMockConfiguration config = ImmutableOopMockConfiguration.builder()
+        .mockDataFileName(FILENAME)
+        .enabled(false)
+        .build();
+    final ThrowException throwException = getTestWith(config);
+
+    assertThatExceptionOfType(IllegalStateException.class)
+        .isThrownBy(throwException::callMocked);
+    assertThatExceptionOfType(IllegalStateException.class)
+        .isThrownBy(throwException::callNotMocked);
+  }
+
+  /**
+   * Given an IMPLICIT DISABLED configuration (no configuration set),
+   * - mocked request with mock data set gets configuration exception.
+   * - mocked request with no mock data set gets configuration exception.
+   */
+  @Test
+  public void mockProxy_notEnabled_implicit() {
+    final OopMockConfiguration config = ImmutableOopMockConfiguration.builder()
+        .mockDataFileName(FILENAME)
+        .build();
+    final ThrowException throwException = getTestWith(config);
+
+    assertThatExceptionOfType(IllegalStateException.class)
+        .isThrownBy(throwException::callMocked);
+    assertThatExceptionOfType(IllegalStateException.class)
+        .isThrownBy(throwException::callNotMocked);
+  }
+
+  private ThrowException getTestWith(final OopMockConfiguration config) {
+    return new ThrowException(DaggerOopMockFactoryBuilder.builder()
+        .oopConfigurationModule(new OopConfigurationModule(config))
+        .build()
+        .factory());
+  }
+
+  class ThrowException {
+
+    private final TimeManager timeManager;
+
+    private final OopMock oopMock;
+
+    ThrowException(final OopMockFactory factory) {
+      oopMock = factory.generate(getClass());
+      timeManager = new TimeManager();
     }
 
-    /**
-     * Given an explicit DISABLED configuration,
-     * - mocked request with mock data set gets configuration exception.
-     * - mocked request with no mock data set gets configuration exception.
-     */
-    @Test
-    public void mockProxy_notEnabled_explicit() {
-        final OopMockConfiguration config = ImmutableOopMockConfiguration.builder()
-                .mockDataFileName(FILENAME)
-                .enabled(false)
-                .build();
-        final ThrowException throwException = getTestWith(config);
-
-        assertThatExceptionOfType(IllegalStateException.class)
-                .isThrownBy(throwException::callMocked);
-        assertThatExceptionOfType(IllegalStateException.class)
-                .isThrownBy(throwException::callNotMocked);
+    public Boolean callMocked() {
+      return timeManager.logTimed(() -> oopMock.proxy(Boolean.class, this::doIt, METHOD_MOCK_NAME, ID));
     }
 
-    /**
-     * Given an IMPLICIT DISABLED configuration (no configuration set),
-     * - mocked request with mock data set gets configuration exception.
-     * - mocked request with no mock data set gets configuration exception.
-     */
-    @Test
-    public void mockProxy_notEnabled_implicit() {
-        final OopMockConfiguration config = ImmutableOopMockConfiguration.builder()
-                .mockDataFileName(FILENAME)
-                .build();
-        final ThrowException throwException = getTestWith(config);
-
-        assertThatExceptionOfType(IllegalStateException.class)
-                .isThrownBy(throwException::callMocked);
-        assertThatExceptionOfType(IllegalStateException.class)
-                .isThrownBy(throwException::callNotMocked);
+    public boolean doIt() {
+      throw new IllegalStateException("boom");
     }
 
-    private ThrowException getTestWith(final OopMockConfiguration config) {
-        return new ThrowException(DaggerOopMockFactoryBuilder.builder()
-                .oopConfigurationModule(new OopConfigurationModule(config))
-                .build()
-                .factory());
+    public Boolean callNotMocked() {
+      return timeManager.logTimed(() -> oopMock.proxy(Boolean.class, this::doIt, METHOD_MOCK_NAME, UNSET_ID));
     }
 
-    class ThrowException {
-
-        private final TimeManager timeManager;
-
-        private final OopMock oopMock;
-
-        ThrowException(final OopMockFactory factory) {
-            oopMock = factory.generate(getClass());
-            timeManager = new TimeManager();
-        }
-
-        public Boolean callMocked() {
-            return timeManager.logTimed(() -> oopMock.proxy(Boolean.class, this::doIt, METHOD_MOCK_NAME, ID));
-        }
-
-        public boolean doIt() {
-            throw new IllegalStateException("boom");
-        }
-
-        public Boolean callNotMocked() {
-            return timeManager.logTimed(() -> oopMock.proxy(Boolean.class, this::doIt, METHOD_MOCK_NAME, UNSET_ID));
-        }
-
-    }
+  }
 
 }

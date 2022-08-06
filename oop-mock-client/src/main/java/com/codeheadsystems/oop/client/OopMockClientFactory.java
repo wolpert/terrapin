@@ -28,19 +28,19 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class OopMockClientFactory {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OopMockClientFactory.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(OopMockClientFactory.class);
 
-    private final LoadingCache<Class<?>, OopMockClient> cache;
+  private final LoadingCache<Class<?>, OopMockClient> cache;
 
-    @Inject
-    public OopMockClientFactory(final OopMockClientAssistedFactory assistedFactory) {
-        LOGGER.info("OopMockClientFactory()");
-        this.cache = CacheBuilder.newBuilder().build(CacheLoader.from(assistedFactory::create));
-    }
+  @Inject
+  public OopMockClientFactory(final OopMockClientAssistedFactory assistedFactory) {
+    LOGGER.info("OopMockClientFactory()");
+    this.cache = CacheBuilder.newBuilder().build(CacheLoader.from(assistedFactory::create));
+  }
 
-    public OopMockClient generate(final Class<?> clazz) {
-        LOGGER.info("generate({})", clazz);
-        return cache.getUnchecked(clazz);
-    }
+  public OopMockClient generate(final Class<?> clazz) {
+    LOGGER.info("generate({})", clazz);
+    return cache.getUnchecked(clazz);
+  }
 
 }

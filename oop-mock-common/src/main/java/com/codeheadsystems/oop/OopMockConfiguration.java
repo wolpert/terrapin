@@ -32,64 +32,64 @@ import org.immutables.value.Value.Immutable;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public interface OopMockConfiguration {
 
-    /**
-     * Is everything just enabled.
-     *
-     * @return boolean
-     */
-    @Value.Default
-    @JsonProperty("enabled")
-    default boolean enabled() {
-        return false;
-    }
+  /**
+   * Is everything just enabled.
+   *
+   * @return boolean
+   */
+  @Value.Default
+  @JsonProperty("enabled")
+  default boolean enabled() {
+    return false;
+  }
 
-    /**
-     * Delays are settable with the mocked data. By default, we do not use them.
-     *
-     * @return boolean if the delay should be used.
-     */
-    @Value.Default
-    @JsonProperty("delayResponseEnabled")
-    default boolean delayResponseEnabled() {
-        return false;
-    }
+  /**
+   * Delays are settable with the mocked data. By default, we do not use them.
+   *
+   * @return boolean if the delay should be used.
+   */
+  @Value.Default
+  @JsonProperty("delayResponseEnabled")
+  default boolean delayResponseEnabled() {
+    return false;
+  }
 
-    /**
-     * Max amount of time to wait for a delay. By default we set this to 5 seconds, which is
-     * forever. But set this as you need.
-     */
-    @Value.Default
-    @JsonProperty("maxDelayTimeMS")
-    default long maxDelayTimeMS() {
-        return 5000L;
-    }
+  /**
+   * Max amount of time to wait for a delay. By default we set this to 5 seconds, which is
+   * forever. But set this as you need.
+   */
+  @Value.Default
+  @JsonProperty("maxDelayTimeMS")
+  default long maxDelayTimeMS() {
+    return 5000L;
+  }
 
-    /**
-     * The default namespace for this instance.
-     */
-    @Value.Default
-    @JsonProperty("namespace")
-    default String namespace() {
-        return NAMESPACE;
-    }
+  /**
+   * The default namespace for this instance.
+   */
+  @Value.Default
+  @JsonProperty("namespace")
+  default String namespace() {
+    return NAMESPACE;
+  }
 
-    /**
-     * If mocked data is from a file, you can set this here.
-     * WARNING, this will likely change format later.
-     *
-     * @return optional string.
-     */
-    @JsonProperty("mockDataFileName")
-    Optional<String> mockDataFileName();
+  /**
+   * If mocked data is from a file, you can set this here.
+   * WARNING, this will likely change format later.
+   *
+   * @return optional string.
+   */
+  @JsonProperty("mockDataFileName")
+  Optional<String> mockDataFileName();
 
-    /**
-     * Will use the resolver configuration as defined. Note that pulling in a resolver
-     * is done by adding in a resolver module to the dagger ioc. This allows for runtime.
-     * configuration.
-     *
-     * @return resolver configuration.
-     */
-    @JsonProperty("resolverConfiguration")
-    Optional<ResolverConfiguration> resolverConfiguration();
+  /**
+   * Will use the resolver configuration as defined. Note that pulling in a resolver
+   * is done by adding in a resolver module to the dagger ioc. This allows for runtime.
+   * configuration.
+   *
+   * @return resolver configuration.
+   */
+  @JsonProperty("resolverConfiguration")
+  Optional<ResolverConfiguration> resolverConfiguration();
 
 }

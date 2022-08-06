@@ -21,11 +21,11 @@ import com.codeheadsystems.terrapin.server.dao.dagger.DDBModule;
 import dagger.Module;
 
 @Module(includes = {
-        DDBModule.class,
-        HealthCheckModule.class,
-        MetricsModule.class,
-        ResourceModule.class,
-        RNGModule.class
+    DDBModule.class,
+    HealthCheckModule.class,
+    MetricsModule.class,
+    ResourceModule.class,
+    RNGModule.class
 })
 public interface KeyStoreModule {
 }

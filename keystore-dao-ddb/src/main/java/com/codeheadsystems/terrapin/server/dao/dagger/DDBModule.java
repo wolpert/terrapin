@@ -46,64 +46,64 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 @Module(includes = {DDBModule.Binder.class, MetricsModule.class})
 public class DDBModule {
 
-    public static final String DDB_DAO_RETRY = "DDB_DAO_RETRY";
-    private final DynamoDbClient client;
-    private final TableConfiguration tableConfiguration;
+  public static final String DDB_DAO_RETRY = "DDB_DAO_RETRY";
+  private final DynamoDbClient client;
+  private final TableConfiguration tableConfiguration;
 
-    public DDBModule() {
-        this(DynamoDbClient.create());
-    }
+  public DDBModule() {
+    this(DynamoDbClient.create());
+  }
 
-    public DDBModule(final DynamoDbClient dynamoDbClient) {
-        this(dynamoDbClient, ImmutableTableConfiguration.builder().build());
-    }
+  public DDBModule(final DynamoDbClient dynamoDbClient) {
+    this(dynamoDbClient, ImmutableTableConfiguration.builder().build());
+  }
 
-    public DDBModule(final DynamoDbClient dynamoDbClient,
-                     final TableConfiguration tableConfiguration) {
-        this.client = dynamoDbClient;
-        this.tableConfiguration = tableConfiguration;
-    }
+  public DDBModule(final DynamoDbClient dynamoDbClient,
+                   final TableConfiguration tableConfiguration) {
+    this.client = dynamoDbClient;
+    this.tableConfiguration = tableConfiguration;
+  }
 
-    @Provides
-    @Singleton
-    public ObjectMapper objectMapper(final DdbObjectMapperFactory factory) {
-        return factory.generate();
-    }
+  @Provides
+  @Singleton
+  public ObjectMapper objectMapper(final DdbObjectMapperFactory factory) {
+    return factory.generate();
+  }
 
-    @Provides
-    @Singleton
-    public DynamoDbClient dynamoDbClient() {
-        return client;
-    }
+  @Provides
+  @Singleton
+  public DynamoDbClient dynamoDbClient() {
+    return client;
+  }
 
-    @Provides
-    @Singleton
-    public TableConfiguration tableConfiguration() {
-        return tableConfiguration;
-    }
+  @Provides
+  @Singleton
+  public TableConfiguration tableConfiguration() {
+    return tableConfiguration;
+  }
 
-    @Named(DDB_DAO_RETRY)
-    @Provides
-    @Singleton
-    public Retry retry(final Metrics metrics) {
-        final RetryConfig config = RetryConfig.custom()
-                .maxAttempts(3)
-                .retryExceptions(RetryableException.class)
-                .intervalFunction(IntervalFunction.ofExponentialBackoff(100, 2))
-                .failAfterMaxAttempts(true)
-                .build();
-        final RetryRegistry registry = RetryRegistry.of(config);
-        TaggedRetryMetrics.ofRetryRegistry(registry)
-                .bindTo(metrics.registry());
-        return registry.retry(DDB_DAO_RETRY);
-    }
+  @Named(DDB_DAO_RETRY)
+  @Provides
+  @Singleton
+  public Retry retry(final Metrics metrics) {
+    final RetryConfig config = RetryConfig.custom()
+        .maxAttempts(3)
+        .retryExceptions(RetryableException.class)
+        .intervalFunction(IntervalFunction.ofExponentialBackoff(100, 2))
+        .failAfterMaxAttempts(true)
+        .build();
+    final RetryRegistry registry = RetryRegistry.of(config);
+    TaggedRetryMetrics.ofRetryRegistry(registry)
+        .bindTo(metrics.registry());
+    return registry.retry(DDB_DAO_RETRY);
+  }
 
-    @Module
-    public interface Binder {
+  @Module
+  public interface Binder {
 
-        @Binds
-        KeyDAO dao(KeyDAODynamoDB dao);
+    @Binds
+    KeyDAO dao(KeyDAODynamoDB dao);
 
-    }
+  }
 
 }

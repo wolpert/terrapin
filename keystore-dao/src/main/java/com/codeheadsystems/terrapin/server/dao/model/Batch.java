@@ -23,14 +23,14 @@ import org.immutables.value.Value;
 @Value.Immutable
 public interface Batch<T> {
 
-    List<T> list();
+  List<T> list();
 
-    /**
-     * If empty, there is no more keys. WARNING: This will potentially contain result data. Treat it as you would table
-     * results.
-     *
-     * @return optional token for the next request.
-     */
-    Optional<Token> nextToken();
+  /**
+   * If empty, there is no more keys. WARNING: This will potentially contain result data. Treat it as you would table
+   * results.
+   *
+   * @return optional token for the next request.
+   */
+  Optional<Token> nextToken();
 
 }

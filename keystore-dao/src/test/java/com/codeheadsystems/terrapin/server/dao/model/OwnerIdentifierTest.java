@@ -20,13 +20,13 @@ import com.codeheadsystems.test.model.BaseJacksonTest;
 
 class OwnerIdentifierTest extends BaseJacksonTest<OwnerIdentifier> {
 
-    @Override
-    protected Class<OwnerIdentifier> getBaseClass() {
-        return OwnerIdentifier.class;
-    }
+  @Override
+  protected Class<OwnerIdentifier> getBaseClass() {
+    return OwnerIdentifier.class;
+  }
 
-    @Override
-    protected OwnerIdentifier getInstance() {
-        return ImmutableOwnerIdentifier.builder().owner("owner").build();
-    }
+  @Override
+  protected OwnerIdentifier getInstance() {
+    return ImmutableOwnerIdentifier.builder().owner("owner").build();
+  }
 }

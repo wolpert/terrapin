@@ -30,29 +30,29 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 class KeyManagerTest {
 
-    private Random random;
-    private RNG rng;
-    private KeyManager keyManager;
+  private Random random;
+  private RNG rng;
+  private KeyManager keyManager;
 
-    public static Stream<Arguments> cryptoTypes() {
-        return Arrays.stream(CryptorType.values())
-                .map(Arguments::of);
-    }
+  public static Stream<Arguments> cryptoTypes() {
+    return Arrays.stream(CryptorType.values())
+        .map(Arguments::of);
+  }
 
-    @BeforeEach
-    public void setup() {
-        random = new Random();
-        rng = random::nextBytes;
-        keyManager = new KeyManager(rng);
-    }
+  @BeforeEach
+  public void setup() {
+    random = new Random();
+    rng = random::nextBytes;
+    keyManager = new KeyManager(rng);
+  }
 
-    @ParameterizedTest
-    @MethodSource("cryptoTypes")
-    public void testType(final CryptorType type) {
-        final byte[] result = keyManager.generate(type);
-        assertThat(result)
-                .isNotEmpty()
-                .hasSize(type.getIvLength() + type.getKeyLength());
-    }
+  @ParameterizedTest
+  @MethodSource("cryptoTypes")
+  public void testType(final CryptorType type) {
+    final byte[] result = keyManager.generate(type);
+    assertThat(result)
+        .isNotEmpty()
+        .hasSize(type.getIvLength() + type.getKeyLength());
+  }
 
 }

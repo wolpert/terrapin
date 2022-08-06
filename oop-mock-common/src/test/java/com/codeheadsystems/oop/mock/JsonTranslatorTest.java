@@ -31,41 +31,41 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class JsonTranslatorTest {
 
-    private static final String MARSHALLED = "marshalled";
-    private static final String REAL_DATA = "real data";
+  private static final String MARSHALLED = "marshalled";
+  private static final String REAL_DATA = "real data";
 
-    @Mock private JsonConverter converter;
-    @Mock private MockedData mockedData;
+  @Mock private JsonConverter converter;
+  @Mock private MockedData mockedData;
 
-    private JsonTranslator translator;
+  private JsonTranslator translator;
 
-    @BeforeEach
-    void setUp() {
-        translator = new JsonTranslator(converter);
-    }
+  @BeforeEach
+  void setUp() {
+    translator = new JsonTranslator(converter);
+  }
 
-    @Test
-    void unmarshal() {
-        when(mockedData.marshalledData()).thenReturn(MARSHALLED);
-        when(converter.convert(MARSHALLED, String.class)).thenReturn(REAL_DATA);
+  @Test
+  void unmarshal() {
+    when(mockedData.marshalledData()).thenReturn(MARSHALLED);
+    when(converter.convert(MARSHALLED, String.class)).thenReturn(REAL_DATA);
 
-        final String result = translator.unmarshal(String.class, mockedData);
+    final String result = translator.unmarshal(String.class, mockedData);
 
-        assertThat(result)
-                .isEqualTo(REAL_DATA);
-    }
+    assertThat(result)
+        .isEqualTo(REAL_DATA);
+  }
 
-    @Test
-    void marshal() {
-        when(converter.toJson(REAL_DATA))
-                .thenReturn(MARSHALLED);
+  @Test
+  void marshal() {
+    when(converter.toJson(REAL_DATA))
+        .thenReturn(MARSHALLED);
 
-        final MockedData result = translator.marshal(REAL_DATA);
+    final MockedData result = translator.marshal(REAL_DATA);
 
-        assertThat(result)
-                .isNotNull()
-                .hasFieldOrPropertyWithValue("marshalledData", MARSHALLED);
+    assertThat(result)
+        .isNotNull()
+        .hasFieldOrPropertyWithValue("marshalledData", MARSHALLED);
 
-    }
+  }
 
 }

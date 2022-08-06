@@ -24,15 +24,15 @@ import javax.inject.Singleton;
  */
 @Singleton
 public class SleeperManager {
-    @Inject
-    public SleeperManager() {
-    }
+  @Inject
+  public SleeperManager() {
+  }
 
-    public void sleep(long mills) {
-        try {
-            Thread.sleep(mills);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+  public void sleep(long mills) {
+    try {
+      Thread.sleep(mills);
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
     }
+  }
 }

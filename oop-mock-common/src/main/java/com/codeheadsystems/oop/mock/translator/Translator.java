@@ -26,22 +26,22 @@ import com.codeheadsystems.oop.mock.model.MockedData;
  */
 public interface Translator {
 
-    /**
-     * Convert the marshalled text back to the original object.
-     *
-     * @param clazz          class of what we are returning.
-     * @param marshalledData that we converted before.
-     * @param <R>            type of object.
-     * @return the object.
-     */
-    <R> R unmarshal(Class<R> clazz, MockedData marshalledData);
+  /**
+   * Convert the marshalled text back to the original object.
+   *
+   * @param clazz          class of what we are returning.
+   * @param marshalledData that we converted before.
+   * @param <R>            type of object.
+   * @return the object.
+   */
+  <R> R unmarshal(Class<R> clazz, MockedData marshalledData);
 
-    /**
-     * Convert the object to text that can be stored.
-     *
-     * @param object to marshall.
-     * @param <R>    type of object.
-     * @return the marshall text.
-     */
-    <R> MockedData marshal(R object);
+  /**
+   * Convert the object to text that can be stored.
+   *
+   * @param object to marshall.
+   * @param <R>    type of object.
+   * @return the marshall text.
+   */
+  <R> MockedData marshal(R object);
 }

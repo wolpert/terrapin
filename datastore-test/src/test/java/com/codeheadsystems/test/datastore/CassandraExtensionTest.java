@@ -25,13 +25,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @ExtendWith(CassandraExtension.class)
 public class CassandraExtensionTest {
 
-    @DataStore private CqlSession session;
-    @Keyspace private String keyspace = "mykeyspace";
+  @DataStore private CqlSession session;
+  @Keyspace private String keyspace = "mykeyspace";
 
-    @Test
-    public void validateSession() {
-        assertThat(session)
-                .isNotNull();
-    }
+  @Test
+  public void validateSession() {
+    assertThat(session)
+        .isNotNull();
+  }
 
 }

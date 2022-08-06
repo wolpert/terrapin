@@ -25,38 +25,38 @@ import org.slf4j.LoggerFactory;
 
 @Singleton
 public class DelayManager {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DelayManager.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(DelayManager.class);
 
-    private final boolean delayEnabled;
-    private final long maxDelayTimeMS;
-    private final Clock clock;
-    private final SleeperManager sleeper;
+  private final boolean delayEnabled;
+  private final long maxDelayTimeMS;
+  private final Clock clock;
+  private final SleeperManager sleeper;
 
-    @Inject
-    public DelayManager(final OopMockConfiguration configuration,
-                        final Clock clock,
-                        final SleeperManager sleeper) {
-        this.sleeper = sleeper;
-        this.delayEnabled = configuration.delayResponseEnabled();
-        this.clock = clock;
-        this.maxDelayTimeMS = configuration.maxDelayTimeMS();
-        LOGGER.info("DelayManager({},{},{})", delayEnabled, maxDelayTimeMS, clock);
+  @Inject
+  public DelayManager(final OopMockConfiguration configuration,
+                      final Clock clock,
+                      final SleeperManager sleeper) {
+    this.sleeper = sleeper;
+    this.delayEnabled = configuration.delayResponseEnabled();
+    this.clock = clock;
+    this.maxDelayTimeMS = configuration.maxDelayTimeMS();
+    LOGGER.info("DelayManager({},{},{})", delayEnabled, maxDelayTimeMS, clock);
+  }
+
+  public long startMillis() {
+    return clock.millis();
+  }
+
+  public void delay(final long start, final long delay) {
+    if (delayEnabled) {
+      LOGGER.debug("delay({},{}", start, delay);
+      final long timeSpentSoFar = Math.max(0, clock.millis() - start);// at least zero.
+      final long waitInMills = delay - timeSpentSoFar;
+      // we use the min time for waiting, calculated or max wait time. Then the result must be greater than zero.
+      final long actualWaitTime = Math.max(0L, Math.min(waitInMills, maxDelayTimeMS));
+      LOGGER.debug("timeSpentSoFar:{}, waitInMills:{}, actualWaitTime:{}", timeSpentSoFar, waitInMills, actualWaitTime);
+      sleeper.sleep(actualWaitTime);
     }
-
-    public long startMillis() {
-        return clock.millis();
-    }
-
-    public void delay(final long start, final long delay) {
-        if (delayEnabled) {
-            LOGGER.debug("delay({},{}", start, delay);
-            final long timeSpentSoFar = Math.max(0, clock.millis() - start);// at least zero.
-            final long waitInMills = delay - timeSpentSoFar;
-            // we use the min time for waiting, calculated or max wait time. Then the result must be greater than zero.
-            final long actualWaitTime = Math.max(0L, Math.min(waitInMills, maxDelayTimeMS));
-            LOGGER.debug("timeSpentSoFar:{}, waitInMills:{}, actualWaitTime:{}", timeSpentSoFar, waitInMills, actualWaitTime);
-            sleeper.sleep(actualWaitTime);
-        }
-    }
+  }
 
 }

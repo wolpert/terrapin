@@ -20,8 +20,8 @@ import com.codeheadsystems.terrapin.common.exception.CryptoException;
 
 public interface Cryptor {
 
-    byte[] encrypt(final byte[] key, final byte[] clear, int ivLength) throws CryptoException;
+  byte[] encrypt(final byte[] key, final byte[] clear, int ivLength) throws CryptoException;
 
-    byte[] decrypt(final byte[] key, final byte[] payload, int ivLength) throws CryptoException;
+  byte[] decrypt(final byte[] key, final byte[] payload, int ivLength) throws CryptoException;
 
 }

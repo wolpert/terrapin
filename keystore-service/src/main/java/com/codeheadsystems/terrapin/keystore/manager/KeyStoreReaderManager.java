@@ -32,22 +32,22 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class KeyStoreReaderManager {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(KeyStoreReaderManager.class);
-    private final KeyDAO keyDAO;
+  private static final Logger LOGGER = LoggerFactory.getLogger(KeyStoreReaderManager.class);
+  private final KeyDAO keyDAO;
 
-    @Inject
-    public KeyStoreReaderManager(final KeyDAO keyDAO) {
-        LOGGER.info("KeyStoreReaderManager({})", keyDAO);
-        this.keyDAO = keyDAO;
-    }
+  @Inject
+  public KeyStoreReaderManager(final KeyDAO keyDAO) {
+    LOGGER.info("KeyStoreReaderManager({})", keyDAO);
+    this.keyDAO = keyDAO;
+  }
 
-    public Optional<Key> getKey(final KeyVersionIdentifier identifier) {
-        LOGGER.debug("getKey({})", identifier);
-        return keyDAO.load(identifier);
-    }
+  public Optional<Key> getKey(final KeyVersionIdentifier identifier) {
+    LOGGER.debug("getKey({})", identifier);
+    return keyDAO.load(identifier);
+  }
 
-    public Optional<Key> getKey(final KeyIdentifier identifier) {
-        LOGGER.debug("getKey({})", identifier);
-        return keyDAO.load(identifier);
-    }
+  public Optional<Key> getKey(final KeyIdentifier identifier) {
+    LOGGER.debug("getKey({})", identifier);
+    return keyDAO.load(identifier);
+  }
 }

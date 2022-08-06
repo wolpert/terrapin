@@ -27,62 +27,62 @@ import org.junit.jupiter.api.Test;
 
 class AEADCipherCryptorTest {
 
-    private Random random;
-    private AEADCipherCryptor<GCMSIVBlockCipher> cryptor;
+  private Random random;
+  private AEADCipherCryptor<GCMSIVBlockCipher> cryptor;
 
-    @BeforeEach
-    void setup() {
-        random = new Random();
-        cryptor = new AEADCipherCryptor<>(GCMSIVBlockCipher::new);
-    }
+  @BeforeEach
+  void setup() {
+    random = new Random();
+    cryptor = new AEADCipherCryptor<>(GCMSIVBlockCipher::new);
+  }
 
-    @Test
-    public void roundTrip() throws CryptoException {
-        final byte[] key = getKey(32, 12);
-        final byte[] clearPayload = new byte[256];
-        random.nextBytes(clearPayload);
+  @Test
+  public void roundTrip() throws CryptoException {
+    final byte[] key = getKey(32, 12);
+    final byte[] clearPayload = new byte[256];
+    random.nextBytes(clearPayload);
 
-        final byte[] encryptedPayload = cryptor.encrypt(key, clearPayload, 12);
-        assertThat(encryptedPayload)
-                .isNotEmpty()
-                .isNotEqualTo(clearPayload);
+    final byte[] encryptedPayload = cryptor.encrypt(key, clearPayload, 12);
+    assertThat(encryptedPayload)
+        .isNotEmpty()
+        .isNotEqualTo(clearPayload);
 
-        final byte[] decryptedPayload = cryptor.decrypt(key, encryptedPayload, 12);
-        assertThat(decryptedPayload)
-                .isNotEmpty()
-                .isEqualTo(clearPayload);
-    }
+    final byte[] decryptedPayload = cryptor.decrypt(key, encryptedPayload, 12);
+    assertThat(decryptedPayload)
+        .isNotEmpty()
+        .isEqualTo(clearPayload);
+  }
 
-    @Test
-    public void badIVLength() {
-        final byte[] key = getKey(32, 16);
-        final byte[] clearPayload = new byte[256];
-        random.nextBytes(clearPayload);
-        assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(()-> cryptor.encrypt(key, clearPayload, 16));
-    }
+  @Test
+  public void badIVLength() {
+    final byte[] key = getKey(32, 16);
+    final byte[] clearPayload = new byte[256];
+    random.nextBytes(clearPayload);
+    assertThatExceptionOfType(IllegalArgumentException.class)
+        .isThrownBy(() -> cryptor.encrypt(key, clearPayload, 16));
+  }
 
-    @Test
-    public void noIV() {
-        final byte[] key = getKey(32, 0);
-        final byte[] clearPayload = new byte[256];
-        random.nextBytes(clearPayload);
-        assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(()-> cryptor.encrypt(key, clearPayload, 0));
-    }
+  @Test
+  public void noIV() {
+    final byte[] key = getKey(32, 0);
+    final byte[] clearPayload = new byte[256];
+    random.nextBytes(clearPayload);
+    assertThatExceptionOfType(IllegalArgumentException.class)
+        .isThrownBy(() -> cryptor.encrypt(key, clearPayload, 0));
+  }
 
-    @Test
-    public void badDecrypt() {
-        final byte[] key = getKey(32, 12);
-        final byte[] clearPayload = new byte[256];
-        random.nextBytes(clearPayload);
-        assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(()-> cryptor.decrypt(key, clearPayload, 16));
-    }
+  @Test
+  public void badDecrypt() {
+    final byte[] key = getKey(32, 12);
+    final byte[] clearPayload = new byte[256];
+    random.nextBytes(clearPayload);
+    assertThatExceptionOfType(IllegalArgumentException.class)
+        .isThrownBy(() -> cryptor.decrypt(key, clearPayload, 16));
+  }
 
-    public byte[] getKey(final int keyLen, final int ivLen) {
-        final byte[] result = new byte[keyLen + ivLen];
-        random.nextBytes(result);
-        return result;
-    }
+  public byte[] getKey(final int keyLen, final int ivLen) {
+    final byte[] result = new byte[keyLen + ivLen];
+    random.nextBytes(result);
+    return result;
+  }
 }

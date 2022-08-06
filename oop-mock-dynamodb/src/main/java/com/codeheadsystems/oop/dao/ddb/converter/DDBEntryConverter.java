@@ -29,42 +29,42 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class DDBEntryConverter {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DDBEntryConverter.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(DDBEntryConverter.class);
 
-    private final Hasher hasher;
-    private final JsonConverter jsonConverter;
+  private final Hasher hasher;
+  private final JsonConverter jsonConverter;
 
-    @Inject
-    public DDBEntryConverter(final Hasher hasher,
-                             final JsonConverter jsonConverter) {
-        this.hasher = hasher;
-        this.jsonConverter = jsonConverter;
-        LOGGER.info("DDBEntryConverter({},{})", hasher, jsonConverter);
+  @Inject
+  public DDBEntryConverter(final Hasher hasher,
+                           final JsonConverter jsonConverter) {
+    this.hasher = hasher;
+    this.jsonConverter = jsonConverter;
+    LOGGER.info("DDBEntryConverter({},{})", hasher, jsonConverter);
+  }
+
+  public DDBEntry convert(final String namespace,
+                          final String lookup,
+                          final String discriminator,
+                          final MockedData data) {
+    final DDBEntry entry = convert(namespace, lookup, discriminator);
+    final String json = jsonConverter.toJson(data);
+    entry.setMockData(json);
+    return entry;
+  }
+
+  public DDBEntry convert(final String namespace,
+                          final String lookup,
+                          final String discriminator) {
+    final String secondary = hasher.hash(lookup, discriminator);
+    return new DDBEntry(namespace, secondary);
+  }
+
+  public Optional<MockedData> toMockedData(final DDBEntry entry) {
+    if (entry.getMockData() == null) {
+      return Optional.empty();
+    } else {
+      return Optional.of(jsonConverter.convert(entry.getMockData(), MockedData.class));
     }
-
-    public DDBEntry convert(final String namespace,
-                            final String lookup,
-                            final String discriminator,
-                            final MockedData data) {
-        final DDBEntry entry = convert(namespace, lookup, discriminator);
-        final String json = jsonConverter.toJson(data);
-        entry.setMockData(json);
-        return entry;
-    }
-
-    public DDBEntry convert(final String namespace,
-                            final String lookup,
-                            final String discriminator) {
-        final String secondary = hasher.hash(lookup, discriminator);
-        return new DDBEntry(namespace, secondary);
-    }
-
-    public Optional<MockedData> toMockedData(final DDBEntry entry) {
-        if (entry.getMockData() == null) {
-            return Optional.empty();
-        } else {
-            return Optional.of(jsonConverter.convert(entry.getMockData(), MockedData.class));
-        }
-    }
+  }
 
 }

@@ -39,6 +39,7 @@ allprojects {
     apply plugin: "java-library"
     apply plugin: "eclipse"
     apply plugin: 'jacoco'
+    apply plugin: 'checkstyle'
     java {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11

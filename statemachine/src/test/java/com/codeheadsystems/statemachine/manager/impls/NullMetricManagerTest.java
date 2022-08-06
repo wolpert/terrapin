@@ -24,24 +24,24 @@ import org.junit.jupiter.api.Test;
 
 class NullMetricManagerTest {
 
-    private static final String METRIC_NAME = "metricName";
+  private static final String METRIC_NAME = "metricName";
 
-    private MetricManager metricManager;
+  private MetricManager metricManager;
 
-    @BeforeEach
-    void setUp() {
-        metricManager = new NullMetricManager();
-    }
+  @BeforeEach
+  void setUp() {
+    metricManager = new NullMetricManager();
+  }
 
-    @Test
-    void meter() {
-        metricManager.meter(METRIC_NAME, 5);
-        // nothing to assert
-    }
+  @Test
+  void meter() {
+    metricManager.meter(METRIC_NAME, 5);
+    // nothing to assert
+  }
 
-    @Test
-    void time() {
-        final Boolean b = metricManager.time(METRIC_NAME, () -> Boolean.TRUE);
-        assertThat(b).isTrue();
-    }
+  @Test
+  void time() {
+    final Boolean b = metricManager.time(METRIC_NAME, () -> Boolean.TRUE);
+    assertThat(b).isTrue();
+  }
 }

@@ -20,17 +20,17 @@ import com.codeheadsystems.test.model.BaseJacksonTest;
 
 class KeyVersionIdentifierTest extends BaseJacksonTest<KeyVersionIdentifier> {
 
-    @Override
-    protected Class<KeyVersionIdentifier> getBaseClass() {
-        return KeyVersionIdentifier.class;
-    }
+  @Override
+  protected Class<KeyVersionIdentifier> getBaseClass() {
+    return KeyVersionIdentifier.class;
+  }
 
-    @Override
-    protected KeyVersionIdentifier getInstance() {
-        return ImmutableKeyVersionIdentifier.builder()
-                .owner("owner")
-                .key("key")
-                .version(2L)
-                .build();
-    }
+  @Override
+  protected KeyVersionIdentifier getInstance() {
+    return ImmutableKeyVersionIdentifier.builder()
+        .owner("owner")
+        .key("key")
+        .version(2L)
+        .build();
+  }
 }

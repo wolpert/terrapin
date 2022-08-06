@@ -35,44 +35,44 @@ import software.amazon.awssdk.services.dynamodb.model.WriteRequest;
 
 @Singleton
 public class BatchWriteConverter {
-    private static final Logger LOGGER = LoggerFactory.getLogger(BatchWriteConverter.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(BatchWriteConverter.class);
 
-    @Inject
-    public BatchWriteConverter() {
-        LOGGER.info("BatchWriteConverter()");
-    }
+  @Inject
+  public BatchWriteConverter() {
+    LOGGER.info("BatchWriteConverter()");
+  }
 
-    public BatchWriteItemRequest fromPutItemRequests(final PutItemRequest... requests) {
-        final Map<String, ? extends Collection<WriteRequest>> items = Arrays.stream(requests)
-                .map(PutItemRequest::tableName)
-                .distinct()
-                .collect(Collectors.toMap(t -> t, t -> new ArrayList<>()));
-        for (PutItemRequest request : requests) {
-            items.get(request.tableName()).add(toWriteRequest(request));
-        }
-        return BatchWriteItemRequest.builder()
-                .returnConsumedCapacity(ReturnConsumedCapacity.TOTAL)
-                .requestItems(items)
-                .build();
+  public BatchWriteItemRequest fromPutItemRequests(final PutItemRequest... requests) {
+    final Map<String, ? extends Collection<WriteRequest>> items = Arrays.stream(requests)
+        .map(PutItemRequest::tableName)
+        .distinct()
+        .collect(Collectors.toMap(t -> t, t -> new ArrayList<>()));
+    for (PutItemRequest request : requests) {
+      items.get(request.tableName()).add(toWriteRequest(request));
     }
+    return BatchWriteItemRequest.builder()
+        .returnConsumedCapacity(ReturnConsumedCapacity.TOTAL)
+        .requestItems(items)
+        .build();
+  }
 
-    public Optional<BatchWriteItemRequest> unprocessedRequest(final BatchWriteItemResponse response) {
-        if (response.hasUnprocessedItems() && response.unprocessedItems().size() > 0) {
-            return Optional.of(BatchWriteItemRequest.builder()
-                    .requestItems(response.unprocessedItems())
-                    .returnConsumedCapacity(ReturnConsumedCapacity.TOTAL)
-                    .build());
-        } else {
-            return Optional.empty();
-        }
+  public Optional<BatchWriteItemRequest> unprocessedRequest(final BatchWriteItemResponse response) {
+    if (response.hasUnprocessedItems() && response.unprocessedItems().size() > 0) {
+      return Optional.of(BatchWriteItemRequest.builder()
+          .requestItems(response.unprocessedItems())
+          .returnConsumedCapacity(ReturnConsumedCapacity.TOTAL)
+          .build());
+    } else {
+      return Optional.empty();
     }
+  }
 
-    private WriteRequest toWriteRequest(final PutItemRequest putItemRequest) {
-        return WriteRequest.builder()
-                .putRequest(PutRequest.builder()
-                        .item(putItemRequest.item())
-                        .build())
-                .build();
-    }
+  private WriteRequest toWriteRequest(final PutItemRequest putItemRequest) {
+    return WriteRequest.builder()
+        .putRequest(PutRequest.builder()
+            .item(putItemRequest.item())
+            .build())
+        .build();
+  }
 
 }

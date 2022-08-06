@@ -29,70 +29,70 @@ import java.util.Optional;
  */
 public interface KeyDAO {
 
-    void store(Key key);
+  void store(Key key);
 
-    OwnerIdentifier storeOwner(String owner);
+  OwnerIdentifier storeOwner(String owner);
 
-    Optional<Key> load(KeyVersionIdentifier identifier);
+  Optional<Key> load(KeyVersionIdentifier identifier);
 
-    /**
-     * Gets the latest key version for the list of keys.
-     */
-    Optional<Key> load(KeyIdentifier identifier);
+  /**
+   * Gets the latest key version for the list of keys.
+   */
+  Optional<Key> load(KeyIdentifier identifier);
 
-    Optional<OwnerIdentifier> loadOwner(String ownerName);
+  Optional<OwnerIdentifier> loadOwner(String ownerName);
 
-    /**
-     * Gets all the owners.
-     *
-     * @param nextToken nullable.
-     * @return owners
-     */
-    Batch<OwnerIdentifier> listOwners(Token nextToken);
+  /**
+   * Gets all the owners.
+   *
+   * @param nextToken nullable.
+   * @return owners
+   */
+  Batch<OwnerIdentifier> listOwners(Token nextToken);
 
-    /**
-     * Gets all the keys for an owner.
-     *
-     * @param identifier
-     * @param nextToken  nullable.
-     * @return
-     */
-    Batch<KeyIdentifier> listKeys(OwnerIdentifier identifier, Token nextToken);
+  /**
+   * Gets all the keys for an owner.
+   *
+   * @param identifier
+   * @param nextToken  nullable.
+   * @return
+   */
+  Batch<KeyIdentifier> listKeys(OwnerIdentifier identifier, Token nextToken);
 
-    /**
-     * Gets all the versions for a key.
-     *
-     * @param identifier
-     * @param nextToken  nullable.
-     * @return
-     */
-    Batch<KeyVersionIdentifier> listVersions(KeyIdentifier identifier, Token nextToken);
+  /**
+   * Gets all the versions for a key.
+   *
+   * @param identifier
+   * @param nextToken  nullable.
+   * @return
+   */
+  Batch<KeyVersionIdentifier> listVersions(KeyIdentifier identifier, Token nextToken);
 
-    // These exist for completeness, but need caution when using.
+  // These exist for completeness, but need caution when using.
 
-    /**
-     * Deletes a specific key version.
-     *
-     * @param identifier
-     * @return boolean if anything was deleted.
-     */
-    boolean delete(KeyVersionIdentifier identifier);
+  /**
+   * Deletes a specific key version.
+   *
+   * @param identifier
+   * @return boolean if anything was deleted.
+   */
+  boolean delete(KeyVersionIdentifier identifier);
 
-    /**
-     * Deletes all versions for a key
-     *
-     * @param identifier
-     * @return boolean if anything was deleted.
-     */
-    boolean delete(KeyIdentifier identifier);
+  /**
+   * Deletes all versions for a key
+   *
+   * @param identifier
+   * @return boolean if anything was deleted.
+   */
+  boolean delete(KeyIdentifier identifier);
 
-    /**
-     * Deletes everything tied to the owner.
-     * This is surprisingly controversial. We may need to batch this up in a manager if the list of
-     * keys is too long.
-     *
-     * @param identifier
-     * @return boolean if anything was deleted.
-     */
-    boolean delete(OwnerIdentifier identifier);
+  /**
+   * Deletes everything tied to the owner.
+   * This is surprisingly controversial. We may need to batch this up in a manager if the list of
+   * keys is too long.
+   *
+   * @param identifier
+   * @return boolean if anything was deleted.
+   */
+  boolean delete(OwnerIdentifier identifier);
 }

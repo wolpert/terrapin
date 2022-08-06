@@ -25,23 +25,23 @@ import javax.inject.Singleton;
 @Singleton
 public class JsonTranslator implements Translator {
 
-    private final JsonConverter converter;
+  private final JsonConverter converter;
 
-    @Inject
-    public JsonTranslator(final JsonConverter converter) {
-        this.converter = converter;
-    }
+  @Inject
+  public JsonTranslator(final JsonConverter converter) {
+    this.converter = converter;
+  }
 
-    @Override
-    public <R> R unmarshal(final Class<R> clazz,
-                           final MockedData marshalledData) {
-        return converter.convert(marshalledData.marshalledData(), clazz);
-    }
+  @Override
+  public <R> R unmarshal(final Class<R> clazz,
+                         final MockedData marshalledData) {
+    return converter.convert(marshalledData.marshalledData(), clazz);
+  }
 
-    @Override
-    public <R> MockedData marshal(final R object) {
-        return ImmutableMockedData.builder()
-                .marshalledData(converter.toJson(object))
-                .build();
-    }
+  @Override
+  public <R> MockedData marshal(final R object) {
+    return ImmutableMockedData.builder()
+        .marshalledData(converter.toJson(object))
+        .build();
+  }
 }

@@ -26,43 +26,43 @@ import org.junit.jupiter.api.Test;
 
 class SleeperManagerTest {
 
-    private SleeperManager sleeperManager;
+  private SleeperManager sleeperManager;
 
-    @BeforeEach
-    void setup() {
-        sleeperManager = new SleeperManager();
-    }
+  @BeforeEach
+  void setup() {
+    sleeperManager = new SleeperManager();
+  }
 
-    @Test
-    void sleep() {
-        sleeperManager.sleep(0);// no exception please.
-    }
+  @Test
+  void sleep() {
+    sleeperManager.sleep(0);// no exception please.
+  }
 
-    /**
-     * I wait for NO cpu. Well, maybe a little.
-     *
-     * @throws InterruptedException
-     */
-    @Test
-    void interruptedSleep() throws InterruptedException {
-        final Thread currentThread = Thread.currentThread();
-        AtomicReference<Throwable> thrown = new AtomicReference<>();
-        CountDownLatch latch = new CountDownLatch(1);
-        final Runnable runnable = () -> {
-            try {
-                latch.await();
-                Thread.sleep(10L); // Roll dem bones
-                currentThread.interrupt();
-            } catch (Throwable e) {
-                thrown.set(e);
-            }
-        };
-        Thread t = new Thread(runnable);
-        t.start();
-        latch.countDown();
-        assertThatExceptionOfType(RuntimeException.class)
-                .isThrownBy(() -> sleeperManager.sleep(1000L));
-        assertThat(thrown.get())
-                .isNull();
-    }
+  /**
+   * I wait for NO cpu. Well, maybe a little.
+   *
+   * @throws InterruptedException
+   */
+  @Test
+  void interruptedSleep() throws InterruptedException {
+    final Thread currentThread = Thread.currentThread();
+    AtomicReference<Throwable> thrown = new AtomicReference<>();
+    CountDownLatch latch = new CountDownLatch(1);
+    final Runnable runnable = () -> {
+      try {
+        latch.await();
+        Thread.sleep(10L); // Roll dem bones
+        currentThread.interrupt();
+      } catch (Throwable e) {
+        thrown.set(e);
+      }
+    };
+    Thread t = new Thread(runnable);
+    t.start();
+    latch.countDown();
+    assertThatExceptionOfType(RuntimeException.class)
+        .isThrownBy(() -> sleeperManager.sleep(1000L));
+    assertThat(thrown.get())
+        .isNull();
+  }
 }

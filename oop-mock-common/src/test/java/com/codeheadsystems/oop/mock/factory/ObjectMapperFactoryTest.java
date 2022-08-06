@@ -25,21 +25,21 @@ import org.junit.jupiter.api.Test;
 
 class ObjectMapperFactoryTest {
 
-    private ObjectMapperFactory objectMapperFactory;
+  private ObjectMapperFactory objectMapperFactory;
 
-    @BeforeEach
-    public void setup() {
-        objectMapperFactory = new ObjectMapperFactory();
-    }
+  @BeforeEach
+  public void setup() {
+    objectMapperFactory = new ObjectMapperFactory();
+  }
 
-    @Test
-    void objectMapper() {
-        assertThat(objectMapperFactory.objectMapper())
-                .isNotNull()
-                .extracting("RegisteredModuleIds")
-                .asInstanceOf(InstanceOfAssertFactories.COLLECTION)
-                .isNotNull()
-                .isNotEmpty()
-                .contains(Jdk8Module.class.getCanonicalName());
-    }
+  @Test
+  void objectMapper() {
+    assertThat(objectMapperFactory.objectMapper())
+        .isNotNull()
+        .extracting("RegisteredModuleIds")
+        .asInstanceOf(InstanceOfAssertFactories.COLLECTION)
+        .isNotNull()
+        .isNotEmpty()
+        .contains(Jdk8Module.class.getCanonicalName());
+  }
 }

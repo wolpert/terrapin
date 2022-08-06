@@ -32,23 +32,23 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class CassandraAccessor {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CassandraAccessor.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(CassandraAccessor.class);
 
-    private final CqlSession session;
-    private final Metrics metrics;
+  private final CqlSession session;
+  private final Metrics metrics;
 
-    @Inject
-    public CassandraAccessor(final CqlSession session,
-                             final Metrics metrics,
-                             @Named(CASSANDRA_RETRY) final Retry retry) {
-        LOGGER.info("CassandraAccessor({},{},{})", session, metrics, retry);
-        this.session = session;
-        this.metrics = metrics;
-    }
+  @Inject
+  public CassandraAccessor(final CqlSession session,
+                           final Metrics metrics,
+                           @Named(CASSANDRA_RETRY) final Retry retry) {
+    LOGGER.info("CassandraAccessor({},{},{})", session, metrics, retry);
+    this.session = session;
+    this.metrics = metrics;
+  }
 
-    private <T> T call(final String metricName,
-                       final Supplier<T> supplier) {
-        final Timer timer = metrics.registry().timer(metricName);
-        return metrics.time(metricName, timer, supplier);
-    }
+  private <T> T call(final String metricName,
+                     final Supplier<T> supplier) {
+    final Timer timer = metrics.registry().timer(metricName);
+    return metrics.time(metricName, timer, supplier);
+  }
 }

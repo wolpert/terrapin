@@ -32,33 +32,33 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class KeyReaderResource implements KeyReaderService, JettyResource {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(KeyReaderResource.class);
-    private final ApiConverter apiConverter;
-    private final KeyStoreReaderManager keyStoreReaderManager;
+  public static final Logger LOGGER = LoggerFactory.getLogger(KeyReaderResource.class);
+  private final ApiConverter apiConverter;
+  private final KeyStoreReaderManager keyStoreReaderManager;
 
-    @Inject
-    public KeyReaderResource(final ApiConverter apiConverter,
-                             final KeyStoreReaderManager keyStoreReaderManager) {
-        LOGGER.info("KeyReaderResource({},{})", apiConverter, keyStoreReaderManager);
-        this.apiConverter = apiConverter;
-        this.keyStoreReaderManager = keyStoreReaderManager;
-    }
+  @Inject
+  public KeyReaderResource(final ApiConverter apiConverter,
+                           final KeyStoreReaderManager keyStoreReaderManager) {
+    LOGGER.info("KeyReaderResource({},{})", apiConverter, keyStoreReaderManager);
+    this.apiConverter = apiConverter;
+    this.keyStoreReaderManager = keyStoreReaderManager;
+  }
 
-    @Override
-    public Key get(final String owner, final String keyId) {
-        LOGGER.debug("get({},{})", owner, keyId);
-        final KeyIdentifier identifier = apiConverter.toDaoKeyIdentifier(owner, keyId);
-        return keyStoreReaderManager.getKey(identifier)
-                .map(apiConverter::toApiKey)
-                .orElseThrow(() -> new WebApplicationException(Response.Status.NOT_FOUND));
-    }
+  @Override
+  public Key get(final String owner, final String keyId) {
+    LOGGER.debug("get({},{})", owner, keyId);
+    final KeyIdentifier identifier = apiConverter.toDaoKeyIdentifier(owner, keyId);
+    return keyStoreReaderManager.getKey(identifier)
+        .map(apiConverter::toApiKey)
+        .orElseThrow(() -> new WebApplicationException(Response.Status.NOT_FOUND));
+  }
 
-    @Override
-    public Key get(final String owner, final String keyId, final Long version) {
-        LOGGER.debug("get({},{},{})", owner, keyId, version);
-        final KeyVersionIdentifier identifier = apiConverter.toDaoKeyVersionIdentifier(owner, keyId, version);
-        return keyStoreReaderManager.getKey(identifier)
-                .map(apiConverter::toApiKey)
-                .orElseThrow(() -> new WebApplicationException(Response.Status.NOT_FOUND));
-    }
+  @Override
+  public Key get(final String owner, final String keyId, final Long version) {
+    LOGGER.debug("get({},{},{})", owner, keyId, version);
+    final KeyVersionIdentifier identifier = apiConverter.toDaoKeyVersionIdentifier(owner, keyId, version);
+    return keyStoreReaderManager.getKey(identifier)
+        .map(apiConverter::toApiKey)
+        .orElseThrow(() -> new WebApplicationException(Response.Status.NOT_FOUND));
+  }
 }

@@ -26,35 +26,35 @@ import javax.inject.Singleton;
 @Singleton
 public class JsonConverter {
 
-    private final ObjectMapper mapper;
+  private final ObjectMapper mapper;
 
-    @Inject
-    public JsonConverter(final ObjectMapper mapper) {
-        this.mapper = mapper;
-    }
+  @Inject
+  public JsonConverter(final ObjectMapper mapper) {
+    this.mapper = mapper;
+  }
 
-    public String toJson(final Object resource) {
-        try {
-            return mapper.writeValueAsString(resource);
-        } catch (JsonProcessingException e) {
-            throw new IllegalArgumentException("Unable to convert resource type:" + resource.getClass(), e);
-        }
+  public String toJson(final Object resource) {
+    try {
+      return mapper.writeValueAsString(resource);
+    } catch (JsonProcessingException e) {
+      throw new IllegalArgumentException("Unable to convert resource type:" + resource.getClass(), e);
     }
+  }
 
-    public <R> R convert(final String json, final Class<R> clazz) {
-        try {
-            return mapper.readValue(json, clazz);
-        } catch (JsonProcessingException e) {
-            throw new IllegalArgumentException("Unable to convert json string to " + clazz, e);
-        }
+  public <R> R convert(final String json, final Class<R> clazz) {
+    try {
+      return mapper.readValue(json, clazz);
+    } catch (JsonProcessingException e) {
+      throw new IllegalArgumentException("Unable to convert json string to " + clazz, e);
     }
+  }
 
-    public <R> R convert(final InputStream inputStream, final Class<R> clazz) {
-        try {
-            return mapper.readValue(inputStream, clazz); // this will close the stream automatically.
-        } catch (IOException e) {
-            throw new IllegalArgumentException("Unable to convert input stream to " + clazz, e);
-        }
+  public <R> R convert(final InputStream inputStream, final Class<R> clazz) {
+    try {
+      return mapper.readValue(inputStream, clazz); // this will close the stream automatically.
+    } catch (IOException e) {
+      throw new IllegalArgumentException("Unable to convert input stream to " + clazz, e);
     }
+  }
 
 }

@@ -26,25 +26,25 @@ import org.junit.jupiter.params.provider.MethodSource;
  * Just want to make sure all the constructors are setup for these exceptions.
  */
 class ExceptionTest {
-    private static final String MESSAGE = "a message";
-    private static final Exception CAUSE = new Exception();
+  private static final String MESSAGE = "a message";
+  private static final Exception CAUSE = new Exception();
 
-    private static Stream<Arguments> runtimeExceptions() {
-        return Stream.of(
-                Arguments.of(DatalayerException.class),
-                Arguments.of(DependencyException.class),
-                Arguments.of(RetryableException.class)
-        );
-    }
+  private static Stream<Arguments> runtimeExceptions() {
+    return Stream.of(
+        Arguments.of(DatalayerException.class),
+        Arguments.of(DependencyException.class),
+        Arguments.of(RetryableException.class)
+    );
+  }
 
-    @ParameterizedTest
-    @MethodSource("runtimeExceptions")
-    public <T extends RuntimeException> void testConstructorsForRuntimeExceptions(final Class<T> clazz)
-            throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        clazz.getConstructor().newInstance();
-        clazz.getConstructor(String.class).newInstance(MESSAGE);
-        clazz.getConstructor(Throwable.class).newInstance(CAUSE);
-        clazz.getConstructor(String.class, Throwable.class).newInstance(MESSAGE, CAUSE);
-    }
+  @ParameterizedTest
+  @MethodSource("runtimeExceptions")
+  public <T extends RuntimeException> void testConstructorsForRuntimeExceptions(final Class<T> clazz)
+      throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    clazz.getConstructor().newInstance();
+    clazz.getConstructor(String.class).newInstance(MESSAGE);
+    clazz.getConstructor(Throwable.class).newInstance(CAUSE);
+    clazz.getConstructor(String.class, Throwable.class).newInstance(MESSAGE, CAUSE);
+  }
 
 }

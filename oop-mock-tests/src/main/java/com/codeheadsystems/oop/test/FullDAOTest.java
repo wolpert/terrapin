@@ -33,63 +33,63 @@ import org.junit.jupiter.api.Test;
 
 public abstract class FullDAOTest {
 
-    protected static final String ID = "id";
+  protected static final String ID = "id";
 
-    protected OopMockClientFactory oopMockClientFactory;
-    protected OopMockFactory oopMockFactory;
-    protected Client client;
-    protected Server server;
+  protected OopMockClientFactory oopMockClientFactory;
+  protected OopMockFactory oopMockFactory;
+  protected Client client;
+  protected Server server;
 
-    /**
-     * The resolver configuration you expect clients to use in their configuration file.
-     */
-    protected abstract ResolverConfiguration resolverConfiguration();
+  /**
+   * The resolver configuration you expect clients to use in their configuration file.
+   */
+  protected abstract ResolverConfiguration resolverConfiguration();
 
-    /**
-     * These are optional dependencies if your resolver dao needs them for construction.
-     * If this is not null/empty, you need to document what is expected here from users,
-     * as this requires coding changes by the users.
-     */
-    protected abstract Map<Class<?>, Object> resolverDeps();
+  /**
+   * These are optional dependencies if your resolver dao needs them for construction.
+   * If this is not null/empty, you need to document what is expected here from users,
+   * as this requires coding changes by the users.
+   */
+  protected abstract Map<Class<?>, Object> resolverDeps();
 
-    @BeforeEach
-    public void setUpOopMock() {
-        final OopMockConfiguration oopMockConfiguration = ImmutableOopMockConfiguration.builder()
-                .enabled(true)
-                .delayResponseEnabled(false)
-                .resolverConfiguration(resolverConfiguration())
-                .build();
-        oopMockClientFactory = DaggerOopMockClientFactoryBuilder.builder()
-                .resolverConfigModule(new ResolverModule.ResolverConfigModule(resolverDeps()))
-                .oopConfigurationModule(new OopConfigurationModule(oopMockConfiguration))
-                .build().factory();
-        oopMockFactory = DaggerOopMockFactoryBuilder.builder()
-                .resolverConfigModule(new ResolverModule.ResolverConfigModule(resolverDeps()))
-                .oopConfigurationModule(new OopConfigurationModule(oopMockConfiguration))
-                .build().factory();
-        server = new Server(oopMockFactory);
-        client = new Client(oopMockClientFactory);
-    }
+  @BeforeEach
+  public void setUpOopMock() {
+    final OopMockConfiguration oopMockConfiguration = ImmutableOopMockConfiguration.builder()
+        .enabled(true)
+        .delayResponseEnabled(false)
+        .resolverConfiguration(resolverConfiguration())
+        .build();
+    oopMockClientFactory = DaggerOopMockClientFactoryBuilder.builder()
+        .resolverConfigModule(new ResolverModule.ResolverConfigModule(resolverDeps()))
+        .oopConfigurationModule(new OopConfigurationModule(oopMockConfiguration))
+        .build().factory();
+    oopMockFactory = DaggerOopMockFactoryBuilder.builder()
+        .resolverConfigModule(new ResolverModule.ResolverConfigModule(resolverDeps()))
+        .oopConfigurationModule(new OopConfigurationModule(oopMockConfiguration))
+        .build().factory();
+    server = new Server(oopMockFactory);
+    client = new Client(oopMockClientFactory);
+  }
 
-    @Test
-    public void callWithoutMock() {
-        assertThat(client.callServerWithoutMock(server, ID))
-                .isNotNull()
-                .isEqualTo(Server.BASE_RESULT);
-    }
+  @Test
+  public void callWithoutMock() {
+    assertThat(client.callServerWithoutMock(server, ID))
+        .isNotNull()
+        .isEqualTo(Server.BASE_RESULT);
+  }
 
-    @Test
-    public void callWithDifferentIdMocked() {
-        assertThat(client.callServerWithMockOnDifferentId(server, ID))
-                .isNotNull()
-                .isEqualTo(Server.BASE_RESULT);
-    }
+  @Test
+  public void callWithDifferentIdMocked() {
+    assertThat(client.callServerWithMockOnDifferentId(server, ID))
+        .isNotNull()
+        .isEqualTo(Server.BASE_RESULT);
+  }
 
-    @Test
-    public void callWithMock() {
-        assertThat(client.callServerMocked(server, ID))
-                .isNotNull()
-                .isEqualTo(Client.MOCKED_DATA);
-    }
+  @Test
+  public void callWithMock() {
+    assertThat(client.callServerMocked(server, ID))
+        .isNotNull()
+        .isEqualTo(Client.MOCKED_DATA);
+  }
 
 }

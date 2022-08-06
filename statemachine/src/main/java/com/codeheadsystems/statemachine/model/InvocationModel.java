@@ -27,56 +27,56 @@ import org.immutables.value.Value;
 @Value.Immutable
 public interface InvocationModel<T> {
 
-    /**
-     * Provides the property name of the object we want to manage.
-     *
-     * @return string.
-     */
-    String propertyName();
+  /**
+   * Provides the property name of the object we want to manage.
+   *
+   * @return string.
+   */
+  String propertyName();
 
-    /**
-     * The class the object is good for.
-     *
-     * @return class.
-     */
-    Class<T> targetClass();
+  /**
+   * The class the object is good for.
+   *
+   * @return class.
+   */
+  Class<T> targetClass();
 
-    /**
-     * A method to get the property from the object.
-     *
-     * @return method.
-     */
-    Method retrieveMethod();
+  /**
+   * A method to get the property from the object.
+   *
+   * @return method.
+   */
+  Method retrieveMethod();
 
-    /**
-     * A method to set the property in the object.
-     *
-     * @return method.
-     */
-    Method updateMethod();
+  /**
+   * A method to set the property in the object.
+   *
+   * @return method.
+   */
+  Method updateMethod();
 
-    /**
-     * The set of pending transition hooks to use.
-     *
-     * @return pending transition hooks.
-     */
-    Set<Hook.PendingTransition> pendingTransitionHooks();
+  /**
+   * The set of pending transition hooks to use.
+   *
+   * @return pending transition hooks.
+   */
+  Set<Hook.PendingTransition> pendingTransitionHooks();
 
-    /**
-     * The set of post transition hooks to use.
-     *
-     * @return post transition hooks.
-     */
-    Set<Hook.PostTransition> postTransitionHooks();
+  /**
+   * The set of post transition hooks to use.
+   *
+   * @return post transition hooks.
+   */
+  Set<Hook.PostTransition> postTransitionHooks();
 
-    @Value.Derived
-    default String retrieveMethodSignature() {
-        return targetClass().getCanonicalName() + "." + retrieveMethod().getName();
-    }
+  @Value.Derived
+  default String retrieveMethodSignature() {
+    return targetClass().getCanonicalName() + "." + retrieveMethod().getName();
+  }
 
-    @Value.Derived
-    default String updateMethodSignature() {
-        return targetClass().getCanonicalName() + "," + updateMethod().getName();
-    }
+  @Value.Derived
+  default String updateMethodSignature() {
+    return targetClass().getCanonicalName() + "," + updateMethod().getName();
+  }
 
 }

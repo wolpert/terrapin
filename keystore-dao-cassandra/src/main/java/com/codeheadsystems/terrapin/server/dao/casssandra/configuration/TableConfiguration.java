@@ -28,22 +28,22 @@ import org.immutables.value.Value;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public interface TableConfiguration {
 
-    @Value.Default
-    @JsonProperty("keyspace")
-    default String keyspace() {
-        return "keystore";
-    }
+  @Value.Default
+  @JsonProperty("keyspace")
+  default String keyspace() {
+    return "keystore";
+  }
 
-    @Value.Default
-    @JsonProperty("hashKey")
-    default String hashKey() {
-        return "hashKey";
-    }
+  @Value.Default
+  @JsonProperty("hashKey")
+  default String hashKey() {
+    return "hashKey";
+  }
 
-    @Value.Default
-    @JsonProperty("rangeKey")
-    default String rangeKey() {
-        return "rangeKey";
-    }
+  @Value.Default
+  @JsonProperty("rangeKey")
+  default String rangeKey() {
+    return "rangeKey";
+  }
 
 }

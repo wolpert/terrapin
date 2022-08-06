@@ -31,31 +31,31 @@ import org.slf4j.LoggerFactory;
  */
 @Singleton
 public class OopMockFactory {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OopMockFactory.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(OopMockFactory.class);
 
-    private final Generator generator;
+  private final Generator generator;
 
-    @Inject
-    public OopMockFactory(final OopMockConfiguration oopMockConfiguration,
-                          final ClassOopMockFactory classOopMockFactory,
-                          final PassThroughOopMock passThroughOopMock) {
-        if (oopMockConfiguration.enabled()) {
-            LOGGER.info("OopMockFactory() -> enabled");
-            final LoadingCache<Class<?>, OopMock> oppMockCache = CacheBuilder.newBuilder()
-                    .build(CacheLoader.from(classOopMockFactory::create));
-            generator = oppMockCache::getUnchecked;
-        } else {
-            LOGGER.info("OopMockFactory() -> disabled");
-            generator = c -> passThroughOopMock;
-        }
+  @Inject
+  public OopMockFactory(final OopMockConfiguration oopMockConfiguration,
+                        final ClassOopMockFactory classOopMockFactory,
+                        final PassThroughOopMock passThroughOopMock) {
+    if (oopMockConfiguration.enabled()) {
+      LOGGER.info("OopMockFactory() -> enabled");
+      final LoadingCache<Class<?>, OopMock> oppMockCache = CacheBuilder.newBuilder()
+          .build(CacheLoader.from(classOopMockFactory::create));
+      generator = oppMockCache::getUnchecked;
+    } else {
+      LOGGER.info("OopMockFactory() -> disabled");
+      generator = c -> passThroughOopMock;
     }
+  }
 
-    public OopMock generate(final Class<?> clazz) {
-        return generator.generate(clazz);
-    }
+  public OopMock generate(final Class<?> clazz) {
+    return generator.generate(clazz);
+  }
 
-    @FunctionalInterface
-    public interface Generator {
-        OopMock generate(final Class<?> clazz);
-    }
+  @FunctionalInterface
+  public interface Generator {
+    OopMock generate(final Class<?> clazz);
+  }
 }

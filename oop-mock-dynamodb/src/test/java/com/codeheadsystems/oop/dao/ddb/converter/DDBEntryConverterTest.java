@@ -32,61 +32,61 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class DDBEntryConverterTest {
 
-    public static final String NAMESPACE = "namespace";
-    public static final String LOOKUP = "lookup";
-    public static final String DISCRIMINATOR = "discriminator";
-    public static final String HASH = "hash";
-    public static final String RANGE = "range";
-    public static final DDBEntry ENTRY_WITHOUT_DATA = new DDBEntry(HASH, RANGE);
-    private static final String JSON = "JSON";
-    public static final DDBEntry ENTRY_WITH_DATA = new DDBEntry(HASH, RANGE, JSON);
+  public static final String NAMESPACE = "namespace";
+  public static final String LOOKUP = "lookup";
+  public static final String DISCRIMINATOR = "discriminator";
+  public static final String HASH = "hash";
+  public static final String RANGE = "range";
+  public static final DDBEntry ENTRY_WITHOUT_DATA = new DDBEntry(HASH, RANGE);
+  private static final String JSON = "JSON";
+  public static final DDBEntry ENTRY_WITH_DATA = new DDBEntry(HASH, RANGE, JSON);
 
-    @Mock private Hasher hasher;
-    @Mock private JsonConverter jsonConverter;
-    @Mock private MockedData mockedData;
+  @Mock private Hasher hasher;
+  @Mock private JsonConverter jsonConverter;
+  @Mock private MockedData mockedData;
 
-    private DDBEntryConverter converter;
+  private DDBEntryConverter converter;
 
-    @BeforeEach
-    void setup() {
-        converter = new DDBEntryConverter(hasher, jsonConverter);
-    }
+  @BeforeEach
+  void setup() {
+    converter = new DDBEntryConverter(hasher, jsonConverter);
+  }
 
-    @Test
-    void convert_withoutMockData() {
-        when(hasher.hash(LOOKUP, DISCRIMINATOR)).thenReturn(RANGE);
+  @Test
+  void convert_withoutMockData() {
+    when(hasher.hash(LOOKUP, DISCRIMINATOR)).thenReturn(RANGE);
 
-        assertThat(converter.convert(NAMESPACE, LOOKUP, DISCRIMINATOR))
-                .isNotNull()
-                .hasFieldOrPropertyWithValue("hash", NAMESPACE)
-                .hasFieldOrPropertyWithValue("range", RANGE)
-                .hasFieldOrPropertyWithValue("mockData", null);
-    }
+    assertThat(converter.convert(NAMESPACE, LOOKUP, DISCRIMINATOR))
+        .isNotNull()
+        .hasFieldOrPropertyWithValue("hash", NAMESPACE)
+        .hasFieldOrPropertyWithValue("range", RANGE)
+        .hasFieldOrPropertyWithValue("mockData", null);
+  }
 
-    @Test
-    void convert_withMockData() {
-        when(hasher.hash(LOOKUP, DISCRIMINATOR)).thenReturn(RANGE);
-        when(jsonConverter.toJson(mockedData)).thenReturn(JSON);
+  @Test
+  void convert_withMockData() {
+    when(hasher.hash(LOOKUP, DISCRIMINATOR)).thenReturn(RANGE);
+    when(jsonConverter.toJson(mockedData)).thenReturn(JSON);
 
-        assertThat(converter.convert(NAMESPACE, LOOKUP, DISCRIMINATOR, mockedData))
-                .isNotNull()
-                .hasFieldOrPropertyWithValue("hash", NAMESPACE)
-                .hasFieldOrPropertyWithValue("range", RANGE)
-                .hasFieldOrPropertyWithValue("mockData", JSON);
-    }
+    assertThat(converter.convert(NAMESPACE, LOOKUP, DISCRIMINATOR, mockedData))
+        .isNotNull()
+        .hasFieldOrPropertyWithValue("hash", NAMESPACE)
+        .hasFieldOrPropertyWithValue("range", RANGE)
+        .hasFieldOrPropertyWithValue("mockData", JSON);
+  }
 
-    @Test
-    void toMockedData_nofield() {
-        assertThat(converter.toMockedData(ENTRY_WITHOUT_DATA))
-                .isEmpty();
-    }
+  @Test
+  void toMockedData_nofield() {
+    assertThat(converter.toMockedData(ENTRY_WITHOUT_DATA))
+        .isEmpty();
+  }
 
-    @Test
-    void toMockedData_withfield() {
-        when(jsonConverter.convert(JSON, MockedData.class)).thenReturn(mockedData);
+  @Test
+  void toMockedData_withfield() {
+    when(jsonConverter.convert(JSON, MockedData.class)).thenReturn(mockedData);
 
-        assertThat(converter.toMockedData(ENTRY_WITH_DATA))
-                .isNotEmpty()
-                .contains(mockedData);
-    }
+    assertThat(converter.toMockedData(ENTRY_WITH_DATA))
+        .isNotEmpty()
+        .contains(mockedData);
+  }
 }

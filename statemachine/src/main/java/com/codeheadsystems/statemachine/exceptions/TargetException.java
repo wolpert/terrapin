@@ -18,11 +18,11 @@ package com.codeheadsystems.statemachine.exceptions;
 
 public class TargetException extends RuntimeException {
 
-    public TargetException(final String message, final Throwable throwable) {
-        super(message, throwable);
-    }
+  public TargetException(final String message, final Throwable throwable) {
+    super(message, throwable);
+  }
 
-    public TargetException(final String message) {
-        super(message);
-    }
+  public TargetException(final String message) {
+    super(message);
+  }
 }

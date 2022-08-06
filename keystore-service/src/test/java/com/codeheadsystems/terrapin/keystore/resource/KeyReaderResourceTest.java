@@ -36,65 +36,65 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 public class KeyReaderResourceTest {
 
-    public static final String OWNER = "fred";
-    public static final String KEY_ID = "somekey";
-    public static final long VERSION = 10L;
+  public static final String OWNER = "fred";
+  public static final String KEY_ID = "somekey";
+  public static final long VERSION = 10L;
 
-    @Mock private ApiConverter apiConverter;
-    @Mock private KeyStoreReaderManager keyStoreReaderManager;
+  @Mock private ApiConverter apiConverter;
+  @Mock private KeyStoreReaderManager keyStoreReaderManager;
 
-    @Mock private Key daoKey;
-    @Mock private KeyIdentifier keyIdentifier;
-    @Mock private KeyVersionIdentifier keyVersionIdentifier;
-    @Mock private com.codeheadsystems.terrapin.keystore.api.Key apiKey;
+  @Mock private Key daoKey;
+  @Mock private KeyIdentifier keyIdentifier;
+  @Mock private KeyVersionIdentifier keyVersionIdentifier;
+  @Mock private com.codeheadsystems.terrapin.keystore.api.Key apiKey;
 
-    private KeyReaderResource resource;
+  private KeyReaderResource resource;
 
-    @BeforeEach
-    void setup() {
-        resource = new KeyReaderResource(apiConverter, keyStoreReaderManager);
-    }
+  @BeforeEach
+  void setup() {
+    resource = new KeyReaderResource(apiConverter, keyStoreReaderManager);
+  }
 
-    @Test
-    void get_ownerKey_found() {
-        when(apiConverter.toDaoKeyIdentifier(OWNER, KEY_ID)).thenReturn(keyIdentifier);
-        when(keyStoreReaderManager.getKey(keyIdentifier)).thenReturn(Optional.of(daoKey));
-        when(apiConverter.toApiKey(daoKey)).thenReturn(apiKey);
+  @Test
+  void get_ownerKey_found() {
+    when(apiConverter.toDaoKeyIdentifier(OWNER, KEY_ID)).thenReturn(keyIdentifier);
+    when(keyStoreReaderManager.getKey(keyIdentifier)).thenReturn(Optional.of(daoKey));
+    when(apiConverter.toApiKey(daoKey)).thenReturn(apiKey);
 
-        assertThat(resource.get(OWNER, KEY_ID))
-                .isNotNull()
-                .isEqualTo(apiKey);
-    }
+    assertThat(resource.get(OWNER, KEY_ID))
+        .isNotNull()
+        .isEqualTo(apiKey);
+  }
 
-    @Test
-    void get_ownerKey_notFound() {
-        when(apiConverter.toDaoKeyIdentifier(OWNER, KEY_ID)).thenReturn(keyIdentifier);
+  @Test
+  void get_ownerKey_notFound() {
+    when(apiConverter.toDaoKeyIdentifier(OWNER, KEY_ID)).thenReturn(keyIdentifier);
 
-        assertThatExceptionOfType(WebApplicationException.class)
-                .isThrownBy(() -> resource.get(OWNER, KEY_ID))
-                .extracting("response")
-                .hasFieldOrPropertyWithValue("status", 404);
-    }
+    assertThatExceptionOfType(WebApplicationException.class)
+        .isThrownBy(() -> resource.get(OWNER, KEY_ID))
+        .extracting("response")
+        .hasFieldOrPropertyWithValue("status", 404);
+  }
 
-    @Test
-    void get_ownerKeyVersion_found() {
-        when(apiConverter.toDaoKeyVersionIdentifier(OWNER, KEY_ID, VERSION)).thenReturn(keyVersionIdentifier);
-        when(keyStoreReaderManager.getKey(keyVersionIdentifier)).thenReturn(Optional.of(daoKey));
-        when(apiConverter.toApiKey(daoKey)).thenReturn(apiKey);
+  @Test
+  void get_ownerKeyVersion_found() {
+    when(apiConverter.toDaoKeyVersionIdentifier(OWNER, KEY_ID, VERSION)).thenReturn(keyVersionIdentifier);
+    when(keyStoreReaderManager.getKey(keyVersionIdentifier)).thenReturn(Optional.of(daoKey));
+    when(apiConverter.toApiKey(daoKey)).thenReturn(apiKey);
 
-        assertThat(resource.get(OWNER, KEY_ID, VERSION))
-                .isNotNull()
-                .isEqualTo(apiKey);
-    }
+    assertThat(resource.get(OWNER, KEY_ID, VERSION))
+        .isNotNull()
+        .isEqualTo(apiKey);
+  }
 
-    @Test
-    void get_ownerKeyVersion_notFound() {
-        when(apiConverter.toDaoKeyVersionIdentifier(OWNER, KEY_ID, VERSION)).thenReturn(keyVersionIdentifier);
+  @Test
+  void get_ownerKeyVersion_notFound() {
+    when(apiConverter.toDaoKeyVersionIdentifier(OWNER, KEY_ID, VERSION)).thenReturn(keyVersionIdentifier);
 
-        assertThatExceptionOfType(WebApplicationException.class)
-                .isThrownBy(() -> resource.get(OWNER, KEY_ID, VERSION))
-                .extracting("response")
-                .hasFieldOrPropertyWithValue("status", 404);
-    }
+    assertThatExceptionOfType(WebApplicationException.class)
+        .isThrownBy(() -> resource.get(OWNER, KEY_ID, VERSION))
+        .extracting("response")
+        .hasFieldOrPropertyWithValue("status", 404);
+  }
 
 }

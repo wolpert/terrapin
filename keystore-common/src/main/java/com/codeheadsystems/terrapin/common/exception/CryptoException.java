@@ -17,23 +17,23 @@
 package com.codeheadsystems.terrapin.common.exception;
 
 public class CryptoException extends Exception {
-    public CryptoException() {
-        super();
-    }
+  public CryptoException() {
+    super();
+  }
 
-    public CryptoException(final String message) {
-        super(message);
-    }
+  public CryptoException(final String message) {
+    super(message);
+  }
 
-    public CryptoException(final String message, final Throwable cause) {
-        super(message, cause);
-    }
+  public CryptoException(final String message, final Throwable cause) {
+    super(message, cause);
+  }
 
-    public CryptoException(final Throwable cause) {
-        super(cause);
-    }
+  public CryptoException(final Throwable cause) {
+    super(cause);
+  }
 
-    protected CryptoException(final String message, final Throwable cause, final boolean enableSuppression, final boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
+  protected CryptoException(final String message, final Throwable cause, final boolean enableSuppression, final boolean writableStackTrace) {
+    super(message, cause, enableSuppression, writableStackTrace);
+  }
 }

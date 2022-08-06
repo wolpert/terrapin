@@ -25,10 +25,10 @@ import javax.inject.Singleton;
 @Module
 public class JsonModule {
 
-    @Provides
-    @Singleton
-    public ObjectMapper objectMapper(final ObjectMapperFactory factory) {
-        return factory.generate();
-    }
+  @Provides
+  @Singleton
+  public ObjectMapper objectMapper(final ObjectMapperFactory factory) {
+    return factory.generate();
+  }
 
 }

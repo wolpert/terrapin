@@ -24,24 +24,24 @@ import org.junit.jupiter.api.Test;
 
 class ResourceLookupManagerTest {
 
-    private ResourceLookupManager manager;
+  private ResourceLookupManager manager;
 
-    @BeforeEach
-    void setup() {
-        manager = new ResourceLookupManager(Optional.empty());
-    }
+  @BeforeEach
+  void setup() {
+    manager = new ResourceLookupManager(Optional.empty());
+  }
 
-    @Test
-    void inputStream() {
-        assertThat(manager.inputStream("logback.xml"))
-                .isNotNull()
-                .isNotEmpty();
-    }
+  @Test
+  void inputStream() {
+    assertThat(manager.inputStream("logback.xml"))
+        .isNotNull()
+        .isNotEmpty();
+  }
 
-    @Test
-    void inputStream_notFound() {
-        assertThat(manager.inputStream("I do not ExIsT"))
-                .isNotNull()
-                .isEmpty();
-    }
+  @Test
+  void inputStream_notFound() {
+    assertThat(manager.inputStream("I do not ExIsT"))
+        .isNotNull()
+        .isEmpty();
+  }
 }

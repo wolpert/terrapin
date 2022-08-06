@@ -28,18 +28,18 @@ import java.util.function.Supplier;
  */
 public interface OopMock {
 
-    /**
-     * This is the main execution method that everything is based on ways to call it.
-     * It will return the results of the supplier unless there is a mock defined in the
-     * framework for the class.
-     *
-     * @param returnClass We use this to cast the result of the mock if we had one.
-     * @param supplier    The method that is being mocked.
-     * @param lookup      Used to lookup the mock result.
-     * @param id          id of the actual request.
-     * @param <R>         Type of result.
-     * @return the result, mocked or supplied.
-     */
-    <R> R proxy(Class<R> returnClass, Supplier<R> supplier, String lookup, String id);
+  /**
+   * This is the main execution method that everything is based on ways to call it.
+   * It will return the results of the supplier unless there is a mock defined in the
+   * framework for the class.
+   *
+   * @param returnClass We use this to cast the result of the mock if we had one.
+   * @param supplier    The method that is being mocked.
+   * @param lookup      Used to lookup the mock result.
+   * @param id          id of the actual request.
+   * @param <R>         Type of result.
+   * @return the result, mocked or supplied.
+   */
+  <R> R proxy(Class<R> returnClass, Supplier<R> supplier, String lookup, String id);
 
 }

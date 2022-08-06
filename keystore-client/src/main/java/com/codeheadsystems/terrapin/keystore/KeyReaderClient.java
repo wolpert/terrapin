@@ -27,26 +27,26 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class KeyReaderClient implements KeyReaderService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(KeyReaderClient.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(KeyReaderClient.class);
 
-    private final MeterRegistry meterRegistry;
-    private final ClientConfiguration configuration;
+  private final MeterRegistry meterRegistry;
+  private final ClientConfiguration configuration;
 
-    @Inject
-    public KeyReaderClient(final MeterRegistry meterRegistry,
-                           final ClientConfiguration configuration) {
-        LOGGER.info("KeyReaderClient({},{})", configuration, meterRegistry);
-        this.meterRegistry = meterRegistry;
-        this.configuration = configuration;
-    }
+  @Inject
+  public KeyReaderClient(final MeterRegistry meterRegistry,
+                         final ClientConfiguration configuration) {
+    LOGGER.info("KeyReaderClient({},{})", configuration, meterRegistry);
+    this.meterRegistry = meterRegistry;
+    this.configuration = configuration;
+  }
 
-    @Override
-    public Key get(final String owner, final String keyId) {
-        return null;
-    }
+  @Override
+  public Key get(final String owner, final String keyId) {
+    return null;
+  }
 
-    @Override
-    public Key get(final String owner, final String keyId, final Long version) {
-        return null;
-    }
+  @Override
+  public Key get(final String owner, final String keyId, final Long version) {
+    return null;
+  }
 }

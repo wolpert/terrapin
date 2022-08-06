@@ -31,41 +31,41 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class OopMockFactoryTest {
 
-    @Mock private OopMockConfiguration oopMockConfiguration;
-    @Mock private ClassOopMockFactory classOopMockFactory;
-    @Mock private PassThroughOopMock passThroughOopMoc;
-    @Mock private ClassOopMock oopMock;
+  @Mock private OopMockConfiguration oopMockConfiguration;
+  @Mock private ClassOopMockFactory classOopMockFactory;
+  @Mock private PassThroughOopMock passThroughOopMoc;
+  @Mock private ClassOopMock oopMock;
 
-    private OopMockFactory oopMockFactory;
+  private OopMockFactory oopMockFactory;
 
-    @Test
-    void generate_disabled() {
-        when(oopMockConfiguration.enabled()).thenReturn(false);
-        oopMockFactory = new OopMockFactory(oopMockConfiguration, classOopMockFactory, passThroughOopMoc);
+  @Test
+  void generate_disabled() {
+    when(oopMockConfiguration.enabled()).thenReturn(false);
+    oopMockFactory = new OopMockFactory(oopMockConfiguration, classOopMockFactory, passThroughOopMoc);
 
-        assertThat(oopMockFactory.generate(Object.class))
-                .isEqualTo(passThroughOopMoc);
-    }
+    assertThat(oopMockFactory.generate(Object.class))
+        .isEqualTo(passThroughOopMoc);
+  }
 
-    @Test
-    void generate_enabled() {
-        when(oopMockConfiguration.enabled()).thenReturn(true);
-        when(classOopMockFactory.create(Object.class)).thenReturn(oopMock);
-        oopMockFactory = new OopMockFactory(oopMockConfiguration, classOopMockFactory, passThroughOopMoc);
+  @Test
+  void generate_enabled() {
+    when(oopMockConfiguration.enabled()).thenReturn(true);
+    when(classOopMockFactory.create(Object.class)).thenReturn(oopMock);
+    oopMockFactory = new OopMockFactory(oopMockConfiguration, classOopMockFactory, passThroughOopMoc);
 
-        assertThat(oopMockFactory.generate(Object.class))
-                .isEqualTo(oopMock);
-    }
+    assertThat(oopMockFactory.generate(Object.class))
+        .isEqualTo(oopMock);
+  }
 
-    @Test
-    void generate_instance() {
-        oopMockFactory = OopMockFactoryBuilder.generate();
+  @Test
+  void generate_instance() {
+    oopMockFactory = OopMockFactoryBuilder.generate();
 
-        final OopMock mock = oopMockFactory.generate(Object.class);
-        assertThat(mock)
-                .isNotNull()
-                .extracting(Object::getClass)
-                .isNotEqualTo(PassThroughOopMock.class)
-                .isEqualTo(ClassOopMock.class);
-    }
+    final OopMock mock = oopMockFactory.generate(Object.class);
+    assertThat(mock)
+        .isNotNull()
+        .extracting(Object::getClass)
+        .isNotEqualTo(PassThroughOopMock.class)
+        .isEqualTo(ClassOopMock.class);
+  }
 }

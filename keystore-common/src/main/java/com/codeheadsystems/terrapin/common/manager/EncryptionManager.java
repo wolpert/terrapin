@@ -36,42 +36,42 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class EncryptionManager {
 
-    public static final String LOADING_CACHE = "LoadingCache";
-    private static final Logger LOGGER = LoggerFactory.getLogger(EncryptionManager.class);
-    private final KeyManager keyManager;
+  public static final String LOADING_CACHE = "LoadingCache";
+  private static final Logger LOGGER = LoggerFactory.getLogger(EncryptionManager.class);
+  private final KeyManager keyManager;
 
-    private final LoadingCache<CryptorType, AEADCipherCryptor<? extends AEADCipher>> cache;
+  private final LoadingCache<CryptorType, AEADCipherCryptor<? extends AEADCipher>> cache;
 
-    @Inject
-    public EncryptionManager(final KeyManager keyManager,
-                             @Named(LOADING_CACHE) final LoadingCache<CryptorType, AEADCipherCryptor<? extends AEADCipher>> cache) {
-        LOGGER.info("EncryptionManager({})", keyManager);
-        this.keyManager = keyManager;
-        this.cache = cache;
+  @Inject
+  public EncryptionManager(final KeyManager keyManager,
+                           @Named(LOADING_CACHE) final LoadingCache<CryptorType, AEADCipherCryptor<? extends AEADCipher>> cache) {
+    LOGGER.info("EncryptionManager({})", keyManager);
+    this.keyManager = keyManager;
+    this.cache = cache;
+  }
+
+  public byte[] keyFor(final CryptorType type) {
+    LOGGER.debug("keyFor({})", type);
+    return keyManager.generate(type);
+  }
+
+  public byte[] encrypt(final CryptorType type, final byte[] key, final byte[] payload) {
+    LOGGER.debug("encrypt({})", type);
+    try {
+      return cache.getUnchecked(type)
+          .encrypt(key, payload, type.getIvLength());
+    } catch (CryptoException e) {
+      throw new IllegalArgumentException(e);
     }
+  }
 
-    public byte[] keyFor(final CryptorType type) {
-        LOGGER.debug("keyFor({})", type);
-        return keyManager.generate(type);
+  public byte[] decrypt(final CryptorType type, final byte[] key, final byte[] payload) {
+    LOGGER.debug("decrypt({})", type);
+    try {
+      return cache.getUnchecked(type)
+          .decrypt(key, payload, type.getIvLength());
+    } catch (CryptoException e) {
+      throw new IllegalArgumentException(e);
     }
-
-    public byte[] encrypt(final CryptorType type, byte[] key, byte[] payload) {
-        LOGGER.debug("encrypt({})", type);
-        try {
-            return cache.getUnchecked(type)
-                    .encrypt(key, payload, type.getIvLength());
-        } catch (CryptoException e) {
-            throw new IllegalArgumentException(e);
-        }
-    }
-
-    public byte[] decrypt(final CryptorType type, byte[] key, byte[] payload) {
-        LOGGER.debug("decrypt({})", type);
-        try {
-            return cache.getUnchecked(type)
-                    .decrypt(key, payload, type.getIvLength());
-        } catch (CryptoException e) {
-            throw new IllegalArgumentException(e);
-        }
-    }
+  }
 }

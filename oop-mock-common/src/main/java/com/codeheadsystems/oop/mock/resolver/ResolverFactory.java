@@ -40,51 +40,51 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class ResolverFactory {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ResolverFactory.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(ResolverFactory.class);
 
-    private final Map<Class<?>, Object> instanceMap;
-    private final String resolverClass;
+  private final Map<Class<?>, Object> instanceMap;
+  private final String resolverClass;
 
-    @Inject
-    public ResolverFactory(@Named(RESOLVER_CLASSNAME) final String resolverClass,
-                           @Named(RESOLVER_MAP) final Map<Class<?>, Object> instanceMap) {
-        LOGGER.info("ResolverFactory({})", resolverClass);
-        this.instanceMap = instanceMap;
-        this.resolverClass = resolverClass;
-    }
+  @Inject
+  public ResolverFactory(@Named(RESOLVER_CLASSNAME) final String resolverClass,
+                         @Named(RESOLVER_MAP) final Map<Class<?>, Object> instanceMap) {
+    LOGGER.info("ResolverFactory({})", resolverClass);
+    this.instanceMap = instanceMap;
+    this.resolverClass = resolverClass;
+  }
 
-    public <T> T build() throws ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        LOGGER.info("build({})", resolverClass);
-        final Class<?> clazz = Class.forName(resolverClass);
-        return buildForClass(clazz);
-    }
+  public <T> T build() throws ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    LOGGER.info("build({})", resolverClass);
+    final Class<?> clazz = Class.forName(resolverClass);
+    return buildForClass(clazz);
+  }
 
-    /**
-     * For now, this uses a recursive pattern to build the main object. Any object can be created, as long as objects it
-     * depends on exists in the map given to us. And that map cannot be named. There must be a better way in dagger to
-     * do this.
-     */
-    private <T> T buildForClass(final Class<?> clazz) throws ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        final Constructor<?> constructor = Arrays.stream(clazz.getConstructors())
-                .filter(c -> c.isAnnotationPresent(Inject.class))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("No constructor with @Inject for " + clazz.getCanonicalName()));
-        final Object[] args = new Object[constructor.getParameterCount()];
-        final Class<?>[] params = constructor.getParameterTypes();
-        LOGGER.debug("param count: " + constructor.getParameterCount());
-        for (int i = 0; i < args.length; i++) {
-            Class<?> param = params[i];
-            args[i] = instanceMap.get(param);
-            LOGGER.debug("   {} -> {}", param, args[i]);
-            if (args[i] == null) {
-                // hail mary...
-                args[i] = buildForClass(param);
-                if (args[i] == null) {
-                    throw new IllegalArgumentException("Missing injected param for class " + resolverClass + " type " + params[i].getName());
-                }
-            }
+  /**
+   * For now, this uses a recursive pattern to build the main object. Any object can be created, as long as objects it
+   * depends on exists in the map given to us. And that map cannot be named. There must be a better way in dagger to
+   * do this.
+   */
+  private <T> T buildForClass(final Class<?> clazz) throws ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    final Constructor<?> constructor = Arrays.stream(clazz.getConstructors())
+        .filter(c -> c.isAnnotationPresent(Inject.class))
+        .findFirst()
+        .orElseThrow(() -> new IllegalArgumentException("No constructor with @Inject for " + clazz.getCanonicalName()));
+    final Object[] args = new Object[constructor.getParameterCount()];
+    final Class<?>[] params = constructor.getParameterTypes();
+    LOGGER.debug("param count: " + constructor.getParameterCount());
+    for (int i = 0; i < args.length; i++) {
+      Class<?> param = params[i];
+      args[i] = instanceMap.get(param);
+      LOGGER.debug("   {} -> {}", param, args[i]);
+      if (args[i] == null) {
+        // hail mary...
+        args[i] = buildForClass(param);
+        if (args[i] == null) {
+          throw new IllegalArgumentException("Missing injected param for class " + resolverClass + " type " + params[i].getName());
         }
-        return (T) constructor.newInstance(args);
+      }
     }
+    return (T) constructor.newInstance(args);
+  }
 
 }

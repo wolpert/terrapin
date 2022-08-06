@@ -31,33 +31,33 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 @Singleton
 public class TokenManager {
 
-    public static final TypeReference<HashMap<String, AttributeValue.Builder>> TYPE_REFERENCE = new TypeReference<>() {
-    };
-    private final DataHelper dataHelper;
-    private final JsonManager mapper;
+  public static final TypeReference<HashMap<String, AttributeValue.Builder>> TYPE_REFERENCE = new TypeReference<>() {
+  };
+  private final DataHelper dataHelper;
+  private final JsonManager mapper;
 
-    @Inject
-    public TokenManager(final DataHelper dataHelper,
-                        final JsonManager mapper) {
-        this.dataHelper = dataHelper;
-        this.mapper = mapper;
-    }
+  @Inject
+  public TokenManager(final DataHelper dataHelper,
+                      final JsonManager mapper) {
+    this.dataHelper = dataHelper;
+    this.mapper = mapper;
+  }
 
-    public Token serialize(final Map<String, AttributeValue> map) {
-        final Map<String, AttributeValue.Builder> serializedMap = map.entrySet().stream()
-                .map(e -> Map.entry(e.getKey(), e.getValue().toBuilder()))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-        final String json = mapper.writeValue(serializedMap);
-        final String base64 = dataHelper.toBase64(json);
-        serializedMap.clear();
-        return ImmutableToken.builder().value(base64).build();
-    }
+  public Token serialize(final Map<String, AttributeValue> map) {
+    final Map<String, AttributeValue.Builder> serializedMap = map.entrySet().stream()
+        .map(e -> Map.entry(e.getKey(), e.getValue().toBuilder()))
+        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    final String json = mapper.writeValue(serializedMap);
+    final String base64 = dataHelper.toBase64(json);
+    serializedMap.clear();
+    return ImmutableToken.builder().value(base64).build();
+  }
 
-    public Map<String, AttributeValue> deserialize(final Token token) {
-        final String json = dataHelper.toStringFromBase64(token.value());
-        return mapper.readValue(json, TYPE_REFERENCE).entrySet().stream()
-                .map(e -> Map.entry(e.getKey(), e.getValue().build()))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-    }
+  public Map<String, AttributeValue> deserialize(final Token token) {
+    final String json = dataHelper.toStringFromBase64(token.value());
+    return mapper.readValue(json, TYPE_REFERENCE).entrySet().stream()
+        .map(e -> Map.entry(e.getKey(), e.getValue().build()))
+        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+  }
 
 }

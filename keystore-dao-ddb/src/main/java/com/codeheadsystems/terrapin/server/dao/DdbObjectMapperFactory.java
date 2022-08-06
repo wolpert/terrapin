@@ -26,23 +26,23 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 @Singleton
 public class DdbObjectMapperFactory {
 
-    private final ObjectMapperFactory factory;
+  private final ObjectMapperFactory factory;
 
-    @Inject
-    public DdbObjectMapperFactory(final ObjectMapperFactory factory) {
-        this.factory = factory;
-    }
+  @Inject
+  public DdbObjectMapperFactory(final ObjectMapperFactory factory) {
+    this.factory = factory;
+  }
 
-    /**
-     * This one handles the AttributeValue, in addition to the regular modules.
-     *
-     * @return an object mapper suitable for us.
-     */
-    public ObjectMapper generate() {
-        final SimpleModule simpleModule = new SimpleModule();
-        simpleModule.addAbstractTypeMapping(AttributeValue.Builder.class, AttributeValue.serializableBuilderClass());
-        return factory.generate()
-                .registerModule(simpleModule);
-    }
+  /**
+   * This one handles the AttributeValue, in addition to the regular modules.
+   *
+   * @return an object mapper suitable for us.
+   */
+  public ObjectMapper generate() {
+    final SimpleModule simpleModule = new SimpleModule();
+    simpleModule.addAbstractTypeMapping(AttributeValue.Builder.class, AttributeValue.serializableBuilderClass());
+    return factory.generate()
+        .registerModule(simpleModule);
+  }
 
 }

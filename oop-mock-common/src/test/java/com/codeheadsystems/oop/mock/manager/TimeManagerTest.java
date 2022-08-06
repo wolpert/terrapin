@@ -23,20 +23,20 @@ import org.junit.jupiter.api.Test;
 
 class TimeManagerTest {
 
-    private TimeManager manager;
+  private TimeManager manager;
 
-    @BeforeEach
-    public void setup() {
-        manager = new TimeManager();
-    }
+  @BeforeEach
+  public void setup() {
+    manager = new TimeManager();
+  }
 
-    @Test
-    void logTimed() {
-        final Boolean result = manager.logTimed(() -> Boolean.TRUE);
+  @Test
+  void logTimed() {
+    final Boolean result = manager.logTimed(() -> Boolean.TRUE);
 
-        assertThat(result)
-                .isNotNull()
-                .isTrue();
+    assertThat(result)
+        .isNotNull()
+        .isTrue();
 
-    }
+  }
 }

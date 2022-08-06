@@ -38,54 +38,54 @@ import javax.inject.Singleton;
 @Module(includes = {CassandraModule.Binder.class, MetricsModule.class})
 public class CassandraModule {
 
-    public static final String CASSANDRA_RETRY = "CASSANDRA_RETRY";
+  public static final String CASSANDRA_RETRY = "CASSANDRA_RETRY";
 
-    private final CqlSession cqlSession;
-    private final TableConfiguration tableConfiguration;
+  private final CqlSession cqlSession;
+  private final TableConfiguration tableConfiguration;
 
-    public CassandraModule(final CqlSession cqlSession) {
-        this(cqlSession, ImmutableTableConfiguration.builder().build());
-    }
+  public CassandraModule(final CqlSession cqlSession) {
+    this(cqlSession, ImmutableTableConfiguration.builder().build());
+  }
 
-    public CassandraModule(final CqlSession cqlSession,
-                           final TableConfiguration tableConfiguration) {
-        this.cqlSession = cqlSession;
-        this.tableConfiguration = tableConfiguration;
-    }
+  public CassandraModule(final CqlSession cqlSession,
+                         final TableConfiguration tableConfiguration) {
+    this.cqlSession = cqlSession;
+    this.tableConfiguration = tableConfiguration;
+  }
 
-    @Provides
-    @Singleton
-    public CqlSession cqlSession() {
-        return cqlSession;
-    }
+  @Provides
+  @Singleton
+  public CqlSession cqlSession() {
+    return cqlSession;
+  }
 
-    @Provides
-    @Singleton
-    public TableConfiguration tableConfiguration() {
-        return tableConfiguration;
-    }
+  @Provides
+  @Singleton
+  public TableConfiguration tableConfiguration() {
+    return tableConfiguration;
+  }
 
-    @Named(CASSANDRA_RETRY)
-    @Provides
-    @Singleton
-    public Retry retry(final Metrics metrics) {
-        final RetryConfig config = RetryConfig.custom()
-                .maxAttempts(3)
-                .retryExceptions(RetryableException.class)
-                .intervalFunction(IntervalFunction.ofExponentialBackoff(100, 2))
-                .failAfterMaxAttempts(true)
-                .build();
-        final RetryRegistry registry = RetryRegistry.of(config);
-        TaggedRetryMetrics.ofRetryRegistry(registry)
-                .bindTo(metrics.registry());
-        return registry.retry(CASSANDRA_RETRY);
-    }
+  @Named(CASSANDRA_RETRY)
+  @Provides
+  @Singleton
+  public Retry retry(final Metrics metrics) {
+    final RetryConfig config = RetryConfig.custom()
+        .maxAttempts(3)
+        .retryExceptions(RetryableException.class)
+        .intervalFunction(IntervalFunction.ofExponentialBackoff(100, 2))
+        .failAfterMaxAttempts(true)
+        .build();
+    final RetryRegistry registry = RetryRegistry.of(config);
+    TaggedRetryMetrics.ofRetryRegistry(registry)
+        .bindTo(metrics.registry());
+    return registry.retry(CASSANDRA_RETRY);
+  }
 
-    @Module
-    public interface Binder {
+  @Module
+  public interface Binder {
 
-        @Binds
-        KeyDAO dao(CassandraKeyDAO dao);
+    @Binds
+    KeyDAO dao(CassandraKeyDAO dao);
 
-    }
+  }
 }

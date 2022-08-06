@@ -28,55 +28,55 @@ import org.immutables.value.Value;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public interface TableConfiguration {
 
-    @Value.Default
-    @JsonProperty("tableName")
-    default String tableName() {
-        return "keyservice";
-    }
+  @Value.Default
+  @JsonProperty("tableName")
+  default String tableName() {
+    return "keyservice";
+  }
 
-    @Value.Default
-    @JsonProperty("hashKey")
-    default String hashKey() {
-        return "hashKey";
-    }
+  @Value.Default
+  @JsonProperty("hashKey")
+  default String hashKey() {
+    return "hashKey";
+  }
 
-    @Value.Default
-    @JsonProperty("rangeKey")
-    default String rangeKey() {
-        return "rangeKey";
-    }
+  @Value.Default
+  @JsonProperty("rangeKey")
+  default String rangeKey() {
+    return "rangeKey";
+  }
 
-    @Value.Default
-    @JsonProperty("ttlKey")
-    default String ttlKey() {
-        return "ttl";
-    }
+  @Value.Default
+  @JsonProperty("ttlKey")
+  default String ttlKey() {
+    return "ttl";
+  }
 
-    /**
-     * The index for all active key versions.
-     */
-    @Value.Default
-    @JsonProperty("activeIndex")
-    default String activeIndex() {
-        return "activeIndex";
-    }
+  /**
+   * The index for all active key versions.
+   */
+  @Value.Default
+  @JsonProperty("activeIndex")
+  default String activeIndex() {
+    return "activeIndex";
+  }
 
-    /**
-     * The index for every key record that is owned.
-     */
-    @Value.Default
-    @JsonProperty("ownerIndex")
-    default String ownerIndex() {
-        return "ownerIndex";
-    }
+  /**
+   * The index for every key record that is owned.
+   */
+  @Value.Default
+  @JsonProperty("ownerIndex")
+  default String ownerIndex() {
+    return "ownerIndex";
+  }
 
-    /**
-     * The index for every owner.
-     */
-    @Value.Default
-    @JsonProperty("ownerSearchIndex")
-    default String ownerSearchIndex() {
-        return "ownerSearchIndex";
-    }
+  /**
+   * The index for every owner.
+   */
+  @Value.Default
+  @JsonProperty("ownerSearchIndex")
+  default String ownerSearchIndex() {
+    return "ownerSearchIndex";
+  }
 
 }

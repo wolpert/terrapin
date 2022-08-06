@@ -31,28 +31,28 @@ import javax.inject.Singleton;
 @Module(includes = {RNGModule.Binder.class})
 public class RNGModule {
 
-    public static final String PROVIDED_RNG = "RNG";
+  public static final String PROVIDED_RNG = "RNG";
 
-    @Provides
-    @Singleton
-    @Named(PROVIDED_RNG)
-    public RNG rng(@Named(Binder.RNG_IMPL) final Optional<RNG> rng) {
-        return rng.orElseGet(this::defaultRNG);
-    }
+  @Provides
+  @Singleton
+  @Named(PROVIDED_RNG)
+  public RNG rng(@Named(Binder.RNG_IMPL) final Optional<RNG> rng) {
+    return rng.orElseGet(this::defaultRNG);
+  }
 
-    public RNG defaultRNG() {
-        final SecureRandom random = new SecureRandom();
-        random.setSeed(System.currentTimeMillis());
-        return random::nextBytes;
-    }
+  public RNG defaultRNG() {
+    final SecureRandom random = new SecureRandom();
+    random.setSeed(System.currentTimeMillis());
+    return random::nextBytes;
+  }
 
-    @Module
-    public interface Binder {
-        String RNG_IMPL = "RNG_IMPL";
+  @Module
+  public interface Binder {
+    String RNG_IMPL = "RNG_IMPL";
 
-        @BindsOptionalOf
-        @Named(RNG_IMPL)
-        RNG rng();
-    }
+    @BindsOptionalOf
+    @Named(RNG_IMPL)
+    RNG rng();
+  }
 
 }

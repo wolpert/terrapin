@@ -41,86 +41,86 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class StateMachineManager {
 
-    private static final Logger log = LoggerFactory.getLogger(StateMachineManager.class);
-    private final StateMachineFactory factory;
-    private final ObjectMapper objectMapper;
+  private static final Logger log = LoggerFactory.getLogger(StateMachineManager.class);
+  private final StateMachineFactory factory;
+  private final ObjectMapper objectMapper;
 
-    @Inject
-    public StateMachineManager(final StateMachineFactory factory,
-                               final ObjectMapper objectMapper) {
-        log.debug("StateMachineManager({},{})", factory, objectMapper);
-        this.objectMapper = objectMapper;
-        this.factory = factory;
-        if (!objectMapper.getRegisteredModuleIds().contains(Jdk8Module.class.getCanonicalName())) {
-            log.warn("Missing Jdk8Module module from object mapper. Likely will have json failures for state machines.");
-        }
+  @Inject
+  public StateMachineManager(final StateMachineFactory factory,
+                             final ObjectMapper objectMapper) {
+    log.debug("StateMachineManager({},{})", factory, objectMapper);
+    this.objectMapper = objectMapper;
+    this.factory = factory;
+    if (!objectMapper.getRegisteredModuleIds().contains(Jdk8Module.class.getCanonicalName())) {
+      log.warn("Missing Jdk8Module module from object mapper. Likely will have json failures for state machines.");
     }
+  }
 
-    public <T> Optional<StateMachine> generateFromAnnotation(final Class<T> targetClass) {
-        final StateMachineTarget target = targetClass.getAnnotation(StateMachineTarget.class);
-        if (target == null) {
-            return Optional.empty();
-        } else {
-            return Optional.of(generate(target.value(), Charset.defaultCharset(), targetClass.getClassLoader()));
-        }
+  public <T> Optional<StateMachine> generateFromAnnotation(final Class<T> targetClass) {
+    final StateMachineTarget target = targetClass.getAnnotation(StateMachineTarget.class);
+    if (target == null) {
+      return Optional.empty();
+    } else {
+      return Optional.of(generate(target.value(), Charset.defaultCharset(), targetClass.getClassLoader()));
     }
+  }
 
-    /**
-     * This will load from the resource if able to.
-     *
-     * @param resource    to use.
-     * @param charset     for decoding.
-     * @param classLoader classloader, since you likely don't want us.
-     * @return a state machine if found.
-     */
-    public StateMachine generate(final String resource, final Charset charset, final ClassLoader classLoader) {
-        log.debug("generate({},{},{})", resource, charset, classLoader);
-        try {
-            return generate(IOUtils.resourceToString(resource, charset, classLoader));
-        } catch (IOException e) {
-            throw new IllegalArgumentException("Unknown resource: " + resource, e);
-        }
+  /**
+   * This will load from the resource if able to.
+   *
+   * @param resource    to use.
+   * @param charset     for decoding.
+   * @param classLoader classloader, since you likely don't want us.
+   * @return a state machine if found.
+   */
+  public StateMachine generate(final String resource, final Charset charset, final ClassLoader classLoader) {
+    log.debug("generate({},{},{})", resource, charset, classLoader);
+    try {
+      return generate(IOUtils.resourceToString(resource, charset, classLoader));
+    } catch (IOException e) {
+      throw new IllegalArgumentException("Unknown resource: " + resource, e);
     }
+  }
 
-    /**
-     * Safe mechanism to handle.
-     * TODO: Update this to limit quantity of data to jackson... DOS possible.
-     *
-     * @param inputStream to read from.
-     * @return state machine.
-     */
-    public StateMachine generate(final InputStream inputStream) {
-        log.debug("generate(inputStream)");
-        return validateAndReId(getStateMachine(inputStream));
-    }
+  /**
+   * Safe mechanism to handle.
+   * TODO: Update this to limit quantity of data to jackson... DOS possible.
+   *
+   * @param inputStream to read from.
+   * @return state machine.
+   */
+  public StateMachine generate(final InputStream inputStream) {
+    log.debug("generate(inputStream)");
+    return validateAndReId(getStateMachine(inputStream));
+  }
 
-    public StateMachine generate(final String json) {
-        log.debug("generate({})", json);
-        return validateAndReId(getStateMachine(json));
-    }
+  public StateMachine generate(final String json) {
+    log.debug("generate({})", json);
+    return validateAndReId(getStateMachine(json));
+  }
 
-    private StateMachine validateAndReId(StateMachine stateMachine) {
-        if (!factory.isValid(stateMachine)) {
-            throw new StateMachineException(stateMachine, "State Machine is not valid:" + stateMachine.toString());
-        }
-        return ImmutableStateMachine.copyOf(stateMachine)
-                .withId(UUID.randomUUID().toString());
+  private StateMachine validateAndReId(StateMachine stateMachine) {
+    if (!factory.isValid(stateMachine)) {
+      throw new StateMachineException(stateMachine, "State Machine is not valid:" + stateMachine.toString());
     }
+    return ImmutableStateMachine.copyOf(stateMachine)
+        .withId(UUID.randomUUID().toString());
+  }
 
-    private StateMachine getStateMachine(final String json) {
-        try {
-            return objectMapper.readValue(json, StateMachine.class);
-        } catch (JsonProcessingException e) {
-            throw new IllegalArgumentException("Bad json for stateMachine", e);
-        }
+  private StateMachine getStateMachine(final String json) {
+    try {
+      return objectMapper.readValue(json, StateMachine.class);
+    } catch (JsonProcessingException e) {
+      throw new IllegalArgumentException("Bad json for stateMachine", e);
     }
+  }
 
-    private StateMachine getStateMachine(final InputStream inputStream) {
-        try {
-            return objectMapper.readValue(inputStream, StateMachine.class);
-        } catch (IOException e) {
-            throw new IllegalArgumentException("Bad json for stateMachine", e);
-        }
+  private StateMachine getStateMachine(final InputStream inputStream) {
+    try {
+      return objectMapper.readValue(inputStream, StateMachine.class);
+    } catch (IOException e) {
+      throw new IllegalArgumentException("Bad json for stateMachine", e);
     }
+  }
 
 }

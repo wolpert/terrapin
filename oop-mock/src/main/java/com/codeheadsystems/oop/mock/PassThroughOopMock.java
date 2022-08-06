@@ -28,18 +28,18 @@ import javax.inject.Singleton;
 @Singleton
 public class PassThroughOopMock implements OopMock {
 
-    @Inject
-    public PassThroughOopMock() {
+  @Inject
+  public PassThroughOopMock() {
 
-    }
+  }
 
-    @Override
-    public <R> R proxy(Class<R> returnClass, Supplier<R> supplier, String lookup, String id) {
-        return supplier.get();
-    }
+  @Override
+  public <R> R proxy(Class<R> returnClass, Supplier<R> supplier, String lookup, String id) {
+    return supplier.get();
+  }
 
-    @Override
-    public String toString() {
-        return "PassThroughOopMock{} (OopMock disabled)";
-    }
+  @Override
+  public String toString() {
+    return "PassThroughOopMock{} (OopMock disabled)";
+  }
 }

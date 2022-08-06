@@ -32,40 +32,40 @@ import org.slf4j.LoggerFactory;
  */
 @Module(includes = MetricsModule.Binder.class)
 public class MetricsModule {
-    public static final String PROVIDED_METER_REGISTRY = "Provided Meter Registry";
-    public static final String METER_REGISTRY = "Meter Registry";
-    private static final Logger LOGGER = LoggerFactory.getLogger(MetricsModule.class);
+  public static final String PROVIDED_METER_REGISTRY = "Provided Meter Registry";
+  public static final String METER_REGISTRY = "Meter Registry";
+  private static final Logger LOGGER = LoggerFactory.getLogger(MetricsModule.class);
 
-    private final MeterRegistry override;
+  private final MeterRegistry override;
 
-    public MetricsModule() {
-        this(null);
+  public MetricsModule() {
+    this(null);
+  }
+
+  public MetricsModule(final MeterRegistry override) {
+    this.override = override;
+  }
+
+  @Provides
+  @Singleton
+  @Named(METER_REGISTRY)
+  public MeterRegistry meterRegistry(@Named(PROVIDED_METER_REGISTRY) Optional<MeterRegistry> optionalMeterRegistry) {
+    LOGGER.info("Provided metric: {}", optionalMeterRegistry.isPresent());
+    if (override != null) {
+      LOGGER.info("Override: {}", override);
+      return override;
+    } else {
+      return optionalMeterRegistry.orElseGet(SimpleMeterRegistry::new);
     }
+  }
 
-    public MetricsModule(final MeterRegistry override) {
-        this.override = override;
-    }
+  @Module
+  public interface Binder {
 
-    @Provides
-    @Singleton
-    @Named(METER_REGISTRY)
-    public MeterRegistry meterRegistry(@Named(PROVIDED_METER_REGISTRY) Optional<MeterRegistry> optionalMeterRegistry) {
-        LOGGER.info("Provided metric: {}", optionalMeterRegistry.isPresent());
-        if (override != null) {
-            LOGGER.info("Override: {}", override);
-            return override;
-        } else {
-            return optionalMeterRegistry.orElseGet(SimpleMeterRegistry::new);
-        }
-    }
+    @Named(PROVIDED_METER_REGISTRY)
+    @BindsOptionalOf
+    MeterRegistry meterRegistry();
 
-    @Module
-    public interface Binder {
-
-        @Named(PROVIDED_METER_REGISTRY)
-        @BindsOptionalOf
-        MeterRegistry meterRegistry();
-
-    }
+  }
 
 }

@@ -32,38 +32,38 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class KeyManagerResource implements KeyManagerService, JettyResource {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(KeyManagerResource.class);
-    private final ApiConverter apiConverter;
-    private final KeyStoreAdminManager keyStoreAdminManager;
+  public static final Logger LOGGER = LoggerFactory.getLogger(KeyManagerResource.class);
+  private final ApiConverter apiConverter;
+  private final KeyStoreAdminManager keyStoreAdminManager;
 
-    @Inject
-    public KeyManagerResource(final ApiConverter apiConverter,
-                              final KeyStoreAdminManager keyStoreAdminManager) {
-        LOGGER.info("KeyManagerResource({},{})", apiConverter, keyStoreAdminManager);
-        this.apiConverter = apiConverter;
-        this.keyStoreAdminManager = keyStoreAdminManager;
-    }
+  @Inject
+  public KeyManagerResource(final ApiConverter apiConverter,
+                            final KeyStoreAdminManager keyStoreAdminManager) {
+    LOGGER.info("KeyManagerResource({},{})", apiConverter, keyStoreAdminManager);
+    this.apiConverter = apiConverter;
+    this.keyStoreAdminManager = keyStoreAdminManager;
+  }
 
-    @Override
-    public Key create(final String owner, final String keyId) {
-        LOGGER.debug("create({},{})", owner, keyId);
-        final KeyIdentifier identifier = apiConverter.toDaoKeyIdentifier(owner, keyId);
-        try {
-            return apiConverter.toApiKey(keyStoreAdminManager.create(identifier));
-        } catch (AlreadyExistsException e) {
-            throw new WebApplicationException("The key already exists", Response.Status.CONFLICT);
-        }
+  @Override
+  public Key create(final String owner, final String keyId) {
+    LOGGER.debug("create({},{})", owner, keyId);
+    final KeyIdentifier identifier = apiConverter.toDaoKeyIdentifier(owner, keyId);
+    try {
+      return apiConverter.toApiKey(keyStoreAdminManager.create(identifier));
+    } catch (AlreadyExistsException e) {
+      throw new WebApplicationException("The key already exists", Response.Status.CONFLICT);
     }
+  }
 
-    @Override
-    public Response delete(final String owner, final String keyId) {
-        LOGGER.debug("delete({},{})", owner, keyId);
-        return null;
-    }
+  @Override
+  public Response delete(final String owner, final String keyId) {
+    LOGGER.debug("delete({},{})", owner, keyId);
+    return null;
+  }
 
-    @Override
-    public Response delete(final String owner, final String keyId, final Long version) {
-        LOGGER.debug("delete({},{},{})", owner, keyId, version);
-        return null;
-    }
+  @Override
+  public Response delete(final String owner, final String keyId, final Long version) {
+    LOGGER.debug("delete({},{},{})", owner, keyId, version);
+    return null;
+  }
 }

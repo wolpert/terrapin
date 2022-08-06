@@ -27,15 +27,15 @@ import dagger.multibindings.IntoSet;
 @Module
 public interface ResourceModule {
 
-    @Binds
-    @IntoSet
-    JettyResource keyManagerResource(KeyManagerResource resource);
+  @Binds
+  @IntoSet
+  JettyResource keyManagerResource(KeyManagerResource resource);
 
-    @Binds
-    @IntoSet
-    JettyResource keyReaderResource(KeyReaderResource resource);
+  @Binds
+  @IntoSet
+  JettyResource keyReaderResource(KeyReaderResource resource);
 
-    @Binds
-    @IntoSet
-    JettyResource keyRotationResource(KeyRotationResource resource);
+  @Binds
+  @IntoSet
+  JettyResource keyRotationResource(KeyRotationResource resource);
 }

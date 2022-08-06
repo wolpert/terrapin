@@ -30,48 +30,48 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class ApiConverter {
 
-    public static final String ACTIVE = "active";
-    public static final String INACTIVE = "inactive";
-    private static final Logger LOGGER = LoggerFactory.getLogger(ApiConverter.class);
+  public static final String ACTIVE = "active";
+  public static final String INACTIVE = "inactive";
+  private static final Logger LOGGER = LoggerFactory.getLogger(ApiConverter.class);
 
-    @Inject
-    public ApiConverter() {
-        LOGGER.info("ApiConverter()");
-    }
+  @Inject
+  public ApiConverter() {
+    LOGGER.info("ApiConverter()");
+  }
 
-    public KeyVersionIdentifier toDaoKeyVersionIdentifier(final String owner,
-                                                          final String keyId,
-                                                          final Long version) {
-        return ImmutableKeyVersionIdentifier.builder()
-                .owner(owner)
-                .key(keyId)
-                .version(version)
-                .build();
-    }
+  public KeyVersionIdentifier toDaoKeyVersionIdentifier(final String owner,
+                                                        final String keyId,
+                                                        final Long version) {
+    return ImmutableKeyVersionIdentifier.builder()
+        .owner(owner)
+        .key(keyId)
+        .version(version)
+        .build();
+  }
 
-    public KeyIdentifier toDaoKeyIdentifier(final String owner,
-                                            final String keyId) {
-        return ImmutableKeyIdentifier.builder()
-                .owner(owner)
-                .key(keyId)
-                .build();
-    }
+  public KeyIdentifier toDaoKeyIdentifier(final String owner,
+                                          final String keyId) {
+    return ImmutableKeyIdentifier.builder()
+        .owner(owner)
+        .key(keyId)
+        .build();
+  }
 
-    /**
-     * The secret stored im the database itself should be encrypted. We do not assume the database encrypts
-     * internally, so it should be field-level encryption.
-     *
-     * @param daoKey
-     * @return
-     */
-    public Key toApiKey(final com.codeheadsystems.terrapin.server.dao.model.Key daoKey) {
-        final KeyVersionIdentifier identifier = daoKey.keyVersionIdentifier();
-        return ImmutableKey.builder()
-                .owner(identifier.owner())
-                .id(identifier.key())
-                .version(identifier.version())
-                .key(daoKey.value())
-                .status(daoKey.active() ? ACTIVE : INACTIVE)
-                .build();
-    }
+  /**
+   * The secret stored im the database itself should be encrypted. We do not assume the database encrypts
+   * internally, so it should be field-level encryption.
+   *
+   * @param daoKey
+   * @return
+   */
+  public Key toApiKey(final com.codeheadsystems.terrapin.server.dao.model.Key daoKey) {
+    final KeyVersionIdentifier identifier = daoKey.keyVersionIdentifier();
+    return ImmutableKey.builder()
+        .owner(identifier.owner())
+        .id(identifier.key())
+        .version(identifier.version())
+        .key(daoKey.value())
+        .status(daoKey.active() ? ACTIVE : INACTIVE)
+        .build();
+  }
 }

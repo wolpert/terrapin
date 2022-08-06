@@ -21,8 +21,8 @@ import com.codeheadsystems.oop.mock.resolver.MockDataResolver;
 
 public interface MockDataDAO extends MockDataResolver {
 
-    void store(String namespace, String lookup, String discriminator, MockedData data);
+  void store(String namespace, String lookup, String discriminator, MockedData data);
 
-    void delete(String namespace, String lookup, String discriminator);
+  void delete(String namespace, String lookup, String discriminator);
 
 }

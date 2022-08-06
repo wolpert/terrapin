@@ -22,8 +22,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.codeheadsystems.terrapin.common.helper.DataHelper;
-import com.codeheadsystems.terrapin.keystore.exception.AlreadyExistsException;
 import com.codeheadsystems.terrapin.common.model.RNG;
+import com.codeheadsystems.terrapin.keystore.exception.AlreadyExistsException;
 import com.codeheadsystems.terrapin.server.dao.KeyDAO;
 import com.codeheadsystems.terrapin.server.dao.model.Key;
 import com.codeheadsystems.terrapin.server.dao.model.KeyIdentifier;
@@ -39,51 +39,51 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class KeyStoreAdminManagerTest {
-    public static final String OWNER = "fred";
-    public static final String KEY_ID = "somekey";
+  public static final String OWNER = "fred";
+  public static final String KEY_ID = "somekey";
 
-    @Mock private KeyDAO keyDAO;
-    @Mock private RNG rng;
+  @Mock private KeyDAO keyDAO;
+  @Mock private RNG rng;
 
-    @Mock private KeyVersionIdentifier keyVersionIdentifier;
-    @Mock private KeyIdentifier keyIdentifier;
-    @Mock private Key key;
-    @Mock private DataHelper dataHelper;
+  @Mock private KeyVersionIdentifier keyVersionIdentifier;
+  @Mock private KeyIdentifier keyIdentifier;
+  @Mock private Key key;
+  @Mock private DataHelper dataHelper;
 
-    @Captor private ArgumentCaptor<byte[]> byteCapture;
+  @Captor private ArgumentCaptor<byte[]> byteCapture;
 
-    private KeyStoreAdminManager manager;
+  private KeyStoreAdminManager manager;
 
-    @BeforeEach
-    public void setup() {
-        manager = new KeyStoreAdminManager(keyDAO, rng, dataHelper);
-    }
+  @BeforeEach
+  public void setup() {
+    manager = new KeyStoreAdminManager(keyDAO, rng, dataHelper);
+  }
 
-    @Test
-    void create_existingKey() {
-        when(keyDAO.load(keyIdentifier)).thenReturn(Optional.of(key));
+  @Test
+  void create_existingKey() {
+    when(keyDAO.load(keyIdentifier)).thenReturn(Optional.of(key));
 
-        assertThatExceptionOfType(AlreadyExistsException.class)
-                .isThrownBy(() -> manager.create(keyIdentifier));
-    }
+    assertThatExceptionOfType(AlreadyExistsException.class)
+        .isThrownBy(() -> manager.create(keyIdentifier));
+  }
 
-    @Test
-    void create_newKey() throws AlreadyExistsException {
-        when(keyDAO.load(keyIdentifier)).thenReturn(Optional.empty());
-        when(keyIdentifier.owner()).thenReturn(OWNER);
-        when(keyIdentifier.key()).thenReturn(KEY_ID);
+  @Test
+  void create_newKey() throws AlreadyExistsException {
+    when(keyDAO.load(keyIdentifier)).thenReturn(Optional.empty());
+    when(keyIdentifier.owner()).thenReturn(OWNER);
+    when(keyIdentifier.key()).thenReturn(KEY_ID);
 
-        final Key result = manager.create(keyIdentifier);
+    final Key result = manager.create(keyIdentifier);
 
-        assertThat(result)
-                .isNotNull()
-                .hasFieldOrPropertyWithValue("active", true)
-                .extracting("keyVersionIdentifier")
-                .hasFieldOrPropertyWithValue("owner", OWNER)
-                .hasFieldOrPropertyWithValue("key", KEY_ID)
-                .hasFieldOrPropertyWithValue("version", 1L);
-        verify(rng).random(byteCapture.capture());
-        verify(dataHelper).clear(byteCapture.capture());
-    }
+    assertThat(result)
+        .isNotNull()
+        .hasFieldOrPropertyWithValue("active", true)
+        .extracting("keyVersionIdentifier")
+        .hasFieldOrPropertyWithValue("owner", OWNER)
+        .hasFieldOrPropertyWithValue("key", KEY_ID)
+        .hasFieldOrPropertyWithValue("version", 1L);
+    verify(rng).random(byteCapture.capture());
+    verify(dataHelper).clear(byteCapture.capture());
+  }
 
 }

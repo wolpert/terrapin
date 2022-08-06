@@ -21,24 +21,24 @@ import java.util.Date;
 
 public class KeyTest extends BaseJacksonTest<Key> {
 
-    @Override
-    protected Class<Key> getBaseClass() {
-        return Key.class;
-    }
+  @Override
+  protected Class<Key> getBaseClass() {
+    return Key.class;
+  }
 
-    @Override
-    protected Key getInstance() {
-        return ImmutableKey.builder()
-                .active(true)
-                .type("a type")
-                .createDate(new Date())
-                .updateDate(new Date())
-                .keyVersionIdentifier(ImmutableKeyVersionIdentifier.builder()
-                        .key("id")
-                        .owner("owner")
-                        .version(2L)
-                        .build())
-                .value((byte) 1, (byte) 2, (byte) 3)
-                .build();
-    }
+  @Override
+  protected Key getInstance() {
+    return ImmutableKey.builder()
+        .active(true)
+        .type("a type")
+        .createDate(new Date())
+        .updateDate(new Date())
+        .keyVersionIdentifier(ImmutableKeyVersionIdentifier.builder()
+            .key("id")
+            .owner("owner")
+            .version(2L)
+            .build())
+        .value((byte) 1, (byte) 2, (byte) 3)
+        .build();
+  }
 }

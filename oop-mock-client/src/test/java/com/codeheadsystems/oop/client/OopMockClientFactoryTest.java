@@ -29,26 +29,26 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class OopMockClientFactoryTest {
 
-    @Mock private OopMockClientAssistedFactory assistedFactory;
-    @Mock private OopMockClient client;
+  @Mock private OopMockClientAssistedFactory assistedFactory;
+  @Mock private OopMockClient client;
 
-    private OopMockClientFactory factory;
+  private OopMockClientFactory factory;
 
-    @BeforeEach
-    void setup() {
-        factory = new OopMockClientFactory(assistedFactory);
-    }
+  @BeforeEach
+  void setup() {
+    factory = new OopMockClientFactory(assistedFactory);
+  }
 
-    @Test
-    void generate() {
-        when(assistedFactory.create(Object.class)).thenReturn(client);
+  @Test
+  void generate() {
+    when(assistedFactory.create(Object.class)).thenReturn(client);
 
-        final OopMockClient client1 = factory.generate(Object.class);
-        final OopMockClient client2 = factory.generate(Object.class);
+    final OopMockClient client1 = factory.generate(Object.class);
+    final OopMockClient client2 = factory.generate(Object.class);
 
-        assertThat(client1)
-                .isNotNull()
-                .isEqualTo(client)
-                .isEqualTo(client2);
-    }
+    assertThat(client1)
+        .isNotNull()
+        .isEqualTo(client)
+        .isEqualTo(client2);
+  }
 }

@@ -26,7 +26,7 @@ import com.codeheadsystems.oop.dao.ddb.converter.DDBEntryConverter;
 import com.codeheadsystems.oop.dao.ddb.model.DDBEntry;
 import com.codeheadsystems.oop.mock.model.MockedData;
 import com.codeheadsystems.test.datastore.DataStore;
-import com.codeheadsystems.test.datastore.DynamoDBExtension;
+import com.codeheadsystems.test.datastore.DynamoDbExtension;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,102 +46,102 @@ import org.mockito.junit.jupiter.MockitoExtension;
  * path for now to get it to work. See DynamoDBExtension for details. (Only needed for
  * intelij, not for gradle on the cmdline.)
  */
-@ExtendWith({MockitoExtension.class, DynamoDBExtension.class})
+@ExtendWith({MockitoExtension.class, DynamoDbExtension.class})
 class MockDataDDBDAOTest {
 
-    public static final String NAMESPACE = "namespace";
-    public static final String LOOKUP = "lookup";
-    public static final String DISCRIMINATOR = "discriminator";
-    public static final String HASH = "a";
-    public static final String RANGE = "b";
-    public static final DDBEntry ENTRY_WITHOUT_DATA = new DDBEntry(HASH, RANGE);
-    public static final String MOCK_DATA = "c";
-    public static final DDBEntry ENTRY_WITH_DATA = new DDBEntry(HASH, RANGE, MOCK_DATA);
-    private MockDataDDBDAO dao;
+  public static final String NAMESPACE = "namespace";
+  public static final String LOOKUP = "lookup";
+  public static final String DISCRIMINATOR = "discriminator";
+  public static final String HASH = "a";
+  public static final String RANGE = "b";
+  public static final DDBEntry ENTRY_WITHOUT_DATA = new DDBEntry(HASH, RANGE);
+  public static final String MOCK_DATA = "c";
+  public static final DDBEntry ENTRY_WITH_DATA = new DDBEntry(HASH, RANGE, MOCK_DATA);
+  private MockDataDDBDAO dao;
 
-    @DataStore private DynamoDBMapper mapper;
-    @DataStore private AmazonDynamoDB amazonDynamoDB;
-    @Mock private MockedData mockedData;
-    @Mock private DDBEntryConverter converter;
-    @Captor private ArgumentCaptor<DDBEntry> ddbEntryCaptor;
+  @DataStore private DynamoDBMapper mapper;
+  @DataStore private AmazonDynamoDB amazonDynamoDB;
+  @Mock private MockedData mockedData;
+  @Mock private DDBEntryConverter converter;
+  @Captor private ArgumentCaptor<DDBEntry> ddbEntryCaptor;
 
-    @BeforeEach
-    void setup() {
-        dao = new MockDataDDBDAO(mapper, converter);
-        amazonDynamoDB.createTable(mapper.generateCreateTableRequest(DDBEntry.class)
-                .withBillingMode(BillingMode.PAY_PER_REQUEST));
-    }
+  @BeforeEach
+  void setup() {
+    dao = new MockDataDDBDAO(mapper, converter);
+    amazonDynamoDB.createTable(mapper.generateCreateTableRequest(DDBEntry.class)
+        .withBillingMode(BillingMode.PAY_PER_REQUEST));
+  }
 
-    @AfterEach
-    void tearDown() {
-        // force the table empty
-        amazonDynamoDB.deleteTable(mapper.generateDeleteTableRequest(DDBEntry.class));
-    }
+  @AfterEach
+  void tearDown() {
+    // force the table empty
+    amazonDynamoDB.deleteTable(mapper.generateDeleteTableRequest(DDBEntry.class));
+  }
 
-    @Test
-    void resolve_doesnotexist() {
-        when(converter.convert(NAMESPACE, LOOKUP, DISCRIMINATOR)).thenReturn(ENTRY_WITHOUT_DATA);
-        assertThat(dao.resolve(NAMESPACE, LOOKUP, DISCRIMINATOR))
-                .isNotNull()
-                .isEmpty();
-    }
+  @Test
+  void resolve_doesnotexist() {
+    when(converter.convert(NAMESPACE, LOOKUP, DISCRIMINATOR)).thenReturn(ENTRY_WITHOUT_DATA);
+    assertThat(dao.resolve(NAMESPACE, LOOKUP, DISCRIMINATOR))
+        .isNotNull()
+        .isEmpty();
+  }
 
-    @Test
-    void resolve_exist() {
-        when(converter.convert(NAMESPACE, LOOKUP, DISCRIMINATOR)).thenReturn(ENTRY_WITHOUT_DATA);
-        when(converter.toMockedData(ddbEntryCaptor.capture())).thenReturn(Optional.of(mockedData));
-        mapper.save(ENTRY_WITH_DATA);
-        assertThat(dao.resolve(NAMESPACE, LOOKUP, DISCRIMINATOR))
-                .isNotNull()
-                .isNotEmpty()
-                .contains(mockedData);
-    }
+  @Test
+  void resolve_exist() {
+    when(converter.convert(NAMESPACE, LOOKUP, DISCRIMINATOR)).thenReturn(ENTRY_WITHOUT_DATA);
+    when(converter.toMockedData(ddbEntryCaptor.capture())).thenReturn(Optional.of(mockedData));
+    mapper.save(ENTRY_WITH_DATA);
+    assertThat(dao.resolve(NAMESPACE, LOOKUP, DISCRIMINATOR))
+        .isNotNull()
+        .isNotEmpty()
+        .contains(mockedData);
+  }
 
-    @Test
-    void resolve_exist_butnomockeddata() {
-        when(converter.convert(NAMESPACE, LOOKUP, DISCRIMINATOR)).thenReturn(ENTRY_WITHOUT_DATA);
-        when(converter.toMockedData(ddbEntryCaptor.capture())).thenReturn(Optional.empty());
-        mapper.save(ENTRY_WITH_DATA);
-        assertThat(dao.resolve(NAMESPACE, LOOKUP, DISCRIMINATOR))
-                .isNotNull()
-                .isEmpty();
-    }
+  @Test
+  void resolve_exist_butnomockeddata() {
+    when(converter.convert(NAMESPACE, LOOKUP, DISCRIMINATOR)).thenReturn(ENTRY_WITHOUT_DATA);
+    when(converter.toMockedData(ddbEntryCaptor.capture())).thenReturn(Optional.empty());
+    mapper.save(ENTRY_WITH_DATA);
+    assertThat(dao.resolve(NAMESPACE, LOOKUP, DISCRIMINATOR))
+        .isNotNull()
+        .isEmpty();
+  }
 
-    @Test
-    void store() {
-        when(converter.convert(NAMESPACE, LOOKUP, DISCRIMINATOR, mockedData))
-                .thenReturn(ENTRY_WITH_DATA);
+  @Test
+  void store() {
+    when(converter.convert(NAMESPACE, LOOKUP, DISCRIMINATOR, mockedData))
+        .thenReturn(ENTRY_WITH_DATA);
 
-        dao.store(NAMESPACE, LOOKUP, DISCRIMINATOR, mockedData);
+    dao.store(NAMESPACE, LOOKUP, DISCRIMINATOR, mockedData);
 
-        assertThat(mapper.load(ENTRY_WITHOUT_DATA))
-                .isNotNull()
-                .hasFieldOrPropertyWithValue("mockData", MOCK_DATA);
-    }
+    assertThat(mapper.load(ENTRY_WITHOUT_DATA))
+        .isNotNull()
+        .hasFieldOrPropertyWithValue("mockData", MOCK_DATA);
+  }
 
-    @Test
-    void delete_exists() {
-        mapper.save(ENTRY_WITH_DATA);
-        assertThat(mapper.load(ENTRY_WITHOUT_DATA))
-                .isNotNull()
-                .hasFieldOrPropertyWithValue("mockData", MOCK_DATA); // verify we got this
-        when(converter.convert(NAMESPACE, LOOKUP, DISCRIMINATOR)).thenReturn(ENTRY_WITHOUT_DATA);
+  @Test
+  void delete_exists() {
+    mapper.save(ENTRY_WITH_DATA);
+    assertThat(mapper.load(ENTRY_WITHOUT_DATA))
+        .isNotNull()
+        .hasFieldOrPropertyWithValue("mockData", MOCK_DATA); // verify we got this
+    when(converter.convert(NAMESPACE, LOOKUP, DISCRIMINATOR)).thenReturn(ENTRY_WITHOUT_DATA);
 
-        dao.delete(NAMESPACE, LOOKUP, DISCRIMINATOR);
-        assertThat(dao.resolve(NAMESPACE, LOOKUP, DISCRIMINATOR))
-                .isNotNull()
-                .isEmpty();
-    }
+    dao.delete(NAMESPACE, LOOKUP, DISCRIMINATOR);
+    assertThat(dao.resolve(NAMESPACE, LOOKUP, DISCRIMINATOR))
+        .isNotNull()
+        .isEmpty();
+  }
 
-    @Test
-    void delete_doesnotexists() {
-        when(converter.convert(NAMESPACE, LOOKUP, DISCRIMINATOR)).thenReturn(ENTRY_WITHOUT_DATA);
+  @Test
+  void delete_doesnotexists() {
+    when(converter.convert(NAMESPACE, LOOKUP, DISCRIMINATOR)).thenReturn(ENTRY_WITHOUT_DATA);
 
-        dao.delete(NAMESPACE, LOOKUP, DISCRIMINATOR);
-        assertThat(dao.resolve(NAMESPACE, LOOKUP, DISCRIMINATOR))
-                .isNotNull()
-                .isEmpty();
-        // really we are asserting there is no exception.
-    }
+    dao.delete(NAMESPACE, LOOKUP, DISCRIMINATOR);
+    assertThat(dao.resolve(NAMESPACE, LOOKUP, DISCRIMINATOR))
+        .isNotNull()
+        .isEmpty();
+    // really we are asserting there is no exception.
+  }
 
 }

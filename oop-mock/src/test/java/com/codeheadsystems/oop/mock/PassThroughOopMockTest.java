@@ -23,26 +23,26 @@ import org.junit.jupiter.api.Test;
 
 class PassThroughOopMockTest {
 
-    private PassThroughOopMock passThroughOopMock;
+  private PassThroughOopMock passThroughOopMock;
 
-    @BeforeEach
-    public void setup() {
-        passThroughOopMock = new PassThroughOopMock();
-    }
+  @BeforeEach
+  public void setup() {
+    passThroughOopMock = new PassThroughOopMock();
+  }
 
-    @Test
-    void proxy() {
-        final String str = "not a test";
-        final String result = passThroughOopMock.proxy(String.class, () -> str, "a", "b");
+  @Test
+  void proxy() {
+    final String str = "not a test";
+    final String result = passThroughOopMock.proxy(String.class, () -> str, "a", "b");
 
-        assertThat(result)
-                .isEqualTo(str);
-    }
+    assertThat(result)
+        .isEqualTo(str);
+  }
 
-    @Test
-    void testToString() {
-        assertThat(passThroughOopMock.toString())
-                .isNotNull()
-                .contains("disabled");
-    }
+  @Test
+  void testToString() {
+    assertThat(passThroughOopMock.toString())
+        .isNotNull()
+        .contains("disabled");
+  }
 }

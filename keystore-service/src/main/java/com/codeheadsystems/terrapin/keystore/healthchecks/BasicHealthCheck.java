@@ -25,16 +25,16 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class BasicHealthCheck extends HealthCheck {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BasicHealthCheck.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(BasicHealthCheck.class);
 
-    @Inject
-    public BasicHealthCheck() {
-        LOGGER.info("BasicHealthCheck()");
-    }
+  @Inject
+  public BasicHealthCheck() {
+    LOGGER.info("BasicHealthCheck()");
+  }
 
-    @Override
-    protected Result check() throws Exception {
-        LOGGER.debug("check()");
-        return Result.healthy();
-    }
+  @Override
+  protected Result check() throws Exception {
+    LOGGER.debug("check()");
+    return Result.healthy();
+  }
 }

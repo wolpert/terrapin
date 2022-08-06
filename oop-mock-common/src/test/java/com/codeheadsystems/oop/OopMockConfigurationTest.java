@@ -23,50 +23,50 @@ import org.junit.jupiter.api.Test;
 
 class OopMockConfigurationTest extends BaseJacksonTest<OopMockConfiguration> {
 
-    public static final String MOCK_DATA_FILE_NAME = "filename";
+  public static final String MOCK_DATA_FILE_NAME = "filename";
 
-    @Override
-    protected Class<OopMockConfiguration> getBaseClass() {
-        return OopMockConfiguration.class;
-    }
+  @Override
+  protected Class<OopMockConfiguration> getBaseClass() {
+    return OopMockConfiguration.class;
+  }
 
-    @Override
-    protected OopMockConfiguration getInstance() {
-        return ImmutableOopMockConfiguration.builder()
-                .mockDataFileName(MOCK_DATA_FILE_NAME)
-                .delayResponseEnabled(true)
-                .maxDelayTimeMS(10000L)
-                .namespace("namespace")
-                .enabled(true)
-                .resolverConfiguration(ImmutableResolverConfiguration.builder()
-                        .addConfigurationLines("config 1")
-                        .resolverClass("clazz")
-                        .build())
-                .build();
-    }
+  @Override
+  protected OopMockConfiguration getInstance() {
+    return ImmutableOopMockConfiguration.builder()
+        .mockDataFileName(MOCK_DATA_FILE_NAME)
+        .delayResponseEnabled(true)
+        .maxDelayTimeMS(10000L)
+        .namespace("namespace")
+        .enabled(true)
+        .resolverConfiguration(ImmutableResolverConfiguration.builder()
+            .addConfigurationLines("config 1")
+            .resolverClass("clazz")
+            .build())
+        .build();
+  }
 
-    @Test
-    void testMockDataFileNamed() {
-        assertThat(getInstance().mockDataFileName())
-                .isNotEmpty()
-                .get().isEqualTo(MOCK_DATA_FILE_NAME);
-        assertThat(ImmutableOopMockConfiguration.builder().build().mockDataFileName())
-                .isEmpty();
-    }
+  @Test
+  void testMockDataFileNamed() {
+    assertThat(getInstance().mockDataFileName())
+        .isNotEmpty()
+        .get().isEqualTo(MOCK_DATA_FILE_NAME);
+    assertThat(ImmutableOopMockConfiguration.builder().build().mockDataFileName())
+        .isEmpty();
+  }
 
-    @Test
-    void testEnabled() {
-        assertThat(getInstance().enabled())
-                .isTrue();
-        assertThat(ImmutableOopMockConfiguration.builder().build().enabled())
-                .isFalse();
-    }
+  @Test
+  void testEnabled() {
+    assertThat(getInstance().enabled())
+        .isTrue();
+    assertThat(ImmutableOopMockConfiguration.builder().build().enabled())
+        .isFalse();
+  }
 
-    @Test
-    void testDelayResponseEnabled() {
-        assertThat(getInstance().delayResponseEnabled())
-                .isTrue();
-        assertThat(ImmutableOopMockConfiguration.builder().build().delayResponseEnabled())
-                .isFalse();
-    }
+  @Test
+  void testDelayResponseEnabled() {
+    assertThat(getInstance().delayResponseEnabled())
+        .isTrue();
+    assertThat(ImmutableOopMockConfiguration.builder().build().delayResponseEnabled())
+        .isFalse();
+  }
 }

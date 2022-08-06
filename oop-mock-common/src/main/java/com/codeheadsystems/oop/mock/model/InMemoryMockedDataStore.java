@@ -28,13 +28,13 @@ import org.immutables.value.Value;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public interface InMemoryMockedDataStore {
 
-    /**
-     * Provides an inmemory datastore of all mocked data. When in use, this should  be loaded up on
-     * boot and used. Note that this is mostly used for testing or writing mocked data. Unless your
-     * needs are small, you likely want a real datastore.
-     *
-     * @return Namespace->discriminator->mocked data map. (discriminator = lookup.id as processed by hasher)
-     */
-    Map<String, Map<String, MockedData>> datastore();
+  /**
+   * Provides an inmemory datastore of all mocked data. When in use, this should  be loaded up on
+   * boot and used. Note that this is mostly used for testing or writing mocked data. Unless your
+   * needs are small, you likely want a real datastore.
+   *
+   * @return Namespace->discriminator->mocked data map. (discriminator = lookup.id as processed by hasher)
+   */
+  Map<String, Map<String, MockedData>> datastore();
 
 }

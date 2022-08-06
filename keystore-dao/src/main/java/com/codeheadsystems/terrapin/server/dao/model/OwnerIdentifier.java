@@ -28,12 +28,12 @@ import org.immutables.value.Value;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public interface OwnerIdentifier {
 
-    /**
-     * The owner of the group.
-     *
-     * @return String
-     */
-    @JsonProperty("owner")
-    String owner();
+  /**
+   * The owner of the group.
+   *
+   * @return String
+   */
+  @JsonProperty("owner")
+  String owner();
 
 }

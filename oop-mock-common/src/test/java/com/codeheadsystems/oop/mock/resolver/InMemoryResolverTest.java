@@ -38,49 +38,49 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class InMemoryResolverTest {
 
-    public static final String NAMESPACE = "namespace";
-    public static final String LOOKUP = "lookup";
-    public static final String DISCRIMINATOR = "discriminator";
-    public static final String MARSHALLED_DATA = "marshaled";
-    private static final String FILENAME = "filename";
-    private static final Hasher HASHER = new Hasher("blah");
-    private static final InMemoryMockedDataStore datastore = ImmutableInMemoryMockedDataStore.builder()
-            .putDatastore(NAMESPACE, ImmutableMap.of(HASHER.hash(LOOKUP, DISCRIMINATOR),
-                    ImmutableMockedData.builder().marshalledData(MARSHALLED_DATA).build()))
-            .build();
+  public static final String NAMESPACE = "namespace";
+  public static final String LOOKUP = "lookup";
+  public static final String DISCRIMINATOR = "discriminator";
+  public static final String MARSHALLED_DATA = "marshaled";
+  private static final String FILENAME = "filename";
+  private static final Hasher HASHER = new Hasher("blah");
+  private static final InMemoryMockedDataStore datastore = ImmutableInMemoryMockedDataStore.builder()
+      .putDatastore(NAMESPACE, ImmutableMap.of(HASHER.hash(LOOKUP, DISCRIMINATOR),
+          ImmutableMockedData.builder().marshalledData(MARSHALLED_DATA).build()))
+      .build();
 
-    @Mock private OopMockConfiguration configuration;
-    @Mock private JsonConverter converter;
-    @Mock private ResourceLookupManager manager;
-    @Mock private InputStream inputStream;
+  @Mock private OopMockConfiguration configuration;
+  @Mock private JsonConverter converter;
+  @Mock private ResourceLookupManager manager;
+  @Mock private InputStream inputStream;
 
-    private InMemoryResolver resolver;
+  private InMemoryResolver resolver;
 
-    @BeforeEach
-    void setUp() {
-        when(configuration.mockDataFileName()).thenReturn(Optional.of(FILENAME));
-        when(manager.inputStream(FILENAME)).thenReturn(Optional.of(inputStream));
-        when(converter.convert(inputStream, InMemoryMockedDataStore.class)).thenReturn(datastore);
-        resolver = new InMemoryResolver(configuration, converter, manager, HASHER);
-    }
+  @BeforeEach
+  void setUp() {
+    when(configuration.mockDataFileName()).thenReturn(Optional.of(FILENAME));
+    when(manager.inputStream(FILENAME)).thenReturn(Optional.of(inputStream));
+    when(converter.convert(inputStream, InMemoryMockedDataStore.class)).thenReturn(datastore);
+    resolver = new InMemoryResolver(configuration, converter, manager, HASHER);
+  }
 
-    @Test
-    void resolve_nonamespace() {
-        assertThat(resolver.resolve(NAMESPACE + "not here", LOOKUP, DISCRIMINATOR))
-                .isEmpty();
-    }
+  @Test
+  void resolve_nonamespace() {
+    assertThat(resolver.resolve(NAMESPACE + "not here", LOOKUP, DISCRIMINATOR))
+        .isEmpty();
+  }
 
-    @Test
-    void resolve_nodiscriminator() {
-        assertThat(resolver.resolve(NAMESPACE, LOOKUP, DISCRIMINATOR + "not here"))
-                .isEmpty();
-    }
+  @Test
+  void resolve_nodiscriminator() {
+    assertThat(resolver.resolve(NAMESPACE, LOOKUP, DISCRIMINATOR + "not here"))
+        .isEmpty();
+  }
 
-    @Test
-    void resolve() {
-        assertThat(resolver.resolve(NAMESPACE, LOOKUP, DISCRIMINATOR))
-                .isNotEmpty()
-                .get()
-                .hasFieldOrPropertyWithValue("marshalledData", MARSHALLED_DATA);
-    }
+  @Test
+  void resolve() {
+    assertThat(resolver.resolve(NAMESPACE, LOOKUP, DISCRIMINATOR))
+        .isNotEmpty()
+        .get()
+        .hasFieldOrPropertyWithValue("marshalledData", MARSHALLED_DATA);
+  }
 }

@@ -24,49 +24,49 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 @DynamoDBTable(tableName = "ATable")
 public class Entry {
 
-    private String hash;
-    private String range;
-    private String attribute;
+  private String hash;
+  private String range;
+  private String attribute;
 
-    public Entry() {
+  public Entry() {
 
-    }
+  }
 
-    public Entry(String hash, String range) {
-        this.hash = hash;
-        this.range = range;
-    }
+  public Entry(String hash, String range) {
+    this.hash = hash;
+    this.range = range;
+  }
 
-    public Entry(String hash, String range, String attr) {
-        this.hash = hash;
-        this.range = range;
-        this.attribute = attr;
-    }
+  public Entry(String hash, String range, String attr) {
+    this.hash = hash;
+    this.range = range;
+    this.attribute = attr;
+  }
 
-    @DynamoDBHashKey(attributeName = "hash")
-    public String getHash() {
-        return hash;
-    }
+  @DynamoDBHashKey(attributeName = "hash")
+  public String getHash() {
+    return hash;
+  }
 
-    public void setHash(final String hash) {
-        this.hash = hash;
-    }
+  public void setHash(final String hash) {
+    this.hash = hash;
+  }
 
-    @DynamoDBRangeKey(attributeName = "range")
-    public String getRange() {
-        return range;
-    }
+  @DynamoDBRangeKey(attributeName = "range")
+  public String getRange() {
+    return range;
+  }
 
-    public void setRange(final String range) {
-        this.range = range;
-    }
+  public void setRange(final String range) {
+    this.range = range;
+  }
 
-    @DynamoDBAttribute(attributeName = "attribute")
-    public String getAttribute() {
-        return attribute;
-    }
+  @DynamoDBAttribute(attributeName = "attribute")
+  public String getAttribute() {
+    return attribute;
+  }
 
-    public void setAttribute(final String attribute) {
-        this.attribute = attribute;
-    }
+  public void setAttribute(final String attribute) {
+    this.attribute = attribute;
+  }
 }

@@ -20,23 +20,23 @@ import com.codeheadsystems.oop.OopMock;
 import com.codeheadsystems.oop.OopMockFactory;
 
 public class Server {
-    public static final String BASE_RESULT = "This is from the server";
-    public static final String LOOKUP = "getBaseResult";
+  public static final String BASE_RESULT = "This is from the server";
+  public static final String LOOKUP = "getBaseResult";
 
-    private final OopMockFactory factory;
+  private final OopMockFactory factory;
 
-    public Server(final OopMockFactory factory) {
-        this.factory = factory;
-    }
+  public Server(final OopMockFactory factory) {
+    this.factory = factory;
+  }
 
 
-    public String getBaseResult(String id) {
-        final OopMock oopMock = factory.generate(Server.class);
-        return oopMock.proxy(String.class, this::getBaseResult, LOOKUP, id);
-    }
+  public String getBaseResult(String id) {
+    final OopMock oopMock = factory.generate(Server.class);
+    return oopMock.proxy(String.class, this::getBaseResult, LOOKUP, id);
+  }
 
-    private String getBaseResult() {
-        return BASE_RESULT;
-    }
+  private String getBaseResult() {
+    return BASE_RESULT;
+  }
 
 }
