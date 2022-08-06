@@ -1,7 +1,4 @@
-# terrapin sub-projects
-
-
-# About Subprojects
+# About the terrapin subprojects
 
 These subprojects were developed to provide specific features that were reusable across software
 within CodeHead Systems. THe original projects and new ones being developed are all open-sourced.
