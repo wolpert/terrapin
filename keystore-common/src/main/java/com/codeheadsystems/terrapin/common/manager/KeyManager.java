@@ -20,18 +20,24 @@ import com.codeheadsystems.terrapin.common.crypt.CryptorType;
 import com.codeheadsystems.terrapin.common.model.RNG;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Singleton
 public class KeyManager {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(KeyManager.class);
 
     private final RNG rng;
 
     @Inject
     public KeyManager(final RNG rng) {
+        LOGGER.info("KeyManager({})", rng);
         this.rng = rng;
     }
 
     public byte[] generate(final CryptorType type) {
+        LOGGER.debug("generate({})", type);
         final byte[] result = new byte[type.getKeyLength() + type.getIvLength()];
         rng.random(result);
         return result;

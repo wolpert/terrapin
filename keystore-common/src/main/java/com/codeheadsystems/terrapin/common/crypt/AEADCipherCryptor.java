@@ -41,14 +41,14 @@ public class AEADCipherCryptor<T extends AEADCipher> implements Cryptor {
 
     @Override
     public byte[] encrypt(final byte[] key, final byte[] payload, int ivLength) throws CryptoException {
-        LOGGER.info("{}: encrypt", algorithm);
+        LOGGER.debug("{}: encrypt", algorithm);
         final T cypher = setupCrypto(key, true, ivLength);
         return executeCrypto(payload, cypher);
     }
 
     @Override
     public byte[] decrypt(final byte[] key, final byte[] payload, int ivLength) throws CryptoException {
-        LOGGER.info("{}: decrypt", algorithm);
+        LOGGER.debug("{}: decrypt", algorithm);
         final T cypher = setupCrypto(key, false, ivLength);
         return executeCrypto(payload, cypher);
     }
@@ -61,10 +61,12 @@ public class AEADCipherCryptor<T extends AEADCipher> implements Cryptor {
     }
 
     private byte[] executeCrypto(final byte[] payload, final T cypher) throws CryptoException {
-        final byte[] result = new byte[cypher.getOutputSize(payload.length)];
-        cypher.processBytes(payload, 0, payload.length, null, 0);
+        final int outputSize = cypher.getOutputSize(payload.length);
+        final byte[] result = new byte[outputSize];
+        int processed = cypher.processBytes(payload, 0, payload.length, result, 0);
         try {
-            cypher.doFinal(result, 0);
+            processed += cypher.doFinal(result, processed);
+            LOGGER.trace("Avail:{} Processed:{} match:{}", outputSize, processed, outputSize == processed);
         } catch (InvalidCipherTextException e) {
             throw new CryptoException(e);
         } finally {

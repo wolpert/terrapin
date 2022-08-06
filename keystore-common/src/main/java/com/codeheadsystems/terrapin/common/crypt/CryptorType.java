@@ -16,30 +16,32 @@
 
 package com.codeheadsystems.terrapin.common.crypt;
 
+import java.util.function.Supplier;
+import org.bouncycastle.crypto.engines.AESEngine;
 import org.bouncycastle.crypto.modes.AEADCipher;
 import org.bouncycastle.crypto.modes.GCMBlockCipher;
 import org.bouncycastle.crypto.modes.GCMSIVBlockCipher;
 
 public enum CryptorType {
-    AES_256_GCM_SIV(GCMSIVBlockCipher.class, 32, 12),
-    AES_128_GCM_SIV(GCMSIVBlockCipher.class, 16, 12),
-    AES_256_GCM(GCMBlockCipher.class, 32, 12),
-    AES_128_GCM(GCMBlockCipher.class, 16, 12);
+    AES_256_GCM_SIV(GCMSIVBlockCipher::new, 32, 12),
+    AES_128_GCM_SIV(GCMSIVBlockCipher::new, 16, 12),
+    AES_256_GCM(() -> new GCMBlockCipher(new AESEngine()), 32, 12),
+    AES_128_GCM(() -> new GCMBlockCipher(new AESEngine()), 16, 12);
 
-    private final Class<? extends AEADCipher> clazz;
+    private final Supplier<? extends AEADCipher> supplier;
     private final int ivLength;
     private final int keyLength;
 
-    CryptorType(final Class<? extends AEADCipher> clazz,
+    CryptorType(final Supplier<? extends AEADCipher> supplier,
                 final int keyLength,
                 final int ivLength) {
-        this.clazz = clazz;
+        this.supplier = supplier;
         this.keyLength = keyLength;
         this.ivLength = ivLength;
     }
 
-    public Class<? extends AEADCipher> getClazz() {
-        return clazz;
+    public Supplier<? extends AEADCipher> getSupplier() {
+        return supplier;
     }
 
     public int getIvLength() {
