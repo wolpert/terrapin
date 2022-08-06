@@ -16,7 +16,7 @@
 
 package com.codeheadsystems.terrapin.keystore.module;
 
-import com.codeheadsystems.terrapin.keystore.model.RNG;
+import com.codeheadsystems.terrapin.common.model.RNG;
 import dagger.BindsOptionalOf;
 import dagger.Module;
 import dagger.Provides;

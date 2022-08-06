@@ -23,7 +23,7 @@ import static org.mockito.Mockito.when;
 
 import com.codeheadsystems.terrapin.common.helper.DataHelper;
 import com.codeheadsystems.terrapin.keystore.exception.AlreadyExistsException;
-import com.codeheadsystems.terrapin.keystore.model.RNG;
+import com.codeheadsystems.terrapin.common.model.RNG;
 import com.codeheadsystems.terrapin.server.dao.KeyDAO;
 import com.codeheadsystems.terrapin.server.dao.model.Key;
 import com.codeheadsystems.terrapin.server.dao.model.KeyIdentifier;

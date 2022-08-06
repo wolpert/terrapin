@@ -20,7 +20,7 @@ import static com.codeheadsystems.terrapin.keystore.module.RNGModule.PROVIDED_RN
 
 import com.codeheadsystems.terrapin.common.helper.DataHelper;
 import com.codeheadsystems.terrapin.keystore.exception.AlreadyExistsException;
-import com.codeheadsystems.terrapin.keystore.model.RNG;
+import com.codeheadsystems.terrapin.common.model.RNG;
 import com.codeheadsystems.terrapin.server.dao.KeyDAO;
 import com.codeheadsystems.terrapin.server.dao.model.ImmutableKey;
 import com.codeheadsystems.terrapin.server.dao.model.ImmutableKeyVersionIdentifier;

@@ -14,16 +14,14 @@
  *    limitations under the License.
  */
 
-package com.codeheadsystems.terrapin.keystore.model;
+package com.codeheadsystems.terrapin.common.crypt;
 
-@FunctionalInterface
-public interface RNG {
+import com.codeheadsystems.terrapin.common.exception.CryptoException;
 
-    /**
-     * Fill the array with random values.
-     *
-     * @param array to fill.
-     */
-    void random(byte[] array);
+public interface Cryptor {
+
+    byte[] encrypt(final byte[] key, final byte[] clear, int ivLength) throws CryptoException;
+
+    byte[] decrypt(final byte[] key, final byte[] payload, int ivLength) throws CryptoException;
 
 }

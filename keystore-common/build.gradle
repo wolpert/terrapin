@@ -25,6 +25,7 @@ dependencies {
     implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonDatabindVersion}"
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:${jacksonVersion}"
     implementation "org.bouncycastle:bcprov-jdk15on:${bouncyVersion}"
+    implementation("com.google.guava:guava:${guavaVersion}")
 
     implementation "com.google.dagger:dagger:${daggerVersion}" // Common files for runtime
     annotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
@@ -39,5 +40,7 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter-engine:${jupiterVersion}"
     testImplementation "org.mockito:mockito-core:${mockitoVersion}"
     testImplementation "org.mockito:mockito-junit-jupiter:${mockitoVersion}"
+    testImplementation("ch.qos.logback:logback-classic:${logbackVersion}")
+    testImplementation("ch.qos.logback:logback-core:${logbackVersion}")
 }
 

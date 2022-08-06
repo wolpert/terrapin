@@ -17,13 +17,9 @@
 package com.codeheadsystems.terrapin.keystore.manager;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.codeheadsystems.terrapin.common.helper.DataHelper;
-import com.codeheadsystems.terrapin.keystore.exception.AlreadyExistsException;
-import com.codeheadsystems.terrapin.keystore.model.RNG;
 import com.codeheadsystems.terrapin.server.dao.KeyDAO;
 import com.codeheadsystems.terrapin.server.dao.model.Key;
 import com.codeheadsystems.terrapin.server.dao.model.KeyIdentifier;

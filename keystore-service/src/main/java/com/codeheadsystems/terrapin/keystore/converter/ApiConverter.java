@@ -57,6 +57,13 @@ public class ApiConverter {
                 .build();
     }
 
+    /**
+     * The secret stored im the database itself should be encrypted. We do not assume the database encrypts
+     * internally, so it should be field-level encryption.
+     *
+     * @param daoKey
+     * @return
+     */
     public Key toApiKey(final com.codeheadsystems.terrapin.server.dao.model.Key daoKey) {
         final KeyVersionIdentifier identifier = daoKey.keyVersionIdentifier();
         return ImmutableKey.builder()
