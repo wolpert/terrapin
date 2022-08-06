@@ -17,10 +17,14 @@
 package com.codeheadsystems.terrapin.common.crypt;
 
 import org.bouncycastle.crypto.modes.AEADCipher;
+import org.bouncycastle.crypto.modes.GCMBlockCipher;
 import org.bouncycastle.crypto.modes.GCMSIVBlockCipher;
 
 public enum CryptorType {
-    AES_256_GCM_SIV(GCMSIVBlockCipher.class, 32, 12);
+    AES_256_GCM_SIV(GCMSIVBlockCipher.class, 32, 12),
+    AES_128_GCM_SIV(GCMSIVBlockCipher.class, 16, 12),
+    AES_256_GCM(GCMBlockCipher.class, 32, 12),
+    AES_128_GCM(GCMBlockCipher.class, 16, 12);
 
     private final Class<? extends AEADCipher> clazz;
     private final int ivLength;

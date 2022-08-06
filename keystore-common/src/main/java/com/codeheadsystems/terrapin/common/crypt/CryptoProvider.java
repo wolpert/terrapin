@@ -26,9 +26,9 @@ import javax.inject.Singleton;
 import org.bouncycastle.crypto.modes.AEADCipher;
 
 @Singleton
-public class CryptoProvider<T extends AEADCipher> {
+public class CryptoProvider {
 
-    private final LoadingCache<Class<T>, AEADCipherCryptor<T>> cache;
+    private final LoadingCache<Class<? extends AEADCipher>, AEADCipherCryptor<? extends AEADCipher>> cache;
     private final ConstructorManager constructorManager;
 
     @Inject
@@ -37,13 +37,13 @@ public class CryptoProvider<T extends AEADCipher> {
         this.cache = CacheBuilder.newBuilder().build(CacheLoader.from(this::from));
     }
 
-    private <T extends AEADCipher> AEADCipherCryptor<T> from(final Class<T> clazz) {
-        final Supplier<T> supplier = constructorManager.defaultConstructor(clazz);
+    private AEADCipherCryptor<? extends AEADCipher> from(final Class<? extends AEADCipher> clazz) {
+        final Supplier<? extends AEADCipher> supplier = constructorManager.defaultConstructor(clazz);
         return new AEADCipherCryptor<>(supplier);
     }
 
     public Cryptor cryptor(final CryptorType type) {
-        return cache.getUnchecked((Class<T>) type.getClazz());
+        return cache.getUnchecked(type.getClazz());
     }
 
 }
