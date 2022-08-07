@@ -21,9 +21,15 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+/**
+ * Builds a standard object mapper across terrapin.
+ */
 @Singleton
 public class ObjectMapperFactory {
 
+  /**
+   * Default constructor.
+   */
   @Inject
   public ObjectMapperFactory() {
 

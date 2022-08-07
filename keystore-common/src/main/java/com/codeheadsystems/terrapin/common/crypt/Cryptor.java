@@ -18,6 +18,9 @@ package com.codeheadsystems.terrapin.common.crypt;
 
 import com.codeheadsystems.terrapin.common.exception.CryptoException;
 
+/**
+ * Standard interface to encrypt/decrypt.
+ */
 public interface Cryptor {
 
   byte[] encrypt(final byte[] key, final byte[] clear, int ivLength) throws CryptoException;

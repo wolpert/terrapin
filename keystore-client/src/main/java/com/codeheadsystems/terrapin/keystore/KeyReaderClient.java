@@ -24,6 +24,9 @@ import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Provides for a key reader.
+ */
 @Singleton
 public class KeyReaderClient implements KeyReaderService {
 
@@ -32,6 +35,12 @@ public class KeyReaderClient implements KeyReaderService {
   private final MeterRegistry meterRegistry;
   private final ClientConfiguration configuration;
 
+  /**
+   * Default constructor.
+   *
+   * @param meterRegistry used for metrics.
+   * @param configuration how we contact the client.
+   */
   @Inject
   public KeyReaderClient(final MeterRegistry meterRegistry,
                          final ClientConfiguration configuration) {

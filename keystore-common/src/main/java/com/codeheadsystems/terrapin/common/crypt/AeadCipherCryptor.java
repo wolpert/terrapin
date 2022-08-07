@@ -26,14 +26,24 @@ import org.bouncycastle.crypto.params.ParametersWithIV;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AEADCipherCryptor<T extends AEADCipher> implements Cryptor {
+/**
+ * Provides a common way to use bouncy castle ciphers.
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(AEADCipherCryptor.class);
+ * @param <T> type of BC cipher we manage in a thread-safe way.
+ */
+public class AeadCipherCryptor<T extends AEADCipher> implements Cryptor {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(AeadCipherCryptor.class);
 
   private final ThreadLocal<T> blockCipherThreadLocal;
   private final String algorithm;
 
-  public AEADCipherCryptor(final Supplier<T> cipherSupplier) {
+  /**
+   * Default constructor.
+   *
+   * @param cipherSupplier the supplier to create the cipher.
+   */
+  public AeadCipherCryptor(final Supplier<T> cipherSupplier) {
     this.blockCipherThreadLocal = ThreadLocal.withInitial(cipherSupplier);
     this.algorithm = blockCipherThreadLocal.get().getAlgorithmName();
     LOGGER.info("AEADCipherCryptor({})", algorithm);
@@ -53,10 +63,10 @@ public class AEADCipherCryptor<T extends AEADCipher> implements Cryptor {
     return executeCrypto(payload, cypher);
   }
 
-  private T setupCrypto(final byte[] key, final boolean pEncrypt, int ivLength) {
+  private T setupCrypto(final byte[] key, final boolean encrypt, int ivLength) {
     final CipherParameters parameters = getParameters(key, ivLength);
     var cypher = blockCipherThreadLocal.get();
-    cypher.init(pEncrypt, parameters);
+    cypher.init(encrypt, parameters);
     return cypher;
   }
 

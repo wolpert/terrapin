@@ -16,7 +16,7 @@
 
 package com.codeheadsystems.terrapin.keystore.module;
 
-import com.codeheadsystems.terrapin.common.model.RNG;
+import com.codeheadsystems.terrapin.common.model.Rng;
 import dagger.BindsOptionalOf;
 import dagger.Module;
 import dagger.Provides;
@@ -36,11 +36,11 @@ public class RNGModule {
   @Provides
   @Singleton
   @Named(PROVIDED_RNG)
-  public RNG rng(@Named(Binder.RNG_IMPL) final Optional<RNG> rng) {
+  public Rng rng(@Named(Binder.RNG_IMPL) final Optional<Rng> rng) {
     return rng.orElseGet(this::defaultRNG);
   }
 
-  public RNG defaultRNG() {
+  public Rng defaultRNG() {
     final SecureRandom random = new SecureRandom();
     random.setSeed(System.currentTimeMillis());
     return random::nextBytes;
@@ -52,7 +52,7 @@ public class RNGModule {
 
     @BindsOptionalOf
     @Named(RNG_IMPL)
-    RNG rng();
+    Rng rng();
   }
 
 }

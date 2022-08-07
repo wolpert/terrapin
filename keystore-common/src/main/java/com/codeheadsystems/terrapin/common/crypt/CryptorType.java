@@ -22,6 +22,9 @@ import org.bouncycastle.crypto.modes.AEADCipher;
 import org.bouncycastle.crypto.modes.GCMBlockCipher;
 import org.bouncycastle.crypto.modes.GCMSIVBlockCipher;
 
+/**
+ * A type of cipher we support.
+ */
 public enum CryptorType {
   AES_256_GCM_SIV(GCMSIVBlockCipher::new, 32, 12),
   AES_128_GCM_SIV(GCMSIVBlockCipher::new, 16, 12),
@@ -32,6 +35,13 @@ public enum CryptorType {
   private final int ivLength;
   private final int keyLength;
 
+  /**
+   * Encapsulates what is n a cipher we need.
+   *
+   * @param supplier the implementation.
+   * @param keyLength the key length for this version.
+   * @param ivLength the iv length for this version.
+   */
   CryptorType(final Supplier<? extends AEADCipher> supplier,
               final int keyLength,
               final int ivLength) {

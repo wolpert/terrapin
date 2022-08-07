@@ -16,6 +16,9 @@
 
 package com.codeheadsystems.terrapin.common.exception;
 
+/**
+ * Gives us details on crypto exceptions.
+ */
 public class CryptoException extends Exception {
   public CryptoException() {
     super();
@@ -33,7 +36,10 @@ public class CryptoException extends Exception {
     super(cause);
   }
 
-  protected CryptoException(final String message, final Throwable cause, final boolean enableSuppression, final boolean writableStackTrace) {
+  protected CryptoException(final String message,
+                            final Throwable cause,
+                            final boolean enableSuppression,
+                            final boolean writableStackTrace) {
     super(message, cause, enableSuppression, writableStackTrace);
   }
 }

@@ -19,7 +19,7 @@ package com.codeheadsystems.terrapin.keystore.manager;
 import static com.codeheadsystems.terrapin.keystore.module.RNGModule.PROVIDED_RNG;
 
 import com.codeheadsystems.terrapin.common.helper.DataHelper;
-import com.codeheadsystems.terrapin.common.model.RNG;
+import com.codeheadsystems.terrapin.common.model.Rng;
 import com.codeheadsystems.terrapin.keystore.exception.AlreadyExistsException;
 import com.codeheadsystems.terrapin.server.dao.KeyDAO;
 import com.codeheadsystems.terrapin.server.dao.model.ImmutableKey;
@@ -41,12 +41,12 @@ public class KeyStoreAdminManager {
   public static final int KEY_SIZE = 32;
   private static final Logger LOGGER = LoggerFactory.getLogger(KeyStoreAdminManager.class);
   private final KeyDAO keyDAO;
-  private final RNG rng;
+  private final Rng rng;
   private final DataHelper dataHelper;
 
   @Inject
   public KeyStoreAdminManager(final KeyDAO keyDAO,
-                              @Named(PROVIDED_RNG) final RNG rng,
+                              @Named(PROVIDED_RNG) final Rng rng,
                               final DataHelper dataHelper) {
     LOGGER.info("KeyManager({},{},{})", keyDAO, rng, dataHelper);
     this.keyDAO = keyDAO;

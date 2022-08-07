@@ -23,12 +23,18 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.bouncycastle.util.encoders.Base64;
 
+/**
+ * Helper for managing strings and data types in terrapin.
+ */
 @Singleton
 public class DataHelper {
 
   private static final Charset CHARSET = StandardCharsets.UTF_16;
   private static final byte CLEAR_BYTE = (byte) 0;
 
+  /**
+   * Default constructor.
+   */
   @Inject
   public DataHelper() {
 

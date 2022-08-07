@@ -25,15 +25,15 @@ import org.bouncycastle.crypto.modes.GCMSIVBlockCipher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class AEADCipherCryptorTest {
+class AeadCipherCryptorTest {
 
   private Random random;
-  private AEADCipherCryptor<GCMSIVBlockCipher> cryptor;
+  private AeadCipherCryptor<GCMSIVBlockCipher> cryptor;
 
   @BeforeEach
   void setup() {
     random = new Random();
-    cryptor = new AEADCipherCryptor<>(GCMSIVBlockCipher::new);
+    cryptor = new AeadCipherCryptor<>(GCMSIVBlockCipher::new);
   }
 
   @Test

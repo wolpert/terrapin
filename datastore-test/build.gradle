@@ -19,6 +19,10 @@ configurations {
     dynamodb
 }
 
+checkstyle {
+    ignoreFailures = false
+    maxWarnings = 0
+}
 //jacocoTestReport.finalizedBy jacocoTestCoverageVerification
 
 

@@ -16,8 +16,11 @@
 
 package com.codeheadsystems.terrapin.common.model;
 
+/**
+ * Common random number pattern we use.
+ */
 @FunctionalInterface
-public interface RNG {
+public interface Rng {
 
   /**
    * Fill the array with random values.

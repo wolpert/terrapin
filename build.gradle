@@ -57,6 +57,9 @@ allprojects {
         useJUnitPlatform() // needed for junit5
         finalizedBy jacocoTestReport
     }
+    checkstyleTest { // ignore checkstyle in tests
+        ignoreFailures true
+    }
     jacocoTestReport {
         dependsOn test
         reports {

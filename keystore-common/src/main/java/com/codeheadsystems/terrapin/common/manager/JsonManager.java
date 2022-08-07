@@ -24,6 +24,9 @@ import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Wraps checked exceptions with the object mapper.
+ */
 @Singleton
 public class JsonManager {
 
@@ -31,10 +34,20 @@ public class JsonManager {
 
   private final ObjectMapper objectMapper;
 
+  /**
+   * Default constructor.
+   *
+   * @param objectMapper we are wrapping.
+   */
   @Inject
   public JsonManager(final ObjectMapper objectMapper) {
     LOGGER.info("JsonManager({})", objectMapper);
     this.objectMapper = objectMapper;
+  }
+
+
+  public ObjectMapper objectMapper() {
+    return objectMapper;
   }
 
   /**
@@ -55,10 +68,6 @@ public class JsonManager {
     }
   }
 
-  public ObjectMapper objectMapper() {
-    return objectMapper;
-  }
-
   /**
    * Wrapper so no one has to catch the JSON processing exception. Safe logging, only logs the class, not the json.
    *
@@ -77,6 +86,14 @@ public class JsonManager {
     }
   }
 
+  /**
+   * Writes the value to json.
+   *
+   * @param object the value to read
+   * @param <T> the type of object it is.
+   *
+   * @return json.
+   */
   public <T> String writeValue(final T object) {
     LOGGER.debug("writeValue(json,{})", object.getClass());
     try {

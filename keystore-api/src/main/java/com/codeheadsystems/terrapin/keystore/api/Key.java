@@ -22,6 +22,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.immutables.value.Value;
 
+/**
+ * Key as seen by the client.
+ */
 @Value.Immutable
 @JsonSerialize(as = ImmutableKey.class)
 @JsonDeserialize(builder = ImmutableKey.Builder.class)

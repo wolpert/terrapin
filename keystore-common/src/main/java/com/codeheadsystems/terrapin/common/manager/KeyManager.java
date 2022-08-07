@@ -17,25 +17,39 @@
 package com.codeheadsystems.terrapin.common.manager;
 
 import com.codeheadsystems.terrapin.common.crypt.CryptorType;
-import com.codeheadsystems.terrapin.common.model.RNG;
+import com.codeheadsystems.terrapin.common.model.Rng;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Manages keys generation. Can be used server side or client.
+ */
 @Singleton
 public class KeyManager {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(KeyManager.class);
 
-  private final RNG rng;
+  private final Rng rng;
 
+  /**
+   * Default constructor.
+   *
+   * @param rng for creating keys.
+   */
   @Inject
-  public KeyManager(final RNG rng) {
+  public KeyManager(final Rng rng) {
     LOGGER.info("KeyManager({})", rng);
     this.rng = rng;
   }
 
+  /**
+   * Generates a key for this type.
+   *
+   * @param type of cipher we want to use.
+   * @return bytes which is a newly generated key.
+   */
   public byte[] generate(final CryptorType type) {
     LOGGER.debug("generate({})", type);
     final byte[] result = new byte[type.getKeyLength() + type.getIvLength()];

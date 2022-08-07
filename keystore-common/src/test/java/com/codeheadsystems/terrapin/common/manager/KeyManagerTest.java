@@ -19,7 +19,7 @@ package com.codeheadsystems.terrapin.common.manager;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.codeheadsystems.terrapin.common.crypt.CryptorType;
-import com.codeheadsystems.terrapin.common.model.RNG;
+import com.codeheadsystems.terrapin.common.model.Rng;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.stream.Stream;
@@ -31,7 +31,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 class KeyManagerTest {
 
   private Random random;
-  private RNG rng;
+  private Rng rng;
   private KeyManager keyManager;
 
   public static Stream<Arguments> cryptoTypes() {

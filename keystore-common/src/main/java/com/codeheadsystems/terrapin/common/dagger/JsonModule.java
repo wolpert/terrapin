@@ -22,6 +22,9 @@ import dagger.Module;
 import dagger.Provides;
 import javax.inject.Singleton;
 
+/**
+ * Provides modules needed for JSON support.
+ */
 @Module
 public class JsonModule {
 

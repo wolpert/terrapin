@@ -18,27 +18,49 @@ package com.codeheadsystems.terrapin.common.dagger;
 
 import static com.codeheadsystems.terrapin.common.manager.EncryptionManager.LOADING_CACHE;
 
-import com.codeheadsystems.terrapin.common.crypt.AEADCipherCryptor;
+import com.codeheadsystems.terrapin.common.crypt.AeadCipherCryptor;
+import com.codeheadsystems.terrapin.common.crypt.Cryptor;
 import com.codeheadsystems.terrapin.common.crypt.CryptorType;
+import com.codeheadsystems.terrapin.common.model.Rng;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import dagger.Module;
 import dagger.Provides;
+import java.security.SecureRandom;
 import javax.inject.Named;
 import javax.inject.Singleton;
-import org.bouncycastle.crypto.modes.AEADCipher;
 
+/**
+ * Provides components needed for encryption.
+ */
 @Module
 public class EncryptionModule {
 
+  /**
+   * Provides a loading cache of cryptors we can use.
+   *
+   * @return the loading cache.
+   */
   @Provides
   @Singleton
   @Named(LOADING_CACHE)
-  public LoadingCache<CryptorType, AEADCipherCryptor<? extends AEADCipher>> cache() {
+  public LoadingCache<CryptorType, Cryptor> cache() {
     // Note, we really want a thread with each supplier, not type. But this works anyways.
     // The memory hit isn't high.
-    return CacheBuilder.newBuilder().build(CacheLoader.from(type -> new AEADCipherCryptor<>(type.getSupplier())));
+    return CacheBuilder.newBuilder().build(CacheLoader.from(type -> new AeadCipherCryptor<>(type.getSupplier())));
+  }
+
+  /**
+   * Gives us access to the RNG that is secure here.
+   *
+   * @return the rng.
+   */
+  @Provides
+  @Singleton
+  public Rng rng() {
+    final SecureRandom random = new SecureRandom();
+    return random::nextBytes;
   }
 
 }

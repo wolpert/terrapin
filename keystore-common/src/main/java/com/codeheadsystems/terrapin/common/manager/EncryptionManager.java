@@ -16,14 +16,13 @@
 
 package com.codeheadsystems.terrapin.common.manager;
 
-import com.codeheadsystems.terrapin.common.crypt.AEADCipherCryptor;
+import com.codeheadsystems.terrapin.common.crypt.Cryptor;
 import com.codeheadsystems.terrapin.common.crypt.CryptorType;
 import com.codeheadsystems.terrapin.common.exception.CryptoException;
 import com.google.common.cache.LoadingCache;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
-import org.bouncycastle.crypto.modes.AEADCipher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,11 +39,17 @@ public class EncryptionManager {
   private static final Logger LOGGER = LoggerFactory.getLogger(EncryptionManager.class);
   private final KeyManager keyManager;
 
-  private final LoadingCache<CryptorType, AEADCipherCryptor<? extends AEADCipher>> cache;
+  private final LoadingCache<CryptorType, Cryptor> cache;
 
+  /**
+   * Default constructor.
+   *
+   * @param keyManager key manager for creating keys.
+   * @param cache the cache for the ciphers.
+   */
   @Inject
   public EncryptionManager(final KeyManager keyManager,
-                           @Named(LOADING_CACHE) final LoadingCache<CryptorType, AEADCipherCryptor<? extends AEADCipher>> cache) {
+                           @Named(LOADING_CACHE) final LoadingCache<CryptorType, Cryptor> cache) {
     LOGGER.info("EncryptionManager({})", keyManager);
     this.keyManager = keyManager;
     this.cache = cache;
@@ -55,6 +60,15 @@ public class EncryptionManager {
     return keyManager.generate(type);
   }
 
+  /**
+   * Encrypts for the given cipher.
+   *
+   * @param type of cipher to use.
+   * @param key to encrypt the data.
+   * @param payload the payload to encrypt.
+   *
+   * @return encrypted payload.
+   */
   public byte[] encrypt(final CryptorType type, final byte[] key, final byte[] payload) {
     LOGGER.debug("encrypt({})", type);
     try {
@@ -65,6 +79,16 @@ public class EncryptionManager {
     }
   }
 
+
+  /**
+   * Decrypts for the given cipher.
+   *
+   * @param type of cipher to use.
+   * @param key to decrypt the data.
+   * @param payload the payload to decrypt.
+   *
+   * @return decrypted payload..
+   */
   public byte[] decrypt(final CryptorType type, final byte[] key, final byte[] payload) {
     LOGGER.debug("decrypt({})", type);
     try {

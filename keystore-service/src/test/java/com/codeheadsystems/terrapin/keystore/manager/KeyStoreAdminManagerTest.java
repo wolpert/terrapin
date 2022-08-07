@@ -22,7 +22,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.codeheadsystems.terrapin.common.helper.DataHelper;
-import com.codeheadsystems.terrapin.common.model.RNG;
+import com.codeheadsystems.terrapin.common.model.Rng;
 import com.codeheadsystems.terrapin.keystore.exception.AlreadyExistsException;
 import com.codeheadsystems.terrapin.server.dao.KeyDAO;
 import com.codeheadsystems.terrapin.server.dao.model.Key;
@@ -43,7 +43,7 @@ class KeyStoreAdminManagerTest {
   public static final String KEY_ID = "somekey";
 
   @Mock private KeyDAO keyDAO;
-  @Mock private RNG rng;
+  @Mock private Rng rng;
 
   @Mock private KeyVersionIdentifier keyVersionIdentifier;
   @Mock private KeyIdentifier keyIdentifier;

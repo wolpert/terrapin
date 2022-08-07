@@ -19,9 +19,10 @@ package com.codeheadsystems.terrapin.common.manager;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-import com.codeheadsystems.terrapin.common.crypt.AEADCipherCryptor;
+import com.codeheadsystems.terrapin.common.crypt.AeadCipherCryptor;
+import com.codeheadsystems.terrapin.common.crypt.Cryptor;
 import com.codeheadsystems.terrapin.common.crypt.CryptorType;
-import com.codeheadsystems.terrapin.common.model.RNG;
+import com.codeheadsystems.terrapin.common.model.Rng;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -39,10 +40,10 @@ import org.junit.jupiter.params.provider.MethodSource;
 class EncryptionManagerTest {
 
   private Random random = new Random();
-  private RNG rng = random::nextBytes;
+  private Rng rng = random::nextBytes;
   private KeyManager keyManager = new KeyManager(rng);
-  private LoadingCache<CryptorType, AEADCipherCryptor<? extends AEADCipher>> cache =
-      CacheBuilder.newBuilder().build(CacheLoader.from(type -> new AEADCipherCryptor<>(type.getSupplier())));
+  private LoadingCache<CryptorType, Cryptor> cache =
+      CacheBuilder.newBuilder().build(CacheLoader.from(type -> new AeadCipherCryptor<>(type.getSupplier())));
 
   private EncryptionManager encryptionManager;
 

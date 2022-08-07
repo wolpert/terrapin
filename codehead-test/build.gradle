@@ -18,6 +18,10 @@ configurations {
 
 jacocoTestReport.finalizedBy jacocoTestCoverageVerification
 
+checkstyle {
+    ignoreFailures = false
+    maxWarnings = 0
+}
 dependencies {
     implementation("com.google.guava:guava:${guavaVersion}")
     implementation("com.fasterxml.jackson.core:jackson-core:${jacksonVersion}")
