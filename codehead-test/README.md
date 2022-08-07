@@ -2,11 +2,13 @@
 
 ## Immutable/Jackson JSON tests
 
-Tests the ability for your **Immutables** objects to be JSON friendly. Validates you have all the jackson
-annotations setup correctly. It can handle complex structures as well as simple ones. Allows for custom
-ObjectMapper to be used for the tests as well. See the state machine project for usage examples.
+Tests the ability for your **Immutables** objects to be JSON friendly. Validates
+you have all the jackson annotations setup correctly. It can handle complex
+structures as well as simple ones. Allows for custom ObjectMapper to be used for
+the tests as well. See the state machine project for usage examples.
 
-I've seen variations of this from different places and made my own version that uses junit5 and assertJ.
+I've seen variations of this from different places and made my own version that
+uses junit5 and assertJ.
 
 ## Release
 

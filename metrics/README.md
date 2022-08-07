@@ -1,7 +1,7 @@
 # Metrics
 
-Provide a wrapper around metric implementations so we can switch depending on our
-running environment.
+Provide a wrapper around metric implementations so we can switch depending on
+our running environment.
 
 # Usage
 
@@ -17,7 +17,8 @@ threadLocalMetricsFactory.with(() -> {
 
 ```
 
-The project is setup to use Dagger by default, but you can easily use guice, spring, etc.
+The project is setup to use Dagger by default, but you can easily use guice,
+spring, etc.
 
 # Design
 
