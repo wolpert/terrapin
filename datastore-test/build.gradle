@@ -83,4 +83,6 @@ dependencies {
     implementation "com.datastax.oss:java-driver-query-builder:${cassandraDriverVersion}"
     implementation "com.datastax.oss:java-driver-mapper-runtime:${cassandraDriverVersion}"
     implementation "org.cassandraunit:cassandra-unit:${cassandraUnitVersion}"
+    implementation "org.testcontainers:testcontainers:${testContainerVersion}"
+    implementation "org.testcontainers:cassandra:${testContainerVersion}"
 }

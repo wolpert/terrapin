@@ -17,10 +17,11 @@
 package com.codeheadsystems.test.datastore;
 
 import com.datastax.oss.driver.api.core.CqlSession;
+import java.net.InetSocketAddress;
+import java.util.ArrayList;
 import java.util.Arrays;
 import org.cassandraunit.CQLDataLoader;
 import org.cassandraunit.dataset.cql.ClassPathCQLDataSet;
-import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -29,6 +30,7 @@ import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testcontainers.containers.CassandraContainer;
 
 /**
  * Sets up the cassandra instance.
@@ -40,6 +42,9 @@ public class CassandraExtension
   private static final Logger LOGGER = LoggerFactory.getLogger(CassandraExtension.class);
 
   private static final Class<?> SESSION = CqlSession.class;
+  private final ArrayList<String> keyspaces = new ArrayList<>();
+  private CassandraContainer<?> cassandraContainer;
+  private long startTime;
 
   @Override
   protected Class<?> namespaceClass() {
@@ -47,21 +52,44 @@ public class CassandraExtension
   }
 
   @Override
+  public void beforeAll(final ExtensionContext context) throws Exception {
+    LOGGER.info("Setting in memory Cassandra instance");
+    startTime = System.currentTimeMillis();
+    cassandraContainer = new CassandraContainer<>("cassandra:4.0.5");
+    cassandraContainer.start();
+    final CqlSession session = CqlSession
+        .builder()
+        .addContactPoint(
+            new InetSocketAddress(
+                cassandraContainer.getHost(),
+                cassandraContainer.getMappedPort(CassandraContainer.CQL_PORT)))
+        .withLocalDatacenter("datacenter1")
+        .build();
+    withStore(context, s -> {
+      s.put(SESSION, session);
+    });
+    LOGGER.info("Embedded cassandra setup");
+  }
+
+  @Override
   public void afterAll(final ExtensionContext context) {
     LOGGER.info("Tearing down in memory DynamoDB local instance");
     withStore(context, s -> {
-      s.remove(SESSION, CqlSession.class);
+      try (CqlSession session = s.remove(SESSION, CqlSession.class)) {
+        keyspaces.forEach(keyspace -> session.execute("DROP KEYSPACE IF EXISTS " + keyspace));
+      } catch (RuntimeException re) {
+        re.printStackTrace();
+      }
+      cassandraContainer.stop();
     });
-    try {
-      EmbeddedCassandraServerHelper.cleanEmbeddedCassandra();
-    } catch (Throwable t) {
-      t.printStackTrace();
-    }
+    cassandraContainer = null;
+    LOGGER.info("Total time(ms): {} for {}", System.currentTimeMillis() - startTime, context.getDisplayName());
   }
 
   @Override
   public void beforeEach(final ExtensionContext context) {
     super.beforeEach(context);
+    LOGGER.info("start beforeEach:{}", context.getDisplayName());
     withStore(context, store -> {
       context.getRequiredTestInstances().getAllInstances().forEach(o -> {
         Arrays.stream(o.getClass().getDeclaredFields())
@@ -70,10 +98,10 @@ public class CassandraExtension
               enableSettingTheField(field);
               try {
                 final String keyspace = field.get(o).toString();
-                if (store.get(keyspace) == null) {
-                  store.put(keyspace, keyspace);
+                if (!keyspaces.contains(keyspace)) {
                   new CQLDataLoader(store.get(SESSION, CqlSession.class))
                       .load(new ClassPathCQLDataSet(keyspace + ".cql", keyspace));
+                  keyspaces.add(keyspace);
                 }
               } catch (Throwable e) {
                 e.printStackTrace();
@@ -81,17 +109,7 @@ public class CassandraExtension
             });
       });
     });
-  }
-
-  @Override
-  public void beforeAll(final ExtensionContext context) throws Exception {
-    LOGGER.info("Setting in memory Cassandra instance");
-
-    EmbeddedCassandraServerHelper.startEmbeddedCassandra();
-    final CqlSession session = EmbeddedCassandraServerHelper.getSession();
-    withStore(context, s -> {
-      s.put(SESSION, session);
-    });
+    LOGGER.info("end beforeEach:{}", context.getDisplayName());
   }
 
   @Override

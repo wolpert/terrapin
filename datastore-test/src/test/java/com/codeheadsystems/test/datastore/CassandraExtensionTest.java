@@ -19,6 +19,7 @@ package com.codeheadsystems.test.datastore;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -32,6 +33,13 @@ public class CassandraExtensionTest {
   public void validateSession() {
     assertThat(session)
         .isNotNull();
+  }
+
+  @Test
+  public void readFromTable() {
+    final ResultSet resultSet = session.execute("select * from person");
+    assertThat(resultSet)
+        .hasSize(2);
   }
 
 }

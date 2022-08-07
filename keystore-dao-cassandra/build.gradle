@@ -57,6 +57,7 @@ dependencies {
     testImplementation "org.mockito:mockito-junit-jupiter:${mockitoVersion}"
     testImplementation("ch.qos.logback:logback-classic:${logbackVersion}")
     testImplementation("ch.qos.logback:logback-core:${logbackVersion}")
-    testImplementation "org.cassandraunit:cassandra-unit:${cassandraUnitVersion}"
+    testImplementation "org.testcontainers:testcontainers:${testContainerVersion}"
+    testImplementation "org.testcontainers:cassandra:${testContainerVersion}"
 }
 
