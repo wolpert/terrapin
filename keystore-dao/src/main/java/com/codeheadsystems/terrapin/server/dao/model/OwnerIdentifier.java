@@ -22,6 +22,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.immutables.value.Value;
 
+/**
+ * An owner within the system.
+ */
 @Value.Immutable
 @JsonSerialize(as = ImmutableOwnerIdentifier.class)
 @JsonDeserialize(builder = ImmutableOwnerIdentifier.Builder.class)

@@ -33,7 +33,7 @@ import javax.inject.Singleton;
 @Component(modules = {DDBModule.class, DaoComponent.OurMeterModule.class})
 public interface DaoComponent {
 
-  KeyDAO keyDao();
+  KeyDao keyDao();
 
   @Module
   class OurMeterModule {

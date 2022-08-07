@@ -20,6 +20,11 @@ import java.util.List;
 import java.util.Optional;
 import org.immutables.value.Value;
 
+/**
+ * A response object from the dao.
+ *
+ * @param <T> the type of object that is in the batch.
+ */
 @Value.Immutable
 public interface Batch<T> {
 

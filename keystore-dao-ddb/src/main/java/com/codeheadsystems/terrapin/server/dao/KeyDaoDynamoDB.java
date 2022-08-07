@@ -40,11 +40,11 @@ import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.dynamodb.model.*;
 
 @Singleton
-public class KeyDAODynamoDB implements KeyDAO {
+public class KeyDaoDynamoDB implements KeyDao {
   public static final String OWNER = "owner";
   public static final String PREFIX = "ddbdao.";
   public static final int MAX_TIMES_KEY_STORE = 5;
-  private static final Logger LOGGER = LoggerFactory.getLogger(KeyDAODynamoDB.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(KeyDaoDynamoDB.class);
   private final DynamoDbClientAccessor dynamoDbClientAccessor;
   private final KeyConverter keyConverter;
   private final OwnerConverter ownerConverter;
@@ -56,7 +56,7 @@ public class KeyDAODynamoDB implements KeyDAO {
   private final Counter counterBatchWriteRanOut;
 
   @Inject
-  public KeyDAODynamoDB(final DynamoDbClientAccessor dynamoDbClientAccessor,
+  public KeyDaoDynamoDB(final DynamoDbClientAccessor dynamoDbClientAccessor,
                         final KeyConverter keyConverter,
                         final OwnerConverter ownerConverter,
                         final BatchWriteConverter batchWriteConverter,

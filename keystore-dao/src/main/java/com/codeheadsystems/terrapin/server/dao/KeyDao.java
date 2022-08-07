@@ -27,19 +27,45 @@ import java.util.Optional;
 /**
  * The DAO is largely mechanical; no business logic exists here.
  */
-public interface KeyDAO {
+public interface KeyDao {
 
+  /**
+   * Stores the key in the data store.
+   *
+   * @param key to store.
+   */
   void store(Key key);
 
+  /**
+   * Stores the owner into the data store.
+   *
+   * @param owner to store.
+   * @return the owner identifier that was stored.
+   */
   OwnerIdentifier storeOwner(String owner);
 
+  /**
+   * Gets from the data store a key based on the identifier given.
+   *
+   * @param identifier the identifier for the key.
+   * @return an optional key.
+   */
   Optional<Key> load(KeyVersionIdentifier identifier);
 
   /**
    * Gets the latest key version for the list of keys.
+   *
+   * @param identifier the identifier for the key.
+   * @return an optional key.
    */
   Optional<Key> load(KeyIdentifier identifier);
 
+  /**
+   * Returns the owner from the data store if found.
+   *
+   * @param ownerName to look for.
+   * @return an owner identifier.
+   */
   Optional<OwnerIdentifier> loadOwner(String ownerName);
 
   /**
@@ -53,18 +79,18 @@ public interface KeyDAO {
   /**
    * Gets all the keys for an owner.
    *
-   * @param identifier
+   * @param identifier to list.
    * @param nextToken  nullable.
-   * @return
+   * @return batch of key identifiers.
    */
   Batch<KeyIdentifier> listKeys(OwnerIdentifier identifier, Token nextToken);
 
   /**
    * Gets all the versions for a key.
    *
-   * @param identifier
+   * @param identifier to list.
    * @param nextToken  nullable.
-   * @return
+   * @return batch of key version identifiers.
    */
   Batch<KeyVersionIdentifier> listVersions(KeyIdentifier identifier, Token nextToken);
 
@@ -73,15 +99,15 @@ public interface KeyDAO {
   /**
    * Deletes a specific key version.
    *
-   * @param identifier
+   * @param identifier to delete
    * @return boolean if anything was deleted.
    */
   boolean delete(KeyVersionIdentifier identifier);
 
   /**
-   * Deletes all versions for a key
+   * Deletes all versions for a key.
    *
-   * @param identifier
+   * @param identifier to delete.
    * @return boolean if anything was deleted.
    */
   boolean delete(KeyIdentifier identifier);
@@ -91,7 +117,7 @@ public interface KeyDAO {
    * This is surprisingly controversial. We may need to batch this up in a manager if the list of
    * keys is too long.
    *
-   * @param identifier
+   * @param identifier to delete.
    * @return boolean if anything was deleted.
    */
   boolean delete(OwnerIdentifier identifier);

@@ -31,14 +31,14 @@ import java.util.Random;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public abstract class KeyDAOTest extends BaseMetricTest {
+public abstract class KeyDaoTest extends BaseMetricTest {
 
   public static final String OWNER = "I am an owner";
   protected final Random random = new Random();
   protected final ObjectMapper mapper = new ObjectMapperFactory().generate();
-  protected KeyDAO dao;
+  protected KeyDao dao;
 
-  protected abstract KeyDAO keyDAO();
+  protected abstract KeyDao keyDAO();
 
   @BeforeEach
   void setupDao() {
@@ -292,7 +292,7 @@ public abstract class KeyDAOTest extends BaseMetricTest {
   private Key getKey(final boolean active,
                      final long version,
                      final String owner) {
-    final InputStream stream = KeyDAOTest.class.getClassLoader().getResourceAsStream("fixture/Key.json");
+    final InputStream stream = KeyDaoTest.class.getClassLoader().getResourceAsStream("fixture/Key.json");
     try {
       final Key key = mapper.readValue(stream, Key.class);
       final byte[] value = new byte[32];

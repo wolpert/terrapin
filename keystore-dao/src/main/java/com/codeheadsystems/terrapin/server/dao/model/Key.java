@@ -29,7 +29,6 @@ import org.immutables.value.Value;
  * The key represents the data need to (de|en)crypt data. The ID is a UUID that is unique to the groupId.
  * Keys are versioned. So one 'key' has many 'versions'. What is represented here is a single version. We
  * do not represent the list of keys that are available.
- * <p>
  * The identifier for a key is 'groupId:keyId:version'
  */
 @Value.Immutable

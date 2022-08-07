@@ -16,6 +16,9 @@
 
 package com.codeheadsystems.terrapin.server.exception;
 
+/**
+ * An exception from the system that is retryable.
+ */
 public class RetryableException extends RuntimeException {
   public RetryableException() {
     super();

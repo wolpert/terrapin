@@ -19,7 +19,7 @@ package com.codeheadsystems.terrapin.keystore.manager;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-import com.codeheadsystems.terrapin.server.dao.KeyDAO;
+import com.codeheadsystems.terrapin.server.dao.KeyDao;
 import com.codeheadsystems.terrapin.server.dao.model.Key;
 import com.codeheadsystems.terrapin.server.dao.model.KeyIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.KeyVersionIdentifier;
@@ -35,7 +35,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class KeyStoreReaderManagerTest {
 
-  @Mock private KeyDAO keyDAO;
+  @Mock private KeyDao keyDAO;
 
   @Mock private KeyVersionIdentifier keyVersionIdentifier;
   @Mock private KeyIdentifier keyIdentifier;

@@ -34,7 +34,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
 
 @ExtendWith(DynamoDbExtension.class)
-public class KeyDAODynamoDBTest extends KeyDAOTest {
+public class KeyDaoDynamoDBTest extends KeyDaoTest {
 
   private static Retry retry;
   private final TableConfiguration tableConfiguration = ImmutableTableConfiguration.builder().build();
@@ -49,7 +49,7 @@ public class KeyDAODynamoDBTest extends KeyDAOTest {
   }
 
   @Override
-  protected KeyDAO keyDAO() {
+  protected KeyDao keyDAO() {
     return DaggerDaoComponent.builder()
         .dDBModule(new DDBModule(client, tableConfiguration))
         .ourMeterModule(new DaoComponent.OurMeterModule(meterRegistry))

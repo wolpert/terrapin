@@ -33,17 +33,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Singleton
-public class CassandraKeyDAO implements KeyDAO {
+public class CassandraKeyDao implements KeyDao {
 
   public static final String OWNER = "owner";
   public static final String PREFIX = "ddbdao.";
   public static final int MAX_TIMES_KEY_STORE = 5;
-  private static final Logger LOGGER = LoggerFactory.getLogger(CassandraKeyDAO.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(CassandraKeyDao.class);
   private final CassandraAccessor cassandraAccessor;
   private final Metrics metrics;
 
   @Inject
-  public CassandraKeyDAO(final CassandraAccessor cassandraAccessor,
+  public CassandraKeyDao(final CassandraAccessor cassandraAccessor,
                          final Metrics metrics) {
     LOGGER.info("CassandraKeyDAO({},{})", cassandraAccessor, metrics);
     this.cassandraAccessor = cassandraAccessor;

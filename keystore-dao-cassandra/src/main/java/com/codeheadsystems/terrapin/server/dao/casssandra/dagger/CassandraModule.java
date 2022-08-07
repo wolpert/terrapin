@@ -18,8 +18,8 @@ package com.codeheadsystems.terrapin.server.dao.casssandra.dagger;
 
 import com.codeheadsystems.metrics.Metrics;
 import com.codeheadsystems.metrics.dagger.MetricsModule;
-import com.codeheadsystems.terrapin.server.dao.CassandraKeyDAO;
-import com.codeheadsystems.terrapin.server.dao.KeyDAO;
+import com.codeheadsystems.terrapin.server.dao.CassandraKeyDao;
+import com.codeheadsystems.terrapin.server.dao.KeyDao;
 import com.codeheadsystems.terrapin.server.dao.casssandra.configuration.ImmutableTableConfiguration;
 import com.codeheadsystems.terrapin.server.dao.casssandra.configuration.TableConfiguration;
 import com.codeheadsystems.terrapin.server.exception.RetryableException;
@@ -85,7 +85,7 @@ public class CassandraModule {
   public interface Binder {
 
     @Binds
-    KeyDAO dao(CassandraKeyDAO dao);
+    KeyDao dao(CassandraKeyDao dao);
 
   }
 }

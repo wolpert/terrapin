@@ -20,8 +20,8 @@ import com.codeheadsystems.metrics.Metrics;
 import com.codeheadsystems.metrics.dagger.MetricsModule;
 import com.codeheadsystems.terrapin.server.dao.DdbObjectMapperFactory;
 import com.codeheadsystems.terrapin.server.dao.ImmutableTableConfiguration;
-import com.codeheadsystems.terrapin.server.dao.KeyDAO;
-import com.codeheadsystems.terrapin.server.dao.KeyDAODynamoDB;
+import com.codeheadsystems.terrapin.server.dao.KeyDao;
+import com.codeheadsystems.terrapin.server.dao.KeyDaoDynamoDB;
 import com.codeheadsystems.terrapin.server.dao.TableConfiguration;
 import com.codeheadsystems.terrapin.server.exception.RetryableException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -102,7 +102,7 @@ public class DDBModule {
   public interface Binder {
 
     @Binds
-    KeyDAO dao(KeyDAODynamoDB dao);
+    KeyDao dao(KeyDaoDynamoDB dao);
 
   }
 

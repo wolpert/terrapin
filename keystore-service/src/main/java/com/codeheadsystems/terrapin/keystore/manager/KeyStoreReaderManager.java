@@ -16,7 +16,7 @@
 
 package com.codeheadsystems.terrapin.keystore.manager;
 
-import com.codeheadsystems.terrapin.server.dao.KeyDAO;
+import com.codeheadsystems.terrapin.server.dao.KeyDao;
 import com.codeheadsystems.terrapin.server.dao.model.Key;
 import com.codeheadsystems.terrapin.server.dao.model.KeyIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.KeyVersionIdentifier;
@@ -33,10 +33,10 @@ import org.slf4j.LoggerFactory;
 public class KeyStoreReaderManager {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(KeyStoreReaderManager.class);
-  private final KeyDAO keyDAO;
+  private final KeyDao keyDAO;
 
   @Inject
-  public KeyStoreReaderManager(final KeyDAO keyDAO) {
+  public KeyStoreReaderManager(final KeyDao keyDAO) {
     LOGGER.info("KeyStoreReaderManager({})", keyDAO);
     this.keyDAO = keyDAO;
   }
