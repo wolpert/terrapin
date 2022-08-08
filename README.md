@@ -14,6 +14,11 @@ internally for **CodeHead** projects, but have been made available for external
 usages. When possible, features are developed in a functional programming style,
 with limited side effects.
 
+## Building
+
+Terrapin requires JDK17 or higher. I'm tired of not being able to upgrade Java.
+Seriously, it's been years. I want var, record, better streams, optional, etc.
+
 ## Projects
 
 ### StateMachine

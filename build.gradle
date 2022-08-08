@@ -41,8 +41,8 @@ allprojects {
     apply plugin: 'jacoco'
     apply plugin: 'checkstyle'
     java {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     repositories {
         mavenLocal()
@@ -59,6 +59,7 @@ allprojects {
     }
     checkstyleTest { // ignore checkstyle in tests
         ignoreFailures true
+        showViolations false
     }
     jacocoTestReport {
         dependsOn test
@@ -123,8 +124,8 @@ version '1.0.0-SNAPSHOT'
 
 ext {
     awsLocalDDB = "1.15.0" // https://mvnrepository.com/artifact/com.amazonaws/DynamoDBLocal
-    awsSDK = "1.12.267" // https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-dynamodb
-    awsSDK2 = "2.17.238" // https://mvnrepository.com/artifact/software.amazon.awssdk/dynamodb
+    awsSDK = "1.12.276" // https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-dynamodb
+    awsSDK2 = "2.17.247" // https://mvnrepository.com/artifact/software.amazon.awssdk/dynamodb
     aiVersion = '1.8.2' // https://mvnrepository.com/artifact/com.badlogicgames.gdx/gdx-ai
     ashleyVersion = '1.7.4' // https://mvnrepository.com/artifact/com.badlogicgames.ashley/ashley
     assertjVersion = '3.23.1' // https://mvnrepository.com/artifact/org.assertj/assertj-core
@@ -134,19 +135,19 @@ ext {
     cassandraUnitVersion = '4.3.1.0' // https://mvnrepository.com/artifact/org.cassandraunit/cassandra-unit
     commonsIoVersion = '2.11.0' // https://mvnrepository.com/artifact/commons-io/commons-io
     commonsLangVersion = '3.12.0' // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
-    daggerVersion = '2.43' // https://mvnrepository.com/artifact/com.google.dagger/dagger
+    daggerVersion = '2.43.2' // https://mvnrepository.com/artifact/com.google.dagger/dagger
     dropwizardVersion = '2.1.1' // https://mvnrepository.com/artifact/io.dropwizard/dropwizard-core
     gdxVersion = '1.11.0' // https://mvnrepository.com/artifact/com.badlogicgames.gdx/gdx
     guavaVersion = '31.1-jre' // https://mvnrepository.com/artifact/com.google.guava/guava
-    hsqldbVersion = '2.6.1' // https://mvnrepository.com/artifact/org.hsqldb/hsqldb
+    hsqldbVersion = '2.7.0' // https://mvnrepository.com/artifact/org.hsqldb/hsqldb
     immutablesVersion = '2.9.0' // https://mvnrepository.com/artifact/org.immutables/value
     jacksonVersion = '2.13.3' // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core
     jacksonDatabindVersion = '2.13.3' // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
     javaxInjectVersion = '1'
-    jupiterVersion = '5.8.2' // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
+    jupiterVersion = '5.9.0' // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
     log4jVersion = '2.18.0' //  https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core
     logbackVersion = '1.2.11' // https://mvnrepository.com/artifact/ch.qos.logback/logback-core
-    metricsVersion = '4.2.10' // https://mvnrepository.com/artifact/io.dropwizard.metrics/metrics-core
+    metricsVersion = '4.2.11' // https://mvnrepository.com/artifact/io.dropwizard.metrics/metrics-core
     micrometerVersion = '1.9.2' // https://mvnrepository.com/artifact/io.micrometer/micrometer-core
     mockitoVersion = '4.6.1' // https://mvnrepository.com/artifact/org.mockito/mockito-core
     openfeign = '11.9.1' // https://mvnrepository.com/artifact/io.github.openfeign/feign-core

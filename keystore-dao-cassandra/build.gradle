@@ -46,7 +46,6 @@ dependencies {
     testAnnotationProcessor "org.immutables:value:${immutablesVersion}"
     testAnnotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
     testImplementation project(":codehead-test")
-    testImplementation project(":datastore-test")
     testImplementation project(":keystore-dao-test")
     testImplementation project(":metrics-test")
     testImplementation("org.assertj:assertj-core:${assertjVersion}")
@@ -59,5 +58,6 @@ dependencies {
     testImplementation("ch.qos.logback:logback-core:${logbackVersion}")
     testImplementation "org.testcontainers:testcontainers:${testContainerVersion}"
     testImplementation "org.testcontainers:cassandra:${testContainerVersion}"
+    testImplementation "org.testcontainers:junit-jupiter:${testContainerVersion}"
 }
 
