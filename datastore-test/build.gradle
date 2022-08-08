@@ -78,11 +78,4 @@ dependencies {
     api("org.mockito:mockito-core:${mockitoVersion}")
     testImplementation("ch.qos.logback:logback-classic:${logbackVersion}")
     testImplementation("ch.qos.logback:logback-core:${logbackVersion}")
-
-    implementation "com.datastax.oss:java-driver-core:${cassandraDriverVersion}"
-    implementation "com.datastax.oss:java-driver-query-builder:${cassandraDriverVersion}"
-    implementation "com.datastax.oss:java-driver-mapper-runtime:${cassandraDriverVersion}"
-    implementation "org.cassandraunit:cassandra-unit:${cassandraUnitVersion}"
-    implementation "org.testcontainers:testcontainers:${testContainerVersion}"
-    implementation "org.testcontainers:cassandra:${testContainerVersion}"
 }
