@@ -150,6 +150,7 @@ ext {
     metricsVersion = '4.2.11' // https://mvnrepository.com/artifact/io.dropwizard.metrics/metrics-core
     micrometerVersion = '1.9.2' // https://mvnrepository.com/artifact/io.micrometer/micrometer-core
     mockitoVersion = '4.6.1' // https://mvnrepository.com/artifact/org.mockito/mockito-core
+    nettyVersion = '4.1.79.Final' //  https://mvnrepository.com/artifact/io.netty/netty-all
     openfeign = '11.9.1' // https://mvnrepository.com/artifact/io.github.openfeign/feign-core
     retrofitVersion = '2.9.0' // https://mvnrepository.com/artifact/com.squareup.retrofit2/retrofit
     resilience4jVersion = '1.7.1' // https://mvnrepository.com/artifact/io.github.resilience4j/resilience4j-retry

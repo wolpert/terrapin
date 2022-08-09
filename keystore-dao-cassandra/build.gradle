@@ -36,6 +36,7 @@ dependencies {
     implementation "com.datastax.oss:java-driver-core:${cassandraDriverVersion}"
     implementation "com.datastax.oss:java-driver-query-builder:${cassandraDriverVersion}"
     implementation "com.datastax.oss:java-driver-mapper-runtime:${cassandraDriverVersion}"
+    implementation "io.netty:netty-all:${nettyVersion}"
 
     compileOnly "org.immutables:value:${immutablesVersion}"
     annotationProcessor "org.immutables:value:${immutablesVersion}"

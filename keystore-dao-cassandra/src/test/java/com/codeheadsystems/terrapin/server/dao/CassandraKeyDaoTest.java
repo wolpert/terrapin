@@ -18,29 +18,58 @@ package com.codeheadsystems.terrapin.server.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.codeheadsystems.metrics.test.BaseMetricTest;
+import com.codeheadsystems.terrapin.server.dao.casssandra.dagger.CassandraModule;
 import com.datastax.oss.driver.api.core.CqlSession;
+import io.github.resilience4j.micrometer.tagged.TaggedRetryMetrics;
+import io.github.resilience4j.retry.Retry;
+import io.github.resilience4j.retry.RetryRegistry;
 import java.net.InetSocketAddress;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.CassandraContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
-@Testcontainers
-class CassandraKeyDaoTest {
+class CassandraKeyDaoTest extends BaseMetricTest {
 
   public static final String CASSANDRA_VERSION = "4.0.5";
   public static final String DATACENTER = "datacenter1";
+  public static final String KEYSTORE_CQL = "keystore.cql";
 
-  @Container
-  public CassandraContainer<?> container = new CassandraContainer<>(DockerImageName.parse("cassandra")
-      .withTag(CASSANDRA_VERSION))
-      .withInitScript("test-keystore.cql");
+  public static Retry retry;
+  public static CassandraContainer<?> container;
+
+  @BeforeAll
+  public static void setupRetry() {
+    final RetryRegistry registry = RetryRegistry.ofDefaults();
+    retry = registry.retry("retry.CassandraKeyDaoTest");
+    TaggedRetryMetrics.ofRetryRegistry(registry)
+        .bindTo(meterRegistry);
+  }
+
+  @BeforeAll
+  public static void setupContainer() {
+    container = new CassandraContainer<>(DockerImageName.parse("cassandra")
+        .withTag(CASSANDRA_VERSION))
+        .withInitScript(KEYSTORE_CQL);
+    container.start();
+  }
+
+  @AfterAll
+  public static void removeContainer() {
+    container.stop();
+    container = null;
+  }
 
   private CqlSession cqlSession() {
     final InetSocketAddress address =
         new InetSocketAddress(container.getHost(), container.getMappedPort(CassandraContainer.CQL_PORT));
-    return CqlSession.builder().addContactPoint(address).withLocalDatacenter(DATACENTER).build();
+    return CqlSession.builder()
+        .addContactPoint(address)
+        .withKeyspace("keystore")
+        .withLocalDatacenter(DATACENTER)
+        .build();
   }
 
   @Test
@@ -51,4 +80,12 @@ class CassandraKeyDaoTest {
     }
   }
 
+  //@Override
+  protected KeyDao keyDAO() {
+    return DaggerDaoComponent.builder()
+        .cassandraModule(new CassandraModule(cqlSession()))
+        .ourMeterModule(new DaoComponent.OurMeterModule(meterRegistry))
+        .build()
+        .keyDao();
+  }
 }
