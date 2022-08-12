@@ -35,15 +35,21 @@ public interface TableConfiguration {
   }
 
   @Value.Default
-  @JsonProperty("hashKey")
-  default String hashKey() {
-    return "hashKey";
+  @JsonProperty("ownersTable")
+  default String ownersTable() {
+    return "owners";
   }
 
   @Value.Default
-  @JsonProperty("rangeKey")
-  default String rangeKey() {
-    return "rangeKey";
+  @JsonProperty("keysTable")
+  default String keysTable() {
+    return "keys";
+  }
+
+  @Value.Default
+  @JsonProperty("activeKeysTable")
+  default String activeKeysTable() {
+    return "active_keys";
   }
 
 }

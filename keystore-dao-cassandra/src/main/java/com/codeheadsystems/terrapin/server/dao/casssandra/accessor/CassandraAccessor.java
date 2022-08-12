@@ -20,8 +20,11 @@ import static com.codeheadsystems.terrapin.server.dao.casssandra.dagger.Cassandr
 
 import com.codeheadsystems.metrics.Metrics;
 import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
+import com.datastax.oss.driver.api.core.cql.Statement;
 import io.github.resilience4j.retry.Retry;
 import io.micrometer.core.instrument.Timer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -33,9 +36,12 @@ import org.slf4j.LoggerFactory;
 public class CassandraAccessor {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(CassandraAccessor.class);
+  private static final String EXECUTE_STATEMENT = "executeStatement";
 
   private final CqlSession session;
   private final Metrics metrics;
+
+  private final Function<Statement<?>, ResultSet> executeStatement;
 
   @Inject
   public CassandraAccessor(final CqlSession session,
@@ -44,7 +50,15 @@ public class CassandraAccessor {
     LOGGER.info("CassandraAccessor({},{},{})", session, metrics, retry);
     this.session = session;
     this.metrics = metrics;
+    this.executeStatement = Retry.decorateFunction(retry,                  // retries
+        (request) -> call(EXECUTE_STATEMENT,     // exception check and metrics
+            () -> session.execute(request))); // the actual function
   }
+
+  public ResultSet execute(final Statement statement) {
+    return executeStatement.apply(statement);
+  }
+
 
   private <T> T call(final String metricName,
                      final Supplier<T> supplier) {

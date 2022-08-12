@@ -18,7 +18,6 @@ package com.codeheadsystems.terrapin.server.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.codeheadsystems.metrics.test.BaseMetricTest;
 import com.codeheadsystems.terrapin.server.dao.casssandra.dagger.CassandraModule;
 import com.datastax.oss.driver.api.core.CqlSession;
 import io.github.resilience4j.micrometer.tagged.TaggedRetryMetrics;
@@ -31,7 +30,7 @@ import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.CassandraContainer;
 import org.testcontainers.utility.DockerImageName;
 
-class CassandraKeyDaoTest extends BaseMetricTest {
+class CassandraKeyDaoTest extends KeyDaoTest {
 
   public static final String CASSANDRA_VERSION = "4.0.5";
   public static final String DATACENTER = "datacenter1";
@@ -80,7 +79,7 @@ class CassandraKeyDaoTest extends BaseMetricTest {
     }
   }
 
-  //@Override
+  @Override
   protected KeyDao keyDAO() {
     return DaggerDaoComponent.builder()
         .cassandraModule(new CassandraModule(cqlSession()))
