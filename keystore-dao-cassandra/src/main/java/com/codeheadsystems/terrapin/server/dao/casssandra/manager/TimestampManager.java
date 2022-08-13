@@ -16,11 +16,8 @@
 
 package com.codeheadsystems.terrapin.server.dao.casssandra.manager;
 
-import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
-
 import java.time.Clock;
 import java.time.Instant;
-import java.time.ZonedDateTime;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -43,21 +40,12 @@ public class TimestampManager {
   }
 
   /**
-   * Gets the timestamp as an ISO formated string.
-   *
-   * @return timestamp.
-   */
-  public String timestampString() {
-    return ZonedDateTime.now(clock).format(ISO_OFFSET_DATE_TIME);
-  }
-
-  /**
    * Gets the current timestamp as an instant.
    *
    * @return instant of now.
    */
   public Instant timestamp() {
-    return ZonedDateTime.now(clock).toInstant();
+    return clock.instant();
   }
 
 }
