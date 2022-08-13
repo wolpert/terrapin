@@ -16,14 +16,22 @@
 
 package com.codeheadsystems.terrapin.server.dao;
 
+import static com.codeheadsystems.terrapin.server.dao.casssandra.dagger.StatementModule.LOAD_OWNER_STMT;
+import static com.codeheadsystems.terrapin.server.dao.casssandra.dagger.StatementModule.STORE_OWNER_STMT;
+
 import com.codeheadsystems.metrics.Metrics;
 import com.codeheadsystems.terrapin.server.dao.casssandra.accessor.CassandraAccessor;
+import com.codeheadsystems.terrapin.server.dao.casssandra.manager.BoundStatementManager;
 import com.codeheadsystems.terrapin.server.dao.model.Batch;
+import com.codeheadsystems.terrapin.server.dao.model.ImmutableOwnerIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.Key;
 import com.codeheadsystems.terrapin.server.dao.model.KeyIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.KeyVersionIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.OwnerIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.Token;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
+import com.datastax.oss.driver.api.core.cql.Row;
+import com.datastax.oss.driver.api.core.cql.Statement;
 import io.micrometer.core.instrument.Timer;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -41,11 +49,14 @@ public class CassandraKeyDao implements KeyDao {
   private static final Logger LOGGER = LoggerFactory.getLogger(CassandraKeyDao.class);
   private final CassandraAccessor cassandraAccessor;
   private final Metrics metrics;
+  private final BoundStatementManager binder;
 
   @Inject
   public CassandraKeyDao(final CassandraAccessor cassandraAccessor,
-                         final Metrics metrics) {
+                         final Metrics metrics,
+                         final BoundStatementManager binder) {
     LOGGER.info("CassandraKeyDAO({},{})", cassandraAccessor, metrics);
+    this.binder = binder;
     this.cassandraAccessor = cassandraAccessor;
     this.metrics = metrics;
   }
@@ -70,7 +81,9 @@ public class CassandraKeyDao implements KeyDao {
   public OwnerIdentifier storeOwner(final String owner) {
     LOGGER.debug("storeOwner({})", owner);
     return time("storeOwner", owner, () -> {
-      return null;
+      final Statement<?> statement = binder.bind(STORE_OWNER_STMT, owner);
+      cassandraAccessor.execute(statement);
+      return ImmutableOwnerIdentifier.builder().owner(owner).build();
     });
   }
 
@@ -98,7 +111,16 @@ public class CassandraKeyDao implements KeyDao {
   public Optional<OwnerIdentifier> loadOwner(final String ownerName) {
     LOGGER.debug("loadOwner({})", ownerName);
     return time("loadOwner", ownerName, () -> {
-      return null;
+      final Statement<?> statement = binder.bind(LOAD_OWNER_STMT, ownerName);
+      final ResultSet resultSet = cassandraAccessor.execute(statement);
+      final Row row = resultSet.one();
+      if (row == null) {
+        return Optional.empty();
+      } else {
+        final OwnerIdentifier identifier =
+            ImmutableOwnerIdentifier.builder().owner(row.getString("owner")).build();
+        return Optional.of(identifier);
+      }
     });
   }
 

@@ -38,6 +38,7 @@ class CassandraKeyDaoTest extends KeyDaoTest {
 
   public static Retry retry;
   public static CassandraContainer<?> container;
+  private static CqlSession cqlSession;
 
   @BeforeAll
   public static void setupRetry() {
@@ -53,6 +54,14 @@ class CassandraKeyDaoTest extends KeyDaoTest {
         .withTag(CASSANDRA_VERSION))
         .withInitScript(KEYSTORE_CQL);
     container.start();
+    final InetSocketAddress address =
+        new InetSocketAddress(container.getHost(), container.getMappedPort(CassandraContainer.CQL_PORT));
+    cqlSession = CqlSession.builder()
+        .addContactPoint(address)
+        .withKeyspace("keystore")
+        .withLocalDatacenter(DATACENTER)
+        .build();
+
   }
 
   @AfterAll
@@ -61,19 +70,15 @@ class CassandraKeyDaoTest extends KeyDaoTest {
     container = null;
   }
 
-  private CqlSession cqlSession() {
+  @Test
+  public void testSessions() {
     final InetSocketAddress address =
         new InetSocketAddress(container.getHost(), container.getMappedPort(CassandraContainer.CQL_PORT));
-    return CqlSession.builder()
+    try (final CqlSession session = CqlSession.builder()
         .addContactPoint(address)
         .withKeyspace("keystore")
         .withLocalDatacenter(DATACENTER)
-        .build();
-  }
-
-  @Test
-  public void testSessions() {
-    try (final CqlSession session = cqlSession()) {
+        .build();) {
       assertThat(session.getMetadata().getKeyspaces().values())
           .isNotEmpty();
     }
@@ -82,7 +87,7 @@ class CassandraKeyDaoTest extends KeyDaoTest {
   @Override
   protected KeyDao keyDAO() {
     return DaggerDaoComponent.builder()
-        .cassandraModule(new CassandraModule(cqlSession()))
+        .cassandraModule(new CassandraModule(cqlSession))
         .ourMeterModule(new DaoComponent.OurMeterModule(meterRegistry))
         .build()
         .keyDao();

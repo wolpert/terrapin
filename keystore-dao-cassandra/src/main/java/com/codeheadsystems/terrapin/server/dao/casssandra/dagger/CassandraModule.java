@@ -32,10 +32,15 @@ import io.github.resilience4j.micrometer.tagged.TaggedRetryMetrics;
 import io.github.resilience4j.retry.Retry;
 import io.github.resilience4j.retry.RetryConfig;
 import io.github.resilience4j.retry.RetryRegistry;
+import java.time.Clock;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-@Module(includes = {CassandraModule.Binder.class, MetricsModule.class})
+@Module(includes = {
+    CassandraModule.Binder.class,
+    MetricsModule.class,
+    StatementModule.class
+})
 public class CassandraModule {
 
   public static final String CASSANDRA_RETRY = "CASSANDRA_RETRY";
@@ -79,6 +84,12 @@ public class CassandraModule {
     TaggedRetryMetrics.ofRetryRegistry(registry)
         .bindTo(metrics.registry());
     return registry.retry(CASSANDRA_RETRY);
+  }
+
+  @Provides
+  @Singleton
+  public Clock clock() {
+    return Clock.systemUTC();
   }
 
   @Module
