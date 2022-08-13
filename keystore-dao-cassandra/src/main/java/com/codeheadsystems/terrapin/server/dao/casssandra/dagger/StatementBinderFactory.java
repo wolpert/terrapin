@@ -17,16 +17,34 @@
 package com.codeheadsystems.terrapin.server.dao.casssandra.dagger;
 
 import com.codeheadsystems.terrapin.server.dao.casssandra.manager.StatementBinder;
-import dagger.assisted.AssistedFactory;
+import com.datastax.oss.driver.api.core.CqlSession;
 import java.util.function.Function;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
  * Factory from Dagger to create PreparedStatementManagers.
+ * This is supposed to be from dagger, but daggers assisted factory does not work with generic types.
  */
-@AssistedFactory
-public interface StatementBinderFactory {
+@Singleton
+public class StatementBinderFactory {
 
-  StatementBinder build(final String cqlStatement,
-                        final Function<Object, Object[]> binder);
+  private final CqlSession cqlSession;
+
+  /**
+   * Default constructor.
+   *
+   * @param cqlSession for binding.
+   */
+  @Inject
+  public StatementBinderFactory(final CqlSession cqlSession) {
+    this.cqlSession = cqlSession;
+  }
+
+  public <T> StatementBinder<T> build(final String cqlStatement,
+                                      final Class<T> type,
+                                      final Function<T, Object[]> binder) {
+    return new StatementBinder(cqlSession, cqlStatement, binder, type);
+  }
 
 }

@@ -14,43 +14,27 @@
  *    limitations under the License.
  */
 
-package com.codeheadsystems.terrapin.server.dao.casssandra.manager;
+package com.codeheadsystems.terrapin.server.dao.casssandra.converter;
 
-import java.time.Clock;
-import java.time.Instant;
-import java.util.Date;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Provides Cassandra valid timestamps.
+ * Converts keys to various objects.
  */
 @Singleton
-public class TimestampManager {
+public class KeyConverter {
 
-  private final Clock clock;
+    private static final Logger LOGGER = LoggerFactory.getLogger(KeyConverter.class);
 
-  /**
-   * Default constructor.
-   *
-   * @param clock to get the timestamp.
-   */
-  @Inject
-  public TimestampManager(final Clock clock) {
-    this.clock = clock;
-  }
-
-  /**
-   * Gets the current timestamp as an instant.
-   *
-   * @return instant of now.
-   */
-  public Instant timestamp() {
-    return clock.instant();
-  }
-
-  public Instant fromDate(final Date date) {
-    return date.toInstant();
-  }
+    /**
+     * Default Constructor.
+     */
+    @Inject
+    public KeyConverter() {
+        LOGGER.info("KeyConverter()");
+    }
 
 }

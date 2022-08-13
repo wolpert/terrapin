@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 public class BoundStatementManager {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(BoundStatementManager.class);
-  private final Map<String, StatementBinder> preparedStatementMap;
+  private final Map<String, StatementBinder<?>> preparedStatementMap;
 
   /**
    * Default Constructor.
@@ -38,7 +38,7 @@ public class BoundStatementManager {
    * @param preparedStatementMap for binding.
    */
   @Inject
-  public BoundStatementManager(final Map<String, StatementBinder> preparedStatementMap) {
+  public BoundStatementManager(final Map<String, StatementBinder<?>> preparedStatementMap) {
     LOGGER.info("BoundStatementManager({})", preparedStatementMap);
     this.preparedStatementMap = preparedStatementMap;
   }
@@ -50,9 +50,9 @@ public class BoundStatementManager {
    * @param object                 to bind.
    * @return a statement that can be executed.
    */
-  public Statement<?> bind(final String statementMapIdentifier,
-                           final Object object) {
-    final StatementBinder statementBinder = preparedStatementMap.get(statementMapIdentifier);
+  public <T> Statement<?> bind(final String statementMapIdentifier,
+                               final T object) {
+    final StatementBinder<T> statementBinder = (StatementBinder<T>) preparedStatementMap.get(statementMapIdentifier);
     if (statementBinder == null) {
       throw new IllegalArgumentException("No such statement binder: " + statementMapIdentifier);
     }

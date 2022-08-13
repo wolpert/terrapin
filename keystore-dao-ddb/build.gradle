@@ -18,6 +18,16 @@ configurations {
 
 //jacocoTestReport.finalizedBy jacocoTestCoverageVerification
 
+task copyNativeDeps(type: Copy) {
+    from configurations.dynamodb
+    into "$project.buildDir/libs/"
+}
+
+test.dependsOn copyNativeDeps
+test.doFirst {
+    systemProperty "java.library.path", 'build/libs'
+}
+
 dependencies {
     // DynamoDB testing
     dynamodb "com.amazonaws:DynamoDBLocal:${awsLocalDDB}"

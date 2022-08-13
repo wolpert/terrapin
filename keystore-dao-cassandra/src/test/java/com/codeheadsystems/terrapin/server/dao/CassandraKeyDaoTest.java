@@ -35,7 +35,6 @@ class CassandraKeyDaoTest extends KeyDaoTest {
   public static final String CASSANDRA_VERSION = "4.0.5";
   public static final String DATACENTER = "datacenter1";
   public static final String KEYSTORE_CQL = "keystore.cql";
-
   public static Retry retry;
   public static CassandraContainer<?> container;
   private static CqlSession cqlSession;

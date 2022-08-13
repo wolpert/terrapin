@@ -16,10 +16,10 @@
 
 package com.codeheadsystems.terrapin.server.dao;
 
-import static com.codeheadsystems.terrapin.server.dao.casssandra.dagger.StatementModule.LOAD_OWNER_STMT;
-import static com.codeheadsystems.terrapin.server.dao.casssandra.dagger.StatementModule.STORE_OWNER_STMT;
+import static com.codeheadsystems.terrapin.server.dao.casssandra.dagger.StatementModule.*;
 
 import com.codeheadsystems.metrics.Metrics;
+import com.codeheadsystems.terrapin.server.dao.casssandra.converter.OwnerConverter;
 import com.codeheadsystems.terrapin.server.dao.casssandra.accessor.CassandraAccessor;
 import com.codeheadsystems.terrapin.server.dao.casssandra.manager.BoundStatementManager;
 import com.codeheadsystems.terrapin.server.dao.model.Batch;
@@ -50,15 +50,18 @@ public class CassandraKeyDao implements KeyDao {
   private final CassandraAccessor cassandraAccessor;
   private final Metrics metrics;
   private final BoundStatementManager binder;
+  private final OwnerConverter ownerConverter;
 
   @Inject
   public CassandraKeyDao(final CassandraAccessor cassandraAccessor,
                          final Metrics metrics,
-                         final BoundStatementManager binder) {
+                         final BoundStatementManager binder,
+                         final OwnerConverter ownerConverter) {
     LOGGER.info("CassandraKeyDAO({},{})", cassandraAccessor, metrics);
     this.binder = binder;
     this.cassandraAccessor = cassandraAccessor;
     this.metrics = metrics;
+    this.ownerConverter = ownerConverter;
   }
 
   private <T> T time(final String methodName,
@@ -73,6 +76,13 @@ public class CassandraKeyDao implements KeyDao {
   public void store(final Key key) {
     LOGGER.debug("store({})", key.keyVersionIdentifier());
     time("storeKey", key.keyVersionIdentifier().owner(), () -> {
+      cassandraAccessor.execute(binder.bind(STORE_KEY_STMT, key));
+      if (key.active()) {
+        cassandraAccessor.execute(binder.bind(STORE_ACTIVE_KEY_STMT, key));
+      } else {
+        cassandraAccessor.execute(binder.bind(DELETE_ACTIVE_KEY_STMT, key));
+      }
+      cassandraAccessor.execute(binder.bind(STORE_OWNER_KEY_STMT, key));
       return null;
     });
   }
@@ -117,9 +127,7 @@ public class CassandraKeyDao implements KeyDao {
       if (row == null) {
         return Optional.empty();
       } else {
-        final OwnerIdentifier identifier =
-            ImmutableOwnerIdentifier.builder().owner(row.getString("owner")).build();
-        return Optional.of(identifier);
+        return Optional.of(ownerConverter.toOwnerIdentifier(row));
       }
     });
   }

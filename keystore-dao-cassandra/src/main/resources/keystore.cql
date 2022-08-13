@@ -1,3 +1,5 @@
+-- noinspection SqlNoDataSourceInspectionForFile
+
 CREATE KEYSPACE
     IF NOT EXISTS keystore
     WITH replication ={'class' : 'SimpleStrategy', 'replication_factor':1}
@@ -9,7 +11,6 @@ CREATE TABLE
 (
     owner       text,
     lookup      text,
-    key_name    text,
     type        text,
     create_date timestamp,
     PRIMARY KEY ( (owner, lookup) )

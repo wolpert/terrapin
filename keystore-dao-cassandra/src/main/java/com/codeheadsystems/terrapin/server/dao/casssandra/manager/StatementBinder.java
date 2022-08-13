@@ -29,13 +29,14 @@ import org.slf4j.LoggerFactory;
 /**
  * Provides ability to convert an object to the correct prepared statement.
  */
-public class StatementBinder {
+public class StatementBinder<T> {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(StatementBinder.class);
 
-  private final Function<Object, Object[]> binder;
+  private final Function<T, Object[]> binder;
   private final PreparedStatement preparedStatement;
   private final String cqlStatement;
+  private final Class<T> type;
 
   /**
    * Default constructor.
@@ -43,11 +44,14 @@ public class StatementBinder {
    * @param cqlSession   used for creating the preparer.
    * @param cqlStatement Statement we are preparing.
    * @param binder       execution binder to convert.
+   * @param type         to get the type of object. Java generics almost work.
    */
   @AssistedInject
   public StatementBinder(final CqlSession cqlSession,
                          @Assisted final String cqlStatement,
-                         @Assisted final Function<Object, Object[]> binder) {
+                         @Assisted final Function<T, Object[]> binder,
+                         @Assisted final Class<T> type) {
+    this.type = type;
     final SimpleStatement statement = SimpleStatement.newInstance(cqlStatement);
     this.preparedStatement = cqlSession.prepare(statement);
     this.binder = binder;
@@ -61,9 +65,17 @@ public class StatementBinder {
    * @param object to bind.
    * @return bound statement.
    */
-  public BoundStatement bind(final Object object) {
-    LOGGER.debug("[{}] bind", cqlStatement);
+  public BoundStatement bind(final T object) {
+    LOGGER.debug("bind [{}] to {}", cqlStatement, object.getClass().getSimpleName());
     return preparedStatement.bind(binder.apply(object));
   }
 
+  public Class<T> getType() {
+    return type;
+  }
+
+  @Override
+  public String toString() {
+    return getClass().getSimpleName() + ":[" + cqlStatement + "]";
+  }
 }
