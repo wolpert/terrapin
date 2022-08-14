@@ -18,6 +18,7 @@ package com.codeheadsystems.terrapin.server.dao.casssandra.manager;
 
 import com.datastax.oss.driver.api.core.cql.Statement;
 import java.util.Map;
+import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.slf4j.Logger;
@@ -50,13 +51,13 @@ public class BoundStatementManager {
    * @param object                 to bind.
    * @return a statement that can be executed.
    */
-  public <T> Statement<?> bind(final String statementMapIdentifier,
-                               final T object) {
-    final StatementBinder<T> statementBinder = (StatementBinder<T>) preparedStatementMap.get(statementMapIdentifier);
+  public <T> Statement<?> bind(@Nonnull final String statementMapIdentifier,
+                               @Nonnull final T object) {
+    final StatementBinder<?> statementBinder = preparedStatementMap.get(statementMapIdentifier);
     if (statementBinder == null) {
       throw new IllegalArgumentException("No such statement binder: " + statementMapIdentifier);
     }
-    return statementBinder.bind(object);
+    return ((StatementBinder<T>) statementBinder).bind(object);
   }
 
 }

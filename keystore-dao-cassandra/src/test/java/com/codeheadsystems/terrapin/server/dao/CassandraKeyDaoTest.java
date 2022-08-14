@@ -20,6 +20,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.codeheadsystems.terrapin.server.dao.casssandra.dagger.CassandraModule;
 import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.type.codec.ExtraTypeCodecs;
+import com.datastax.oss.driver.api.core.type.codec.TypeCodecs;
 import io.github.resilience4j.micrometer.tagged.TaggedRetryMetrics;
 import io.github.resilience4j.retry.Retry;
 import io.github.resilience4j.retry.RetryRegistry;
@@ -56,6 +58,7 @@ class CassandraKeyDaoTest extends KeyDaoTest {
     final InetSocketAddress address =
         new InetSocketAddress(container.getHost(), container.getMappedPort(CassandraContainer.CQL_PORT));
     cqlSession = CqlSession.builder()
+        .addTypeCodecs(TypeCodecs.ZONED_TIMESTAMP_UTC, ExtraTypeCodecs.BLOB_TO_ARRAY)
         .addContactPoint(address)
         .withKeyspace("keystore")
         .withLocalDatacenter(DATACENTER)
@@ -74,10 +77,11 @@ class CassandraKeyDaoTest extends KeyDaoTest {
     final InetSocketAddress address =
         new InetSocketAddress(container.getHost(), container.getMappedPort(CassandraContainer.CQL_PORT));
     try (final CqlSession session = CqlSession.builder()
+        .addTypeCodecs(TypeCodecs.ZONED_TIMESTAMP_UTC, ExtraTypeCodecs.BLOB_TO_ARRAY)
         .addContactPoint(address)
         .withKeyspace("keystore")
         .withLocalDatacenter(DATACENTER)
-        .build();) {
+        .build()) {
       assertThat(session.getMetadata().getKeyspaces().values())
           .isNotEmpty();
     }

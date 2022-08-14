@@ -19,6 +19,7 @@ package com.codeheadsystems.terrapin.server.dao;
 import static com.codeheadsystems.terrapin.server.dao.casssandra.dagger.StatementModule.*;
 
 import com.codeheadsystems.metrics.Metrics;
+import com.codeheadsystems.terrapin.server.dao.casssandra.converter.KeyConverter;
 import com.codeheadsystems.terrapin.server.dao.casssandra.converter.OwnerConverter;
 import com.codeheadsystems.terrapin.server.dao.casssandra.accessor.CassandraAccessor;
 import com.codeheadsystems.terrapin.server.dao.casssandra.manager.BoundStatementManager;
@@ -51,17 +52,20 @@ public class CassandraKeyDao implements KeyDao {
   private final Metrics metrics;
   private final BoundStatementManager binder;
   private final OwnerConverter ownerConverter;
+  private final KeyConverter keyConverter;
 
   @Inject
   public CassandraKeyDao(final CassandraAccessor cassandraAccessor,
                          final Metrics metrics,
                          final BoundStatementManager binder,
-                         final OwnerConverter ownerConverter) {
+                         final OwnerConverter ownerConverter,
+                         final KeyConverter keyConverter) {
     LOGGER.info("CassandraKeyDAO({},{})", cassandraAccessor, metrics);
     this.binder = binder;
     this.cassandraAccessor = cassandraAccessor;
     this.metrics = metrics;
     this.ownerConverter = ownerConverter;
+    this.keyConverter = keyConverter;
   }
 
   private <T> T time(final String methodName,
@@ -101,7 +105,13 @@ public class CassandraKeyDao implements KeyDao {
   public Optional<Key> load(final KeyVersionIdentifier identifier) {
     LOGGER.debug("load({})", identifier);
     return time("loadKeyVersion", identifier.owner(), () -> {
-      return null;
+      final ResultSet resultSet = cassandraAccessor.execute(binder.bind(LOAD_KEY_VERSION_STMT, identifier));
+          final Row row = resultSet.one();
+          if (row == null) {
+            return Optional.empty();
+          } else {
+            return Optional.of(keyConverter.toKey(row));
+          }
     });
   }
 

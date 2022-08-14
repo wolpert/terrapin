@@ -51,12 +51,12 @@ public class StatementBinder<T> {
                          @Assisted final String cqlStatement,
                          @Assisted final Function<T, Object[]> binder,
                          @Assisted final Class<T> type) {
-    this.type = type;
+    LOGGER.info("StatementBinder({})", cqlStatement);
     final SimpleStatement statement = SimpleStatement.newInstance(cqlStatement);
     this.preparedStatement = cqlSession.prepare(statement);
     this.binder = binder;
     this.cqlStatement = cqlStatement;
-    LOGGER.info("StatementBinder({})", cqlStatement);
+    this.type = type;
   }
 
   /**

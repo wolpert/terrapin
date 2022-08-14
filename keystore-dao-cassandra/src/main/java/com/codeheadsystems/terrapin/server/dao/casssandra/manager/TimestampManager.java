@@ -16,9 +16,13 @@
 
 package com.codeheadsystems.terrapin.server.dao.casssandra.manager;
 
+import com.datastax.oss.driver.api.core.cql.Row;
+import com.datastax.oss.driver.api.core.type.reflect.GenericType;
 import java.time.Clock;
 import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.Date;
+import java.util.Optional;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -53,4 +57,12 @@ public class TimestampManager {
     return date.toInstant();
   }
 
+  public Optional<Date> toDate(final Row row, final String columnName) {
+    final ZonedDateTime zonedDateTime = row.get(columnName, GenericType.ZONED_DATE_TIME);
+    if (zonedDateTime != null) {
+      return Optional.of(new Date(zonedDateTime.toInstant().toEpochMilli()));
+    } else {
+      return Optional.empty();
+    }
+  }
 }

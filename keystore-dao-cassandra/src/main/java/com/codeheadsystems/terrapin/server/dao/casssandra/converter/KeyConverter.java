@@ -16,6 +16,13 @@
 
 package com.codeheadsystems.terrapin.server.dao.casssandra.converter;
 
+import com.codeheadsystems.terrapin.server.dao.casssandra.manager.TimestampManager;
+import com.codeheadsystems.terrapin.server.dao.model.ImmutableKey;
+import com.codeheadsystems.terrapin.server.dao.model.ImmutableKeyVersionIdentifier;
+import com.codeheadsystems.terrapin.server.dao.model.Key;
+import com.codeheadsystems.terrapin.server.dao.model.KeyVersionIdentifier;
+import com.datastax.oss.driver.api.core.cql.Row;
+import com.datastax.oss.driver.api.core.type.codec.ExtraTypeCodecs;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.slf4j.Logger;
@@ -27,14 +34,33 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class KeyConverter {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(KeyConverter.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(KeyConverter.class);
 
-    /**
-     * Default Constructor.
-     */
-    @Inject
-    public KeyConverter() {
-        LOGGER.info("KeyConverter()");
-    }
+  private final TimestampManager timestampManager;
 
+  /**
+   * Default Constructor.
+   */
+  @Inject
+  public KeyConverter(final TimestampManager timestampManager) {
+    LOGGER.info("KeyConverter({})", timestampManager);
+    this.timestampManager = timestampManager;
+  }
+
+  public Key toKey(final Row row) {
+    final KeyVersionIdentifier identifier = ImmutableKeyVersionIdentifier.builder()
+        .owner(row.getString("owner"))
+        .key(row.getString("key_name"))
+        .version(row.getLong("version"))
+        .build();
+    return ImmutableKey.builder()
+        .keyVersionIdentifier(identifier)
+        .active(row.getBoolean("active"))
+        .type(row.getString("type"))
+        .value(row.get("value", ExtraTypeCodecs.BLOB_TO_ARRAY))
+        .createDate(timestampManager.toDate(row, "create_date")
+            .orElseThrow(() -> new IllegalArgumentException("CreateDate is null: " + row.getString("create_date"))))
+        .updateDate(timestampManager.toDate(row, "update_date"))
+        .build();
+  }
 }

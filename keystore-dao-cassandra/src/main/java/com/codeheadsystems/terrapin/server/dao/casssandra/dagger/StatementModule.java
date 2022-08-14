@@ -21,11 +21,11 @@ import com.codeheadsystems.terrapin.server.dao.casssandra.manager.StatementBinde
 import com.codeheadsystems.terrapin.server.dao.casssandra.manager.TimestampManager;
 import com.codeheadsystems.terrapin.server.dao.model.Key;
 import com.codeheadsystems.terrapin.server.dao.model.KeyIdentifier;
+import com.codeheadsystems.terrapin.server.dao.model.KeyVersionIdentifier;
 import dagger.Module;
 import dagger.Provides;
 import dagger.multibindings.IntoMap;
 import dagger.multibindings.StringKey;
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 @Module
@@ -39,6 +39,7 @@ public class StatementModule {
   public static final String STORE_KEY_STMT = "key.store";
   public static final String STORE_ACTIVE_KEY_STMT = "key.store.active";
   public static final String DELETE_ACTIVE_KEY_STMT = "key.delete.active";
+  public static final String LOAD_KEY_VERSION_STMT = "key.load.version";
 
   @IntoMap
   @Provides
@@ -95,6 +96,19 @@ public class StatementModule {
   @IntoMap
   @Provides
   @Singleton
+  @StringKey(LOAD_KEY_VERSION_STMT)
+  public StatementBinder<?> keyLoadVersion(final StatementBinderFactory factory,
+                                           final TableConfiguration tableConfiguration) {
+    final String baseSelect = "select * from %s.%s where owner = ? and key_name = ? and version = ?";
+    final String select = String.format(baseSelect,
+        tableConfiguration.keyspace(), tableConfiguration.keysTable());
+    return factory.build(select, KeyVersionIdentifier.class,
+        (identifier) -> new Object[]{identifier.owner(), identifier.key(), identifier.version()});
+  }
+
+  @IntoMap
+  @Provides
+  @Singleton
   @StringKey(STORE_KEY_STMT)
   public StatementBinder<?> storeKey(final StatementBinderFactory factory,
                                      final TimestampManager timestampManager,
@@ -133,6 +147,7 @@ public class StatementModule {
         key.updateDate().map(timestampManager::fromDate).orElse(null)
     });
   }
+
 
   @IntoMap
   @Provides
