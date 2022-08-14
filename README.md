@@ -1,18 +1,20 @@
 # Terrapin
 
-A collection of open-source tools.
-
-> **_NOTE:_** The Terrapin project is currently morphing into new work as
-> well... not just
-> a dumping ground of my old projects. I'll update the readme soon(tm).
+Secure 3rd party data management.
 
 ## Description
 
-The Terrapin project is a set of software projects that help provide features
-that can be used for a broad range of applications. These features were used
-internally for **CodeHead** projects, but have been made available for external
-usages. When possible, features are developed in a functional programming style,
-with limited side effects.
+The terrapin project provides the primary data owners the ability to let third
+parties access their data safely. Primary owners can revoke access at any time,
+removing the ability for a third party to access the data. During this time, the
+data itself is store at the third party, encrypted via terrapin, and controlled
+by the owner.
+
+Internally, the terrapin project is a set of software projects that help provide
+features that can be used for a broad range of applications. These features were
+used internally for **CodeHead** projects, but have been made available for
+external usages. When possible, features are developed in a functional
+programming style, with limited side effects.
 
 ## Building
 
