@@ -50,13 +50,17 @@ public class KeyDaoDynamoDBTest extends KeyDaoTest {
         .bindTo(meterRegistry);
   }
 
+  private KeyDao keyDao;
   @Override
   protected KeyDao keyDAO() {
-    return DaggerDaoComponent.builder()
-        .dDBModule(new DDBModule(client, tableConfiguration))
-        .ourMeterModule(new DaoComponent.OurMeterModule(meterRegistry))
-        .build()
-        .keyDao();
+    if (keyDao == null) {
+      keyDao = DaggerDaoComponent.builder()
+          .dDBModule(new DDBModule(client, tableConfiguration))
+          .ourMeterModule(new DaoComponent.OurMeterModule(meterRegistry))
+          .build()
+          .keyDao();
+    }
+    return keyDao;
   }
 
   @BeforeEach

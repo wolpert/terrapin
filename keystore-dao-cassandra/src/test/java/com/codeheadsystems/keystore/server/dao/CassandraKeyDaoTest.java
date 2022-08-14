@@ -45,7 +45,6 @@ class CassandraKeyDaoTest extends KeyDaoTest {
   public static CassandraContainer<?> container;
   private static CqlSession cqlSession;
   private static KeyDao keyDao;
-  private static long restartTime;
 
   @BeforeAll
   public static void setupRetry() {
@@ -69,25 +68,12 @@ class CassandraKeyDaoTest extends KeyDaoTest {
         .build();
     cqlSession = component.cqlSession();
     keyDao = component.keyDao();
-    restartTime = 0;
   }
 
   @AfterAll
   public static void removeContainer() {
     container.stop();
     container = null;
-    LOGGER.info("Total restart time(ms) {}", restartTime);
-  }
-
-  @BeforeEach
-  public void restart() {
-    long start = System.currentTimeMillis();
-    LOGGER.info("restart --> ");
-    cqlSession.execute("TRUNCATE TABLE keys");
-    cqlSession.execute("TRUNCATE TABLE active_keys");
-    cqlSession.execute("TRUNCATE TABLE owners");
-    LOGGER.info("restart <-- ");
-    restartTime += (System.currentTimeMillis() - start);
   }
 
   @Override

@@ -28,7 +28,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -39,15 +41,28 @@ public abstract class KeyDaoTest extends BaseMetricTest {
   private static final Logger LOGGER = LoggerFactory.getLogger(KeyDaoTest.class);
 
   public static final String OWNER = "I am an owner";
-  protected final Random random = new Random();
+  protected final static Random random = new Random();
   protected final ObjectMapper mapper = new ObjectMapperFactory().generate();
   protected KeyDao dao;
-
+  protected static String ownerPrefix;
+  protected String owner;
+  protected static AtomicInteger testCount = new AtomicInteger();
   protected abstract KeyDao keyDAO();
+
+  @BeforeAll
+  public static void setupOwner() {
+    ownerPrefix = "owner." + System.currentTimeMillis() + "." + random.nextInt(10000);
+    testCount.set(0);
+  }
 
   @BeforeEach
   void setupDao() {
+    owner = ownerPrefix + "." + testCount.incrementAndGet();
     dao = keyDAO();
+  }
+  
+  protected String owner() {
+    return owner;
   }
 
   @Test
@@ -146,20 +161,20 @@ public abstract class KeyDaoTest extends BaseMetricTest {
   @Test
   public void loadOwner_found() {
     LOGGER.info("loadOwner_found -->");
-    final OwnerIdentifier owner = dao.storeOwner(OWNER);
-    final Optional<OwnerIdentifier> result = dao.loadOwner(OWNER);
+    final OwnerIdentifier owner = dao.storeOwner(owner());
+    final Optional<OwnerIdentifier> result = dao.loadOwner(owner());
     assertThat(result)
         .isNotNull()
         .isNotEmpty()
         .get()
-        .hasFieldOrPropertyWithValue("owner", OWNER)
+        .hasFieldOrPropertyWithValue("owner", owner())
         .isEqualTo(owner);
   }
 
   @Test
   public void loadOwner_notfound() {
     LOGGER.info("loadOwner_notfound -->");
-    final Optional<OwnerIdentifier> result = dao.loadOwner(OWNER);
+    final Optional<OwnerIdentifier> result = dao.loadOwner(owner());
     assertThat(result)
         .isNotNull()
         .isEmpty();
@@ -218,15 +233,15 @@ public abstract class KeyDaoTest extends BaseMetricTest {
     final OwnerIdentifier o1 = dao.storeOwner("fred");
     final OwnerIdentifier o2 = dao.storeOwner("barney");
     final OwnerIdentifier o3 = dao.storeOwner("smith");
-    final OwnerIdentifier o4 = dao.storeOwner(OWNER);
+    final OwnerIdentifier o4 = dao.storeOwner("sam");
     final Batch<OwnerIdentifier> ownerIdentifierBatch = dao.listOwners(null);
     assertThat(ownerIdentifierBatch)
         .isNotNull()
         .hasFieldOrPropertyWithValue("nextToken", null)
         .extracting("list", as(LIST))
         .isNotEmpty()
-        .hasSize(4)
-        .containsOnly(o1, o2, o3, o4);
+        .hasSizeGreaterThanOrEqualTo(4)
+        .contains(o1, o2, o3, o4);
   }
 
   @Test
@@ -336,7 +351,7 @@ public abstract class KeyDaoTest extends BaseMetricTest {
   }
 
   private Key getKey(final boolean active, final long version) {
-    return getKey(active, version, "owner");
+    return getKey(active, version, owner());
   }
 
   public Key getAndStoreKey(final boolean active,
