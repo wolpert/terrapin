@@ -42,9 +42,12 @@ public class StatementBinderFactory {
   }
 
   public <T> StatementBinder<T> build(final String cqlStatement,
-                                      final Class<T> type,
                                       final Function<T, Object[]> binder) {
-    return new StatementBinder(cqlSession, cqlStatement, binder, type);
+    return new StatementBinder<>(cqlSession, cqlStatement, binder);
+  }
+
+  public <T> StatementBinder<T> build(final StatementBinder.Builder<T> builder) {
+    return new StatementBinder<>(cqlSession, builder);
   }
 
 }

@@ -52,26 +52,27 @@ public class StatementModule {
   @Provides
   @Singleton
   @StringKey(OWNER_STORE_STMT)
-  public StatementBinder<?> ownerStore(final StatementBinderFactory factory,
-                                       final TimestampManager timestampManager,
-                                       final TableConfiguration tableConfiguration) {
+  public StatementBinder.Builder<?> ownerStore(final StatementBinderFactory factory,
+                                               final TimestampManager timestampManager,
+                                               final TableConfiguration tableConfiguration) {
     final String baseInsert = "insert into %s.%s (owner, lookup, create_date) values (?,'%s',?)";
     final String insert = String.format(baseInsert,
         tableConfiguration.keyspace(), tableConfiguration.ownersTable(), DETAILS);
-    return factory.build(insert, String.class, (owner) -> new Object[]{owner, timestampManager.timestamp()});
+    return StatementBinder.<String>builder().with(insert)
+        .with((owner) -> new Object[]{owner, timestampManager.timestamp()});
   }
 
   @IntoMap
   @Provides
   @Singleton
   @StringKey(OWNER_STORE_KEY_STMT)
-  public StatementBinder<?> ownerStoreKey(final StatementBinderFactory factory,
-                                          final TimestampManager timestampManager,
-                                          final TableConfiguration tableConfiguration) {
+  public StatementBinder.Builder<?> ownerStoreKey(final StatementBinderFactory factory,
+                                                  final TimestampManager timestampManager,
+                                                  final TableConfiguration tableConfiguration) {
     final String baseInsert = "insert into %s.%s (owner, lookup, create_date) values (?,?,?)";
     final String insert = String.format(baseInsert,
         tableConfiguration.keyspace(), tableConfiguration.ownersTable());
-    return factory.build(insert, Key.class, (key) -> new Object[]{
+    return StatementBinder.<Key>builder().with(insert).with((key) -> new Object[]{
         key.keyVersionIdentifier().owner(), key.keyVersionIdentifier().key(), timestampManager.timestamp()});
   }
 
@@ -79,106 +80,100 @@ public class StatementModule {
   @Provides
   @Singleton
   @StringKey(OWNER_LOAD_STMT)
-  public StatementBinder<?> ownerLoad(final StatementBinderFactory factory,
-                                      final TableConfiguration tableConfiguration) {
+  public StatementBinder.Builder<?> ownerLoad(final StatementBinderFactory factory,
+                                              final TableConfiguration tableConfiguration) {
     final String baseSelect = "select * from %s.%s where owner = ? and lookup = '%s'";
     final String select = String.format(baseSelect,
         tableConfiguration.keyspace(), tableConfiguration.ownersTable(), DETAILS);
-    return factory.build(select, String.class, (owner) -> new Object[]{owner});
+    return StatementBinder.<String>builder().with(select).with((owner) -> new Object[]{owner});
   }
 
   @IntoMap
   @Provides
   @Singleton
   @StringKey(OWNER_LOAD_KEY_STMT)
-  public StatementBinder<?> ownerLoadKey(final StatementBinderFactory factory,
-                                         final TableConfiguration tableConfiguration) {
+  public StatementBinder.Builder<?> ownerLoadKey(final StatementBinderFactory factory,
+                                                 final TableConfiguration tableConfiguration) {
     final String baseSelect = "select * from %s.%s where owner = ? and lookup = '%s'";
     final String select = String.format(baseSelect,
         tableConfiguration.keyspace(), tableConfiguration.ownersTable(), DETAILS);
-    return factory.build(select, KeyIdentifier.class,
-        (identifier) -> new Object[]{identifier.owner(), identifier.key()});
+    return StatementBinder.<KeyIdentifier>builder().with(select).with((identifier) -> new Object[]{identifier.owner(), identifier.key()});
   }
 
   @IntoMap
   @Provides
   @Singleton
   @StringKey(KEY_LOAD_VERSION_STMT)
-  public StatementBinder<?> keyLoadVersion(final StatementBinderFactory factory,
-                                           final TableConfiguration tableConfiguration) {
+  public StatementBinder.Builder<?> keyLoadVersion(final StatementBinderFactory factory,
+                                                   final TableConfiguration tableConfiguration) {
     final String baseSelect = "select * from %s.%s where owner = ? and key_name = ? and version = ?";
     final String select = String.format(baseSelect,
         tableConfiguration.keyspace(), tableConfiguration.keysTable());
-    return factory.build(select, KeyVersionIdentifier.class,
-        (identifier) -> new Object[]{identifier.owner(), identifier.key(), identifier.version()});
+    return StatementBinder.<KeyVersionIdentifier>builder().with(select).with((identifier) -> new Object[]{identifier.owner(), identifier.key(), identifier.version()});
   }
 
   @IntoMap
   @Provides
   @Singleton
   @StringKey(KEY_LOAD_ACTIVE_VERSION_STMT)
-  public StatementBinder<?> keyLoadActiveVersion(final StatementBinderFactory factory,
-                                                 final TableConfiguration tableConfiguration) {
+  public StatementBinder.Builder<?> keyLoadActiveVersion(final StatementBinderFactory factory,
+                                                         final TableConfiguration tableConfiguration) {
     final String baseSelect = "select * from %s.%s where owner = ? and key_name = ? order by version desc limit 1";
     final String select = String.format(baseSelect,
         tableConfiguration.keyspace(), tableConfiguration.activeKeysTable());
-    return factory.build(select, KeyIdentifier.class,
-        (identifier) -> new Object[]{identifier.owner(), identifier.key()});
+    return StatementBinder.<KeyIdentifier>builder().with(select).with((identifier) -> new Object[]{identifier.owner(), identifier.key()});
   }
 
   @IntoMap
   @Provides
   @Singleton
   @StringKey(KEY_LIST_VERSION_STMT)
-  public StatementBinder<?> keyListVersions(final StatementBinderFactory factory,
-                                            final TableConfiguration tableConfiguration) {
+  public StatementBinder.Builder<?> keyListVersions(final StatementBinderFactory factory,
+                                                    final TableConfiguration tableConfiguration) {
     final String baseSelect = "select * from %s.%s where owner = ? and key_name = ? order by version desc";
     final String select = String.format(baseSelect,
         tableConfiguration.keyspace(), tableConfiguration.keysTable());
-    return factory.build(select, KeyIdentifier.class,
-        (identifier) -> new Object[]{identifier.owner(), identifier.key()});
+    return StatementBinder.<KeyIdentifier>builder().with(select).with((identifier) -> new Object[]{identifier.owner(), identifier.key()});
   }
 
   @IntoMap
   @Provides
   @Singleton
   @StringKey(KEY_LIST_STMT)
-  public StatementBinder<?> keyList(final StatementBinderFactory factory,
-                                    final TableConfiguration tableConfiguration) {
+  public StatementBinder.Builder<?> keyList(final StatementBinderFactory factory,
+                                            final TableConfiguration tableConfiguration) {
     final String baseSelect = "select * from %s.%s where owner = ?";
     final String select = String.format(baseSelect,
         tableConfiguration.keyspace(), tableConfiguration.ownersTable());
-    return factory.build(select, OwnerIdentifier.class,
-        (identifier) -> new Object[]{identifier.owner()});
+    return StatementBinder.<OwnerIdentifier>builder().with(select).with((identifier) -> new Object[]{identifier.owner()});
   }
 
   @IntoMap
   @Provides
   @Singleton
   @StringKey(OWNER_LIST_STMT)
-  public StatementBinder<?> ownerList(final StatementBinderFactory factory,
-                                      final TableConfiguration tableConfiguration) {
+  public StatementBinder.Builder<?> ownerList(final StatementBinderFactory factory,
+                                              final TableConfiguration tableConfiguration) {
     final String baseSelect = "select * from %s.%s where lookup = ?";
     final String select = String.format(baseSelect,
         tableConfiguration.keyspace(), tableConfiguration.ownersTable());
-    return factory.build(select, Void.class,
-        (identifier) -> new Object[]{DETAILS});
+    return StatementBinder.<Void>builder().with(select).with((identifier) -> new Object[]{DETAILS});
   }
 
   @IntoMap
   @Provides
   @Singleton
   @StringKey(KEY_STORE_STMT)
-  public StatementBinder<?> storeKey(final StatementBinderFactory factory,
-                                     final TimestampManager timestampManager,
-                                     final TableConfiguration tableConfiguration) {
+  public StatementBinder.Builder<?> storeKey(final StatementBinderFactory factory,
+                                             final TimestampManager timestampManager,
+                                             final TableConfiguration tableConfiguration) {
     final String baseInsert = """
         insert into %s.%s 
           (owner, key_name, version, value, active, type, create_date, update_date)
           values (?,?,?,?,?,?,?,?)""";
     final String insert = String.format(baseInsert,
         tableConfiguration.keyspace(), tableConfiguration.keysTable());
-    return factory.build(insert, Key.class, (key) -> new Object[]{
+    return StatementBinder.<Key>builder().with(insert).with((key) -> new Object[]{
         key.keyVersionIdentifier().owner(), key.keyVersionIdentifier().key(), key.keyVersionIdentifier().version(),
         key.value(), key.active(), key.type(),
         timestampManager.fromDate(key.createDate()),
@@ -190,16 +185,16 @@ public class StatementModule {
   @Provides
   @Singleton
   @StringKey(KEY_STORE_ACTIVE_STMT)
-  public StatementBinder<?> storeActiveKey(final StatementBinderFactory factory,
-                                           final TimestampManager timestampManager,
-                                           final TableConfiguration tableConfiguration) {
+  public StatementBinder.Builder<?> storeActiveKey(final StatementBinderFactory factory,
+                                                   final TimestampManager timestampManager,
+                                                   final TableConfiguration tableConfiguration) {
     final String baseInsert = """
         insert into %s.%s 
           (owner, key_name, version, value, active, type, create_date, update_date)
           values (?,?,?,?,?,?,?,?)""";
     final String insert = String.format(baseInsert,
         tableConfiguration.keyspace(), tableConfiguration.activeKeysTable());
-    return factory.build(insert, Key.class, (key) -> new Object[]{
+    return StatementBinder.<Key>builder().with(insert).with((key) -> new Object[]{
         key.keyVersionIdentifier().owner(), key.keyVersionIdentifier().key(), key.keyVersionIdentifier().version(),
         key.value(), key.active(), key.type(),
         timestampManager.fromDate(key.createDate()),
@@ -211,15 +206,15 @@ public class StatementModule {
   @Provides
   @Singleton
   @StringKey(KEY_DELETE_ACTIVE_STMT)
-  public StatementBinder<?> deleteActiveKey(final StatementBinderFactory factory,
-                                            final TableConfiguration tableConfiguration) {
+  public StatementBinder.Builder<?> deleteActiveKey(final StatementBinderFactory factory,
+                                                    final TableConfiguration tableConfiguration) {
     final String baseDelete = """
         delete from %s.%s 
         where owner = ? and key_name = ? and version = ?
         """;
     final String delete = String.format(baseDelete,
         tableConfiguration.keyspace(), tableConfiguration.activeKeysTable());
-    return factory.build(delete, KeyVersionIdentifier.class, (identifier) -> new Object[]{
+    return StatementBinder.<KeyVersionIdentifier>builder().with(delete).with((identifier) -> new Object[]{
         identifier.owner(), identifier.key(), identifier.version()
     });
   }
@@ -228,15 +223,15 @@ public class StatementModule {
   @Provides
   @Singleton
   @StringKey(KEY_DELETE_VERSION_STMT)
-  public StatementBinder<?> deleteVersionKey(final StatementBinderFactory factory,
-                                             final TableConfiguration tableConfiguration) {
+  public StatementBinder.Builder<?> deleteVersionKey(final StatementBinderFactory factory,
+                                                     final TableConfiguration tableConfiguration) {
     final String baseDelete = """
         delete from %s.%s 
         where owner = ? and key_name = ? and version = ?
         """;
     final String delete = String.format(baseDelete,
         tableConfiguration.keyspace(), tableConfiguration.keysTable());
-    return factory.build(delete, KeyVersionIdentifier.class, (identifier) -> new Object[]{
+    return StatementBinder.<KeyVersionIdentifier>builder().with(delete).with((identifier) -> new Object[]{
         identifier.owner(), identifier.key(), identifier.version()
     });
   }

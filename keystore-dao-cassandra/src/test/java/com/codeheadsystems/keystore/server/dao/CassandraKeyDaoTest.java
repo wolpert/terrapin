@@ -18,7 +18,7 @@ package com.codeheadsystems.keystore.server.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.codeheadsystems.keystore.server.dao.casssandra.dagger.CassandraModule;
+import com.codeheadsystems.keystore.server.dao.casssandra.dagger.CqlSessionModule;
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.type.codec.ExtraTypeCodecs;
 import com.datastax.oss.driver.api.core.type.codec.TypeCodecs;
@@ -41,6 +41,7 @@ class CassandraKeyDaoTest extends KeyDaoTest {
   public static Retry retry;
   public static CassandraContainer<?> container;
   private static CqlSession cqlSession;
+  private static KeyDao keyDao;
 
   @BeforeAll
   public static void setupRetry() {
@@ -58,12 +59,12 @@ class CassandraKeyDaoTest extends KeyDaoTest {
     container.start();
     final InetSocketAddress address =
         new InetSocketAddress(container.getHost(), container.getMappedPort(CassandraContainer.CQL_PORT));
-    cqlSession = CqlSession.builder()
-        .addTypeCodecs(TypeCodecs.ZONED_TIMESTAMP_UTC, ExtraTypeCodecs.BLOB_TO_ARRAY)
-        .addContactPoint(address)
-        .withKeyspace("keystore")
-        .withLocalDatacenter(DATACENTER)
+    final DaoComponent component = DaggerDaoComponent.builder()
+        .cqlSessionModule(new CqlSessionModule(address))
+        .ourMeterModule(new DaoComponent.OurMeterModule(meterRegistry))
         .build();
+    cqlSession = component.cqlSession();
+    keyDao = component.keyDao();
   }
 
   @AfterAll
@@ -79,27 +80,8 @@ class CassandraKeyDaoTest extends KeyDaoTest {
     cqlSession.execute("TRUNCATE TABLE owners");
   }
 
-  @Test
-  public void testSessions() {
-    final InetSocketAddress address =
-        new InetSocketAddress(container.getHost(), container.getMappedPort(CassandraContainer.CQL_PORT));
-    try (final CqlSession session = CqlSession.builder()
-        .addTypeCodecs(TypeCodecs.ZONED_TIMESTAMP_UTC, ExtraTypeCodecs.BLOB_TO_ARRAY)
-        .addContactPoint(address)
-        .withKeyspace("keystore")
-        .withLocalDatacenter(DATACENTER)
-        .build()) {
-      assertThat(session.getMetadata().getKeyspaces().values())
-          .isNotEmpty();
-    }
-  }
-
   @Override
   protected KeyDao keyDAO() {
-    return DaggerDaoComponent.builder()
-        .cassandraModule(new CassandraModule(cqlSession))
-        .ourMeterModule(new DaoComponent.OurMeterModule(meterRegistry))
-        .build()
-        .keyDao();
+    return keyDao;
   }
 }

@@ -38,6 +38,7 @@ import javax.inject.Singleton;
 
 @Module(includes = {
     CassandraModule.Binder.class,
+    CqlSessionModule.class,
     MetricsModule.class,
     StatementModule.class
 })
@@ -45,23 +46,14 @@ public class CassandraModule {
 
   public static final String CASSANDRA_RETRY = "CASSANDRA_RETRY";
 
-  private final CqlSession cqlSession;
   private final TableConfiguration tableConfiguration;
 
-  public CassandraModule(final CqlSession cqlSession) {
-    this(cqlSession, ImmutableTableConfiguration.builder().build());
+  public CassandraModule() {
+    this(ImmutableTableConfiguration.builder().build());
   }
 
-  public CassandraModule(final CqlSession cqlSession,
-                         final TableConfiguration tableConfiguration) {
-    this.cqlSession = cqlSession;
+  public CassandraModule(final TableConfiguration tableConfiguration) {
     this.tableConfiguration = tableConfiguration;
-  }
-
-  @Provides
-  @Singleton
-  public CqlSession cqlSession() {
-    return cqlSession;
   }
 
   @Provides

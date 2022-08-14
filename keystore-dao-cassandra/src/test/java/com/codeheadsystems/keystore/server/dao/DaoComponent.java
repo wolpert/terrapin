@@ -19,6 +19,7 @@ package com.codeheadsystems.keystore.server.dao;
 import static com.codeheadsystems.metrics.dagger.MetricsModule.PROVIDED_METER_REGISTRY;
 
 import com.codeheadsystems.keystore.server.dao.casssandra.dagger.CassandraModule;
+import com.datastax.oss.driver.api.core.CqlSession;
 import dagger.Component;
 import dagger.Module;
 import dagger.Provides;
@@ -34,6 +35,7 @@ import javax.inject.Singleton;
 public interface DaoComponent {
 
   KeyDao keyDao();
+  CqlSession cqlSession();
 
   @Module
   class OurMeterModule {

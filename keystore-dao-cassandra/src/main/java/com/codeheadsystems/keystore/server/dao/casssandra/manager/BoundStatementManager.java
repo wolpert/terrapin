@@ -16,8 +16,10 @@
 
 package com.codeheadsystems.keystore.server.dao.casssandra.manager;
 
+import com.codeheadsystems.keystore.server.dao.casssandra.dagger.StatementBinderFactory;
 import com.datastax.oss.driver.api.core.cql.Statement;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -39,9 +41,13 @@ public class BoundStatementManager {
    * @param preparedStatementMap for binding.
    */
   @Inject
-  public BoundStatementManager(final Map<String, StatementBinder<?>> preparedStatementMap) {
+  public BoundStatementManager(final Map<String, StatementBinder.Builder<?>> preparedStatementMap,
+                               final StatementBinderFactory factory) {
     LOGGER.info("BoundStatementManager({})", preparedStatementMap);
-    this.preparedStatementMap = preparedStatementMap;
+    this.preparedStatementMap = preparedStatementMap.entrySet().stream()
+        .map(e-> Map.entry(e.getKey(), factory.build(e.getValue())))
+        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    LOGGER.info("BoundStatementManager prepared");
   }
 
   /**
@@ -52,7 +58,7 @@ public class BoundStatementManager {
    * @return a statement that can be executed.
    */
   public <T> Statement<?> bind(@Nonnull final String statementMapIdentifier,
-                               @Nonnull final T object) {
+                               final T object) {
     final StatementBinder<?> statementBinder = preparedStatementMap.get(statementMapIdentifier);
     if (statementBinder == null) {
       throw new IllegalArgumentException("No such statement binder: " + statementMapIdentifier);

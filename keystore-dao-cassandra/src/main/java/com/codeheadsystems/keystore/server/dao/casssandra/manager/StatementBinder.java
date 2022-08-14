@@ -16,12 +16,11 @@
 
 package com.codeheadsystems.keystore.server.dao.casssandra.manager;
 
+import com.codeheadsystems.keystore.server.dao.casssandra.dagger.StatementBinderFactory;
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.cql.BoundStatement;
 import com.datastax.oss.driver.api.core.cql.PreparedStatement;
 import com.datastax.oss.driver.api.core.cql.SimpleStatement;
-import dagger.assisted.Assisted;
-import dagger.assisted.AssistedInject;
 import java.util.function.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +35,6 @@ public class StatementBinder<T> {
   private final Function<T, Object[]> binder;
   private final PreparedStatement preparedStatement;
   private final String cqlStatement;
-  private final Class<T> type;
 
   /**
    * Default constructor.
@@ -44,19 +42,24 @@ public class StatementBinder<T> {
    * @param cqlSession   used for creating the preparer.
    * @param cqlStatement Statement we are preparing.
    * @param binder       execution binder to convert.
-   * @param type         to get the type of object. Java generics almost work.
    */
-  @AssistedInject
   public StatementBinder(final CqlSession cqlSession,
-                         @Assisted final String cqlStatement,
-                         @Assisted final Function<T, Object[]> binder,
-                         @Assisted final Class<T> type) {
+                         final String cqlStatement,
+                         final Function<T, Object[]> binder) {
     LOGGER.info("StatementBinder({})", cqlStatement);
     final SimpleStatement statement = SimpleStatement.newInstance(cqlStatement);
     this.preparedStatement = cqlSession.prepare(statement);
     this.binder = binder;
     this.cqlStatement = cqlStatement;
-    this.type = type;
+  }
+
+  public StatementBinder(final CqlSession cqlSession,
+                         final Builder<T> builder) {
+    this(cqlSession, builder.cqlStatement, builder.binder);
+  }
+
+  public static <T> Builder<T> builder() {
+    return new Builder<>();
   }
 
   /**
@@ -71,12 +74,31 @@ public class StatementBinder<T> {
     return preparedStatement.bind(binder.apply(object));
   }
 
-  public Class<T> getType() {
-    return type;
-  }
-
   @Override
   public String toString() {
     return getClass().getSimpleName() + ":[" + cqlStatement + "]";
+  }
+
+  public static class Builder<T> {
+    private String cqlStatement;
+    private Function<T, Object[]> binder;
+
+    protected Builder() {
+
+    }
+
+    public Builder<T> with(final String cqlStatement) {
+      this.cqlStatement = cqlStatement;
+      return this;
+    }
+
+    public Builder<T> with(final Function<T, Object[]> binder) {
+      this.binder = binder;
+      return this;
+    }
+
+    public StatementBinder<T> build(final StatementBinderFactory factory) {
+      return factory.build(cqlStatement, binder);
+    }
   }
 }
