@@ -30,10 +30,13 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.CassandraContainer;
 import org.testcontainers.utility.DockerImageName;
 
 class CassandraKeyDaoTest extends KeyDaoTest {
+  private static final Logger LOGGER = LoggerFactory.getLogger(CassandraKeyDaoTest.class);
 
   public static final String CASSANDRA_VERSION = "4.0.5";
   public static final String DATACENTER = "datacenter1";
@@ -42,6 +45,7 @@ class CassandraKeyDaoTest extends KeyDaoTest {
   public static CassandraContainer<?> container;
   private static CqlSession cqlSession;
   private static KeyDao keyDao;
+  private static long restartTime;
 
   @BeforeAll
   public static void setupRetry() {
@@ -65,19 +69,25 @@ class CassandraKeyDaoTest extends KeyDaoTest {
         .build();
     cqlSession = component.cqlSession();
     keyDao = component.keyDao();
+    restartTime = 0;
   }
 
   @AfterAll
   public static void removeContainer() {
     container.stop();
     container = null;
+    LOGGER.info("Total restart time(ms) {}", restartTime);
   }
 
   @BeforeEach
   public void restart() {
+    long start = System.currentTimeMillis();
+    LOGGER.info("restart --> ");
     cqlSession.execute("TRUNCATE TABLE keys");
     cqlSession.execute("TRUNCATE TABLE active_keys");
     cqlSession.execute("TRUNCATE TABLE owners");
+    LOGGER.info("restart <-- ");
+    restartTime += (System.currentTimeMillis() - start);
   }
 
   @Override

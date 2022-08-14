@@ -31,8 +31,12 @@ import java.util.Random;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class KeyDaoTest extends BaseMetricTest {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(KeyDaoTest.class);
 
   public static final String OWNER = "I am an owner";
   protected final Random random = new Random();
@@ -48,12 +52,14 @@ public abstract class KeyDaoTest extends BaseMetricTest {
 
   @Test
   public void assertTrue() {
+    LOGGER.info("assertTrue -->");
     assertThat(keyDAO())
         .isNotNull();
   }
 
   @Test
   public void store_load() {
+    LOGGER.info("store_load -->");
     final Key key = getKey();
     dao.store(key);
     final Optional<Key> result = dao.load(key.keyVersionIdentifier()); // key version identifier
@@ -67,6 +73,7 @@ public abstract class KeyDaoTest extends BaseMetricTest {
 
   @Test
   public void load_notFound() {
+    LOGGER.info("load_notFound -->");
     final Key key = getKey();
     final Optional<Key> result = dao.load(key.keyVersionIdentifier()); // key version identifier
 
@@ -77,6 +84,7 @@ public abstract class KeyDaoTest extends BaseMetricTest {
 
   @Test
   public void loadActive_oneKey() {
+    LOGGER.info("loadActive_oneKey -->");
     final Key key = getKey(true, 2);
     final KeyIdentifier keyIdentifier = getKeyIdentifier(key);
     dao.store(key);
@@ -85,6 +93,7 @@ public abstract class KeyDaoTest extends BaseMetricTest {
 
   @Test
   public void loadActive_oneKey_notActive() {
+    LOGGER.info("loadActive_oneKey_notActive -->");
     final Key key = getKey(false, 1);
     final KeyIdentifier keyIdentifier = getKeyIdentifier(key);
     dao.store(key);
@@ -96,6 +105,7 @@ public abstract class KeyDaoTest extends BaseMetricTest {
 
   @Test
   public void loadActive_threeKeys_twoActive() {
+    LOGGER.info("loadActive_threeKeys_twoActive -->");
     final Key key1 = getAndStoreKey(true, 3);
     final Key key2 = getAndStoreKey(true, 2);
     final Key key3 = getAndStoreKey(false, 1);
@@ -104,6 +114,7 @@ public abstract class KeyDaoTest extends BaseMetricTest {
 
   @Test
   public void loadActive_threeKeys_twoActive_diffOrder() {
+    LOGGER.info("loadActive_threeKeys_twoActive_diffOrder -->");
     final Key key2 = getAndStoreKey(true, 2);
     final Key key3 = getAndStoreKey(false, 1);
     final Key key1 = getAndStoreKey(true, 3);
@@ -112,6 +123,7 @@ public abstract class KeyDaoTest extends BaseMetricTest {
 
   @Test
   public void loadActive_threeKeys_oneActive() {
+    LOGGER.info("loadActive_threeKeys_oneActive -->");
     final Key key2 = getAndStoreKey(false, 3);
     final Key key1 = getAndStoreKey(true, 2);
     final Key key3 = getAndStoreKey(false, 1);
@@ -120,6 +132,7 @@ public abstract class KeyDaoTest extends BaseMetricTest {
 
   @Test
   public void loadActive_threeKeys_zeroActive() {
+    LOGGER.info("loadActive_threeKeys_zeroActive -->");
     final Key key3 = getAndStoreKey(false, 1);
     final Key key1 = getAndStoreKey(false, 3);
     final Key key2 = getAndStoreKey(false, 2);
@@ -132,6 +145,7 @@ public abstract class KeyDaoTest extends BaseMetricTest {
 
   @Test
   public void loadOwner_found() {
+    LOGGER.info("loadOwner_found -->");
     final OwnerIdentifier owner = dao.storeOwner(OWNER);
     final Optional<OwnerIdentifier> result = dao.loadOwner(OWNER);
     assertThat(result)
@@ -144,6 +158,7 @@ public abstract class KeyDaoTest extends BaseMetricTest {
 
   @Test
   public void loadOwner_notfound() {
+    LOGGER.info("loadOwner_notfound -->");
     final Optional<OwnerIdentifier> result = dao.loadOwner(OWNER);
     assertThat(result)
         .isNotNull()
@@ -153,6 +168,7 @@ public abstract class KeyDaoTest extends BaseMetricTest {
 
   @Test
   public void change_active_key() {
+    LOGGER.info("change_active_key -->");
     final Key key = getKey();
     final boolean initialActiveState = key.active();
     dao.store(key);
@@ -179,6 +195,7 @@ public abstract class KeyDaoTest extends BaseMetricTest {
 
   @Test
   public void listKeys() {
+    LOGGER.info("listKeys -->");
     final Key key1 = getAndStoreKey(true, 1, "fred");
     final KeyIdentifier identifier = ImmutableKeyIdentifier.copyOf(key1.keyVersionIdentifier());
     getAndStoreKey(true, 2, "fred");
@@ -194,6 +211,7 @@ public abstract class KeyDaoTest extends BaseMetricTest {
 
   @Test
   public void listOwners() {
+    LOGGER.info("listOwners -->");
     final Key key1 = getAndStoreKey(true, 1, "fred");
     final Key key2 = getAndStoreKey(true, 1, "barney");
     final Key key3 = getAndStoreKey(true, 1, "smith");
@@ -213,6 +231,7 @@ public abstract class KeyDaoTest extends BaseMetricTest {
 
   @Test
   public void listKeyVersions() {
+    LOGGER.info("listKeyVersions -->");
     final Key key1 = getAndStoreKey(false, 1);
     final Key key2 = getAndStoreKey(true, 2);
     final Key key3 = getAndStoreKey(true, 3);
@@ -228,6 +247,7 @@ public abstract class KeyDaoTest extends BaseMetricTest {
 
   @Test
   public void deleteKeyVersion() {
+    LOGGER.info("deleteKeyVersion -->");
     final Key key1 = getAndStoreKey(false, 1);
     final Key key2 = getAndStoreKey(true, 2);
     final Key key3 = getAndStoreKey(true, 3);
@@ -261,6 +281,7 @@ public abstract class KeyDaoTest extends BaseMetricTest {
   // Disabled because this is really a batch process.
   //@Test
   public void deleteAllKeyVersions() {
+    LOGGER.info("deleteAllKeyVersions -->");
     final Key key1 = getAndStoreKey(false, 1);
     final Key key2 = getAndStoreKey(true, 2);
     final Key key3 = getAndStoreKey(true, 3);
