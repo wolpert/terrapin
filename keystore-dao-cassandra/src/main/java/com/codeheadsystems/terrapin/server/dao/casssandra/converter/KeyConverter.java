@@ -18,8 +18,10 @@ package com.codeheadsystems.terrapin.server.dao.casssandra.converter;
 
 import com.codeheadsystems.terrapin.server.dao.casssandra.manager.TimestampManager;
 import com.codeheadsystems.terrapin.server.dao.model.ImmutableKey;
+import com.codeheadsystems.terrapin.server.dao.model.ImmutableKeyIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.ImmutableKeyVersionIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.Key;
+import com.codeheadsystems.terrapin.server.dao.model.KeyIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.KeyVersionIdentifier;
 import com.datastax.oss.driver.api.core.cql.Row;
 import com.datastax.oss.driver.api.core.type.codec.ExtraTypeCodecs;
@@ -34,8 +36,14 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class KeyConverter {
 
+  public static final String CREATE_DATE = "create_date";
+  public static final String UPDATE_DATE = "update_date";
+  public static final String TYPE = "type";
+  public static final String ACTIVE = "active";
+  public static final String OWNER = "owner";
+  public static final String KEY_NAME = "key_name";
+  public static final String VERSION = "version";
   private static final Logger LOGGER = LoggerFactory.getLogger(KeyConverter.class);
-
   private final TimestampManager timestampManager;
 
   /**
@@ -51,20 +59,20 @@ public class KeyConverter {
     final KeyVersionIdentifier identifier = toKeyVersionIdentifier(row);
     return ImmutableKey.builder()
         .keyVersionIdentifier(identifier)
-        .active(row.getBoolean("active"))
-        .type(row.getString("type"))
+        .active(row.getBoolean(ACTIVE))
+        .type(row.getString(TYPE))
         .value(row.get("value", ExtraTypeCodecs.BLOB_TO_ARRAY))
-        .createDate(timestampManager.toDate(row, "create_date")
-            .orElseThrow(() -> new IllegalArgumentException("CreateDate is null: " + row.getString("create_date"))))
-        .updateDate(timestampManager.toDate(row, "update_date"))
+        .createDate(timestampManager.toDate(row, CREATE_DATE)
+            .orElseThrow(() -> new IllegalArgumentException("CreateDate is null: " + row.getString(CREATE_DATE))))
+        .updateDate(timestampManager.toDate(row, UPDATE_DATE))
         .build();
   }
 
   public KeyVersionIdentifier toKeyVersionIdentifier(final Row row) {
     return ImmutableKeyVersionIdentifier.builder()
-        .owner(row.getString("owner"))
-        .key(row.getString("key_name"))
-        .version(row.getLong("version"))
+        .owner(row.getString(OWNER))
+        .key(row.getString(KEY_NAME))
+        .version(row.getLong(VERSION))
         .build();
   }
 }

@@ -22,6 +22,7 @@ import com.codeheadsystems.terrapin.server.dao.casssandra.manager.TimestampManag
 import com.codeheadsystems.terrapin.server.dao.model.Key;
 import com.codeheadsystems.terrapin.server.dao.model.KeyIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.KeyVersionIdentifier;
+import com.codeheadsystems.terrapin.server.dao.model.OwnerIdentifier;
 import dagger.Module;
 import dagger.Provides;
 import dagger.multibindings.IntoMap;
@@ -39,9 +40,12 @@ public class StatementModule {
   public static final String KEY_STORE_STMT = "key.store";
   public static final String KEY_STORE_ACTIVE_STMT = "key.store.active";
   public static final String KEY_DELETE_ACTIVE_STMT = "key.delete.active";
+  public static final String KEY_DELETE_VERSION_STMT = "key.delete.version";
   public static final String KEY_LOAD_VERSION_STMT = "key.load.version";
   public static final String KEY_LOAD_ACTIVE_VERSION_STMT = "key.load.active.version";
   public static final String KEY_LIST_VERSION_STMT = "key.list.version";
+  public static final String KEY_LIST_STMT = "key.list";
+  public static final String OWNER_LIST_STMT = "owner.list";
 
 
   @IntoMap
@@ -138,6 +142,32 @@ public class StatementModule {
   @IntoMap
   @Provides
   @Singleton
+  @StringKey(KEY_LIST_STMT)
+  public StatementBinder<?> keyList(final StatementBinderFactory factory,
+                                    final TableConfiguration tableConfiguration) {
+    final String baseSelect = "select * from %s.%s where owner = ?";
+    final String select = String.format(baseSelect,
+        tableConfiguration.keyspace(), tableConfiguration.ownersTable());
+    return factory.build(select, OwnerIdentifier.class,
+        (identifier) -> new Object[]{identifier.owner()});
+  }
+
+  @IntoMap
+  @Provides
+  @Singleton
+  @StringKey(OWNER_LIST_STMT)
+  public StatementBinder<?> ownerList(final StatementBinderFactory factory,
+                                      final TableConfiguration tableConfiguration) {
+    final String baseSelect = "select * from %s.%s where lookup = ?";
+    final String select = String.format(baseSelect,
+        tableConfiguration.keyspace(), tableConfiguration.ownersTable());
+    return factory.build(select, Void.class,
+        (identifier) -> new Object[]{DETAILS});
+  }
+
+  @IntoMap
+  @Provides
+  @Singleton
   @StringKey(KEY_STORE_STMT)
   public StatementBinder<?> storeKey(final StatementBinderFactory factory,
                                      final TimestampManager timestampManager,
@@ -177,7 +207,6 @@ public class StatementModule {
     });
   }
 
-
   @IntoMap
   @Provides
   @Singleton
@@ -190,8 +219,25 @@ public class StatementModule {
         """;
     final String delete = String.format(baseDelete,
         tableConfiguration.keyspace(), tableConfiguration.activeKeysTable());
-    return factory.build(delete, Key.class, (key) -> new Object[]{
-        key.keyVersionIdentifier().owner(), key.keyVersionIdentifier().key(), key.keyVersionIdentifier().version()
+    return factory.build(delete, KeyVersionIdentifier.class, (identifier) -> new Object[]{
+        identifier.owner(), identifier.key(), identifier.version()
+    });
+  }
+
+  @IntoMap
+  @Provides
+  @Singleton
+  @StringKey(KEY_DELETE_VERSION_STMT)
+  public StatementBinder<?> deleteVersionKey(final StatementBinderFactory factory,
+                                             final TableConfiguration tableConfiguration) {
+    final String baseDelete = """
+        delete from %s.%s 
+        where owner = ? and key_name = ? and version = ?
+        """;
+    final String delete = String.format(baseDelete,
+        tableConfiguration.keyspace(), tableConfiguration.keysTable());
+    return factory.build(delete, KeyVersionIdentifier.class, (identifier) -> new Object[]{
+        identifier.owner(), identifier.key(), identifier.version()
     });
   }
 }

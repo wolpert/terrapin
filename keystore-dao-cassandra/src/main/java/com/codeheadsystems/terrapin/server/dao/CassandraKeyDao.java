@@ -79,7 +79,7 @@ public class CassandraKeyDao implements KeyDao {
       if (key.active()) {
         cassandraAccessor.execute(binder.bind(KEY_STORE_ACTIVE_STMT, key));
       } else {
-        cassandraAccessor.execute(binder.bind(KEY_DELETE_ACTIVE_STMT, key));
+        cassandraAccessor.execute(binder.bind(KEY_DELETE_ACTIVE_STMT, key.keyVersionIdentifier()));
       }
       cassandraAccessor.execute(binder.bind(OWNER_STORE_KEY_STMT, key));
       return null;
@@ -147,7 +147,12 @@ public class CassandraKeyDao implements KeyDao {
   public Batch<OwnerIdentifier> listOwners(final Token nextToken) {
     LOGGER.debug("listOwners()");
     return time("listOwners", null, () -> {
-      return null;
+      final ResultSet resultSet = cassandraAccessor.execute(binder.bind(OWNER_LIST_STMT, null));
+      // TODO: Do this in a batching way
+      final List<OwnerIdentifier> list = resultSet.all().stream()
+          .map(ownerConverter::toOwnerIdentifier)
+          .toList();
+      return ImmutableBatch.<OwnerIdentifier>builder().list(list).build();
     });
   }
 
@@ -157,7 +162,13 @@ public class CassandraKeyDao implements KeyDao {
                                        final Token nextToken) {
     LOGGER.debug("listKeys({})", identifier);
     return time("listKeys", identifier.owner(), () -> {
-      return null;
+      final ResultSet resultSet = cassandraAccessor.execute(binder.bind(KEY_LIST_STMT, identifier));
+      // TODO: Do this in a batching way
+      final List<KeyIdentifier> list = resultSet.all().stream()
+          .map(ownerConverter::toKeyIdentifier)
+          .filter(ki -> !ki.key().equals(DETAILS))
+          .toList();
+      return ImmutableBatch.<KeyIdentifier>builder().list(list).build();
     });
   }
 
@@ -179,6 +190,8 @@ public class CassandraKeyDao implements KeyDao {
   public boolean delete(final KeyVersionIdentifier identifier) {
     LOGGER.debug("delete({})", identifier);
     return time("deleteVersions", identifier.owner(), () -> {
+      cassandraAccessor.execute(binder.bind(KEY_DELETE_ACTIVE_STMT, identifier));
+      cassandraAccessor.execute(binder.bind(KEY_DELETE_VERSION_STMT, identifier));
       return false;
     });
   }

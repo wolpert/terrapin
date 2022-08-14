@@ -66,7 +66,8 @@ public class StatementBinder<T> {
    * @return bound statement.
    */
   public BoundStatement bind(final T object) {
-    LOGGER.debug("bind [{}] to {}", cqlStatement, object.getClass().getSimpleName());
+    LOGGER.debug("bind [{}] to {}", cqlStatement,
+        (object != null ? object.getClass().getSimpleName() : null));
     return preparedStatement.bind(binder.apply(object));
   }
 

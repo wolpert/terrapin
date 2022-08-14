@@ -16,7 +16,9 @@
 
 package com.codeheadsystems.terrapin.server.dao.casssandra.converter;
 
+import com.codeheadsystems.terrapin.server.dao.model.ImmutableKeyIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.ImmutableOwnerIdentifier;
+import com.codeheadsystems.terrapin.server.dao.model.KeyIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.OwnerIdentifier;
 import com.datastax.oss.driver.api.core.cql.Row;
 import javax.inject.Inject;
@@ -32,6 +34,7 @@ public class OwnerConverter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OwnerConverter.class);
     public static final String OWNER = "owner";
+    public static final String LOOKUP = "lookup";
 
     /**
      * Default constructor.
@@ -52,4 +55,10 @@ public class OwnerConverter {
         return ImmutableOwnerIdentifier.builder().owner(row.getString(OWNER)).build();
     }
 
+    public KeyIdentifier toKeyIdentifier(final Row row) {
+        return ImmutableKeyIdentifier.builder()
+            .owner(row.getString(OWNER))
+            .key(row.getString(LOOKUP))
+            .build();
+    }
 }

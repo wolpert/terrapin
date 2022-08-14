@@ -13,8 +13,13 @@ CREATE TABLE
     lookup      text,
     type        text,
     create_date timestamp,
-    PRIMARY KEY ( (owner, lookup) )
+    PRIMARY KEY ( (owner), lookup )
 );
+
+CREATE INDEX
+    IF NOT EXISTS
+    owners_lookup_idx
+    on keystore.owners(lookup);
 
 CREATE TABLE
     IF NOT EXISTS
