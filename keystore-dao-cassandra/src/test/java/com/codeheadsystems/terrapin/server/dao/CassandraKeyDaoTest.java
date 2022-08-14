@@ -27,7 +27,9 @@ import io.github.resilience4j.retry.Retry;
 import io.github.resilience4j.retry.RetryRegistry;
 import java.net.InetSocketAddress;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.CassandraContainer;
 import org.testcontainers.utility.DockerImageName;
@@ -63,7 +65,13 @@ class CassandraKeyDaoTest extends KeyDaoTest {
         .withKeyspace("keystore")
         .withLocalDatacenter(DATACENTER)
         .build();
+  }
 
+  @BeforeEach
+  public void restart() {
+    cqlSession.execute("TRUNCATE TABLE keys");
+    cqlSession.execute("TRUNCATE TABLE active_keys");
+    cqlSession.execute("TRUNCATE TABLE owners");
   }
 
   @AfterAll

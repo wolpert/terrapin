@@ -48,11 +48,7 @@ public class KeyConverter {
   }
 
   public Key toKey(final Row row) {
-    final KeyVersionIdentifier identifier = ImmutableKeyVersionIdentifier.builder()
-        .owner(row.getString("owner"))
-        .key(row.getString("key_name"))
-        .version(row.getLong("version"))
-        .build();
+    final KeyVersionIdentifier identifier = toKeyVersionIdentifier(row);
     return ImmutableKey.builder()
         .keyVersionIdentifier(identifier)
         .active(row.getBoolean("active"))
@@ -61,6 +57,14 @@ public class KeyConverter {
         .createDate(timestampManager.toDate(row, "create_date")
             .orElseThrow(() -> new IllegalArgumentException("CreateDate is null: " + row.getString("create_date"))))
         .updateDate(timestampManager.toDate(row, "update_date"))
+        .build();
+  }
+
+  public KeyVersionIdentifier toKeyVersionIdentifier(final Row row) {
+    return ImmutableKeyVersionIdentifier.builder()
+        .owner(row.getString("owner"))
+        .key(row.getString("key_name"))
+        .version(row.getLong("version"))
         .build();
   }
 }

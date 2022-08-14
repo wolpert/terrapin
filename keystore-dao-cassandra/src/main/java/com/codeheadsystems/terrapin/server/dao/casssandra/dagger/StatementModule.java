@@ -32,19 +32,22 @@ import javax.inject.Singleton;
 public class StatementModule {
 
   public static final String DETAILS = "details";
-  public static final String STORE_OWNER_STMT = "owner.store";
-  public static final String STORE_OWNER_KEY_STMT = "owner.store.key";
-  public static final String LOAD_OWNER_STMT = "owner.load";
-  public static final String LOAD_OWNER_KEY_STMT = "owner.load.key";
-  public static final String STORE_KEY_STMT = "key.store";
-  public static final String STORE_ACTIVE_KEY_STMT = "key.store.active";
-  public static final String DELETE_ACTIVE_KEY_STMT = "key.delete.active";
-  public static final String LOAD_KEY_VERSION_STMT = "key.load.version";
+  public static final String OWNER_STORE_STMT = "owner.store";
+  public static final String OWNER_STORE_KEY_STMT = "owner.store.key";
+  public static final String OWNER_LOAD_STMT = "owner.load";
+  public static final String OWNER_LOAD_KEY_STMT = "owner.load.key";
+  public static final String KEY_STORE_STMT = "key.store";
+  public static final String KEY_STORE_ACTIVE_STMT = "key.store.active";
+  public static final String KEY_DELETE_ACTIVE_STMT = "key.delete.active";
+  public static final String KEY_LOAD_VERSION_STMT = "key.load.version";
+  public static final String KEY_LOAD_ACTIVE_VERSION_STMT = "key.load.active.version";
+  public static final String KEY_LIST_VERSION_STMT = "key.list.version";
+
 
   @IntoMap
   @Provides
   @Singleton
-  @StringKey(STORE_OWNER_STMT)
+  @StringKey(OWNER_STORE_STMT)
   public StatementBinder<?> ownerStore(final StatementBinderFactory factory,
                                        final TimestampManager timestampManager,
                                        final TableConfiguration tableConfiguration) {
@@ -57,13 +60,13 @@ public class StatementModule {
   @IntoMap
   @Provides
   @Singleton
-  @StringKey(STORE_OWNER_KEY_STMT)
+  @StringKey(OWNER_STORE_KEY_STMT)
   public StatementBinder<?> ownerStoreKey(final StatementBinderFactory factory,
                                           final TimestampManager timestampManager,
                                           final TableConfiguration tableConfiguration) {
     final String baseInsert = "insert into %s.%s (owner, lookup, create_date) values (?,?,?)";
     final String insert = String.format(baseInsert,
-        tableConfiguration.keyspace(), tableConfiguration.ownersTable(), DETAILS);
+        tableConfiguration.keyspace(), tableConfiguration.ownersTable());
     return factory.build(insert, Key.class, (key) -> new Object[]{
         key.keyVersionIdentifier().owner(), key.keyVersionIdentifier().key(), timestampManager.timestamp()});
   }
@@ -71,7 +74,7 @@ public class StatementModule {
   @IntoMap
   @Provides
   @Singleton
-  @StringKey(LOAD_OWNER_STMT)
+  @StringKey(OWNER_LOAD_STMT)
   public StatementBinder<?> ownerLoad(final StatementBinderFactory factory,
                                       final TableConfiguration tableConfiguration) {
     final String baseSelect = "select * from %s.%s where owner = ? and lookup = '%s'";
@@ -83,7 +86,7 @@ public class StatementModule {
   @IntoMap
   @Provides
   @Singleton
-  @StringKey(LOAD_OWNER_KEY_STMT)
+  @StringKey(OWNER_LOAD_KEY_STMT)
   public StatementBinder<?> ownerLoadKey(final StatementBinderFactory factory,
                                          final TableConfiguration tableConfiguration) {
     final String baseSelect = "select * from %s.%s where owner = ? and lookup = '%s'";
@@ -96,7 +99,7 @@ public class StatementModule {
   @IntoMap
   @Provides
   @Singleton
-  @StringKey(LOAD_KEY_VERSION_STMT)
+  @StringKey(KEY_LOAD_VERSION_STMT)
   public StatementBinder<?> keyLoadVersion(final StatementBinderFactory factory,
                                            final TableConfiguration tableConfiguration) {
     final String baseSelect = "select * from %s.%s where owner = ? and key_name = ? and version = ?";
@@ -109,7 +112,33 @@ public class StatementModule {
   @IntoMap
   @Provides
   @Singleton
-  @StringKey(STORE_KEY_STMT)
+  @StringKey(KEY_LOAD_ACTIVE_VERSION_STMT)
+  public StatementBinder<?> keyLoadActiveVersion(final StatementBinderFactory factory,
+                                                 final TableConfiguration tableConfiguration) {
+    final String baseSelect = "select * from %s.%s where owner = ? and key_name = ? order by version desc limit 1";
+    final String select = String.format(baseSelect,
+        tableConfiguration.keyspace(), tableConfiguration.activeKeysTable());
+    return factory.build(select, KeyIdentifier.class,
+        (identifier) -> new Object[]{identifier.owner(), identifier.key()});
+  }
+
+  @IntoMap
+  @Provides
+  @Singleton
+  @StringKey(KEY_LIST_VERSION_STMT)
+  public StatementBinder<?> keyListVersions(final StatementBinderFactory factory,
+                                            final TableConfiguration tableConfiguration) {
+    final String baseSelect = "select * from %s.%s where owner = ? and key_name = ? order by version desc";
+    final String select = String.format(baseSelect,
+        tableConfiguration.keyspace(), tableConfiguration.keysTable());
+    return factory.build(select, KeyIdentifier.class,
+        (identifier) -> new Object[]{identifier.owner(), identifier.key()});
+  }
+
+  @IntoMap
+  @Provides
+  @Singleton
+  @StringKey(KEY_STORE_STMT)
   public StatementBinder<?> storeKey(final StatementBinderFactory factory,
                                      final TimestampManager timestampManager,
                                      final TableConfiguration tableConfiguration) {
@@ -130,7 +159,7 @@ public class StatementModule {
   @IntoMap
   @Provides
   @Singleton
-  @StringKey(STORE_ACTIVE_KEY_STMT)
+  @StringKey(KEY_STORE_ACTIVE_STMT)
   public StatementBinder<?> storeActiveKey(final StatementBinderFactory factory,
                                            final TimestampManager timestampManager,
                                            final TableConfiguration tableConfiguration) {
@@ -152,7 +181,7 @@ public class StatementModule {
   @IntoMap
   @Provides
   @Singleton
-  @StringKey(DELETE_ACTIVE_KEY_STMT)
+  @StringKey(KEY_DELETE_ACTIVE_STMT)
   public StatementBinder<?> deleteActiveKey(final StatementBinderFactory factory,
                                             final TableConfiguration tableConfiguration) {
     final String baseDelete = """

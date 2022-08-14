@@ -19,21 +19,16 @@ package com.codeheadsystems.terrapin.server.dao;
 import static com.codeheadsystems.terrapin.server.dao.casssandra.dagger.StatementModule.*;
 
 import com.codeheadsystems.metrics.Metrics;
+import com.codeheadsystems.terrapin.server.dao.casssandra.accessor.CassandraAccessor;
 import com.codeheadsystems.terrapin.server.dao.casssandra.converter.KeyConverter;
 import com.codeheadsystems.terrapin.server.dao.casssandra.converter.OwnerConverter;
-import com.codeheadsystems.terrapin.server.dao.casssandra.accessor.CassandraAccessor;
 import com.codeheadsystems.terrapin.server.dao.casssandra.manager.BoundStatementManager;
-import com.codeheadsystems.terrapin.server.dao.model.Batch;
-import com.codeheadsystems.terrapin.server.dao.model.ImmutableOwnerIdentifier;
-import com.codeheadsystems.terrapin.server.dao.model.Key;
-import com.codeheadsystems.terrapin.server.dao.model.KeyIdentifier;
-import com.codeheadsystems.terrapin.server.dao.model.KeyVersionIdentifier;
-import com.codeheadsystems.terrapin.server.dao.model.OwnerIdentifier;
-import com.codeheadsystems.terrapin.server.dao.model.Token;
+import com.codeheadsystems.terrapin.server.dao.model.*;
 import com.datastax.oss.driver.api.core.cql.ResultSet;
 import com.datastax.oss.driver.api.core.cql.Row;
 import com.datastax.oss.driver.api.core.cql.Statement;
 import io.micrometer.core.instrument.Timer;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 import javax.inject.Inject;
@@ -80,13 +75,13 @@ public class CassandraKeyDao implements KeyDao {
   public void store(final Key key) {
     LOGGER.debug("store({})", key.keyVersionIdentifier());
     time("storeKey", key.keyVersionIdentifier().owner(), () -> {
-      cassandraAccessor.execute(binder.bind(STORE_KEY_STMT, key));
+      cassandraAccessor.execute(binder.bind(KEY_STORE_STMT, key));
       if (key.active()) {
-        cassandraAccessor.execute(binder.bind(STORE_ACTIVE_KEY_STMT, key));
+        cassandraAccessor.execute(binder.bind(KEY_STORE_ACTIVE_STMT, key));
       } else {
-        cassandraAccessor.execute(binder.bind(DELETE_ACTIVE_KEY_STMT, key));
+        cassandraAccessor.execute(binder.bind(KEY_DELETE_ACTIVE_STMT, key));
       }
-      cassandraAccessor.execute(binder.bind(STORE_OWNER_KEY_STMT, key));
+      cassandraAccessor.execute(binder.bind(OWNER_STORE_KEY_STMT, key));
       return null;
     });
   }
@@ -95,7 +90,7 @@ public class CassandraKeyDao implements KeyDao {
   public OwnerIdentifier storeOwner(final String owner) {
     LOGGER.debug("storeOwner({})", owner);
     return time("storeOwner", owner, () -> {
-      final Statement<?> statement = binder.bind(STORE_OWNER_STMT, owner);
+      final Statement<?> statement = binder.bind(OWNER_STORE_STMT, owner);
       cassandraAccessor.execute(statement);
       return ImmutableOwnerIdentifier.builder().owner(owner).build();
     });
@@ -105,13 +100,13 @@ public class CassandraKeyDao implements KeyDao {
   public Optional<Key> load(final KeyVersionIdentifier identifier) {
     LOGGER.debug("load({})", identifier);
     return time("loadKeyVersion", identifier.owner(), () -> {
-      final ResultSet resultSet = cassandraAccessor.execute(binder.bind(LOAD_KEY_VERSION_STMT, identifier));
-          final Row row = resultSet.one();
-          if (row == null) {
-            return Optional.empty();
-          } else {
-            return Optional.of(keyConverter.toKey(row));
-          }
+      final ResultSet resultSet = cassandraAccessor.execute(binder.bind(KEY_LOAD_VERSION_STMT, identifier));
+      final Row row = resultSet.one();
+      if (row == null) {
+        return Optional.empty();
+      } else {
+        return Optional.of(keyConverter.toKey(row));
+      }
     });
   }
 
@@ -123,7 +118,13 @@ public class CassandraKeyDao implements KeyDao {
   public Optional<Key> load(final KeyIdentifier identifier) {
     LOGGER.debug("load({})", identifier);
     return time("loadKey", identifier.owner(), () -> {
-      return null;
+      final ResultSet resultSet = cassandraAccessor.execute(binder.bind(KEY_LOAD_ACTIVE_VERSION_STMT, identifier));
+      final Row row = resultSet.one();
+      if (row == null) {
+        return Optional.empty();
+      } else {
+        return Optional.of(keyConverter.toKey(row));
+      }
     });
   }
 
@@ -131,7 +132,7 @@ public class CassandraKeyDao implements KeyDao {
   public Optional<OwnerIdentifier> loadOwner(final String ownerName) {
     LOGGER.debug("loadOwner({})", ownerName);
     return time("loadOwner", ownerName, () -> {
-      final Statement<?> statement = binder.bind(LOAD_OWNER_STMT, ownerName);
+      final Statement<?> statement = binder.bind(OWNER_LOAD_STMT, ownerName);
       final ResultSet resultSet = cassandraAccessor.execute(statement);
       final Row row = resultSet.one();
       if (row == null) {
@@ -165,7 +166,12 @@ public class CassandraKeyDao implements KeyDao {
                                                   final Token nextToken) {
     LOGGER.debug("listVersions({})", identifier);
     return time("listVersions", identifier.owner(), () -> {
-      return null;
+      final ResultSet resultSet = cassandraAccessor.execute(binder.bind(KEY_LIST_VERSION_STMT, identifier));
+      // TODO: Do this in a batching way
+      final List<KeyVersionIdentifier> list = resultSet.all().stream()
+          .map(keyConverter::toKeyVersionIdentifier)
+          .toList();
+      return ImmutableBatch.<KeyVersionIdentifier>builder().list(list).build();
     });
   }
 
