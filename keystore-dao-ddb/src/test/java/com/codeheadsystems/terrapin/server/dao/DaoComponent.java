@@ -18,7 +18,7 @@ package com.codeheadsystems.terrapin.server.dao;
 
 import static com.codeheadsystems.metrics.dagger.MetricsModule.PROVIDED_METER_REGISTRY;
 
-import com.codeheadsystems.terrapin.server.dao.dagger.DDBModule;
+import com.codeheadsystems.terrapin.server.dao.ddb.dagger.DDBModule;
 import dagger.Component;
 import dagger.Module;
 import dagger.Provides;

@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package com.codeheadsystems.terrapin.server.dao.converter;
+package com.codeheadsystems.terrapin.server.dao.ddb.converter;
 
 import static software.amazon.awssdk.services.dynamodb.model.AttributeValue.fromB;
 import static software.amazon.awssdk.services.dynamodb.model.AttributeValue.fromBool;
@@ -22,8 +22,8 @@ import static software.amazon.awssdk.services.dynamodb.model.AttributeValue.from
 import static software.amazon.awssdk.services.dynamodb.model.AttributeValue.fromS;
 
 import com.codeheadsystems.metrics.Metrics;
-import com.codeheadsystems.terrapin.server.dao.TableConfiguration;
-import com.codeheadsystems.terrapin.server.dao.manager.TokenManager;
+import com.codeheadsystems.terrapin.server.dao.ddb.configuration.TableConfiguration;
+import com.codeheadsystems.terrapin.server.dao.ddb.manager.TokenManager;
 import com.codeheadsystems.terrapin.server.dao.model.*;
 import com.codeheadsystems.terrapin.server.exception.DatalayerException;
 import io.micrometer.core.instrument.Counter;

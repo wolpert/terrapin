@@ -14,15 +14,15 @@
  *    limitations under the License.
  */
 
-package com.codeheadsystems.terrapin.server.dao.dagger;
+package com.codeheadsystems.terrapin.server.dao.ddb.dagger;
 
 import com.codeheadsystems.metrics.Metrics;
 import com.codeheadsystems.metrics.dagger.MetricsModule;
-import com.codeheadsystems.terrapin.server.dao.DdbObjectMapperFactory;
-import com.codeheadsystems.terrapin.server.dao.ImmutableTableConfiguration;
+import com.codeheadsystems.terrapin.server.dao.ddb.configuration.ImmutableTableConfiguration;
+import com.codeheadsystems.terrapin.server.dao.ddb.factory.DdbObjectMapperFactory;
 import com.codeheadsystems.terrapin.server.dao.KeyDao;
 import com.codeheadsystems.terrapin.server.dao.KeyDaoDynamoDB;
-import com.codeheadsystems.terrapin.server.dao.TableConfiguration;
+import com.codeheadsystems.terrapin.server.dao.ddb.configuration.TableConfiguration;
 import com.codeheadsystems.terrapin.server.exception.RetryableException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dagger.Binds;

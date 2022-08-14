@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package com.codeheadsystems.terrapin.server.dao;
+package com.codeheadsystems.terrapin.server.dao.ddb.factory;
 
 import com.codeheadsystems.terrapin.common.factory.ObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;

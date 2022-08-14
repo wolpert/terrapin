@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package com.codeheadsystems.terrapin.keystore;
+package com.codeheadsystems.terrapin.client;
 
 import com.codeheadsystems.terrapin.keystore.api.Key;
 import com.codeheadsystems.terrapin.keystore.api.KeyReaderService;

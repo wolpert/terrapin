@@ -14,12 +14,12 @@
  *    limitations under the License.
  */
 
-package com.codeheadsystems.terrapin.server.dao.converter;
+package com.codeheadsystems.terrapin.server.dao.ddb.converter;
 
 import static software.amazon.awssdk.services.dynamodb.model.AttributeValue.fromS;
 
-import com.codeheadsystems.terrapin.server.dao.TableConfiguration;
-import com.codeheadsystems.terrapin.server.dao.manager.TokenManager;
+import com.codeheadsystems.terrapin.server.dao.ddb.configuration.TableConfiguration;
+import com.codeheadsystems.terrapin.server.dao.ddb.manager.TokenManager;
 import com.codeheadsystems.terrapin.server.dao.model.Batch;
 import com.codeheadsystems.terrapin.server.dao.model.ImmutableBatch;
 import com.codeheadsystems.terrapin.server.dao.model.ImmutableKeyIdentifier;

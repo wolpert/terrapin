@@ -18,8 +18,10 @@ package com.codeheadsystems.terrapin.server.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.codeheadsystems.terrapin.server.dao.dagger.DDBModule;
-import com.codeheadsystems.terrapin.server.dao.manager.AWSManager;
+import com.codeheadsystems.terrapin.server.dao.ddb.configuration.ImmutableTableConfiguration;
+import com.codeheadsystems.terrapin.server.dao.ddb.configuration.TableConfiguration;
+import com.codeheadsystems.terrapin.server.dao.ddb.dagger.DDBModule;
+import com.codeheadsystems.terrapin.server.dao.ddb.manager.AWSManager;
 import com.codeheadsystems.test.datastore.DataStore;
 import com.codeheadsystems.test.datastore.DynamoDbExtension;
 import io.github.resilience4j.micrometer.tagged.TaggedRetryMetrics;

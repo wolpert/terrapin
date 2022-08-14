@@ -17,10 +17,10 @@
 package com.codeheadsystems.terrapin.server.dao;
 
 import com.codeheadsystems.metrics.Metrics;
-import com.codeheadsystems.terrapin.server.dao.accessor.DynamoDbClientAccessor;
-import com.codeheadsystems.terrapin.server.dao.converter.BatchWriteConverter;
-import com.codeheadsystems.terrapin.server.dao.converter.KeyConverter;
-import com.codeheadsystems.terrapin.server.dao.converter.OwnerConverter;
+import com.codeheadsystems.terrapin.server.dao.ddb.accessor.DynamoDbClientAccessor;
+import com.codeheadsystems.terrapin.server.dao.ddb.converter.BatchWriteConverter;
+import com.codeheadsystems.terrapin.server.dao.ddb.converter.KeyConverter;
+import com.codeheadsystems.terrapin.server.dao.ddb.converter.OwnerConverter;
 import com.codeheadsystems.terrapin.server.dao.model.Batch;
 import com.codeheadsystems.terrapin.server.dao.model.ImmutableOwnerIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.Key;

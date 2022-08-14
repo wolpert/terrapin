@@ -16,6 +16,8 @@
 
 package com.codeheadsystems.terrapin.server.dao;
 
+import com.codeheadsystems.terrapin.server.dao.ddb.configuration.ImmutableTableConfiguration;
+import com.codeheadsystems.terrapin.server.dao.ddb.configuration.TableConfiguration;
 import com.codeheadsystems.test.model.BaseJacksonTest;
 
 class TableConfigurationTest extends BaseJacksonTest<TableConfiguration> {

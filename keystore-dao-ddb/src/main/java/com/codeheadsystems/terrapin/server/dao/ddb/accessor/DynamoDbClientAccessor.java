@@ -14,12 +14,12 @@
  *    limitations under the License.
  */
 
-package com.codeheadsystems.terrapin.server.dao.accessor;
+package com.codeheadsystems.terrapin.server.dao.ddb.accessor;
 
-import static com.codeheadsystems.terrapin.server.dao.dagger.DDBModule.DDB_DAO_RETRY;
+import static com.codeheadsystems.terrapin.server.dao.ddb.dagger.DDBModule.DDB_DAO_RETRY;
 
 import com.codeheadsystems.metrics.Metrics;
-import com.codeheadsystems.terrapin.server.dao.converter.BatchWriteConverter;
+import com.codeheadsystems.terrapin.server.dao.ddb.converter.BatchWriteConverter;
 import com.codeheadsystems.terrapin.server.exception.DependencyException;
 import com.codeheadsystems.terrapin.server.exception.RetryableException;
 import io.github.resilience4j.retry.Retry;

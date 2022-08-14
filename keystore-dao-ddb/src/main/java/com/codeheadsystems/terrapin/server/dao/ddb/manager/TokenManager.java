@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package com.codeheadsystems.terrapin.server.dao.manager;
+package com.codeheadsystems.terrapin.server.dao.ddb.manager;
 
 import com.codeheadsystems.terrapin.common.helper.DataHelper;
 import com.codeheadsystems.terrapin.common.manager.JsonManager;

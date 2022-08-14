@@ -16,7 +16,7 @@
 
 package com.codeheadsystems.terrapin.server.dao.converter;
 
-import static com.codeheadsystems.terrapin.server.dao.converter.KeyConverter.*;
+import static com.codeheadsystems.terrapin.server.dao.ddb.converter.KeyConverter.*;
 import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.map;
@@ -29,9 +29,10 @@ import static software.amazon.awssdk.services.dynamodb.model.AttributeValue.from
 
 import com.codeheadsystems.metrics.Metrics;
 import com.codeheadsystems.terrapin.common.factory.ObjectMapperFactory;
-import com.codeheadsystems.terrapin.server.dao.ImmutableTableConfiguration;
-import com.codeheadsystems.terrapin.server.dao.TableConfiguration;
-import com.codeheadsystems.terrapin.server.dao.manager.TokenManager;
+import com.codeheadsystems.terrapin.server.dao.ddb.configuration.ImmutableTableConfiguration;
+import com.codeheadsystems.terrapin.server.dao.ddb.configuration.TableConfiguration;
+import com.codeheadsystems.terrapin.server.dao.ddb.converter.KeyConverter;
+import com.codeheadsystems.terrapin.server.dao.ddb.manager.TokenManager;
 import com.codeheadsystems.terrapin.server.dao.model.ImmutableKeyVersionIdentifier;
 import com.codeheadsystems.terrapin.server.dao.model.Key;
 import com.fasterxml.jackson.databind.ObjectMapper;

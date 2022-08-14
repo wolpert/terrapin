@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package com.codeheadsystems.terrapin.server.dao.converter;
+package com.codeheadsystems.terrapin.server.dao.ddb.converter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
