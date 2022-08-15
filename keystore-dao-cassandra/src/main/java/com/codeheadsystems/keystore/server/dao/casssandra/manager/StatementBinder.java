@@ -16,7 +16,6 @@
 
 package com.codeheadsystems.keystore.server.dao.casssandra.manager;
 
-import com.codeheadsystems.keystore.server.dao.casssandra.dagger.StatementBinderFactory;
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.cql.BoundStatement;
 import com.datastax.oss.driver.api.core.cql.PreparedStatement;
@@ -37,31 +36,18 @@ public class StatementBinder<T> {
   private final String cqlStatement;
 
   /**
-   * Default constructor.
-   *
-   * @param cqlSession   used for creating the preparer.
-   * @param cqlStatement Statement we are preparing.
-   * @param binder       execution binder to convert.
-   */
-  public StatementBinder(final CqlSession cqlSession,
-                         final String cqlStatement,
-                         final Function<T, Object[]> binder) {
-    LOGGER.info("StatementBinder({})", cqlStatement);
-    final SimpleStatement statement = SimpleStatement.newInstance(cqlStatement);
-    this.preparedStatement = cqlSession.prepare(statement);
-    this.binder = binder;
-    this.cqlStatement = cqlStatement;
-  }
-
-  /**
    * Given the builder provides the statement binder.
    *
    * @param cqlSession to use.
-   * @param builder the builder we have.
+   * @param builder    the builder we have.
    */
   public StatementBinder(final CqlSession cqlSession,
                          final Builder<T> builder) {
-    this(cqlSession, builder.cqlStatement, builder.binder);
+    LOGGER.info("StatementBinder({})", builder.cqlStatement);
+    final SimpleStatement statement = SimpleStatement.newInstance(builder.cqlStatement);
+    this.preparedStatement = cqlSession.prepare(statement);
+    this.binder = builder.binder;
+    this.cqlStatement = builder.cqlStatement;
   }
 
   public static <T> Builder<T> builder() {
@@ -108,8 +94,5 @@ public class StatementBinder<T> {
       return this;
     }
 
-    public StatementBinder<T> build(final StatementBinderFactory factory) {
-      return factory.build(cqlStatement, binder);
-    }
   }
 }

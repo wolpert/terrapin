@@ -41,11 +41,13 @@ public class StatementBinderFactory {
     this.cqlSession = cqlSession;
   }
 
-  public <T> StatementBinder<T> build(final String cqlStatement,
-                                      final Function<T, Object[]> binder) {
-    return new StatementBinder<>(cqlSession, cqlStatement, binder);
-  }
-
+  /**
+   * Builds the statement binder.
+   *
+   * @param builder to use.
+   * @param <T> type for the binder.
+   * @return a binder.
+   */
   public <T> StatementBinder<T> build(final StatementBinder.Builder<T> builder) {
     return new StatementBinder<>(cqlSession, builder);
   }
