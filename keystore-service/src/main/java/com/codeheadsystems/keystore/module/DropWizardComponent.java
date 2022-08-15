@@ -16,15 +16,17 @@
 
 package com.codeheadsystems.keystore.module;
 
-import com.codeheadsystems.keystore.server.dao.ddb.dagger.DdbModule;
-import com.codeheadsystems.metrics.dagger.MetricsModule;
-import dagger.Module;
+import com.codahale.metrics.health.HealthCheck;
+import com.codeheadsystems.keystore.resource.JettyResource;
+import java.util.Set;
 
-@Module(includes = {
-    HealthCheckModule.class,
-    MetricsModule.class,
-    ResourceModule.class,
-    RNGModule.class
-})
-public interface KeyStoreModule {
+/**
+ * Your server needs to implement this component in order to start a drop wizard server.
+ */
+public interface DropWizardComponent {
+
+  Set<JettyResource> resources();
+
+  Set<HealthCheck> healthChecks();
+
 }

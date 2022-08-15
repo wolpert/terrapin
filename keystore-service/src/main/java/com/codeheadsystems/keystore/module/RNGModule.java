@@ -20,6 +20,7 @@ import com.codeheadsystems.keystore.common.model.Rng;
 import dagger.BindsOptionalOf;
 import dagger.Module;
 import dagger.Provides;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Optional;
 import javax.inject.Named;
@@ -41,9 +42,12 @@ public class RNGModule {
   }
 
   public Rng defaultRNG() {
-    final SecureRandom random = new SecureRandom();
-    random.setSeed(System.currentTimeMillis());
-    return random::nextBytes;
+    try {
+      final SecureRandom random= SecureRandom.getInstance("NativePRNG");
+      return random::nextBytes;
+    } catch (NoSuchAlgorithmException e) {
+      throw new IllegalStateException("No native PRNG found", e);
+    }
   }
 
   @Module

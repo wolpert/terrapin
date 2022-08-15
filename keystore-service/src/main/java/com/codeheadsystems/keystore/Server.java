@@ -17,20 +17,20 @@
 package com.codeheadsystems.keystore;
 
 import com.codahale.metrics.health.HealthCheck;
+import com.codeheadsystems.keystore.module.DropWizardComponent;
 import com.codeheadsystems.keystore.module.KeyStoreModule;
-import com.codeheadsystems.keystore.resource.JettyResource;
 import com.codeheadsystems.keystore.server.dao.ddb.configuration.ImmutableTableConfiguration;
 import com.codeheadsystems.keystore.server.dao.ddb.dagger.DdbModule;
 import com.codeheadsystems.keystore.server.dao.ddb.manager.AwsManager;
 import com.codeheadsystems.metrics.dagger.MetricsModule;
 import com.codeheadsystems.metrics.helper.DropwizardMetricsHelper;
 import dagger.Component;
+import dagger.Module;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Environment;
 import io.micrometer.core.instrument.MeterRegistry;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.slf4j.Logger;
@@ -104,7 +104,7 @@ public class Server extends Application<KeyStoreConfiguration> {
                   final Environment environment) throws Exception {
     LOGGER.info("run({},{})", configuration, environment);
     final MeterRegistry meterRegistry = new DropwizardMetricsHelper().instrument(environment.metrics());
-    final KeystoreComponent component = DaggerServer_KeystoreComponent.builder()
+    final DropWizardComponent component = DaggerServer_KeystoreDynamoDbComponent.builder()
         .metricsModule(new MetricsModule(meterRegistry))
         .ddbModule(new DdbModule(localClient()))
         .build();
@@ -118,13 +118,22 @@ public class Server extends Application<KeyStoreConfiguration> {
     }
   }
 
+  /**
+   * The dagger component to build.
+   */
   @Singleton
-  @Component(modules = {KeyStoreModule.class})
-  public interface KeystoreComponent {
+  @Component(modules = {
+      KeyStoreModule.class,
+      DynamoDbModule.class,})
+  public interface KeystoreDynamoDbComponent extends DropWizardComponent {
 
-    Set<JettyResource> resources();
+  }
 
-    Set<HealthCheck> healthChecks();
+  /**
+   * Add local specific stuff here to dynamo db.
+   */
+  @Module(includes = DdbModule.class)
+  public interface DynamoDbModule {
 
   }
 
