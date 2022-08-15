@@ -18,7 +18,7 @@ package com.codeheadsystems.keystore.server.dao;
 
 import static com.codeheadsystems.metrics.dagger.MetricsModule.PROVIDED_METER_REGISTRY;
 
-import com.codeheadsystems.keystore.server.dao.ddb.dagger.DDBModule;
+import com.codeheadsystems.keystore.server.dao.ddb.dagger.DdbModule;
 import dagger.Component;
 import dagger.Module;
 import dagger.Provides;
@@ -30,7 +30,7 @@ import javax.inject.Singleton;
  * Sample Dao component needed
  */
 @Singleton
-@Component(modules = {DDBModule.class, DaoComponent.OurMeterModule.class})
+@Component(modules = {DdbModule.class, DaoComponent.OurMeterModule.class})
 public interface DaoComponent {
 
   KeyDao keyDao();

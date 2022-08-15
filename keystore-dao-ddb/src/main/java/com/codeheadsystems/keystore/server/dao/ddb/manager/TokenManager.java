@@ -28,6 +28,9 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
+/**
+ * Handles conversion of tokens used for pagable events.
+ */
 @Singleton
 public class TokenManager {
 
@@ -36,6 +39,12 @@ public class TokenManager {
   private final DataHelper dataHelper;
   private final JsonManager mapper;
 
+  /**
+   * Deafult constructor.
+   *
+   * @param dataHelper for string manipulation.
+   * @param mapper for json binder.
+   */
   @Inject
   public TokenManager(final DataHelper dataHelper,
                       final JsonManager mapper) {
@@ -43,6 +52,12 @@ public class TokenManager {
     this.mapper = mapper;
   }
 
+  /**
+   * Converts a map of values to a token. Unsecure.
+   *
+   * @param map from aws.
+   * @return a token object.
+   */
   public Token serialize(final Map<String, AttributeValue> map) {
     final Map<String, AttributeValue.Builder> serializedMap = map.entrySet().stream()
         .map(e -> Map.entry(e.getKey(), e.getValue().toBuilder()))
@@ -53,6 +68,12 @@ public class TokenManager {
     return ImmutableToken.builder().value(base64).build();
   }
 
+  /**
+   * Converts a token back to a map.
+   *
+   * @param token object.
+   * @return map for aws.
+   */
   public Map<String, AttributeValue> deserialize(final Token token) {
     final String json = dataHelper.toStringFromBase64(token.value());
     return mapper.readValue(json, TYPE_REFERENCE).entrySet().stream()

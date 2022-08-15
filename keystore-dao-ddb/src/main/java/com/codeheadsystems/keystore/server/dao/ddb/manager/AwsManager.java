@@ -23,7 +23,17 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
-import software.amazon.awssdk.services.dynamodb.model.*;
+import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
+import software.amazon.awssdk.services.dynamodb.model.BillingMode;
+import software.amazon.awssdk.services.dynamodb.model.CreateTableRequest;
+import software.amazon.awssdk.services.dynamodb.model.GlobalSecondaryIndex;
+import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
+import software.amazon.awssdk.services.dynamodb.model.KeyType;
+import software.amazon.awssdk.services.dynamodb.model.Projection;
+import software.amazon.awssdk.services.dynamodb.model.ProjectionType;
+import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
+import software.amazon.awssdk.services.dynamodb.model.TimeToLiveSpecification;
+import software.amazon.awssdk.services.dynamodb.model.UpdateTimeToLiveRequest;
 
 /**
  * Used for programmatic management of the table.
@@ -32,13 +42,13 @@ import software.amazon.awssdk.services.dynamodb.model.*;
  * as required by your organization.
  */
 @Singleton
-public class AWSManager {
+public class AwsManager {
 
   private final DynamoDbClient client;
   private final TableConfiguration tableConfiguration;
 
   @Inject
-  public AWSManager(final DynamoDbClient client,
+  public AwsManager(final DynamoDbClient client,
                     final TableConfiguration tableConfiguration) {
     this.client = client;
     this.tableConfiguration = tableConfiguration;
@@ -76,8 +86,10 @@ public class AWSManager {
         .indexName(tableConfiguration.ownerIndex())
         .projection(Projection.builder().projectionType(ProjectionType.ALL).build())
         .keySchema(
-            KeySchemaElement.builder().keyType(KeyType.HASH).attributeName(KeyConverter.OWNER_HASH_KEY_VERSION_IDX).build(),
-            KeySchemaElement.builder().keyType(KeyType.RANGE).attributeName(tableConfiguration.hashKey()).build()
+            KeySchemaElement.builder().keyType(KeyType.HASH)
+                .attributeName(KeyConverter.OWNER_HASH_KEY_VERSION_IDX).build(),
+            KeySchemaElement.builder().keyType(KeyType.RANGE)
+                .attributeName(tableConfiguration.hashKey()).build()
         ).build();
 
     // Index for all owners.

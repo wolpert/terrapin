@@ -17,7 +17,7 @@
 package com.codeheadsystems.keystore.server.dao.ddb.accessor;
 
 import com.codeheadsystems.keystore.server.dao.ddb.converter.BatchWriteConverter;
-import com.codeheadsystems.keystore.server.dao.ddb.dagger.DDBModule;
+import com.codeheadsystems.keystore.server.dao.ddb.dagger.DdbModule;
 import com.codeheadsystems.keystore.server.exception.DependencyException;
 import com.codeheadsystems.keystore.server.exception.RetryableException;
 import com.codeheadsystems.metrics.Metrics;
@@ -32,7 +32,21 @@ import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
-import software.amazon.awssdk.services.dynamodb.model.*;
+import software.amazon.awssdk.services.dynamodb.model.BatchWriteItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.BatchWriteItemResponse;
+import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.DeleteItemResponse;
+import software.amazon.awssdk.services.dynamodb.model.DynamoDbResponse;
+import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.GetItemResponse;
+import software.amazon.awssdk.services.dynamodb.model.InternalServerErrorException;
+import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughputExceededException;
+import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.PutItemResponse;
+import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
+import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
+import software.amazon.awssdk.services.dynamodb.model.RequestLimitExceededException;
+import software.amazon.awssdk.services.dynamodb.model.TransactionConflictException;
 
 /**
  * A wrapper around the DDBClient so that we can do retries, metrics, convert exceptions, etc.
@@ -57,11 +71,19 @@ public class DynamoDbClientAccessor {
   private final Function<QueryRequest, QueryResponse> query;
   private final Function<DeleteItemRequest, DeleteItemResponse> deleteItem;
 
+  /**
+   * Default constructor.
+   *
+   * @param dynamoDbClient for aws access.
+   * @param metrics for reporting.
+   * @param batchWriteConverter converter for the batch.
+   * @param retry retry policy.
+   */
   @Inject
   public DynamoDbClientAccessor(final DynamoDbClient dynamoDbClient,
                                 final Metrics metrics,
                                 final BatchWriteConverter batchWriteConverter,
-                                @Named(DDBModule.DDB_DAO_RETRY) final Retry retry) {
+                                @Named(DdbModule.DDB_DAO_RETRY) final Retry retry) {
     LOGGER.info("DynamoDbClientAccessor({},{},{})", dynamoDbClient, metrics, retry.getName());
     this.metrics = metrics;
     this.batchWriteConverter = batchWriteConverter;
@@ -82,12 +104,21 @@ public class DynamoDbClientAccessor {
             () -> dynamoDbClient.deleteItem(request)));
   }
 
+  /**
+   * Applies the batch write item.
+   *
+   * @param request to apply.
+   * @return the response.
+   */
   public BatchWriteItemResponse batchWriteItem(final BatchWriteItemRequest request) {
     return batchWriteItem.apply(request);
   }
 
   /**
-   * Processes a request. Returns a non-empty request containing unprocessed items.
+   * Processes a request.
+   *
+   * @param request to apply.
+   * @return the response.
    */
   public Optional<BatchWriteItemRequest> batchWriteItemProcessor(final BatchWriteItemRequest request) {
     final BatchWriteItemResponse response = batchWriteItem(request);
@@ -95,28 +126,64 @@ public class DynamoDbClientAccessor {
     return batchWriteConverter.unprocessedRequest(response);
   }
 
+
+  /**
+   * Processes a request.
+   *
+   * @param request to apply.
+   * @return the response.
+   */
   public DeleteItemResponse deleteItem(final DeleteItemRequest request) {
     return deleteItem.apply(request);
   }
 
+
+  /**
+   * Processes a request.
+   *
+   * @param request to apply.
+   * @return the response.
+   */
   public PutItemResponse putItem(final PutItemRequest request) {
     return putItem.apply(request);
   }
 
+
+  /**
+   * Processes a request.
+   *
+   * @param request to apply.
+   * @return the response.
+   */
   public GetItemResponse getItem(final GetItemRequest request) {
     return getItem.apply(request);
   }
 
+
+  /**
+   * Processes a request.
+   *
+   * @param request to apply.
+   * @return the response.
+   */
   public QueryResponse query(final QueryRequest request) {
     return query.apply(request);
   }
 
+  /**
+   * Exception check. Times the request as well.
+   *
+   * @param metricName for reporting.
+   * @param supplier to call.
+   * @param <T> type.
+   * @return type.
+   */
   private <T extends DynamoDbResponse> T exceptionCheck(final String metricName, final Supplier<T> supplier) {
     try {
       final Timer timer = metrics.registry().timer(metricName);
       return metrics.time(metricName, timer, supplier);
-    } catch (ProvisionedThroughputExceededException | TransactionConflictException | RequestLimitExceededException |
-             InternalServerErrorException e) {
+    } catch (ProvisionedThroughputExceededException | TransactionConflictException | RequestLimitExceededException
+             | InternalServerErrorException e) {
       throw new RetryableException(e);
     } catch (RuntimeException e) {
       throw new DependencyException(e);

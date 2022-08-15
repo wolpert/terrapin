@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.codeheadsystems.keystore.server.dao.ddb.configuration.ImmutableTableConfiguration;
 import com.codeheadsystems.keystore.server.dao.ddb.configuration.TableConfiguration;
-import com.codeheadsystems.keystore.server.dao.ddb.manager.AWSManager;
+import com.codeheadsystems.keystore.server.dao.ddb.manager.AwsManager;
 import com.codeheadsystems.test.datastore.DataStore;
 import com.codeheadsystems.test.datastore.DynamoDbExtension;
 import org.junit.jupiter.api.AfterEach;
@@ -31,15 +31,15 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
 
 @ExtendWith(DynamoDbExtension.class)
-class AWSManagerTest {
+class AwsManagerTest {
 
   @DataStore private DynamoDbClient client;
   private TableConfiguration tableConfiguration = ImmutableTableConfiguration.builder().build();
-  private AWSManager manager;
+  private AwsManager manager;
 
   @BeforeEach
   public void setup() {
-    manager = new AWSManager(client, tableConfiguration);
+    manager = new AwsManager(client, tableConfiguration);
   }
 
   @AfterEach

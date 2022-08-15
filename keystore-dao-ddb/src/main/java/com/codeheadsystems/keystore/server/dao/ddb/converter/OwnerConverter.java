@@ -32,9 +32,19 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.amazon.awssdk.services.dynamodb.model.*;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.ComparisonOperator;
+import software.amazon.awssdk.services.dynamodb.model.Condition;
+import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
+import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
+import software.amazon.awssdk.services.dynamodb.model.ReturnConsumedCapacity;
 import software.amazon.awssdk.utils.ImmutableMap;
 
+/**
+ * Converter for ownesr.
+ */
 @Singleton
 public class OwnerConverter {
 
@@ -46,14 +56,26 @@ public class OwnerConverter {
   private final TableConfiguration configuration;
   private final TokenManager tokenManager;
 
+  /**
+   * Default constructor.
+   *
+   * @param configuration for the db.
+   * @param tokenManager  token manager for conversions.
+   */
   @Inject
   public OwnerConverter(final TableConfiguration configuration,
                         final TokenManager tokenManager) {
-    this.tokenManager = tokenManager;
     LOGGER.info("OwnerConverter({})", configuration);
+    this.tokenManager = tokenManager;
     this.configuration = configuration;
   }
 
+  /**
+   * Creates a put item request.
+   *
+   * @param identifier for the request.
+   * @return the request.
+   */
   public PutItemRequest toPutItemRequest(final KeyIdentifier identifier) {
     LOGGER.debug("toPutItemRequest({})", identifier);
     final ImmutableMap.Builder<String, AttributeValue> builder = ImmutableMap.builder();
@@ -68,6 +90,12 @@ public class OwnerConverter {
         .build();
   }
 
+  /**
+   * Creates a put item request.
+   *
+   * @param identifier for the request.
+   * @return the request.
+   */
   public PutItemRequest toOwnerPutItemRequest(final OwnerIdentifier identifier) {
     LOGGER.debug("toOwnerPutItemRequest({})", identifier);
     final ImmutableMap.Builder<String, AttributeValue> builder = ImmutableMap.builder();
@@ -82,6 +110,12 @@ public class OwnerConverter {
         .build();
   }
 
+  /**
+   * Creates a get item request.
+   *
+   * @param identifier for the request.
+   * @return the request.
+   */
   public GetItemRequest toOwnerGetItemRequest(final OwnerIdentifier identifier) {
     LOGGER.debug("toOwnerGetItemRequest({})", identifier);
     final ImmutableMap.Builder<String, AttributeValue> builder = ImmutableMap.builder();
@@ -94,6 +128,12 @@ public class OwnerConverter {
         .build();
   }
 
+  /**
+   * Creates an owner from the item.
+   *
+   * @param item from the response.
+   * @return an identifier.
+   */
   public OwnerIdentifier toOwnerIdentifier(final Map<String, AttributeValue> item) {
     return ImmutableOwnerIdentifier.builder()
         .owner(getOwnerFrom(item.get(configuration.hashKey())))
@@ -105,7 +145,7 @@ public class OwnerConverter {
    *
    * @param identifier to search for.
    * @param nextToken  can be null.
-   * @return
+   * @return the query request.
    */
   public QueryRequest toOwnerQueryKeysRequest(final OwnerIdentifier identifier,
                                               final Token nextToken) {
@@ -145,6 +185,12 @@ public class OwnerConverter {
     return builder.build();
   }
 
+  /**
+   * Creates a batch object.
+   *
+   * @param response from ddb.
+   * @return the batch.
+   */
   public Batch<KeyIdentifier> toBatchKeyIdentifier(final QueryResponse response) {
     LOGGER.debug("toBatchKeyIdentifier()");
     final ImmutableBatch.Builder<KeyIdentifier> builder = ImmutableBatch.builder();
@@ -158,6 +204,12 @@ public class OwnerConverter {
     return builder.build();
   }
 
+  /**
+   * Creates a batch object.
+   *
+   * @param response from ddb.
+   * @return the batch.
+   */
   public Batch<OwnerIdentifier> toBatchOwnerIdentifier(final QueryResponse response) {
     LOGGER.debug("toBatchOwnerIdentifier()");
     final ImmutableBatch.Builder<OwnerIdentifier> builder = ImmutableBatch.builder();

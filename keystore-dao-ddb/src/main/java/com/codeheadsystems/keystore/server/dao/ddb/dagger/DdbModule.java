@@ -17,7 +17,7 @@
 package com.codeheadsystems.keystore.server.dao.ddb.dagger;
 
 import com.codeheadsystems.keystore.server.dao.KeyDao;
-import com.codeheadsystems.keystore.server.dao.KeyDaoDynamoDB;
+import com.codeheadsystems.keystore.server.dao.KeyDaoDynamoDb;
 import com.codeheadsystems.keystore.server.dao.ddb.configuration.ImmutableTableConfiguration;
 import com.codeheadsystems.keystore.server.dao.ddb.configuration.TableConfiguration;
 import com.codeheadsystems.keystore.server.dao.ddb.factory.DdbObjectMapperFactory;
@@ -40,25 +40,24 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 /**
  * Basic DDB module.
  * Use this to create a KeyDAO. You'll need the DynamoDBClient.
- * <p>
  * TODO add a circuit breaker to the retry.
  */
-@Module(includes = {DDBModule.Binder.class, MetricsModule.class})
-public class DDBModule {
+@Module(includes = {DdbModule.Binder.class, MetricsModule.class})
+public class DdbModule {
 
   public static final String DDB_DAO_RETRY = "DDB_DAO_RETRY";
   private final DynamoDbClient client;
   private final TableConfiguration tableConfiguration;
 
-  public DDBModule() {
+  public DdbModule() {
     this(DynamoDbClient.create());
   }
 
-  public DDBModule(final DynamoDbClient dynamoDbClient) {
+  public DdbModule(final DynamoDbClient dynamoDbClient) {
     this(dynamoDbClient, ImmutableTableConfiguration.builder().build());
   }
 
-  public DDBModule(final DynamoDbClient dynamoDbClient,
+  public DdbModule(final DynamoDbClient dynamoDbClient,
                    final TableConfiguration tableConfiguration) {
     this.client = dynamoDbClient;
     this.tableConfiguration = tableConfiguration;
@@ -82,6 +81,12 @@ public class DDBModule {
     return tableConfiguration;
   }
 
+  /**
+   * Provides a retry object for dynamodb.
+   *
+   * @param metrics system we are using.
+   * @return retry.
+   */
   @Named(DDB_DAO_RETRY)
   @Provides
   @Singleton
@@ -98,11 +103,14 @@ public class DDBModule {
     return registry.retry(DDB_DAO_RETRY);
   }
 
+  /**
+   * Binder to create the dao.
+   */
   @Module
   public interface Binder {
 
     @Binds
-    KeyDao dao(KeyDaoDynamoDB dao);
+    KeyDao dao(KeyDaoDynamoDb dao);
 
   }
 

@@ -20,8 +20,8 @@ import com.codahale.metrics.health.HealthCheck;
 import com.codeheadsystems.keystore.module.KeyStoreModule;
 import com.codeheadsystems.keystore.resource.JettyResource;
 import com.codeheadsystems.keystore.server.dao.ddb.configuration.ImmutableTableConfiguration;
-import com.codeheadsystems.keystore.server.dao.ddb.dagger.DDBModule;
-import com.codeheadsystems.keystore.server.dao.ddb.manager.AWSManager;
+import com.codeheadsystems.keystore.server.dao.ddb.dagger.DdbModule;
+import com.codeheadsystems.keystore.server.dao.ddb.manager.AwsManager;
 import com.codeheadsystems.metrics.dagger.MetricsModule;
 import com.codeheadsystems.metrics.helper.DropwizardMetricsHelper;
 import dagger.Component;
@@ -89,7 +89,7 @@ public class Server extends Application<KeyStoreConfiguration> {
           .endpointOverride(new URI("http://localhost:8000"))
           .build();
       try {
-        new AWSManager(client, ImmutableTableConfiguration.builder().build()).createTable();
+        new AwsManager(client, ImmutableTableConfiguration.builder().build()).createTable();
       } catch (RuntimeException e) {
         e.printStackTrace();
       }
@@ -106,7 +106,7 @@ public class Server extends Application<KeyStoreConfiguration> {
     final MeterRegistry meterRegistry = new DropwizardMetricsHelper().instrument(environment.metrics());
     final KeystoreComponent component = DaggerServer_KeystoreComponent.builder()
         .metricsModule(new MetricsModule(meterRegistry))
-        .dDBModule(new DDBModule(localClient()))
+        .ddbModule(new DdbModule(localClient()))
         .build();
     for (Object resource : component.resources()) {
       LOGGER.info("Registering resource: " + resource.getClass().getSimpleName());

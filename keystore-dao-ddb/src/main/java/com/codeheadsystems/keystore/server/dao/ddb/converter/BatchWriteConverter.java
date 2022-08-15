@@ -33,15 +33,27 @@ import software.amazon.awssdk.services.dynamodb.model.PutRequest;
 import software.amazon.awssdk.services.dynamodb.model.ReturnConsumedCapacity;
 import software.amazon.awssdk.services.dynamodb.model.WriteRequest;
 
+/**
+ * Converts batch writes.
+ */
 @Singleton
 public class BatchWriteConverter {
   private static final Logger LOGGER = LoggerFactory.getLogger(BatchWriteConverter.class);
 
+  /**
+   * Default constructor.
+   */
   @Inject
   public BatchWriteConverter() {
     LOGGER.info("BatchWriteConverter()");
   }
 
+  /**
+   * Converts several put item request into a batch.
+   *
+   * @param requests the requests.
+   * @return a batch write request.
+   */
   public BatchWriteItemRequest fromPutItemRequests(final PutItemRequest... requests) {
     final Map<String, ? extends Collection<WriteRequest>> items = Arrays.stream(requests)
         .map(PutItemRequest::tableName)
@@ -56,6 +68,12 @@ public class BatchWriteConverter {
         .build();
   }
 
+  /**
+   * Gets any unprocessed requests and returns them as a new batch write request.
+   *
+   * @param response from last time.
+   * @return an optional batch write.
+   */
   public Optional<BatchWriteItemRequest> unprocessedRequest(final BatchWriteItemResponse response) {
     if (response.hasUnprocessedItems() && response.unprocessedItems().size() > 0) {
       return Optional.of(BatchWriteItemRequest.builder()

@@ -20,8 +20,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.codeheadsystems.keystore.server.dao.ddb.configuration.ImmutableTableConfiguration;
 import com.codeheadsystems.keystore.server.dao.ddb.configuration.TableConfiguration;
-import com.codeheadsystems.keystore.server.dao.ddb.dagger.DDBModule;
-import com.codeheadsystems.keystore.server.dao.ddb.manager.AWSManager;
+import com.codeheadsystems.keystore.server.dao.ddb.dagger.DdbModule;
+import com.codeheadsystems.keystore.server.dao.ddb.manager.AwsManager;
 import com.codeheadsystems.test.datastore.DataStore;
 import com.codeheadsystems.test.datastore.DynamoDbExtension;
 import io.github.resilience4j.micrometer.tagged.TaggedRetryMetrics;
@@ -36,7 +36,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
 
 @ExtendWith(DynamoDbExtension.class)
-public class KeyDaoDynamoDBTest extends KeyDaoTest {
+public class KeyDaoDynamoDbTest extends KeyDaoTest {
 
   private static Retry retry;
   private final TableConfiguration tableConfiguration = ImmutableTableConfiguration.builder().build();
@@ -55,7 +55,7 @@ public class KeyDaoDynamoDBTest extends KeyDaoTest {
   protected KeyDao keyDAO() {
     if (keyDao == null) {
       keyDao = DaggerDaoComponent.builder()
-          .dDBModule(new DDBModule(client, tableConfiguration))
+          .ddbModule(new DdbModule(client, tableConfiguration))
           .ourMeterModule(new DaoComponent.OurMeterModule(meterRegistry))
           .build()
           .keyDao();
@@ -65,7 +65,7 @@ public class KeyDaoDynamoDBTest extends KeyDaoTest {
 
   @BeforeEach
   public void setupDatabase() {
-    new AWSManager(client, tableConfiguration).createTable();
+    new AwsManager(client, tableConfiguration).createTable();
   }
 
   @AfterEach

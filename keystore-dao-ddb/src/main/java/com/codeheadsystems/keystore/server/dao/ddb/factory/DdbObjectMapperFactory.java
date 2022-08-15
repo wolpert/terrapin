@@ -23,6 +23,9 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
+/**
+ * A factory for object mapper specific to dynamodb.
+ */
 @Singleton
 public class DdbObjectMapperFactory {
 

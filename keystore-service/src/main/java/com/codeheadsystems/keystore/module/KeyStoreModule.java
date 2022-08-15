@@ -16,12 +16,12 @@
 
 package com.codeheadsystems.keystore.module;
 
-import com.codeheadsystems.keystore.server.dao.ddb.dagger.DDBModule;
+import com.codeheadsystems.keystore.server.dao.ddb.dagger.DdbModule;
 import com.codeheadsystems.metrics.dagger.MetricsModule;
 import dagger.Module;
 
 @Module(includes = {
-    DDBModule.class,
+    DdbModule.class,
     HealthCheckModule.class,
     MetricsModule.class,
     ResourceModule.class,

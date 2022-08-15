@@ -37,14 +37,26 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.amazon.awssdk.services.dynamodb.model.*;
+import software.amazon.awssdk.services.dynamodb.model.BatchWriteItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.ConsumedCapacity;
+import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.DeleteItemResponse;
+import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.GetItemResponse;
+import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.PutItemResponse;
+import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
+import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
+/**
+ * Dynamodb version of the DAO.
+ */
 @Singleton
-public class KeyDaoDynamoDB implements KeyDao {
+public class KeyDaoDynamoDb implements KeyDao {
   public static final String OWNER = "owner";
   public static final String PREFIX = "ddbdao.";
   public static final int MAX_TIMES_KEY_STORE = 5;
-  private static final Logger LOGGER = LoggerFactory.getLogger(KeyDaoDynamoDB.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(KeyDaoDynamoDb.class);
   private final DynamoDbClientAccessor dynamoDbClientAccessor;
   private final KeyConverter keyConverter;
   private final OwnerConverter ownerConverter;
@@ -55,8 +67,17 @@ public class KeyDaoDynamoDB implements KeyDao {
   private final Counter counterOwner;
   private final Counter counterBatchWriteRanOut;
 
+  /**
+   * Default constructor.
+   *
+   * @param dynamoDbClientAccessor to access dynamodb.
+   * @param keyConverter for key converter.
+   * @param ownerConverter for owner converter.
+   * @param batchWriteConverter for batch converter.
+   * @param metrics for reporting.
+   */
   @Inject
-  public KeyDaoDynamoDB(final DynamoDbClientAccessor dynamoDbClientAccessor,
+  public KeyDaoDynamoDb(final DynamoDbClientAccessor dynamoDbClientAccessor,
                         final KeyConverter keyConverter,
                         final OwnerConverter ownerConverter,
                         final BatchWriteConverter batchWriteConverter,
@@ -78,7 +99,8 @@ public class KeyDaoDynamoDB implements KeyDao {
                      final String owner,
                      final Supplier<T> supplier) {
     final String name = PREFIX + methodName;
-    final Timer timer = metrics.registry().timer(name, OWNER, (owner == null ? "null" : owner)); // TODO: Vet cardinality. Set by configuration?
+    final Timer timer = metrics.registry().timer(name, OWNER, (owner == null ? "null" : owner));
+    // TODO: Vet cardinality. Set by configuration?
     return metrics.time(name, timer, supplier);
   }
 
@@ -88,7 +110,8 @@ public class KeyDaoDynamoDB implements KeyDao {
     time("storeKey", key.keyVersionIdentifier().owner(), () -> {
       final PutItemRequest keyPutItemRequest = keyConverter.toPutItemRequest(key);
       final PutItemRequest ownerPutItemRequest = ownerConverter.toPutItemRequest(key.keyVersionIdentifier());
-      final BatchWriteItemRequest request = batchWriteConverter.fromPutItemRequests(keyPutItemRequest, ownerPutItemRequest);
+      final BatchWriteItemRequest request = batchWriteConverter
+          .fromPutItemRequests(keyPutItemRequest, ownerPutItemRequest);
       reProcessor(request, MAX_TIMES_KEY_STORE); // should not take this long for sure.
       return null;
     });
@@ -129,22 +152,6 @@ public class KeyDaoDynamoDB implements KeyDao {
       LOGGER.debug("storeOwner:{}", consumedCapacity);
       return identifier;
     });
-  }
-
-  private void storeKey(final Key key) {
-    LOGGER.debug("storeKey({})", key.keyVersionIdentifier());
-    final PutItemRequest request = keyConverter.toPutItemRequest(key);
-    final PutItemResponse response = dynamoDbClientAccessor.putItem(request);
-    final ConsumedCapacity consumedCapacity = response.consumedCapacity();
-    LOGGER.debug("storeKey:{}", consumedCapacity);
-  }
-
-  private void storeOwner(final Key key) {
-    LOGGER.debug("storeOwner({})", key.keyVersionIdentifier());
-    final PutItemRequest request = ownerConverter.toPutItemRequest(key.keyVersionIdentifier());
-    final PutItemResponse response = dynamoDbClientAccessor.putItem(request);
-    final ConsumedCapacity consumedCapacity = response.consumedCapacity();
-    LOGGER.debug("storeOwner:{}", consumedCapacity);
   }
 
   @Override

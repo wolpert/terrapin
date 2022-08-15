@@ -23,7 +23,14 @@ import static software.amazon.awssdk.services.dynamodb.model.AttributeValue.from
 
 import com.codeheadsystems.keystore.server.dao.ddb.configuration.TableConfiguration;
 import com.codeheadsystems.keystore.server.dao.ddb.manager.TokenManager;
-import com.codeheadsystems.keystore.server.dao.model.*;
+import com.codeheadsystems.keystore.server.dao.model.Batch;
+import com.codeheadsystems.keystore.server.dao.model.ImmutableBatch;
+import com.codeheadsystems.keystore.server.dao.model.ImmutableKey;
+import com.codeheadsystems.keystore.server.dao.model.ImmutableKeyVersionIdentifier;
+import com.codeheadsystems.keystore.server.dao.model.Key;
+import com.codeheadsystems.keystore.server.dao.model.KeyIdentifier;
+import com.codeheadsystems.keystore.server.dao.model.KeyVersionIdentifier;
+import com.codeheadsystems.keystore.server.dao.model.Token;
 import com.codeheadsystems.keystore.server.exception.DatalayerException;
 import com.codeheadsystems.metrics.Metrics;
 import io.micrometer.core.instrument.Counter;
@@ -35,9 +42,21 @@ import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.core.SdkBytes;
-import software.amazon.awssdk.services.dynamodb.model.*;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.ComparisonOperator;
+import software.amazon.awssdk.services.dynamodb.model.Condition;
+import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.GetItemResponse;
+import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
+import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
+import software.amazon.awssdk.services.dynamodb.model.ReturnConsumedCapacity;
 import software.amazon.awssdk.utils.ImmutableMap;
 
+/**
+ * Converter for keys.
+ */
 @Singleton
 public class KeyConverter {
 
@@ -45,8 +64,9 @@ public class KeyConverter {
    * The data that makes up the key itself; used for encryption/decryption.
    */
   public static final String KEY_VALUE = "key_value";
+
   /**
-   * Is this key veresion active?
+   * Is this key version active.
    */
   public static final String ACTIVE = "active";
   /**
@@ -81,6 +101,13 @@ public class KeyConverter {
   private final Counter activeWithoutIndexCounter;
   private final Counter inactiveWithIndexCounter;
 
+  /**
+   * Default constructor.
+   *
+   * @param configuration for table configuration.
+   * @param metrics for reporting.
+   * @param tokenManager for batch conversion.
+   */
   @Inject
   public KeyConverter(final TableConfiguration configuration,
                       final Metrics metrics,
@@ -93,6 +120,12 @@ public class KeyConverter {
     inactiveWithIndexCounter = registry.counter(KEYCONVERTER_ACTIVEINDEX, INVALID_INDEX, FOUND_UNEXPECTEDLY);
   }
 
+  /**
+   * Creates a put item request.
+   *
+   * @param key for the request
+   * @return a put item request.
+   */
   public PutItemRequest toPutItemRequest(final Key key) {
     final KeyVersionIdentifier identifier = key.keyVersionIdentifier();
     LOGGER.debug("toPutItemRequest({})", identifier);
@@ -122,6 +155,12 @@ public class KeyConverter {
     return String.format(KEY_VERSION_HASH, identifier.owner(), identifier.key());
   }
 
+  /**
+   * Creates a get item request.
+   *
+   * @param identifier to convert.
+   * @return the request.
+   */
   public GetItemRequest toGetItemRequest(final KeyVersionIdentifier identifier) {
     LOGGER.debug("toGetItemRequest({})", identifier);
     final ImmutableMap.Builder<String, AttributeValue> builder = ImmutableMap.builder();
@@ -136,12 +175,24 @@ public class KeyConverter {
 
   }
 
+  /**
+   * Converts a response to a key.
+   *
+   * @param response from ddb.
+   * @return a key.
+   */
   public Key from(final GetItemResponse response) {
     LOGGER.debug("GetItemResponse()"); // don't log the response since it has the key itself
     final Map<String, AttributeValue> item = response.item();
     return from(item);
   }
 
+  /**
+   * Converts a response to a key.
+   *
+   * @param item from ddb.
+   * @return a key.
+   */
   public Key from(final Map<String, AttributeValue> item) {
     final ImmutableKey.Builder builder = ImmutableKey.builder()
         .keyVersionIdentifier(versionIdentifierFrom(item))
@@ -191,6 +242,12 @@ public class KeyConverter {
         .build();
   }
 
+  /**
+   * Gets a query request for active keys.
+   *
+   * @param identifier for the request.
+   * @return the request.
+   */
   public QueryRequest toActiveQueryRequest(final KeyIdentifier identifier) {
     LOGGER.debug("toActiveQueryRequest({})", identifier);
     return QueryRequest.builder()
@@ -206,6 +263,14 @@ public class KeyConverter {
         .build();
   }
 
+
+  /**
+   * Gets a query request for active keys.
+   *
+   * @param identifier for the request.
+   * @param nextToken token to use if set.
+   * @return the request.
+   */
   public QueryRequest toKeyVersionsQueryRequest(final KeyIdentifier identifier,
                                                 final Token nextToken) {
     LOGGER.debug("toKeyVersionsQueryRequest({})", identifier);
@@ -223,6 +288,12 @@ public class KeyConverter {
     return builder.build();
   }
 
+  /**
+   * Creates a batch request from a query response for key versions.
+   *
+   * @param response from ddb.
+   * @return a batch response.
+   */
   public Batch<KeyVersionIdentifier> toBatchKeyVersionIdentifier(final QueryResponse response) {
     LOGGER.debug("toBatchKeyVersionIdentifier()");
     final ImmutableBatch.Builder<KeyVersionIdentifier> builder = ImmutableBatch.builder();
@@ -235,6 +306,12 @@ public class KeyConverter {
     return builder.build();
   }
 
+  /**
+   * Creates a delete request from a key identifier.
+   *
+   * @param identifier to delete.
+   * @return the request.
+   */
   public DeleteItemRequest toDeleteRequest(final KeyVersionIdentifier identifier) {
     LOGGER.debug("toDeleteRequest({})", identifier);
     final ImmutableMap.Builder<String, AttributeValue> builder = ImmutableMap.builder();
