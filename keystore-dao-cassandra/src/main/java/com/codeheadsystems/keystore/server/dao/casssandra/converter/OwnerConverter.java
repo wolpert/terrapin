@@ -56,6 +56,12 @@ public class OwnerConverter {
     return ImmutableOwnerIdentifier.builder().owner(row.getString(OWNER)).build();
   }
 
+  /**
+   * Convers the owner row to a key identifier.
+   *
+   * @param row from cassandra.
+   * @return a key identifier.
+   */
   public KeyIdentifier toKeyIdentifier(final Row row) {
     return ImmutableKeyIdentifier.builder()
         .owner(row.getString(OWNER))

@@ -21,7 +21,14 @@ import com.codeheadsystems.keystore.server.dao.casssandra.converter.KeyConverter
 import com.codeheadsystems.keystore.server.dao.casssandra.converter.OwnerConverter;
 import com.codeheadsystems.keystore.server.dao.casssandra.dagger.StatementModule;
 import com.codeheadsystems.keystore.server.dao.casssandra.manager.BoundStatementManager;
-import com.codeheadsystems.keystore.server.dao.model.*;
+import com.codeheadsystems.keystore.server.dao.model.Batch;
+import com.codeheadsystems.keystore.server.dao.model.ImmutableBatch;
+import com.codeheadsystems.keystore.server.dao.model.ImmutableOwnerIdentifier;
+import com.codeheadsystems.keystore.server.dao.model.Key;
+import com.codeheadsystems.keystore.server.dao.model.KeyIdentifier;
+import com.codeheadsystems.keystore.server.dao.model.KeyVersionIdentifier;
+import com.codeheadsystems.keystore.server.dao.model.OwnerIdentifier;
+import com.codeheadsystems.keystore.server.dao.model.Token;
 import com.codeheadsystems.metrics.Metrics;
 import com.datastax.oss.driver.api.core.cql.ResultSet;
 import com.datastax.oss.driver.api.core.cql.Row;
@@ -35,6 +42,9 @@ import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * DAO for Cassandra.
+ */
 @Singleton
 public class CassandraKeyDao implements KeyDao {
 
@@ -48,6 +58,15 @@ public class CassandraKeyDao implements KeyDao {
   private final OwnerConverter ownerConverter;
   private final KeyConverter keyConverter;
 
+  /**
+   * Default constructor.
+   *
+   * @param cassandraAccessor to wrap downstream calls with retries.
+   * @param metrics metrics for reporting.
+   * @param binder binder for the prepared statements.
+   * @param ownerConverter Owner converter.
+   * @param keyConverter key convertor.
+   */
   @Inject
   public CassandraKeyDao(final CassandraAccessor cassandraAccessor,
                          final Metrics metrics,
@@ -66,7 +85,8 @@ public class CassandraKeyDao implements KeyDao {
                      final String owner,
                      final Supplier<T> supplier) {
     final String name = PREFIX + methodName;
-    final Timer timer = metrics.registry().timer(name, OWNER, (owner == null ? "null" : owner)); // TODO: Vet cardinality. Set by configuration?
+    final Timer timer = metrics.registry().timer(name, OWNER, (owner == null ? "null" : owner));
+    // TODO: Vet cardinality. Set by configuration?
     return metrics.time(name, timer, supplier);
   }
 
@@ -99,7 +119,8 @@ public class CassandraKeyDao implements KeyDao {
   public Optional<Key> load(final KeyVersionIdentifier identifier) {
     LOGGER.debug("load({})", identifier);
     return time("loadKeyVersion", identifier.owner(), () -> {
-      final ResultSet resultSet = cassandraAccessor.execute(binder.bind(StatementModule.KEY_LOAD_VERSION_STMT, identifier));
+      final ResultSet resultSet = cassandraAccessor
+          .execute(binder.bind(StatementModule.KEY_LOAD_VERSION_STMT, identifier));
       final Row row = resultSet.one();
       if (row == null) {
         return Optional.empty();
@@ -117,7 +138,8 @@ public class CassandraKeyDao implements KeyDao {
   public Optional<Key> load(final KeyIdentifier identifier) {
     LOGGER.debug("load({})", identifier);
     return time("loadKey", identifier.owner(), () -> {
-      final ResultSet resultSet = cassandraAccessor.execute(binder.bind(StatementModule.KEY_LOAD_ACTIVE_VERSION_STMT, identifier));
+      final ResultSet resultSet = cassandraAccessor
+          .execute(binder.bind(StatementModule.KEY_LOAD_ACTIVE_VERSION_STMT, identifier));
       final Row row = resultSet.one();
       if (row == null) {
         return Optional.empty();
@@ -176,7 +198,8 @@ public class CassandraKeyDao implements KeyDao {
                                                   final Token nextToken) {
     LOGGER.debug("listVersions({})", identifier);
     return time("listVersions", identifier.owner(), () -> {
-      final ResultSet resultSet = cassandraAccessor.execute(binder.bind(StatementModule.KEY_LIST_VERSION_STMT, identifier));
+      final ResultSet resultSet = cassandraAccessor
+          .execute(binder.bind(StatementModule.KEY_LIST_VERSION_STMT, identifier));
       // TODO: Do this in a batching way
       final List<KeyVersionIdentifier> list = resultSet.all().stream()
           .map(keyConverter::toKeyVersionIdentifier)

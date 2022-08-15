@@ -53,6 +53,12 @@ public class StatementBinder<T> {
     this.cqlStatement = cqlStatement;
   }
 
+  /**
+   * Given the builder provides the statement binder.
+   *
+   * @param cqlSession to use.
+   * @param builder the builder we have.
+   */
   public StatementBinder(final CqlSession cqlSession,
                          final Builder<T> builder) {
     this(cqlSession, builder.cqlStatement, builder.binder);
@@ -79,6 +85,11 @@ public class StatementBinder<T> {
     return getClass().getSimpleName() + ":[" + cqlStatement + "]";
   }
 
+  /**
+   * A builder for the statement binder.
+   *
+   * @param <T> the type of object this takes.
+   */
   public static class Builder<T> {
     private String cqlStatement;
     private Function<T, Object[]> binder;

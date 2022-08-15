@@ -16,31 +16,24 @@
 
 package com.codeheadsystems.keystore.server.dao;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import com.codeheadsystems.keystore.server.dao.casssandra.dagger.CqlSessionModule;
 import com.datastax.oss.driver.api.core.CqlSession;
-import com.datastax.oss.driver.api.core.type.codec.ExtraTypeCodecs;
-import com.datastax.oss.driver.api.core.type.codec.TypeCodecs;
 import io.github.resilience4j.micrometer.tagged.TaggedRetryMetrics;
 import io.github.resilience4j.retry.Retry;
 import io.github.resilience4j.retry.RetryRegistry;
 import java.net.InetSocketAddress;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.CassandraContainer;
 import org.testcontainers.utility.DockerImageName;
 
 class CassandraKeyDaoTest extends KeyDaoTest {
-  private static final Logger LOGGER = LoggerFactory.getLogger(CassandraKeyDaoTest.class);
-
   public static final String CASSANDRA_VERSION = "4.0.5";
   public static final String DATACENTER = "datacenter1";
   public static final String KEYSTORE_CQL = "keystore.cql";
+  private static final Logger LOGGER = LoggerFactory.getLogger(CassandraKeyDaoTest.class);
   public static Retry retry;
   public static CassandraContainer<?> container;
   private static CqlSession cqlSession;

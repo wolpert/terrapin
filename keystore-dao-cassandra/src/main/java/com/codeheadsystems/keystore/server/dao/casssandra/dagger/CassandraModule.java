@@ -23,7 +23,6 @@ import com.codeheadsystems.keystore.server.dao.casssandra.configuration.TableCon
 import com.codeheadsystems.keystore.server.exception.RetryableException;
 import com.codeheadsystems.metrics.Metrics;
 import com.codeheadsystems.metrics.dagger.MetricsModule;
-import com.datastax.oss.driver.api.core.CqlSession;
 import dagger.Binds;
 import dagger.Module;
 import dagger.Provides;
@@ -36,6 +35,9 @@ import java.time.Clock;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+/**
+ * Builds out the cassandra module.
+ */
 @Module(includes = {
     CassandraModule.Binder.class,
     CqlSessionModule.class,
@@ -48,10 +50,18 @@ public class CassandraModule {
 
   private final TableConfiguration tableConfiguration;
 
+  /**
+   * Uses the default table configuration.
+   */
   public CassandraModule() {
     this(ImmutableTableConfiguration.builder().build());
   }
 
+  /**
+   * Uses the given table configuration.
+   *
+   * @param tableConfiguration configuration.
+   */
   public CassandraModule(final TableConfiguration tableConfiguration) {
     this.tableConfiguration = tableConfiguration;
   }
@@ -62,6 +72,12 @@ public class CassandraModule {
     return tableConfiguration;
   }
 
+  /**
+   * Provides a retry policy given the metrics.
+   *
+   * @param metrics object in play.
+   * @return a retry object specific for Cassandra.
+   */
   @Named(CASSANDRA_RETRY)
   @Provides
   @Singleton
@@ -84,6 +100,9 @@ public class CassandraModule {
     return Clock.systemUTC();
   }
 
+  /**
+   * Exposes the Cassandra dao as the DAO to use.
+   */
   @Module
   public interface Binder {
 

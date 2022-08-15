@@ -46,6 +46,8 @@ public class KeyConverter {
 
   /**
    * Default Constructor.
+   *
+   * @param timestampManager to manage timestamps.
    */
   @Inject
   public KeyConverter(final TimestampManager timestampManager) {
@@ -53,6 +55,12 @@ public class KeyConverter {
     this.timestampManager = timestampManager;
   }
 
+  /**
+   * Convers a row in a result set to a key.
+   *
+   * @param row from cassandra.
+   * @return the resulting key.
+   */
   public Key toKey(final Row row) {
     final KeyVersionIdentifier identifier = toKeyVersionIdentifier(row);
     return ImmutableKey.builder()
@@ -66,6 +74,12 @@ public class KeyConverter {
         .build();
   }
 
+  /**
+   * Provides a key version identifier for a cassandra row.
+   *
+   * @param row from a result set.
+   * @return usable key version identifier.
+   */
   public KeyVersionIdentifier toKeyVersionIdentifier(final Row row) {
     return ImmutableKeyVersionIdentifier.builder()
         .owner(row.getString(OWNER))

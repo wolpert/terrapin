@@ -29,6 +29,9 @@ import dagger.multibindings.IntoMap;
 import dagger.multibindings.StringKey;
 import javax.inject.Singleton;
 
+/**
+ * All the cassandra prepared statements.
+ */
 @Module
 public class StatementModule {
 
@@ -47,13 +50,18 @@ public class StatementModule {
   public static final String KEY_LIST_STMT = "key.list";
   public static final String OWNER_LIST_STMT = "owner.list";
 
-
+  /**
+   * Prepared statement: store owners.
+   *
+   * @param timestampManager for managing times.
+   * @param tableConfiguration table configuration.
+   * @return statement binder.
+   */
   @IntoMap
   @Provides
   @Singleton
   @StringKey(OWNER_STORE_STMT)
-  public StatementBinder.Builder<?> ownerStore(final StatementBinderFactory factory,
-                                               final TimestampManager timestampManager,
+  public StatementBinder.Builder<?> ownerStore(final TimestampManager timestampManager,
                                                final TableConfiguration tableConfiguration) {
     final String baseInsert = "insert into %s.%s (owner, lookup, create_date) values (?,'%s',?)";
     final String insert = String.format(baseInsert,
@@ -62,12 +70,19 @@ public class StatementModule {
         .with((owner) -> new Object[]{owner, timestampManager.timestamp()});
   }
 
+
+  /**
+   * Prepared statement: store keys.
+   *
+   * @param timestampManager for managing times.
+   * @param tableConfiguration table configuration.
+   * @return statement binder.
+   */
   @IntoMap
   @Provides
   @Singleton
   @StringKey(OWNER_STORE_KEY_STMT)
-  public StatementBinder.Builder<?> ownerStoreKey(final StatementBinderFactory factory,
-                                                  final TimestampManager timestampManager,
+  public StatementBinder.Builder<?> ownerStoreKey(final TimestampManager timestampManager,
                                                   final TableConfiguration tableConfiguration) {
     final String baseInsert = "insert into %s.%s (owner, lookup, create_date) values (?,?,?)";
     final String insert = String.format(baseInsert,
@@ -76,96 +91,147 @@ public class StatementModule {
         key.keyVersionIdentifier().owner(), key.keyVersionIdentifier().key(), timestampManager.timestamp()});
   }
 
+  /**
+   * Prepared Statement: load owner.
+   *
+   * @param tableConfiguration table configuration.
+   * @return statement binder.
+   */
   @IntoMap
   @Provides
   @Singleton
   @StringKey(OWNER_LOAD_STMT)
-  public StatementBinder.Builder<?> ownerLoad(final StatementBinderFactory factory,
-                                              final TableConfiguration tableConfiguration) {
+  public StatementBinder.Builder<?> ownerLoad(final TableConfiguration tableConfiguration) {
     final String baseSelect = "select * from %s.%s where owner = ? and lookup = '%s'";
     final String select = String.format(baseSelect,
         tableConfiguration.keyspace(), tableConfiguration.ownersTable(), DETAILS);
-    return StatementBinder.<String>builder().with(select).with((owner) -> new Object[]{owner});
+    return StatementBinder.<String>builder()
+        .with(select).with((owner) -> new Object[]{owner});
   }
 
+
+  /**
+   * Prepared Statement: load key from owner.
+   *
+   * @param tableConfiguration table configuration.
+   * @return statement binder.
+   */
   @IntoMap
   @Provides
   @Singleton
   @StringKey(OWNER_LOAD_KEY_STMT)
-  public StatementBinder.Builder<?> ownerLoadKey(final StatementBinderFactory factory,
-                                                 final TableConfiguration tableConfiguration) {
+  public StatementBinder.Builder<?> ownerLoadKey(final TableConfiguration tableConfiguration) {
     final String baseSelect = "select * from %s.%s where owner = ? and lookup = '%s'";
     final String select = String.format(baseSelect,
         tableConfiguration.keyspace(), tableConfiguration.ownersTable(), DETAILS);
-    return StatementBinder.<KeyIdentifier>builder().with(select).with((identifier) -> new Object[]{identifier.owner(), identifier.key()});
+    return StatementBinder.<KeyIdentifier>builder()
+        .with(select).with((identifier) -> new Object[]{identifier.owner(), identifier.key()});
   }
 
+
+  /**
+   * Prepared Statement: load the key version.
+   *
+   * @param tableConfiguration table configuration.
+   * @return statement binder.
+   */
   @IntoMap
   @Provides
   @Singleton
   @StringKey(KEY_LOAD_VERSION_STMT)
-  public StatementBinder.Builder<?> keyLoadVersion(final StatementBinderFactory factory,
-                                                   final TableConfiguration tableConfiguration) {
+  public StatementBinder.Builder<?> keyLoadVersion(final TableConfiguration tableConfiguration) {
     final String baseSelect = "select * from %s.%s where owner = ? and key_name = ? and version = ?";
     final String select = String.format(baseSelect,
         tableConfiguration.keyspace(), tableConfiguration.keysTable());
-    return StatementBinder.<KeyVersionIdentifier>builder().with(select).with((identifier) -> new Object[]{identifier.owner(), identifier.key(), identifier.version()});
+    return StatementBinder.<KeyVersionIdentifier>builder()
+        .with(select).with((identifier) -> new Object[]{identifier.owner(), identifier.key(), identifier.version()});
   }
 
+
+  /**
+   * Prepared Statement: load the active key version.
+   *
+   * @param tableConfiguration table configuration.
+   * @return statement binder.
+   */
   @IntoMap
   @Provides
   @Singleton
   @StringKey(KEY_LOAD_ACTIVE_VERSION_STMT)
-  public StatementBinder.Builder<?> keyLoadActiveVersion(final StatementBinderFactory factory,
-                                                         final TableConfiguration tableConfiguration) {
+  public StatementBinder.Builder<?> keyLoadActiveVersion(final TableConfiguration tableConfiguration) {
     final String baseSelect = "select * from %s.%s where owner = ? and key_name = ? order by version desc limit 1";
     final String select = String.format(baseSelect,
         tableConfiguration.keyspace(), tableConfiguration.activeKeysTable());
-    return StatementBinder.<KeyIdentifier>builder().with(select).with((identifier) -> new Object[]{identifier.owner(), identifier.key()});
+    return StatementBinder.<KeyIdentifier>builder()
+        .with(select).with((identifier) -> new Object[]{identifier.owner(), identifier.key()});
   }
 
+  /**
+   * Prepared Statement: list the key versions.
+   *
+   * @param tableConfiguration table configuration.
+   * @return statement binder.
+   */
   @IntoMap
   @Provides
   @Singleton
   @StringKey(KEY_LIST_VERSION_STMT)
-  public StatementBinder.Builder<?> keyListVersions(final StatementBinderFactory factory,
-                                                    final TableConfiguration tableConfiguration) {
+  public StatementBinder.Builder<?> keyListVersions(final TableConfiguration tableConfiguration) {
     final String baseSelect = "select * from %s.%s where owner = ? and key_name = ? order by version desc";
     final String select = String.format(baseSelect,
         tableConfiguration.keyspace(), tableConfiguration.keysTable());
-    return StatementBinder.<KeyIdentifier>builder().with(select).with((identifier) -> new Object[]{identifier.owner(), identifier.key()});
+    return StatementBinder.<KeyIdentifier>builder()
+        .with(select).with((identifier) -> new Object[]{identifier.owner(), identifier.key()});
   }
 
+  /**
+   * Prepared Statement: list the keys.
+   *
+   * @param tableConfiguration table configuration.
+   * @return statement binder.
+   */
   @IntoMap
   @Provides
   @Singleton
   @StringKey(KEY_LIST_STMT)
-  public StatementBinder.Builder<?> keyList(final StatementBinderFactory factory,
-                                            final TableConfiguration tableConfiguration) {
+  public StatementBinder.Builder<?> keyList(final TableConfiguration tableConfiguration) {
     final String baseSelect = "select * from %s.%s where owner = ?";
     final String select = String.format(baseSelect,
         tableConfiguration.keyspace(), tableConfiguration.ownersTable());
-    return StatementBinder.<OwnerIdentifier>builder().with(select).with((identifier) -> new Object[]{identifier.owner()});
+    return StatementBinder.<OwnerIdentifier>builder()
+        .with(select).with((identifier) -> new Object[]{identifier.owner()});
   }
 
+  /**
+   * Prepared Statement: list the owners.
+   *
+   * @param tableConfiguration table configuration.
+   * @return statement binder.
+   */
   @IntoMap
   @Provides
   @Singleton
   @StringKey(OWNER_LIST_STMT)
-  public StatementBinder.Builder<?> ownerList(final StatementBinderFactory factory,
-                                              final TableConfiguration tableConfiguration) {
+  public StatementBinder.Builder<?> ownerList(final TableConfiguration tableConfiguration) {
     final String baseSelect = "select * from %s.%s where lookup = ?";
     final String select = String.format(baseSelect,
         tableConfiguration.keyspace(), tableConfiguration.ownersTable());
     return StatementBinder.<Void>builder().with(select).with((identifier) -> new Object[]{DETAILS});
   }
 
+
+  /**
+   * Prepared statement: store the keys.
+   *
+   * @param timestampManager for managing times.
+   * @param tableConfiguration table configuration.
+   * @return statement binder.
+   */
   @IntoMap
   @Provides
   @Singleton
   @StringKey(KEY_STORE_STMT)
-  public StatementBinder.Builder<?> storeKey(final StatementBinderFactory factory,
-                                             final TimestampManager timestampManager,
+  public StatementBinder.Builder<?> storeKey(final TimestampManager timestampManager,
                                              final TableConfiguration tableConfiguration) {
     final String baseInsert = """
         insert into %s.%s 
@@ -181,12 +247,18 @@ public class StatementModule {
     });
   }
 
+  /**
+   * Prepared statement: store active keys.
+   *
+   * @param timestampManager for managing times.
+   * @param tableConfiguration table configuration.
+   * @return statement binder.
+   */
   @IntoMap
   @Provides
   @Singleton
   @StringKey(KEY_STORE_ACTIVE_STMT)
-  public StatementBinder.Builder<?> storeActiveKey(final StatementBinderFactory factory,
-                                                   final TimestampManager timestampManager,
+  public StatementBinder.Builder<?> storeActiveKey(final TimestampManager timestampManager,
                                                    final TableConfiguration tableConfiguration) {
     final String baseInsert = """
         insert into %s.%s 
@@ -202,12 +274,17 @@ public class StatementModule {
     });
   }
 
+  /**
+   * Prepared Statement: delete active keys.
+   *
+   * @param tableConfiguration table configuration.
+   * @return statement binder.
+   */
   @IntoMap
   @Provides
   @Singleton
   @StringKey(KEY_DELETE_ACTIVE_STMT)
-  public StatementBinder.Builder<?> deleteActiveKey(final StatementBinderFactory factory,
-                                                    final TableConfiguration tableConfiguration) {
+  public StatementBinder.Builder<?> deleteActiveKey(final TableConfiguration tableConfiguration) {
     final String baseDelete = """
         delete from %s.%s 
         where owner = ? and key_name = ? and version = ?
@@ -219,12 +296,17 @@ public class StatementModule {
     });
   }
 
+  /**
+   * Prepared Statement: delete key version.
+   *
+   * @param tableConfiguration table configuration.
+   * @return statement binder.
+   */
   @IntoMap
   @Provides
   @Singleton
   @StringKey(KEY_DELETE_VERSION_STMT)
-  public StatementBinder.Builder<?> deleteVersionKey(final StatementBinderFactory factory,
-                                                     final TableConfiguration tableConfiguration) {
+  public StatementBinder.Builder<?> deleteVersionKey(final TableConfiguration tableConfiguration) {
     final String baseDelete = """
         delete from %s.%s 
         where owner = ? and key_name = ? and version = ?

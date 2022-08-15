@@ -18,6 +18,11 @@ configurations {
 
 //jacocoTestReport.finalizedBy jacocoTestCoverageVerification
 
+checkstyle {
+    ignoreFailures = false
+    maxWarnings = 0
+}
+
 dependencies {
 
     implementation project(":keystore-dao")

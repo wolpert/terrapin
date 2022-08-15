@@ -45,7 +45,7 @@ public class BoundStatementManager {
                                final StatementBinderFactory factory) {
     LOGGER.info("BoundStatementManager({})", preparedStatementMap);
     this.preparedStatementMap = preparedStatementMap.entrySet().stream()
-        .map(e-> Map.entry(e.getKey(), factory.build(e.getValue())))
+        .map(e -> Map.entry(e.getKey(), factory.build(e.getValue())))
         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     LOGGER.info("BoundStatementManager prepared");
   }

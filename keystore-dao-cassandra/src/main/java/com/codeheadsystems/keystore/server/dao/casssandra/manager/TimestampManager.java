@@ -57,6 +57,13 @@ public class TimestampManager {
     return date.toInstant();
   }
 
+  /**
+   * Converts the column in the row to a date via the zoned date time.
+   *
+   * @param row from cassandra.
+   * @param columnName the column name.
+   * @return an optinal date.
+   */
   public Optional<Date> toDate(final Row row, final String columnName) {
     final ZonedDateTime zonedDateTime = row.get(columnName, GenericType.ZONED_DATE_TIME);
     if (zonedDateTime != null) {

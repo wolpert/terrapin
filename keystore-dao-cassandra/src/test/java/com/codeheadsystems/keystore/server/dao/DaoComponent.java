@@ -35,6 +35,7 @@ import javax.inject.Singleton;
 public interface DaoComponent {
 
   KeyDao keyDao();
+
   CqlSession cqlSession();
 
   @Module

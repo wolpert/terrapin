@@ -31,6 +31,9 @@ import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Provides a wrapper to the cassandra driver. It only exists to manage retries and metrics.
+ */
 @Singleton
 public class CassandraAccessor {
 
@@ -42,6 +45,13 @@ public class CassandraAccessor {
 
   private final Function<Statement<?>, ResultSet> executeStatement;
 
+  /**
+   * Default constructor.
+   *
+   * @param session the base CQL Session.
+   * @param metrics for reporting.
+   * @param retry retry policy.
+   */
   @Inject
   public CassandraAccessor(final CqlSession session,
                            final Metrics metrics,

@@ -19,7 +19,7 @@ CREATE TABLE
 CREATE INDEX
     IF NOT EXISTS
     owners_lookup_idx
-    on keystore.owners(lookup);
+    on keystore.owners (lookup);
 
 CREATE TABLE
     IF NOT EXISTS

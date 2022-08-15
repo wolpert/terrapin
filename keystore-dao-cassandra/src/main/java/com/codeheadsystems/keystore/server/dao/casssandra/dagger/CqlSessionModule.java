@@ -26,9 +26,7 @@ import dagger.Module;
 import dagger.Provides;
 import dagger.multibindings.IntoSet;
 import java.net.InetSocketAddress;
-import java.util.Arrays;
 import java.util.Set;
-import java.util.stream.Collectors;
 import javax.inject.Singleton;
 
 /**
@@ -66,17 +64,24 @@ public class CqlSessionModule {
     return ExtraTypeCodecs.BLOB_TO_ARRAY;
   }
 
+  /**
+   * The CQL session builder.
+   *
+   * @param codecs codecs for conversion.
+   * @param tableConfiguration cassandra configuration.
+   * @return an instance.
+   */
   @Provides
   @Singleton
   public CqlSession cqlSession(final Set<TypeCodec<?>> codecs,
                                final TableConfiguration tableConfiguration) {
-    TypeCodec<?> []codecsArray = new TypeCodec[codecs.size()];
+    TypeCodec<?>[] codecsArray = new TypeCodec[codecs.size()];
     codecsArray = codecs.toArray(codecsArray);
     final CqlSessionBuilder builder = CqlSession.builder()
         .addTypeCodecs(codecsArray)
         .withKeyspace(tableConfiguration.keyspace())
         .withLocalDatacenter(localDataCenter);
-    for(InetSocketAddress address : addresses) {
+    for (InetSocketAddress address : addresses) {
       builder.addContactPoint(address);
     }
     return builder.build();
