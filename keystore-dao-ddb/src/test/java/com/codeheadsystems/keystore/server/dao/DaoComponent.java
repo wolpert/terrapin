@@ -25,23 +25,27 @@ import dagger.Provides;
 import io.micrometer.core.instrument.MeterRegistry;
 import javax.inject.Named;
 import javax.inject.Singleton;
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 /**
  * Sample Dao component needed
  */
 @Singleton
-@Component(modules = {DdbModule.class, DaoComponent.OurMeterModule.class})
+@Component(modules = {DdbModule.class, DaoComponent.AuxModule.class})
 public interface DaoComponent {
 
   KeyDao keyDao();
 
   @Module
-  class OurMeterModule {
+  class AuxModule {
 
     private final MeterRegistry meterRegistry;
+    private final DynamoDbClient dynamoDbClient;
 
-    public OurMeterModule(final MeterRegistry meterRegistry) {
+    public AuxModule(final MeterRegistry meterRegistry,
+                     final DynamoDbClient dynamoDbClient) {
       this.meterRegistry = meterRegistry;
+      this.dynamoDbClient = dynamoDbClient;
     }
 
     @Provides
@@ -50,6 +54,13 @@ public interface DaoComponent {
     public MeterRegistry meterRegistry() {
       return meterRegistry;
     }
+
+    @Provides
+    @Singleton
+    public DynamoDbClient dynamoDbClient() {
+      return dynamoDbClient;
+    }
+
   }
 
 }

@@ -14,19 +14,19 @@
  *    limitations under the License.
  */
 
-package com.codeheadsystems.keystore.module;
+package com.codeheadsystems.keystore.dagger;
 
 import com.codahale.metrics.health.HealthCheck;
-import com.codeheadsystems.keystore.healthchecks.BasicHealthCheck;
-import dagger.Binds;
-import dagger.Module;
-import dagger.multibindings.IntoSet;
+import com.codeheadsystems.keystore.resource.JettyResource;
+import java.util.Set;
 
-@Module
-public interface HealthCheckModule {
+/**
+ * Your server needs to implement this component in order to start a drop wizard server.
+ */
+public interface DropWizardComponent {
 
-  @Binds
-  @IntoSet
-  HealthCheck basicHealthCheck(final BasicHealthCheck healthCheck);
+  Set<JettyResource> resources();
+
+  Set<HealthCheck> healthChecks();
 
 }

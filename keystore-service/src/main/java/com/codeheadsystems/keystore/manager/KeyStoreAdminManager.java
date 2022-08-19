@@ -16,7 +16,7 @@
 
 package com.codeheadsystems.keystore.manager;
 
-import static com.codeheadsystems.keystore.module.RNGModule.PROVIDED_RNG;
+import static com.codeheadsystems.keystore.dagger.RNGModule.PROVIDED_RNG;
 
 import com.codeheadsystems.keystore.common.helper.DataHelper;
 import com.codeheadsystems.keystore.common.model.Rng;

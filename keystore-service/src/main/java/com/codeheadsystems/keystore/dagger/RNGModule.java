@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package com.codeheadsystems.keystore.module;
+package com.codeheadsystems.keystore.dagger;
 
 import com.codeheadsystems.keystore.common.model.Rng;
 import dagger.BindsOptionalOf;
@@ -25,6 +25,8 @@ import java.security.SecureRandom;
 import java.util.Optional;
 import javax.inject.Named;
 import javax.inject.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Contains the random provider we want to use.
@@ -33,17 +35,20 @@ import javax.inject.Singleton;
 public class RNGModule {
 
   public static final String PROVIDED_RNG = "RNG";
+  private static final Logger LOGGER = LoggerFactory.getLogger(RNGModule.class);
 
   @Provides
   @Singleton
   @Named(PROVIDED_RNG)
-  public Rng rng(@Named(Binder.RNG_IMPL) final Optional<Rng> rng) {
-    return rng.orElseGet(this::defaultRNG);
+  public Rng rng(@Named(Binder.RNG_IMPL) final Optional<Rng> suppliedRng) {
+    final Rng rng = suppliedRng.orElseGet(this::defaultRNG);
+    LOGGER.info("RNG {}", rng.getClass().getName());
+    return rng;
   }
 
   public Rng defaultRNG() {
     try {
-      final SecureRandom random= SecureRandom.getInstance("NativePRNG");
+      final SecureRandom random = SecureRandom.getInstance("NativePRNG");
       return random::nextBytes;
     } catch (NoSuchAlgorithmException e) {
       throw new IllegalStateException("No native PRNG found", e);

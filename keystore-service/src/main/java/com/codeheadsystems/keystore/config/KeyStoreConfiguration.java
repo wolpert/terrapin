@@ -14,9 +14,28 @@
  *    limitations under the License.
  */
 
-package com.codeheadsystems.keystore;
+package com.codeheadsystems.keystore.config;
 
 import io.dropwizard.Configuration;
 
 public class KeyStoreConfiguration extends Configuration {
+
+  private String dropWizardFactory;
+  private DataStore dataStore;
+
+  public DataStore getDataStore() {
+    return dataStore;
+  }
+
+  public void setDataStore(final DataStore dataStore) {
+    this.dataStore = dataStore;
+  }
+
+  public String getDropWizardFactory() {
+    return dropWizardFactory;
+  }
+
+  public void setDropWizardFactory(final String dropWizardFactory) {
+    this.dropWizardFactory = dropWizardFactory;
+  }
 }

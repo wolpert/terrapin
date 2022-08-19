@@ -14,17 +14,28 @@
  *    limitations under the License.
  */
 
-package com.codeheadsystems.keystore.module;
+package com.codeheadsystems.keystore.dagger;
 
-import com.codeheadsystems.keystore.server.dao.ddb.dagger.DdbModule;
-import com.codeheadsystems.metrics.dagger.MetricsModule;
+import com.codeheadsystems.keystore.resource.JettyResource;
+import com.codeheadsystems.keystore.resource.KeyManagerResource;
+import com.codeheadsystems.keystore.resource.KeyReaderResource;
+import com.codeheadsystems.keystore.resource.KeyRotationResource;
+import dagger.Binds;
 import dagger.Module;
+import dagger.multibindings.IntoSet;
 
-@Module(includes = {
-    HealthCheckModule.class,
-    MetricsModule.class,
-    ResourceModule.class,
-    RNGModule.class
-})
-public interface KeyStoreModule {
+@Module
+public interface ResourceModule {
+
+  @Binds
+  @IntoSet
+  JettyResource keyManagerResource(KeyManagerResource resource);
+
+  @Binds
+  @IntoSet
+  JettyResource keyReaderResource(KeyReaderResource resource);
+
+  @Binds
+  @IntoSet
+  JettyResource keyRotationResource(KeyRotationResource resource);
 }

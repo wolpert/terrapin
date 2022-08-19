@@ -55,8 +55,7 @@ public class KeyDaoDynamoDbTest extends KeyDaoTest {
   protected KeyDao keyDAO() {
     if (keyDao == null) {
       keyDao = DaggerDaoComponent.builder()
-          .ddbModule(new DdbModule(client, tableConfiguration))
-          .ourMeterModule(new DaoComponent.OurMeterModule(meterRegistry))
+          .auxModule(new DaoComponent.AuxModule(meterRegistry, client))
           .build()
           .keyDao();
     }

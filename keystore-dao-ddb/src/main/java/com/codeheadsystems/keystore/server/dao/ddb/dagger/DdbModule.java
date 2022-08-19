@@ -26,6 +26,7 @@ import com.codeheadsystems.metrics.Metrics;
 import com.codeheadsystems.metrics.dagger.MetricsModule;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dagger.Binds;
+import dagger.BindsOptionalOf;
 import dagger.Module;
 import dagger.Provides;
 import io.github.resilience4j.core.IntervalFunction;
@@ -33,6 +34,7 @@ import io.github.resilience4j.micrometer.tagged.TaggedRetryMetrics;
 import io.github.resilience4j.retry.Retry;
 import io.github.resilience4j.retry.RetryConfig;
 import io.github.resilience4j.retry.RetryRegistry;
+import java.util.Optional;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
@@ -46,22 +48,6 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 public class DdbModule {
 
   public static final String DDB_DAO_RETRY = "DDB_DAO_RETRY";
-  private final DynamoDbClient client;
-  private final TableConfiguration tableConfiguration;
-
-  public DdbModule() {
-    this(DynamoDbClient.create());
-  }
-
-  public DdbModule(final DynamoDbClient dynamoDbClient) {
-    this(dynamoDbClient, ImmutableTableConfiguration.builder().build());
-  }
-
-  public DdbModule(final DynamoDbClient dynamoDbClient,
-                   final TableConfiguration tableConfiguration) {
-    this.client = dynamoDbClient;
-    this.tableConfiguration = tableConfiguration;
-  }
 
   @Provides
   @Singleton
@@ -71,14 +57,8 @@ public class DdbModule {
 
   @Provides
   @Singleton
-  public DynamoDbClient dynamoDbClient() {
-    return client;
-  }
-
-  @Provides
-  @Singleton
   public TableConfiguration tableConfiguration() {
-    return tableConfiguration;
+    return ImmutableTableConfiguration.builder().build();
   }
 
   /**
