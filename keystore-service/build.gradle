@@ -27,10 +27,11 @@ dependencies {
     implementation project(":keystore-dao-ddb")
 
     // Cassandra
-//    implementation project(":keystore-dao-cassandra")
-//    testImplementation "org.testcontainers:testcontainers:${testContainerVersion}"
-//    testImplementation "org.testcontainers:cassandra:${testContainerVersion}"
-//    testImplementation "org.testcontainers:junit-jupiter:${testContainerVersion}"
+    implementation project(":keystore-dao-cassandra")
+    implementation "com.datastax.oss:java-driver-core:${cassandraDriverVersion}"
+    testImplementation "org.testcontainers:testcontainers:${testContainerVersion}"
+    testImplementation "org.testcontainers:cassandra:${testContainerVersion}"
+    testImplementation "org.testcontainers:junit-jupiter:${testContainerVersion}"
 
     implementation project(":keystore-dao")
     implementation project(":keystore-common")
@@ -74,6 +75,6 @@ dependencies {
 }
 
 run {
-    args 'server', configPath + 'dev-config.yaml'
+    args 'server', configPath + 'dev-cassandra-config.yaml'
     mainClassName = "com.codeheadsystems.keystore.Server"
 }
