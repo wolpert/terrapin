@@ -1,6 +1,5 @@
 
-dropWizardFactory: com.codeheadsystems.keystore.dagger.CassandraServer
-
+dropWizardFactory: com.codeheadsystems.keystore.dagger.DynamoDBServer
 logging:
   level: INFO
   loggers:

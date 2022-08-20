@@ -1,5 +1,5 @@
+dropWizardFactory: com.codeheadsystems.keystore.dagger.CassandraServer
 
-dropWizardFactory: com.codeheadsystems.keystore.dagger.DynamoDBServer
 
 logging:
   level: INFO
@@ -24,7 +24,7 @@ logging:
 #      transport: tcp
 
 dataStore:
-  connectionUrl: http://localhost:8000
+  connectionUrl: http://localhost:9042
   username: someone
   password: secret
 

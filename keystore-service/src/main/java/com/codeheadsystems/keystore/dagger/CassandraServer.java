@@ -31,10 +31,10 @@ import javax.inject.Singleton;
 
 public class CassandraServer implements DropWizardFactory {
 
-  private static void getAddress(final KeyStoreConfiguration configuration) {
+  private InetSocketAddress getAddress(final KeyStoreConfiguration configuration) {
     try {
       final URI uri = new URI(configuration.getDataStore().connectionUrl());
-      final InetSocketAddress address = new InetSocketAddress(uri.getHost(), uri.getPort());
+      return new InetSocketAddress(uri.getHost(), uri.getPort());
     } catch (URISyntaxException e) {
       throw new RuntimeException(e);
     }
@@ -45,7 +45,7 @@ public class CassandraServer implements DropWizardFactory {
                                    final MeterRegistry meterRegistry) {
     getAddress(configuration);
     return DaggerCassandraServer_CassandraComponent.builder()
-        .cqlSessionModule(new CqlSessionModule())
+        .cqlSessionModule(new CqlSessionModule(getAddress(configuration)))
         .metricsModule(new MetricsModule(meterRegistry))
         .build();
   }
