@@ -1,10 +1,15 @@
+# Once up, execute the following on start to load the db:
+# docker exec -it `docker ps|grep cassandra | awk '{print $1}'` bash /opt/cassandra/bin/cqlsh -f /resources/keystore.cql
+
 services:
   cassandra:
     image: cassandra:4.0.5
     ports:
       - 9042:9042
     environment:
-      - CASSANDRA_SNITCH=GossipingPropertyFileSnitch
-      - JVM_OPTS=-Dcassandra.skip_wait_for_gossip_to_settle=0 -Dcassandra.initial_token=0
-      - HEAP_NEWSIZE=128M
-      - MAX_HEAP_SIZE=1024M
+      CASSANDRA_SNITCH: GossipingPropertyFileSnitch
+      JVM_OPTS: -Dcassandra.skip_wait_for_gossip_to_settle=0 -Dcassandra.initial_token=0
+      HEAP_NEWSIZE: 128M
+      MAX_HEAP_SIZE: 1024M
+    volumes:
+      - ./src/main/resources:/resources

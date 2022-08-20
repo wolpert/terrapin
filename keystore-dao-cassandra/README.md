@@ -43,3 +43,21 @@ and the two keys tables will differ.
 Finally, may need a self-healing technique with deactivated keys. We still store
 the active state on each key. Considering an async process when deactivate keys
 are referenced.
+
+## Docker
+To start cassandra
+
+    docker compose up -d # Remove -d to use foreground.
+
+To shell into cassandra while running
+
+    docker exec -it `docker ps|grep cassandra | awk '{print $1}'` bash
+
+Of course, you wanna load the keystore keyspace? Do this!
+
+    docker exec -it `docker ps|grep cassandra | awk '{print $1}'` bash /opt/cassandra/bin/cqlsh -f /resources/keystore.cql
+
+Cleanup
+
+    docker-compose down
+    docker-compose rm -f
