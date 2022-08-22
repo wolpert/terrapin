@@ -1,0 +1,61 @@
+/*
+ * Copyright (c) 2020-2021. CodeHead Systems. All rights reserved
+ * Ned Wolpert <ned.wolpert@codeheadsystems.com>
+ */
+
+apply plugin: 'java'
+apply plugin: 'idea'
+
+ext {
+    appName = "keystore-integ-tests"
+}
+
+configurations {
+    project.archivesBaseName = "${appName}"
+    jar.baseName = "${appName}"
+}
+
+//jacocoTestReport.finalizedBy jacocoTestCoverageVerification
+
+checkstyle {
+    ignoreFailures = false
+    maxWarnings = 0
+}
+dependencies {
+    implementation project(':keystore-service')
+    implementation project(":keystore-common")
+    implementation project(":keystore-api")
+    implementation project(":metrics")
+
+    implementation "org.slf4j:slf4j-api:${slf4jVersion}"
+    implementation "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}"
+    implementation "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
+    implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonDatabindVersion}"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:${jacksonVersion}"
+    implementation "io.micrometer:micrometer-core:${micrometerVersion}"
+    implementation "io.github.openfeign:feign-core:${openfeign}"
+    implementation "io.github.openfeign:feign-jackson:${openfeign}"
+    implementation "io.github.openfeign:feign-slf4j:${openfeign}"
+    implementation "io.github.openfeign:feign-micrometer:${openfeign}"
+    implementation "io.github.openfeign:feign-java11:${openfeign}"
+    implementation "io.github.openfeign:feign-jaxrs:${openfeign}"
+
+    compileOnly "org.immutables:value:${immutablesVersion}"
+    annotationProcessor "org.immutables:value:${immutablesVersion}"
+
+    implementation "com.google.dagger:dagger:${daggerVersion}" // Common files for runtime
+    annotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
+
+    testAnnotationProcessor "org.immutables:value:${immutablesVersion}"
+    testAnnotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
+    testImplementation project(":codehead-test")
+    testImplementation project(":metrics-test")
+    testImplementation("org.assertj:assertj-core:${assertjVersion}")
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${jupiterVersion}"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:${jupiterVersion}"
+    testImplementation "org.junit.jupiter:junit-jupiter-engine:${jupiterVersion}"
+    testImplementation "org.mockito:mockito-core:${mockitoVersion}"
+    testImplementation "org.mockito:mockito-junit-jupiter:${mockitoVersion}"
+    testImplementation("ch.qos.logback:logback-classic:${logbackVersion}")
+    testImplementation("ch.qos.logback:logback-core:${logbackVersion}")
+}
