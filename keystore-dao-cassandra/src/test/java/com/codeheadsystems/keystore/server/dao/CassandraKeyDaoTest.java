@@ -31,7 +31,6 @@ import org.testcontainers.utility.DockerImageName;
 
 class CassandraKeyDaoTest extends KeyDaoTest {
   public static final String CASSANDRA_VERSION = "4.0.5";
-  public static final String DATACENTER = "datacenter1";
   public static final String KEYSTORE_CQL = "keystore.cql";
   private static final Logger LOGGER = LoggerFactory.getLogger(CassandraKeyDaoTest.class);
   public static Retry retry;

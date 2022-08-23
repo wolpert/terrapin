@@ -17,27 +17,58 @@
 package com.codeheadsystems.keystore.integ.client;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
+import com.codeheadsystems.keystore.Server;
 import com.codeheadsystems.keystore.api.Key;
 import com.codeheadsystems.keystore.api.KeyReaderService;
 import com.codeheadsystems.keystore.common.factory.ObjectMapperFactory;
+import com.codeheadsystems.keystore.config.KeyStoreConfiguration;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import feign.FeignException;
+import io.dropwizard.testing.ConfigOverride;
+import io.dropwizard.testing.DropwizardTestSupport;
+import io.dropwizard.testing.ResourceHelpers;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.testcontainers.containers.CassandraContainer;
+import org.testcontainers.utility.DockerImageName;
 
 class ClientFactoryTest {
 
+  public static final String CASSANDRA_VERSION = "4.0.5";
+  public static final String KEYSTORE_CQL = "keystore.cql";
   private static ObjectMapper objectMapper;
   private static String connectionUrl;
+  private static CassandraContainer<?> container;
+  private static DropwizardTestSupport<KeyStoreConfiguration> SUPPORT;
 
   private ClientFactory clientFactory;
 
   @BeforeAll
-  public static void setup() {
+  public static void setup() throws Exception {
+
+    container = new CassandraContainer<>(DockerImageName.parse("cassandra")
+        .withTag(CASSANDRA_VERSION))
+        .withInitScript(KEYSTORE_CQL);
+    container.start();
+    final int mappedPort = container.getMappedPort(CassandraContainer.CQL_PORT);
+    SUPPORT = new DropwizardTestSupport<>(
+        Server.class,
+        ResourceHelpers.resourceFilePath("dev-cassandra-config.yaml"),
+        ConfigOverride.config("dataStore.  connectionUrl", "http://localhost:" + mappedPort)
+    );
+    SUPPORT.before();
     objectMapper = new ObjectMapperFactory().generate();
-    connectionUrl = "http://localhost:8080/";
+    connectionUrl = "http://localhost:" + SUPPORT.getLocalPort() + "/";
+  }
+
+  @AfterAll
+  public static void shutdown() {
+    container.stop();
+    SUPPORT.after();
   }
 
   @BeforeEach
@@ -52,10 +83,11 @@ class ClientFactoryTest {
         .isNotNull();
   }
 
-  //@Test
-  public void testGet() {
-    final Key key = clientFactory.keyReaderService()
-        .get("One", "two", 3L);
+  @Test
+  public void testGet_notfound() {
+    assertThatExceptionOfType(FeignException.class)
+        .isThrownBy(() -> clientFactory.keyReaderService().get("One", "two", 3L))
+        .withMessageContaining("404");
   }
 
 }
