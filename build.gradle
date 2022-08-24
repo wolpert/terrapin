@@ -124,8 +124,8 @@ version '1.0.0-SNAPSHOT'
 
 ext {
     awsLocalDDB = "1.15.0" // https://mvnrepository.com/artifact/com.amazonaws/DynamoDBLocal
-    awsSDK = "1.12.276" // https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-dynamodb
-    awsSDK2 = "2.17.247" // https://mvnrepository.com/artifact/software.amazon.awssdk/dynamodb
+    awsSDK = "1.12.288" // https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-dynamodb
+    awsSDK2 = "2.17.259" // https://mvnrepository.com/artifact/software.amazon.awssdk/dynamodb
     aiVersion = '1.8.2' // https://mvnrepository.com/artifact/com.badlogicgames.gdx/gdx-ai
     ashleyVersion = '1.7.4' // https://mvnrepository.com/artifact/com.badlogicgames.ashley/ashley
     assertjVersion = '3.23.1' // https://mvnrepository.com/artifact/org.assertj/assertj-core
@@ -140,7 +140,7 @@ ext {
     gdxVersion = '1.11.0' // https://mvnrepository.com/artifact/com.badlogicgames.gdx/gdx
     guavaVersion = '31.1-jre' // https://mvnrepository.com/artifact/com.google.guava/guava
     hsqldbVersion = '2.7.0' // https://mvnrepository.com/artifact/org.hsqldb/hsqldb
-    immutablesVersion = '2.9.0' // https://mvnrepository.com/artifact/org.immutables/value
+    immutablesVersion = '2.9.1' // https://mvnrepository.com/artifact/org.immutables/value
     jacksonVersion = '2.13.3' // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core
     jacksonDatabindVersion = '2.13.3' // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
     javaxInjectVersion = '1'
@@ -148,8 +148,8 @@ ext {
     log4jVersion = '2.18.0' //  https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core
     logbackVersion = '1.2.11' // https://mvnrepository.com/artifact/ch.qos.logback/logback-core
     metricsVersion = '4.2.11' // https://mvnrepository.com/artifact/io.dropwizard.metrics/metrics-core
-    micrometerVersion = '1.9.2' // https://mvnrepository.com/artifact/io.micrometer/micrometer-core
-    mockitoVersion = '4.6.1' // https://mvnrepository.com/artifact/org.mockito/mockito-core
+    micrometerVersion = '1.9.3' // https://mvnrepository.com/artifact/io.micrometer/micrometer-core
+    mockitoVersion = '4.7.0' // https://mvnrepository.com/artifact/org.mockito/mockito-core
     nettyVersion = '4.1.79.Final' //  https://mvnrepository.com/artifact/io.netty/netty-all
     openfeign = '11.9.1' // https://mvnrepository.com/artifact/io.github.openfeign/feign-core
     retrofitVersion = '2.9.0' // https://mvnrepository.com/artifact/com.squareup.retrofit2/retrofit
