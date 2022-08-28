@@ -16,6 +16,7 @@
 
 package com.codeheadsystems.keystore.integ.client;
 
+import com.codeheadsystems.keystore.api.KeyManagerService;
 import com.codeheadsystems.keystore.api.KeyReaderService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.Feign;
@@ -57,6 +58,11 @@ public class ClientFactory {
   public KeyReaderService keyReaderService() {
     LOGGER.debug("keyReaderService()");
     return builder.target(KeyReaderService.class, connectionUrl);
+  }
+
+  public KeyManagerService keyManagerService() {
+    LOGGER.debug("keyManagerService()");
+    return builder.target(KeyManagerService.class, connectionUrl);
   }
 
 }
