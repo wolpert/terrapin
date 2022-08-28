@@ -74,6 +74,12 @@ public class UniqueStringExtension implements BeforeEachCallback, BeforeAllCallb
             }));
   }
 
+  /**
+   * Gets all unique annotation fields for this class and its super class.
+   *
+   * @param clazz to check.
+   * @return set of fields.
+   */
   public Set<Field> uniqueFields(Class<?> clazz) {
     final HashSet<Field> set = new HashSet<>();
     while (clazz != Object.class) {

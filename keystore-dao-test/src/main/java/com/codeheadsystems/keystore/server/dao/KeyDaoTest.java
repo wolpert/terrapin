@@ -43,8 +43,6 @@ import org.slf4j.LoggerFactory;
 public abstract class KeyDaoTest extends BaseMetricTest {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(KeyDaoTest.class);
-
-  public static final String OWNER = "I am an owner";
   protected final static Random random = new Random();
   protected final ObjectMapper mapper = new ObjectMapperFactory().generate();
   protected KeyDao dao;
