@@ -23,6 +23,8 @@ import static org.assertj.core.api.InstanceOfAssertFactories.LIST;
 import com.codeheadsystems.keystore.common.factory.ObjectMapperFactory;
 import com.codeheadsystems.keystore.server.dao.model.*;
 import com.codeheadsystems.metrics.test.BaseMetricTest;
+import com.codeheadsystems.test.unique.UniqueString;
+import com.codeheadsystems.test.unique.UniqueStringExtension;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,9 +35,11 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@ExtendWith(UniqueStringExtension.class)
 public abstract class KeyDaoTest extends BaseMetricTest {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(KeyDaoTest.class);
@@ -44,20 +48,13 @@ public abstract class KeyDaoTest extends BaseMetricTest {
   protected final static Random random = new Random();
   protected final ObjectMapper mapper = new ObjectMapperFactory().generate();
   protected KeyDao dao;
-  protected static String ownerPrefix;
-  protected String owner;
-  protected static AtomicInteger testCount = new AtomicInteger();
-  protected abstract KeyDao keyDAO();
 
-  @BeforeAll
-  public static void setupOwner() {
-    ownerPrefix = "owner." + System.currentTimeMillis() + "." + random.nextInt(10000);
-    testCount.set(0);
-  }
+  @UniqueString(prefix = "owner", separator = ".")
+  protected String owner;
+  protected abstract KeyDao keyDAO();
 
   @BeforeEach
   void setupDao() {
-    owner = ownerPrefix + "." + testCount.incrementAndGet();
     dao = keyDAO();
   }
   

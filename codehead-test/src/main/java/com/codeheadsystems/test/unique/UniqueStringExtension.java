@@ -18,6 +18,8 @@ package com.codeheadsystems.test.unique;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
@@ -62,8 +64,7 @@ public class UniqueStringExtension implements BeforeEachCallback, BeforeAllCallb
     final long currentTime = System.currentTimeMillis();
     final int currentRun = atomic.incrementAndGet();
     context.getRequiredTestInstances().getAllInstances()
-        .forEach(instance -> Arrays.stream(instance.getClass().getDeclaredFields())
-            .filter(f -> f.isAnnotationPresent(UniqueString.class))
+        .forEach(instance -> uniqueFields(instance.getClass())
             .forEach(field -> {
               enableSettingTheField(field);
               final UniqueString prefixAnnotation = field.getAnnotation(UniqueString.class);
@@ -71,6 +72,17 @@ public class UniqueStringExtension implements BeforeEachCallback, BeforeAllCallb
               final String value = prefixAnnotation.prefix() + sep + currentTime + sep + currentRun;
               setValueForField(value, instance, field);
             }));
+  }
+
+  public Set<Field> uniqueFields(Class<?> clazz) {
+    final HashSet<Field> set = new HashSet<>();
+    while (clazz != Object.class) {
+      Arrays.stream(clazz.getDeclaredFields())
+          .filter(f -> f.isAnnotationPresent(UniqueString.class))
+          .forEach(set::add);
+      clazz = clazz.getSuperclass();
+    }
+    return set;
   }
 
   /**
