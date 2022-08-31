@@ -77,7 +77,5 @@ class ApiConverterTest {
         .hasFieldOrPropertyWithValue("version", VERSION)
         .hasFieldOrPropertyWithValue("status", ApiConverter.ACTIVE)
         .hasFieldOrPropertyWithValue("key", BYTES);
-
-
   }
 }
