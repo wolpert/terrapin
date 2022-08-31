@@ -37,12 +37,15 @@ import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
-public class DynamoDBServer implements DropWizardFactory {
+/**
+ * Builds out a drop wizard component where the backend is dynamodb.
+ */
+public class DynamoDbServer implements DropWizardFactory {
 
   @Override
   public DropWizardComponent build(final KeyStoreConfiguration configuration,
                                    final MeterRegistry meterRegistry) {
-    return DaggerDynamoDBServer_KeystoreDynamoDbComponent.builder()
+    return DaggerDynamoDbServer_KeystoreDynamoDbComponent.builder()
         .keyStoreModule(new KeyStoreModule(configuration))
         .metricsModule(new MetricsModule(meterRegistry))
         .build();
@@ -53,7 +56,8 @@ public class DynamoDBServer implements DropWizardFactory {
    */
   @Singleton
   @Component(modules = {
-      KeystoreDynamoDbComponent.AuxModule.class,DdbModule.class,
+      KeystoreDynamoDbComponent.AuxModule.class,
+      DdbModule.class,
       KeyStoreModule.class})
   public interface KeystoreDynamoDbComponent extends DropWizardComponent {
 
@@ -63,6 +67,12 @@ public class DynamoDBServer implements DropWizardFactory {
     @Module
     class AuxModule {
 
+      /**
+       * Returns the client based on the configuration. Really we need to figure out what to do in production on AWS.
+       *
+       * @param configuration for the keystore.
+       * @return a db client.
+       */
       @Provides
       @Singleton
       public DynamoDbClient localClient(final KeyStoreConfiguration configuration) {

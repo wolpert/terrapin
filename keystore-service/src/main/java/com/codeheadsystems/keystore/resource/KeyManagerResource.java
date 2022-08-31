@@ -29,6 +29,9 @@ import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Provide access to manage keys. This are admin routines. Note, rotation is a different, specialized feature.
+ */
 @Singleton
 public class KeyManagerResource implements KeyManagerService, JettyResource {
 
@@ -36,6 +39,12 @@ public class KeyManagerResource implements KeyManagerService, JettyResource {
   private final ApiConverter apiConverter;
   private final KeyStoreAdminManager keyStoreAdminManager;
 
+  /**
+   * Default constructor.
+   *
+   * @param apiConverter         to convert from front-end to backend.
+   * @param keyStoreAdminManager the admin manager for keys.
+   */
   @Inject
   public KeyManagerResource(final ApiConverter apiConverter,
                             final KeyStoreAdminManager keyStoreAdminManager) {
@@ -44,6 +53,13 @@ public class KeyManagerResource implements KeyManagerService, JettyResource {
     this.keyStoreAdminManager = keyStoreAdminManager;
   }
 
+  /**
+   * Creation of new keys.
+   *
+   * @param owner owner of the key.
+   * @param keyId to create for this owner.
+   * @return a new key.
+   */
   @Override
   public Key create(final String owner, final String keyId) {
     LOGGER.debug("create({},{})", owner, keyId);
@@ -55,12 +71,27 @@ public class KeyManagerResource implements KeyManagerService, JettyResource {
     }
   }
 
+  /**
+   * Deletion of all key versions for a specific key.
+   *
+   * @param owner of key.
+   * @param keyId to be deleted.
+   * @return a response if it was complete.
+   */
   @Override
   public Response delete(final String owner, final String keyId) {
     LOGGER.debug("delete({},{})", owner, keyId);
     return null;
   }
 
+  /**
+   * Deletion of a specific key.
+   *
+   * @param owner   of key.
+   * @param keyId   to be deleted.
+   * @param version to be deleted.
+   * @return a response about the key deletion.
+   */
   @Override
   public Response delete(final String owner, final String keyId, final Long version) {
     LOGGER.debug("delete({},{},{})", owner, keyId, version);

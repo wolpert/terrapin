@@ -33,21 +33,39 @@ import org.slf4j.LoggerFactory;
 public class KeyStoreReaderManager {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(KeyStoreReaderManager.class);
-  private final KeyDao keyDAO;
+  private final KeyDao keyDao;
 
+  /**
+   * Default constructor.
+   *
+   * @param keyDao where the keys are stored.
+   */
   @Inject
-  public KeyStoreReaderManager(final KeyDao keyDAO) {
-    LOGGER.info("KeyStoreReaderManager({})", keyDAO);
-    this.keyDAO = keyDAO;
+  public KeyStoreReaderManager(final KeyDao keyDao) {
+    LOGGER.info("KeyStoreReaderManager({})", keyDao);
+    this.keyDao = keyDao;
   }
 
+  /**
+   * Returns a versioned key, if it exists.
+   *
+   * @param identifier of the key.
+   * @return the key, if it exists.
+   */
   public Optional<Key> getKey(final KeyVersionIdentifier identifier) {
     LOGGER.debug("getKey({})", identifier);
-    return keyDAO.load(identifier);
+    return keyDao.load(identifier);
   }
 
+
+  /**
+   * Returns the latest versioned key, if it exists.
+   *
+   * @param identifier of the key.
+   * @return the key, if it exists.
+   */
   public Optional<Key> getKey(final KeyIdentifier identifier) {
     LOGGER.debug("getKey({})", identifier);
-    return keyDAO.load(identifier);
+    return keyDao.load(identifier);
   }
 }

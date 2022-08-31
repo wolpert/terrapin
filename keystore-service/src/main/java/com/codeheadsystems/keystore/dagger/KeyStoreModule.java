@@ -22,16 +22,24 @@ import dagger.Module;
 import dagger.Provides;
 import javax.inject.Singleton;
 
+/**
+ * A super-set of modules used for the keystore service.
+ */
 @Module(includes = {
     HealthCheckModule.class,
     MetricsModule.class,
     ResourceModule.class,
-    RNGModule.class
+    RngModule.class
 })
 public class KeyStoreModule {
 
   private final KeyStoreConfiguration keyStoreConfiguration;
 
+  /**
+   * The default constructor.
+   *
+   * @param keyStoreConfiguration the configuration from dropwizard.
+   */
   public KeyStoreModule(final KeyStoreConfiguration keyStoreConfiguration) {
     this.keyStoreConfiguration = keyStoreConfiguration;
   }

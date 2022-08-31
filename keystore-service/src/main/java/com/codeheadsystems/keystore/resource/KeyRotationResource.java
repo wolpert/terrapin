@@ -23,16 +23,29 @@ import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Rotates the key.
+ */
 @Singleton
 public class KeyRotationResource implements KeyRotationService, JettyResource {
 
   public static final Logger LOGGER = LoggerFactory.getLogger(KeyRotationResource.class);
 
+  /**
+   * Default constructor.
+   */
   @Inject
   public KeyRotationResource() {
     LOGGER.info("KeyRotationResource()");
   }
 
+  /**
+   * Rotates the key, creating a new key version. Does not deactivate old keys.
+   *
+   * @param owner of the key.
+   * @param keyId that needs rotating.
+   * @return the new key.
+   */
   @Override
   public Key rotate(final String owner, final String keyId) {
     LOGGER.debug("rotate({},{})", owner, keyId);

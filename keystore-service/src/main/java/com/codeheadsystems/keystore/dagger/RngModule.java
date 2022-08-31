@@ -31,22 +31,34 @@ import org.slf4j.LoggerFactory;
 /**
  * Contains the random provider we want to use.
  */
-@Module(includes = {RNGModule.Binder.class})
-public class RNGModule {
+@Module(includes = {RngModule.Binder.class})
+public class RngModule {
 
   public static final String PROVIDED_RNG = "RNG";
-  private static final Logger LOGGER = LoggerFactory.getLogger(RNGModule.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(RngModule.class);
 
+  /**
+   * Returns the RNG to used based on one being supplied from dagger injections.
+   *
+   * @param suppliedRng from a different module, if set.
+   * @return the RNG to use.
+   */
   @Provides
   @Singleton
   @Named(PROVIDED_RNG)
   public Rng rng(@Named(Binder.RNG_IMPL) final Optional<Rng> suppliedRng) {
-    final Rng rng = suppliedRng.orElseGet(this::defaultRNG);
+    final Rng rng = suppliedRng.orElseGet(this::defaultRng);
     LOGGER.info("RNG {}", rng.getClass().getName());
     return rng;
   }
 
-  public Rng defaultRNG() {
+  /**
+   * The default RNG. A secure one native to the execution environment.
+   * This is a fail-safe... really you should pick one intentionally.
+   *
+   * @return the RNG.
+   */
+  public Rng defaultRng() {
     try {
       final SecureRandom random = SecureRandom.getInstance("NativePRNG");
       return random::nextBytes;
@@ -55,6 +67,9 @@ public class RNGModule {
     }
   }
 
+  /**
+   * Binder to allow for new Rngs to be set.
+   */
   @Module
   public interface Binder {
     String RNG_IMPL = "RNG_IMPL";

@@ -27,6 +27,9 @@ import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Converts from internal model to the external one.
+ */
 @Singleton
 public class ApiConverter {
 
@@ -34,11 +37,22 @@ public class ApiConverter {
   public static final String INACTIVE = "inactive";
   private static final Logger LOGGER = LoggerFactory.getLogger(ApiConverter.class);
 
+  /**
+   * Default constructor.
+   */
   @Inject
   public ApiConverter() {
     LOGGER.info("ApiConverter()");
   }
 
+  /**
+   * Returns a key version identifier from API details.
+   *
+   * @param owner   of the key.
+   * @param keyId   keyId itself.
+   * @param version version of the key.
+   * @return the identifier.
+   */
   public KeyVersionIdentifier toDaoKeyVersionIdentifier(final String owner,
                                                         final String keyId,
                                                         final Long version) {
@@ -49,6 +63,13 @@ public class ApiConverter {
         .build();
   }
 
+  /**
+   * Returns the version-neutral key identifier from the API details.
+   *
+   * @param owner of the key.
+   * @param keyId key id.
+   * @return the identifier.
+   */
   public KeyIdentifier toDaoKeyIdentifier(final String owner,
                                           final String keyId) {
     return ImmutableKeyIdentifier.builder()
@@ -61,8 +82,8 @@ public class ApiConverter {
    * The secret stored im the database itself should be encrypted. We do not assume the database encrypts
    * internally, so it should be field-level encryption.
    *
-   * @param daoKey
-   * @return
+   * @param daoKey to convert.
+   * @return an external key.
    */
   public Key toApiKey(final com.codeheadsystems.keystore.server.dao.model.Key daoKey) {
     final KeyVersionIdentifier identifier = daoKey.keyVersionIdentifier();

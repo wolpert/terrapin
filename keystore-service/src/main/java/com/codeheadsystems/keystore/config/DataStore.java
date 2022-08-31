@@ -23,6 +23,9 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.util.Map;
 import org.immutables.value.Value;
 
+/**
+ * The generic datastore configuration. Remember, we do not use the dropwizard SQL driver for non-SQL DAOs.
+ */
 @Value.Immutable
 @JsonSerialize(as = ImmutableDataStore.class)
 @JsonDeserialize(builder = ImmutableDataStore.Builder.class)
@@ -31,11 +34,14 @@ public interface DataStore {
 
   @JsonProperty("connectionUrl")
   String connectionUrl();
+
   @JsonProperty("username")
   String username();
+
   @JsonProperty("password")
   String password();
+
   @JsonProperty("aux")
-  Map<String,String> aux();
+  Map<String, String> aux();
 
 }

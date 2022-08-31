@@ -20,6 +20,11 @@ configurations {
 
 //jacocoTestReport.finalizedBy jacocoTestCoverageVerification
 
+checkstyle {
+    ignoreFailures = false
+    maxWarnings = 0
+}
+
 dependencies {
     // DynamoDB
     dynamodb "com.amazonaws:DynamoDBLocal:${awsLocalDDB}"

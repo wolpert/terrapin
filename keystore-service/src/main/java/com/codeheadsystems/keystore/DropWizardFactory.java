@@ -35,10 +35,12 @@ public interface DropWizardFactory {
    */
   static DropWizardFactory getDropWizardFactory(final KeyStoreConfiguration configuration) {
     try {
-      final Class<DropWizardFactory> clazz = (Class<DropWizardFactory>) Class.forName(configuration.getDropWizardFactory());
+      final Class<DropWizardFactory> clazz =
+          (Class<DropWizardFactory>) Class.forName(configuration.getDropWizardFactory());
       final Constructor<DropWizardFactory> constructor = clazz.getConstructor();
       return constructor.newInstance();
-    } catch (ClassNotFoundException | InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
+    } catch (ClassNotFoundException | InvocationTargetException | NoSuchMethodException | InstantiationException
+             | IllegalAccessException e) {
       throw new RuntimeException(e);
     }
   }

@@ -22,6 +22,9 @@ import dagger.Binds;
 import dagger.Module;
 import dagger.multibindings.IntoSet;
 
+/**
+ * All health checks should be referenced here.
+ */
 @Module
 public interface HealthCheckModule {
 

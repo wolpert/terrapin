@@ -24,6 +24,9 @@ import dagger.Binds;
 import dagger.Module;
 import dagger.multibindings.IntoSet;
 
+/**
+ * Module to bind all resources for drop wizard. We use JettyResource as a method to identify resources to expose.
+ */
 @Module
 public interface ResourceModule {
 

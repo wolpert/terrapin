@@ -16,7 +16,7 @@
 
 package com.codeheadsystems.keystore.manager;
 
-import static com.codeheadsystems.keystore.dagger.RNGModule.PROVIDED_RNG;
+import static com.codeheadsystems.keystore.dagger.RngModule.PROVIDED_RNG;
 
 import com.codeheadsystems.keystore.common.helper.DataHelper;
 import com.codeheadsystems.keystore.common.model.Rng;
@@ -35,28 +35,46 @@ import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Basic manager to update or create keys. Business logic for the resource.
+ */
 @Singleton
 public class KeyStoreAdminManager {
 
   public static final int KEY_SIZE = 32;
   private static final Logger LOGGER = LoggerFactory.getLogger(KeyStoreAdminManager.class);
-  private final KeyDao keyDAO;
+  private final KeyDao keyDao;
   private final Rng rng;
   private final DataHelper dataHelper;
 
+  /**
+   * Default constructor.
+   *
+   * @param keyDao     we use to store the keys.
+   * @param rng        the P/RNG for key generation.
+   * @param dataHelper helper class to update strings.
+   */
   @Inject
-  public KeyStoreAdminManager(final KeyDao keyDAO,
+  public KeyStoreAdminManager(final KeyDao keyDao,
                               @Named(PROVIDED_RNG) final Rng rng,
                               final DataHelper dataHelper) {
-    LOGGER.info("KeyManager({},{},{})", keyDAO, rng, dataHelper);
-    this.keyDAO = keyDAO;
+    LOGGER.info("KeyManager({},{},{})", keyDao, rng, dataHelper);
+    this.keyDao = keyDao;
     this.rng = rng;
     this.dataHelper = dataHelper;
   }
 
+  /**
+   * Creates a new key. Note, do not call this to rotate keys. You don't really create versions directly,
+   * rather you rotate keys to create new veresions.
+   *
+   * @param identifier identifier for creation.
+   * @return a ney key.
+   * @throws AlreadyExistsException if the key already exists.
+   */
   public Key create(final KeyIdentifier identifier) throws AlreadyExistsException {
     LOGGER.debug("create({})", identifier);
-    final Optional<Key> currentKey = keyDAO.load(identifier);
+    final Optional<Key> currentKey = keyDao.load(identifier);
     if (currentKey.isPresent()) {
       throw new AlreadyExistsException();
     }
@@ -71,7 +89,7 @@ public class KeyStoreAdminManager {
         .createDate(new Date())
         .value(secret)
         .build();
-    keyDAO.store(key);
+    keyDao.store(key);
     dataHelper.clear(secret); // secret is copied to make the key.
     return key;
   }

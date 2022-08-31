@@ -16,5 +16,8 @@
 
 package com.codeheadsystems.keystore.exception;
 
+/**
+ * Service level exception to capture creating things that already exist. Maps to external error codes in the API.
+ */
 public class AlreadyExistsException extends Exception {
 }

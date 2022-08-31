@@ -29,8 +29,17 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import javax.inject.Singleton;
 
+/**
+ * This will build out the drop wizard component when the backend datastore is cassandra.
+ */
 public class CassandraServer implements DropWizardFactory {
 
+  /**
+   * Returns an address based on the current configuration.
+   *
+   * @param configuration of the service.
+   * @return an address to connect to cassandra.
+   */
   private InetSocketAddress getAddress(final KeyStoreConfiguration configuration) {
     try {
       final URI uri = new URI(configuration.getDataStore().connectionUrl());
@@ -40,6 +49,13 @@ public class CassandraServer implements DropWizardFactory {
     }
   }
 
+  /**
+   * Builds the dropwizard component.
+   *
+   * @param configuration the configuration from dropwizard.
+   * @param meterRegistry the current meter registry.
+   * @return a drop wizard component.
+   */
   @Override
   public DropWizardComponent build(final KeyStoreConfiguration configuration,
                                    final MeterRegistry meterRegistry) {

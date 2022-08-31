@@ -29,6 +29,9 @@ import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Routines to read keys.
+ */
 @Singleton
 public class KeyReaderResource implements KeyReaderService, JettyResource {
 
@@ -36,6 +39,12 @@ public class KeyReaderResource implements KeyReaderService, JettyResource {
   private final ApiConverter apiConverter;
   private final KeyStoreReaderManager keyStoreReaderManager;
 
+  /**
+   * Default constructor.
+   *
+   * @param apiConverter          to convert between keys.
+   * @param keyStoreReaderManager business logic of reading keys.
+   */
   @Inject
   public KeyReaderResource(final ApiConverter apiConverter,
                            final KeyStoreReaderManager keyStoreReaderManager) {
@@ -44,6 +53,13 @@ public class KeyReaderResource implements KeyReaderService, JettyResource {
     this.keyStoreReaderManager = keyStoreReaderManager;
   }
 
+  /**
+   * Gets the latest active version of a key.
+   *
+   * @param owner of the key.
+   * @param keyId to be found.
+   * @return latest version.
+   */
   @Override
   public Key get(final String owner, final String keyId) {
     LOGGER.debug("get({},{})", owner, keyId);
@@ -53,6 +69,14 @@ public class KeyReaderResource implements KeyReaderService, JettyResource {
         .orElseThrow(() -> new WebApplicationException(Response.Status.NOT_FOUND));
   }
 
+  /**
+   * Gets a specific version of a key.
+   *
+   * @param owner   of the key.
+   * @param keyId   to be found.
+   * @param version of the key.
+   * @return the key..
+   */
   @Override
   public Key get(final String owner, final String keyId, final Long version) {
     LOGGER.debug("get({},{},{})", owner, keyId, version);

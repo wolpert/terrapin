@@ -22,6 +22,9 @@ import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Sample healthcheck. Should be replaced by something useful.
+ */
 @Singleton
 public class BasicHealthCheck extends HealthCheck {
 

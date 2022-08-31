@@ -18,6 +18,9 @@ package com.codeheadsystems.keystore.config;
 
 import io.dropwizard.Configuration;
 
+/**
+ * The configuration for drop wizard.
+ */
 public class KeyStoreConfiguration extends Configuration {
 
   private String dropWizardFactory;
