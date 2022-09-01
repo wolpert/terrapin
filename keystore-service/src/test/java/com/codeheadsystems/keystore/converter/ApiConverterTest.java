@@ -78,4 +78,19 @@ class ApiConverterTest {
         .hasFieldOrPropertyWithValue("status", ApiConverter.ACTIVE)
         .hasFieldOrPropertyWithValue("key", BYTES);
   }
+
+  @Test
+  void toApiKey_inactive() {
+    final Key inactiveKey = ImmutableKey.copyOf(API_KEY)
+        .withActive(false);
+
+    final com.codeheadsystems.keystore.api.Key result = converter.toApiKey(inactiveKey);
+    assertThat(result)
+        .isNotNull()
+        .hasFieldOrPropertyWithValue("owner", OWNER)
+        .hasFieldOrPropertyWithValue("id", KEY_ID)
+        .hasFieldOrPropertyWithValue("version", VERSION)
+        .hasFieldOrPropertyWithValue("status", ApiConverter.INACTIVE)
+        .hasFieldOrPropertyWithValue("key", BYTES);
+  }
 }

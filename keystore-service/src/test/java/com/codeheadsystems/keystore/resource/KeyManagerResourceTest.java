@@ -79,4 +79,16 @@ class KeyManagerResourceTest {
         .hasFieldOrPropertyWithValue("status", 409);
   }
 
+  @Test
+  public void delete_keyIdentifier() {
+    assertThat(resource.delete(OWNER, KEY_ID))
+        .isNull();
+  }
+
+  @Test
+  public void delete_keyIdentifierVersion() {
+    assertThat(resource.delete(OWNER, KEY_ID, 1L))
+        .isNull();
+  }
+
 }
