@@ -39,8 +39,7 @@ public interface DropWizardFactory {
           (Class<DropWizardFactory>) Class.forName(configuration.getDropWizardFactory());
       final Constructor<DropWizardFactory> constructor = clazz.getConstructor();
       return constructor.newInstance();
-    } catch (ClassNotFoundException | InvocationTargetException | NoSuchMethodException | InstantiationException
-             | IllegalAccessException e) {
+    } catch (Exception e) {
       throw new RuntimeException(e);
     }
   }
