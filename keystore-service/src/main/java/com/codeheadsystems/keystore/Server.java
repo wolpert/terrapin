@@ -53,7 +53,6 @@ public class Server extends Application<KeyStoreConfiguration> {
     server.run(args);
   }
 
-
   @Override
   public void run(final KeyStoreConfiguration configuration,
                   final Environment environment) throws Exception {

@@ -18,7 +18,7 @@ configurations {
     dynamodb
 }
 
-//jacocoTestReport.finalizedBy jacocoTestCoverageVerification
+jacocoTestReport.finalizedBy jacocoTestCoverageVerification
 
 checkstyle {
     ignoreFailures = false
