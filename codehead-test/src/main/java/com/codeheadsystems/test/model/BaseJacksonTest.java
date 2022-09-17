@@ -102,7 +102,7 @@ public abstract class BaseJacksonTest<T> {
   public void testRoundTrip() throws JsonProcessingException {
     // Arrange
     final T instance = getInstance();
-    final String json = objectMapper.writeValueAsString(getInstance());
+    final String json = objectMapper.writeValueAsString(instance);
 
     // Act
     final T unwoundInstance = objectMapper.readValue(json, getBaseClass());
@@ -123,7 +123,7 @@ public abstract class BaseJacksonTest<T> {
   public void testRoundTripWithExtraCharacters() throws JsonProcessingException {
     // Arrange
     final T instance = getInstance();
-    final String json = objectMapper.writeValueAsString(getInstance());
+    final String json = objectMapper.writeValueAsString(instance);
     final ObjectNode objectNode = objectMapper.readValue(json, ObjectNode.class);
     objectNode.put("someWierdFieldWeDontCareAbout", "whatevervalue");
     final String jsonWithExtraStuff = objectMapper.writeValueAsString(objectNode);
@@ -188,7 +188,7 @@ public abstract class BaseJacksonTest<T> {
   public void testNullableMethods() throws JsonProcessingException, InvocationTargetException, IllegalAccessException {
     // Arrange
     final T instance = getInstance();
-    final String json = objectMapper.writeValueAsString(getInstance());
+    final String json = objectMapper.writeValueAsString(instance);
 
     // Act
     for (Method method : getNullableMethods()) {
