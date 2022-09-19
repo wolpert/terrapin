@@ -56,8 +56,14 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter-engine:${jupiterVersion}"
     testImplementation "org.mockito:mockito-core:${mockitoVersion}"
     testImplementation "org.mockito:mockito-junit-jupiter:${mockitoVersion}"
+
+    // Logging stuff (api needed due to logback upgrade)
     testImplementation("ch.qos.logback:logback-classic:${logbackVersion}")
     testImplementation("ch.qos.logback:logback-core:${logbackVersion}")
+    testImplementation("ch.qos.logback:logback-access:${logbackVersion}")
+    testImplementation "jakarta.servlet:jakarta.servlet-api:${jakartaServletVersion}"
+    testImplementation "javax.servlet:javax.servlet-api:${javaxServletVersion}"
+
 
     testImplementation "io.dropwizard:dropwizard-testing:${dropwizardVersion}"
     testImplementation "org.testcontainers:testcontainers:${testContainerVersion}"
