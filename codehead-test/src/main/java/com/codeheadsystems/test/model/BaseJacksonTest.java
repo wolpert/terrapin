@@ -87,6 +87,16 @@ public abstract class BaseJacksonTest<T> {
     return new ObjectMapper().registerModule(new Jdk8Module());
   }
 
+  /**
+   * Override this if you class has a base class. Used to test polymorphic behavior is setup correctly
+   * with Jackson.
+   *
+   * @return optional of base class.
+   */
+  protected Optional<Class<?>> getPolymorphicBaseClass() {
+    return Optional.empty();
+  }
+
   @BeforeEach
   public void baseJacksonTestSetup() {
     objectMapper = objectMapper();
@@ -311,6 +321,19 @@ public abstract class BaseJacksonTest<T> {
           .asInstanceOf(InstanceOfAssertFactories.OPTIONAL)
           .isNot(PRESENT);
     }
+  }
+
+  @Test
+  public void testPolymorphicBaseClass() throws JsonProcessingException {
+    final Optional<Class<?>> polymorphicBaseClass = getPolymorphicBaseClass();
+    if (polymorphicBaseClass.isEmpty()) {
+      return;
+    }
+    final String json = objectMapper.writeValueAsString(getInstance());
+    final Object polymorphicObject = objectMapper.readValue(json, polymorphicBaseClass.get());
+    assertThat(polymorphicObject)
+        .isNotNull()
+        .isInstanceOf(getBaseClass());
   }
 
   List<Method> getClassMethods() {
