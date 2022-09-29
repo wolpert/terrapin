@@ -60,7 +60,7 @@ dependencies {
     testAnnotationProcessor "org.immutables:value:${immutablesVersion}"
     testAnnotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
     testImplementation "com.codeheadsystems:codehead-test:${codeheadTestVersion}"
-    testImplementation project(":datastore-test")
+    testImplementation "com.codeheadsystems:database-test:${codeheadDatabaseTestVersion}"
     testImplementation project(":keystore-dao-test")
     testImplementation project(":metrics-test")
     testImplementation("org.assertj:assertj-core:${assertjVersion}")

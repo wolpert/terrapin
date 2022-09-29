@@ -37,7 +37,7 @@ dependencies {
     annotationProcessor "org.immutables:value:${immutablesVersion}"
 
     implementation "com.codeheadsystems:codehead-test:${codeheadTestVersion}"
-    implementation project(":datastore-test")
+    implementation "com.codeheadsystems:database-test:${codeheadDatabaseTestVersion}"
     implementation("org.assertj:assertj-core:${assertjVersion}")
     implementation "org.junit.jupiter:junit-jupiter-api:${jupiterVersion}"
     implementation "org.junit.jupiter:junit-jupiter-params:${jupiterVersion}"

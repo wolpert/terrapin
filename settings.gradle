@@ -2,7 +2,7 @@
  * Copyright (c) 2020 CodeHead Systems. All rights reserved
  */
 
-include 'datastore-test', 'statemachine',
+include 'statemachine',
         'metrics', 'metrics-test',
         'oop-mock-common', 'oop-mock-client', 'oop-mock', 'oop-mock-dynamodb', 'oop-mock-tests',
         'keystore-common', 'keystore-dao', 'keystore-dao-test', 'keystore-dao-ddb', 'keystore-dao-cassandra', 'keystore-dao-sql',

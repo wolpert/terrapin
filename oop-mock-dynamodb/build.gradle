@@ -61,7 +61,7 @@ dependencies {
     implementation project(":oop-mock-common")
     implementation project(":oop-mock-client")
     testImplementation project(":oop-mock-tests")
-    testImplementation project(":datastore-test")
+    testImplementation "com.codeheadsystems:database-test:${codeheadDatabaseTestVersion}"
     implementation "com.amazonaws:aws-java-sdk-dynamodb:${awsSDK}"
     implementation "org.slf4j:slf4j-api:${slf4jVersion}"
     implementation("com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}")
