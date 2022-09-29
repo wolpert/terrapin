@@ -80,7 +80,7 @@ dependencies {
     annotationProcessor("org.immutables:value:${immutablesVersion}")
     testAnnotationProcessor("org.immutables:value:${immutablesVersion}")
 
-    testImplementation project(":codehead-test")
+    testImplementation "com.codeheadsystems:codehead-test:${codeheadTestVersion}"
     testImplementation("org.assertj:assertj-core:${assertjVersion}")
     testImplementation("org.junit.jupiter:junit-jupiter-engine:${jupiterVersion}")
     testImplementation("org.junit.jupiter:junit-jupiter-api:${jupiterVersion}")

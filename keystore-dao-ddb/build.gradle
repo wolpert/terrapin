@@ -59,7 +59,7 @@ dependencies {
 
     testAnnotationProcessor "org.immutables:value:${immutablesVersion}"
     testAnnotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
-    testImplementation project(":codehead-test")
+    testImplementation "com.codeheadsystems:codehead-test:${codeheadTestVersion}"
     testImplementation project(":datastore-test")
     testImplementation project(":keystore-dao-test")
     testImplementation project(":metrics-test")

@@ -69,7 +69,7 @@ dependencies {
     implementation("com.google.guava:guava:${guavaVersion}")
     api("org.hsqldb:hsqldb:${hsqldbVersion}")
 
-    implementation project(":codehead-test")
+    implementation "com.codeheadsystems:codehead-test:${codeheadTestVersion}"
     api("org.assertj:assertj-core:${assertjVersion}")
     api("org.junit.jupiter:junit-jupiter-engine:${jupiterVersion}")
     api("org.junit.jupiter:junit-jupiter-api:${jupiterVersion}")
