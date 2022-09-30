@@ -1,6 +1,0 @@
-{
-  "enabled": "true",
-  "resolverConfiguration": {
-    "resolverClass": "com.codeheadsystems.oop.dao.ddb.MockDataDDBDAO"
-  }
-}
