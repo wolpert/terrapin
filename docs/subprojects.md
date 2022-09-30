@@ -13,7 +13,7 @@ use SecureRandom from Java by default.)
 
 ## Out-of-process mock
 
-[OopMock](https://github.com/wolpert/terrapin/tree/main/oop-mock) is a way to
+[OopMock](https://github.com/wolpert/oop-mock) is a way to
 configure services so that you can mock their downstream dependencies as
 configured by a test client that runs 'out-of-process'. The use-case is this:
 Using a functional test client, configure how your service dependency will
@@ -23,7 +23,7 @@ and when calls to downstream clients are destructive.
 
 ## State Machine
 
-[StateMachine](https://github.com/wolpert/terrapin/tree/main/statemachine)
+[StateMachine](https://github.com/wolpert/statemachine)
 provides a general-purpose state machine with both programmatic and JSON-loading
 support for state machine definitions. Stateful objects can use annotations for
 fields that encompasses the state. It provides metricsImplementation, pluggable
@@ -31,7 +31,7 @@ locking mechanism and pre/post hooks as well.
 
 ## CodeHead-Test
 
-[CodeHeadTest](https://github.com/wolpert/terrapin/tree/main/codehead-test) is a
+[CodeHeadTest](https://github.com/wolpert/codehead-test) is a
 selection of test utilities used internally within CodeHead. These are being
 release as other code released under terrapin use them. Note datastore-test was
 created to set up different datastores during unit tests under jUnit5.
