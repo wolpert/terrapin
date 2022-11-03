@@ -22,28 +22,23 @@ checkstyle {
     maxWarnings = 0
 }
 dependencies {
-    implementation "org.slf4j:slf4j-api:${slf4jVersion}"
+    compileOnly libs.immutables.value
+    annotationProcessor libs.immutables.value
 
-    compileOnly "org.immutables:value:${immutablesVersion}"
-    annotationProcessor "org.immutables:value:${immutablesVersion}"
+    api libs.jackson.annotations
+    api libs.dropwizard.core
 
-    api "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}"
-    api "io.dropwizard:dropwizard-core:${dropwizardVersion}"
+    implementation libs.slf4j.api
 
-    implementation "org.slf4j:slf4j-api:${slf4jVersion}"
-
-    implementation "com.google.dagger:dagger:${daggerVersion}" // Common files for runtime
-    annotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
-
-    compileOnly "org.immutables:value:${immutablesVersion}"
-    annotationProcessor "org.immutables:value:${immutablesVersion}"
+    implementation libs.dagger
+    annotationProcessor libs.dagger.compiler
 
     testImplementation "com.codeheadsystems:codehead-test:${codeheadTestVersion}"
-    testImplementation("org.assertj:assertj-core:${assertjVersion}")
-    testImplementation "org.junit.jupiter:junit-jupiter-api:${jupiterVersion}"
-    testImplementation "org.junit.jupiter:junit-jupiter-params:${jupiterVersion}"
-    testImplementation "org.junit.jupiter:junit-jupiter-engine:${jupiterVersion}"
-    testImplementation "org.mockito:mockito-core:${mockitoVersion}"
-    testImplementation "org.mockito:mockito-junit-jupiter:${mockitoVersion}"
+    testImplementation libs.assertj.core
+    testImplementation libs.junit.jupiter.api
+    testImplementation libs.junit.jupiter.params
+    testImplementation libs.junit.jupiter.engine
+    testImplementation libs.mockito.core
+    testImplementation libs.mockito.junit.jupiter
 }
 
