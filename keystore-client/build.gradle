@@ -26,9 +26,6 @@ dependencies {
     implementation project(":keystore-api")
     implementation project(":metrics")
 
-    testImplementation "com.codeheadsystems:codehead-test:${codeheadTestVersion}"
-    testImplementation project(":metrics-test")
-
     implementation libs.slf4j.api
     implementation libs.jackson.annotations
     implementation libs.jackson.core
@@ -39,13 +36,14 @@ dependencies {
     implementation libs.retrofit2.converter.jackson
     implementation libs.retrofit2.converter.java8
 
-
     compileOnly libs.immutables.value
     annotationProcessor libs.immutables.value
 
     implementation libs.dagger // Common files for runtime
     annotationProcessor libs.dagger.compiler
 
+    testImplementation "com.codeheadsystems:codehead-test:${codeheadTestVersion}"
+    testImplementation project(":metrics-test")
     testAnnotationProcessor libs.immutables.value
     testAnnotationProcessor libs.dagger.compiler
     testImplementation libs.assertj.core

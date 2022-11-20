@@ -26,9 +26,6 @@ checkstyle {
 }
 
 dependencies {
-    testImplementation "com.codeheadsystems:codehead-test:${codeheadTestVersion}"
-    testImplementation "com.codeheadsystems:database-test:${codeheadDatabaseTestVersion}"
-    testImplementation project(":metrics-test")
     implementation project(":keystore-dao-ddb")
     implementation project(":keystore-dao-cassandra")
     implementation project(":keystore-dao")
@@ -37,8 +34,8 @@ dependencies {
     implementation project(":metrics")
 
     // DynamoDB
-    dynamodb "com.amazonaws:DynamoDBLocal:${awsLocalDDB}"
-    implementation "software.amazon.awssdk:dynamodb:${awsSDK2}"
+    dynamodb libs.aws.dynamodblocal
+    implementation libs.software.amazon.awssdk.dynamodb
 
     // Cassandra
     implementation libs.oss.core
@@ -67,6 +64,9 @@ dependencies {
     implementation libs.dagger // Common files for runtime
     annotationProcessor libs.dagger.compiler
 
+    testImplementation "com.codeheadsystems:codehead-test:${codeheadTestVersion}"
+    testImplementation "com.codeheadsystems:database-test:${codeheadDatabaseTestVersion}"
+    testImplementation project(":metrics-test")
     testAnnotationProcessor libs.immutables.value
     testAnnotationProcessor libs.dagger.compiler
     testImplementation  libs.assertj.core  

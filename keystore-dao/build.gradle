@@ -23,10 +23,8 @@ checkstyle {
 }
 dependencies {
     implementation project(':keystore-common')
-    testImplementation "com.codeheadsystems:codehead-test:${codeheadTestVersion}"
     
     implementation libs.slf4j.api
-
     implementation libs.jackson.annotations
     implementation libs.jackson.core
     implementation libs.jackson.databind
@@ -39,6 +37,7 @@ dependencies {
     compileOnly libs.immutables.value
     annotationProcessor libs.immutables.value
 
+    testImplementation "com.codeheadsystems:codehead-test:${codeheadTestVersion}"
     testImplementation libs.assertj.core 
     testImplementation libs.junit.jupiter.api
     testImplementation libs.junit.jupiter.params

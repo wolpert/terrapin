@@ -126,9 +126,5 @@ ext {
     codeheadTestVersion = '1.0.3'
     codeheadDatabaseTestVersion = '1.0.1'
     javaxInjectVersion = '1'
-
-    awsLocalDDB = "1.15.0" // https://mvnrepository.com/artifact/com.amazonaws/DynamoDBLocal
-    awsSDK = "1.12.331" // https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-dynamodb
-    awsSDK2 = "2.18.6" // https://mvnrepository.com/artifact/software.amazon.awssdk/dynamodb
 }
 
