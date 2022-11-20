@@ -7,13 +7,13 @@ dependencyResolutionManagement {
         repositories {
             mavenLocal()
             mavenCentral()
+            maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         }
         libs {
             from("com.codeheadsystems:dependencies:1.0.3-SNAPSHOT")
         }
     }
 }
-
 
 include 'metrics', 'metrics-test',
         'keystore-common', 'keystore-dao', 'keystore-dao-test', 'keystore-dao-ddb', 'keystore-dao-cassandra', 'keystore-dao-sql',
