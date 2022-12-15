@@ -75,8 +75,8 @@ dependencies {
     testImplementation libs.junit.jupiter.engine
     testImplementation libs.mockito.core
     testImplementation libs.mockito.junit.jupiter
-    testImplementation  libs.logback.classic  
-    testImplementation  libs.logback.core  
+    testImplementation libs.logback.classic
+    testImplementation libs.logback.core
 }
 
 run {
