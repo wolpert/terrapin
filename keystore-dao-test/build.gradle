@@ -31,7 +31,7 @@ dependencies {
     implementation libs.jackson.core
     implementation libs.jackson.databind
     implementation libs.jackson.datatype.jdk8
-    implementation libs.bcprov.jdk15on
+    implementation libs.bcprov
 
     implementation libs.dagger // Common files for runtime
     annotationProcessor libs.dagger.compiler
