@@ -20,8 +20,7 @@ configurations {
 dependencies {
     implementation project(":keystore-dao")
     implementation project(":keystore-common")
-    implementation project(":metrics")
-    implementation project(":metrics-test")
+    implementation "com.codeheadsystems:metrics-test:${codeheadMetricsVersion}"
     implementation "com.codeheadsystems:codehead-test:${codeheadTestVersion}"
     implementation "com.codeheadsystems:database-test:${codeheadDatabaseTestVersion}"
 

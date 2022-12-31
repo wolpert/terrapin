@@ -15,6 +15,5 @@ dependencyResolutionManagement {
     }
 }
 
-include 'metrics', 'metrics-test',
-        'keystore-common', 'keystore-dao', 'keystore-dao-test', 'keystore-dao-ddb', 'keystore-dao-cassandra', 'keystore-dao-sql',
+include 'keystore-common', 'keystore-dao', 'keystore-dao-test', 'keystore-dao-ddb', 'keystore-dao-cassandra', 'keystore-dao-sql',
         'keystore-api', 'keystore-service', 'keystore-client', 'keystore-integ-tests'

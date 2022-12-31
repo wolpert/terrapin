@@ -35,6 +35,13 @@ nexusPublishing {
 }
 // gradle :<project>:bintrayUpload
 
+ext {
+    codeheadTestVersion = '1.0.3'
+    codeheadMetricsVersion = '1.0.1'
+    codeheadDatabaseTestVersion = '1.0.1'
+    javaxInjectVersion = '1'
+}
+
 allprojects {
     apply plugin: "java-library"
     apply plugin: "eclipse"
@@ -43,6 +50,10 @@ allprojects {
     java {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+    }
+    dependencies {
+        implementation "com.codeheadsystems:metrics:${codeheadMetricsVersion}"
+        testImplementation "com.codeheadsystems:metrics-test:${codeheadMetricsVersion}"
     }
     repositories {
         mavenLocal()
@@ -121,10 +132,3 @@ allprojects {
 
 group 'com.codeheadsystems.terrapin'
 version '1.0.0-SNAPSHOT'
-
-ext {
-    codeheadTestVersion = '1.0.3'
-    codeheadDatabaseTestVersion = '1.0.1'
-    javaxInjectVersion = '1'
-}
-

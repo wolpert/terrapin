@@ -31,7 +31,6 @@ dependencies {
     implementation project(":keystore-dao")
     implementation project(":keystore-common")
     implementation project(":keystore-api")
-    implementation project(":metrics")
 
     // DynamoDB
     dynamodb libs.aws.dynamodblocal
@@ -66,7 +65,6 @@ dependencies {
 
     testImplementation "com.codeheadsystems:codehead-test:${codeheadTestVersion}"
     testImplementation "com.codeheadsystems:database-test:${codeheadDatabaseTestVersion}"
-    testImplementation project(":metrics-test")
     testAnnotationProcessor libs.immutables.value
     testAnnotationProcessor libs.dagger.compiler
     testImplementation  libs.assertj.core  

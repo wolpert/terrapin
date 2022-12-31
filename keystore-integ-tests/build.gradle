@@ -25,7 +25,6 @@ dependencies {
     implementation project(':keystore-service')
     implementation project(":keystore-common")
     implementation project(":keystore-api")
-    implementation project(":metrics")
 
     implementation libs.slf4j.api
     implementation libs.jackson.annotations
@@ -47,7 +46,6 @@ dependencies {
     annotationProcessor libs.dagger.compiler
 
     testImplementation "com.codeheadsystems:codehead-test:${codeheadTestVersion}"
-    testImplementation project(":metrics-test")
     testAnnotationProcessor libs.immutables.value
     testAnnotationProcessor libs.dagger.compiler
     testImplementation  libs.assertj.core  
