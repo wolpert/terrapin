@@ -14,7 +14,7 @@ ext {
 
 configurations {
     project.archivesBaseName = "${appName}"
-    jar.baseName = "${appName}"
+    jar.archiveBaseName = "${appName}"
     dynamodb
 }
 
@@ -25,6 +25,12 @@ checkstyle {
     maxWarnings = 0
 }
 
+startScripts {
+    dependsOn(":keystore-dao-ddb:copyNativeDeps")
+}
+test {
+    dependsOn(":keystore-dao-ddb:copyNativeDeps")
+}
 dependencies {
     implementation project(":keystore-dao-ddb")
     implementation project(":keystore-dao-cassandra")
