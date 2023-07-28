@@ -34,6 +34,9 @@ import org.slf4j.LoggerFactory;
 @Module(includes = {RngModule.Binder.class})
 public class RngModule {
 
+  /**
+   * The constant PROVIDED_RNG.
+   */
   public static final String PROVIDED_RNG = "RNG";
   private static final Logger LOGGER = LoggerFactory.getLogger(RngModule.class);
 
@@ -72,8 +75,16 @@ public class RngModule {
    */
   @Module
   public interface Binder {
+    /**
+     * The constant RNG_IMPL.
+     */
     String RNG_IMPL = "RNG_IMPL";
 
+    /**
+     * Rng rng.
+     *
+     * @return the rng
+     */
     @BindsOptionalOf
     @Named(RNG_IMPL)
     Rng rng();

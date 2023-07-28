@@ -30,6 +30,9 @@ public class BasicHealthCheck extends HealthCheck {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(BasicHealthCheck.class);
 
+  /**
+   * Instantiates a new Basic health check.
+   */
   @Inject
   public BasicHealthCheck() {
     LOGGER.info("BasicHealthCheck()");

@@ -34,7 +34,7 @@ public interface OwnerIdentifier {
   /**
    * The owner of the group.
    *
-   * @return String
+   * @return String string
    */
   @JsonProperty("owner")
   String owner();

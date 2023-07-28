@@ -35,6 +35,11 @@ public class ObjectMapperFactory {
 
   }
 
+  /**
+   * Generate object mapper.
+   *
+   * @return the object mapper
+   */
   public ObjectMapper generate() {
     return new ObjectMapper()
         .registerModule(new Jdk8Module());

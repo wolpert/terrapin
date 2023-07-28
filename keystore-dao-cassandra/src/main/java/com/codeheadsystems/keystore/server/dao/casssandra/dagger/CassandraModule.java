@@ -46,6 +46,9 @@ import javax.inject.Singleton;
 })
 public class CassandraModule {
 
+  /**
+   * The constant CASSANDRA_RETRY.
+   */
   public static final String CASSANDRA_RETRY = "CASSANDRA_RETRY";
 
   private final TableConfiguration tableConfiguration;
@@ -66,6 +69,11 @@ public class CassandraModule {
     this.tableConfiguration = tableConfiguration;
   }
 
+  /**
+   * Table configuration table configuration.
+   *
+   * @return the table configuration
+   */
   @Provides
   @Singleton
   public TableConfiguration tableConfiguration() {
@@ -94,6 +102,11 @@ public class CassandraModule {
     return registry.retry(CASSANDRA_RETRY);
   }
 
+  /**
+   * Clock clock.
+   *
+   * @return the clock
+   */
   @Provides
   @Singleton
   public Clock clock() {
@@ -106,6 +119,12 @@ public class CassandraModule {
   @Module
   public interface Binder {
 
+    /**
+     * Dao key dao.
+     *
+     * @param dao the dao
+     * @return the key dao
+     */
     @Binds
     KeyDao dao(CassandraKeyDao dao);
 

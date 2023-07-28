@@ -37,8 +37,9 @@ public interface KeyManagerService {
   /**
    * Creates a new key with the id given. Note that the resulting key identifier includes the owner of the key.
    *
+   * @param owner the owner
    * @param keyId to create for this owner.
-   * @return key.
+   * @return key. key
    */
   @PUT
   @Timed
@@ -48,7 +49,9 @@ public interface KeyManagerService {
   /**
    * Deletes all the versions of this key. No version of the key can be used after this.
    *
+   * @param owner the owner
    * @param keyId to be deleted.
+   * @return the response
    */
   @DELETE
   @Timed
@@ -58,8 +61,10 @@ public interface KeyManagerService {
   /**
    * Deletes a specific versions of this key. This version of the key can no longer be used after this.
    *
+   * @param owner   the owner
    * @param keyId   to be deleted.
    * @param version to be deleted.
+   * @return the response
    */
   @DELETE
   @Timed

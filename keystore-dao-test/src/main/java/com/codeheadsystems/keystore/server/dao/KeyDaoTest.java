@@ -37,27 +37,59 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * The type Key dao test.
+ */
 @ExtendWith(UniqueStringExtension.class)
 public abstract class KeyDaoTest extends BaseMetricTest {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(KeyDaoTest.class);
+  /**
+   * The constant random.
+   */
   protected final static Random random = new Random();
+  /**
+   * The Mapper.
+   */
   protected final ObjectMapper mapper = new ObjectMapperFactory().generate();
+  /**
+   * The Dao.
+   */
   protected KeyDao dao;
 
+  /**
+   * The Owner.
+   */
   @UniqueString(prefix = "owner", separator = ".")
   protected String owner;
+
+  /**
+   * Key dao key dao.
+   *
+   * @return the key dao
+   */
   protected abstract KeyDao keyDAO();
 
+  /**
+   * Sets dao.
+   */
   @BeforeEach
   void setupDao() {
     dao = keyDAO();
   }
-  
+
+  /**
+   * Owner string.
+   *
+   * @return the string
+   */
   protected String owner() {
     return owner;
   }
 
+  /**
+   * Assert true.
+   */
   @Test
   public void assertTrue() {
     LOGGER.info("assertTrue -->");
@@ -65,6 +97,9 @@ public abstract class KeyDaoTest extends BaseMetricTest {
         .isNotNull();
   }
 
+  /**
+   * Store load.
+   */
   @Test
   public void store_load() {
     LOGGER.info("store_load -->");
@@ -79,6 +114,9 @@ public abstract class KeyDaoTest extends BaseMetricTest {
         .isEqualTo(key);
   }
 
+  /**
+   * Load not found.
+   */
   @Test
   public void load_notFound() {
     LOGGER.info("load_notFound -->");
@@ -90,6 +128,9 @@ public abstract class KeyDaoTest extends BaseMetricTest {
         .isEmpty();
   }
 
+  /**
+   * Load active one key.
+   */
   @Test
   public void loadActive_oneKey() {
     LOGGER.info("loadActive_oneKey -->");
@@ -99,6 +140,9 @@ public abstract class KeyDaoTest extends BaseMetricTest {
     assertQueryReturnsKey(key);
   }
 
+  /**
+   * Load active one key not active.
+   */
   @Test
   public void loadActive_oneKey_notActive() {
     LOGGER.info("loadActive_oneKey_notActive -->");
@@ -111,6 +155,9 @@ public abstract class KeyDaoTest extends BaseMetricTest {
         .isEmpty();
   }
 
+  /**
+   * Load active three keys two active.
+   */
   @Test
   public void loadActive_threeKeys_twoActive() {
     LOGGER.info("loadActive_threeKeys_twoActive -->");
@@ -120,6 +167,9 @@ public abstract class KeyDaoTest extends BaseMetricTest {
     assertQueryReturnsKey(key1);
   }
 
+  /**
+   * Load active three keys two active diff order.
+   */
   @Test
   public void loadActive_threeKeys_twoActive_diffOrder() {
     LOGGER.info("loadActive_threeKeys_twoActive_diffOrder -->");
@@ -129,6 +179,9 @@ public abstract class KeyDaoTest extends BaseMetricTest {
     assertQueryReturnsKey(key1);
   }
 
+  /**
+   * Load active three keys one active.
+   */
   @Test
   public void loadActive_threeKeys_oneActive() {
     LOGGER.info("loadActive_threeKeys_oneActive -->");
@@ -138,6 +191,9 @@ public abstract class KeyDaoTest extends BaseMetricTest {
     assertQueryReturnsKey(key1);
   }
 
+  /**
+   * Load active three keys zero active.
+   */
   @Test
   public void loadActive_threeKeys_zeroActive() {
     LOGGER.info("loadActive_threeKeys_zeroActive -->");
@@ -151,6 +207,9 @@ public abstract class KeyDaoTest extends BaseMetricTest {
         .isEmpty();
   }
 
+  /**
+   * Load owner found.
+   */
   @Test
   public void loadOwner_found() {
     LOGGER.info("loadOwner_found -->");
@@ -164,6 +223,9 @@ public abstract class KeyDaoTest extends BaseMetricTest {
         .isEqualTo(owner);
   }
 
+  /**
+   * Load owner notfound.
+   */
   @Test
   public void loadOwner_notfound() {
     LOGGER.info("loadOwner_notfound -->");
@@ -174,6 +236,9 @@ public abstract class KeyDaoTest extends BaseMetricTest {
   }
 
 
+  /**
+   * Change active key.
+   */
   @Test
   public void change_active_key() {
     LOGGER.info("change_active_key -->");
@@ -201,6 +266,9 @@ public abstract class KeyDaoTest extends BaseMetricTest {
         .hasFieldOrPropertyWithValue("active", initialActiveState);
   }
 
+  /**
+   * List keys.
+   */
   @Test
   public void listKeys() {
     LOGGER.info("listKeys -->");
@@ -217,6 +285,9 @@ public abstract class KeyDaoTest extends BaseMetricTest {
         .containsExactly(identifier);
   }
 
+  /**
+   * List owners.
+   */
   @Test
   public void listOwners() {
     LOGGER.info("listOwners -->");
@@ -237,6 +308,9 @@ public abstract class KeyDaoTest extends BaseMetricTest {
         .contains(o1, o2, o3, o4);
   }
 
+  /**
+   * List key versions.
+   */
   @Test
   public void listKeyVersions() {
     LOGGER.info("listKeyVersions -->");
@@ -253,6 +327,9 @@ public abstract class KeyDaoTest extends BaseMetricTest {
         .containsOnly(key1.keyVersionIdentifier(), key2.keyVersionIdentifier(), key3.keyVersionIdentifier());
   }
 
+  /**
+   * Delete key version.
+   */
   @Test
   public void deleteKeyVersion() {
     LOGGER.info("deleteKeyVersion -->");
@@ -286,7 +363,10 @@ public abstract class KeyDaoTest extends BaseMetricTest {
         .containsOnly(key2.keyVersionIdentifier(), key3.keyVersionIdentifier());
   }
 
-  // Disabled because this is really a batch process.
+  /**
+   * Delete all key versions.
+   */
+// Disabled because this is really a batch process.
   //@Test
   public void deleteAllKeyVersions() {
     LOGGER.info("deleteAllKeyVersions -->");
@@ -339,6 +419,11 @@ public abstract class KeyDaoTest extends BaseMetricTest {
     }
   }
 
+  /**
+   * Gets key.
+   *
+   * @return the key
+   */
   protected Key getKey() {
     return getKey(true, 2);
   }
@@ -347,6 +432,14 @@ public abstract class KeyDaoTest extends BaseMetricTest {
     return getKey(active, version, owner());
   }
 
+  /**
+   * Gets and store key.
+   *
+   * @param active  the active
+   * @param version the version
+   * @param owner   the owner
+   * @return the and store key
+   */
   public Key getAndStoreKey(final boolean active,
                             final long version,
                             final String owner) {
@@ -355,6 +448,13 @@ public abstract class KeyDaoTest extends BaseMetricTest {
     return key;
   }
 
+  /**
+   * Gets and store key.
+   *
+   * @param active  the active
+   * @param version the version
+   * @return the and store key
+   */
   public Key getAndStoreKey(final boolean active,
                             final long version) {
     final Key key = getKey(active, version);

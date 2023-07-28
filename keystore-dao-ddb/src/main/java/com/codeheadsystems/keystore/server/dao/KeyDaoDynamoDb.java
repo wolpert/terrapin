@@ -53,8 +53,17 @@ import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
  */
 @Singleton
 public class KeyDaoDynamoDb implements KeyDao {
+  /**
+   * The constant OWNER.
+   */
   public static final String OWNER = "owner";
+  /**
+   * The constant PREFIX.
+   */
   public static final String PREFIX = "ddbdao.";
+  /**
+   * The constant MAX_TIMES_KEY_STORE.
+   */
   public static final int MAX_TIMES_KEY_STORE = 5;
   private static final Logger LOGGER = LoggerFactory.getLogger(KeyDaoDynamoDb.class);
   private final DynamoDbClientAccessor dynamoDbClientAccessor;
@@ -71,10 +80,10 @@ public class KeyDaoDynamoDb implements KeyDao {
    * Default constructor.
    *
    * @param dynamoDbClientAccessor to access dynamodb.
-   * @param keyConverter for key converter.
-   * @param ownerConverter for owner converter.
-   * @param batchWriteConverter for batch converter.
-   * @param metrics for reporting.
+   * @param keyConverter           for key converter.
+   * @param ownerConverter         for owner converter.
+   * @param batchWriteConverter    for batch converter.
+   * @param metrics                for reporting.
    */
   @Inject
   public KeyDaoDynamoDb(final DynamoDbClientAccessor dynamoDbClientAccessor,

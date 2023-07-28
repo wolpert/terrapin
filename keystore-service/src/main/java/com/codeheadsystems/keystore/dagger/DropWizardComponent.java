@@ -25,8 +25,18 @@ import java.util.Set;
  */
 public interface DropWizardComponent {
 
+  /**
+   * Resources set.
+   *
+   * @return the set
+   */
   Set<JettyResource> resources();
 
+  /**
+   * Health checks set.
+   *
+   * @return the set
+   */
   Set<HealthCheck> healthChecks();
 
 }

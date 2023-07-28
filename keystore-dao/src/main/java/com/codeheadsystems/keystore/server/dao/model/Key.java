@@ -56,7 +56,7 @@ public interface Key {
   /**
    * Boolean if the key is active.
    *
-   * @return boolean.
+   * @return boolean. boolean
    */
   @JsonProperty("active")
   @Changable
@@ -65,7 +65,7 @@ public interface Key {
   /**
    * Keys can have types. (AES-GCM-SIV) The type cannot change between versions.
    *
-   * @return String
+   * @return String string
    */
   @JsonProperty("type")
   String type();

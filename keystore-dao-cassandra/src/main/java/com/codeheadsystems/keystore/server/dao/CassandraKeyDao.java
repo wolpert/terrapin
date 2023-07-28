@@ -48,8 +48,17 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class CassandraKeyDao implements KeyDao {
 
+  /**
+   * The constant OWNER.
+   */
   public static final String OWNER = "owner";
+  /**
+   * The constant PREFIX.
+   */
   public static final String PREFIX = "ddbdao.";
+  /**
+   * The constant MAX_TIMES_KEY_STORE.
+   */
   public static final int MAX_TIMES_KEY_STORE = 5;
   private static final Logger LOGGER = LoggerFactory.getLogger(CassandraKeyDao.class);
   private final CassandraAccessor cassandraAccessor;
@@ -62,10 +71,10 @@ public class CassandraKeyDao implements KeyDao {
    * Default constructor.
    *
    * @param cassandraAccessor to wrap downstream calls with retries.
-   * @param metrics metrics for reporting.
-   * @param binder binder for the prepared statements.
-   * @param ownerConverter Owner converter.
-   * @param keyConverter key convertor.
+   * @param metrics           metrics for reporting.
+   * @param binder            binder for the prepared statements.
+   * @param ownerConverter    Owner converter.
+   * @param keyConverter      key convertor.
    */
   @Inject
   public CassandraKeyDao(final CassandraAccessor cassandraAccessor,

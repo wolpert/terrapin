@@ -26,18 +26,38 @@ public class KeyStoreConfiguration extends Configuration {
   private String dropWizardFactory;
   private DataStore dataStore;
 
+  /**
+   * Gets data store.
+   *
+   * @return the data store
+   */
   public DataStore getDataStore() {
     return dataStore;
   }
 
+  /**
+   * Sets data store.
+   *
+   * @param dataStore the data store
+   */
   public void setDataStore(final DataStore dataStore) {
     this.dataStore = dataStore;
   }
 
+  /**
+   * Gets drop wizard factory.
+   *
+   * @return the drop wizard factory
+   */
   public String getDropWizardFactory() {
     return dropWizardFactory;
   }
 
+  /**
+   * Sets drop wizard factory.
+   *
+   * @param dropWizardFactory the drop wizard factory
+   */
   public void setDropWizardFactory(final String dropWizardFactory) {
     this.dropWizardFactory = dropWizardFactory;
   }

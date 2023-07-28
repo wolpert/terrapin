@@ -50,7 +50,7 @@ public class CassandraAccessor {
    *
    * @param session the base CQL Session.
    * @param metrics for reporting.
-   * @param retry retry policy.
+   * @param retry   retry policy.
    */
   @Inject
   public CassandraAccessor(final CqlSession session,
@@ -64,6 +64,12 @@ public class CassandraAccessor {
             () -> session.execute(request))); // the actual function
   }
 
+  /**
+   * Execute result set.
+   *
+   * @param statement the statement
+   * @return the result set
+   */
   public ResultSet execute(final Statement statement) {
     return executeStatement.apply(statement);
   }

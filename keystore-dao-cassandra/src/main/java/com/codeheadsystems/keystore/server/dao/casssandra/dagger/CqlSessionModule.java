@@ -35,21 +35,40 @@ import javax.inject.Singleton;
 @Module
 public class CqlSessionModule {
 
+  /**
+   * The constant DATACENTER.
+   */
   public static final String DATACENTER = "datacenter1";
 
   private final String localDataCenter;
   private final InetSocketAddress[] addresses;
 
+  /**
+   * Instantiates a new Cql session module.
+   *
+   * @param addresses the addresses
+   */
   public CqlSessionModule(final InetSocketAddress... addresses) {
     this(DATACENTER, addresses);
   }
 
+  /**
+   * Instantiates a new Cql session module.
+   *
+   * @param localDataCenter the local data center
+   * @param addresses       the addresses
+   */
   public CqlSessionModule(final String localDataCenter,
                           final InetSocketAddress... addresses) {
     this.localDataCenter = localDataCenter;
     this.addresses = addresses;
   }
 
+  /**
+   * Zoned time stamp type codec.
+   *
+   * @return the type codec
+   */
   @Provides
   @Singleton
   @IntoSet
@@ -57,6 +76,11 @@ public class CqlSessionModule {
     return TypeCodecs.ZONED_TIMESTAMP_UTC;
   }
 
+  /**
+   * Blob to array type codec.
+   *
+   * @return the type codec
+   */
   @Provides
   @Singleton
   @IntoSet
@@ -67,7 +91,7 @@ public class CqlSessionModule {
   /**
    * The CQL session builder.
    *
-   * @param codecs codecs for conversion.
+   * @param codecs             codecs for conversion.
    * @param tableConfiguration cassandra configuration.
    * @return an instance.
    */

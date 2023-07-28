@@ -44,6 +44,11 @@ public class KeyStoreModule {
     this.keyStoreConfiguration = keyStoreConfiguration;
   }
 
+  /**
+   * Key store configuration key store configuration.
+   *
+   * @return the key store configuration
+   */
   @Provides
   @Singleton
   public KeyStoreConfiguration keyStoreConfiguration() {

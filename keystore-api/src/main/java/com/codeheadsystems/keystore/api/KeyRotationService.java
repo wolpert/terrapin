@@ -35,6 +35,7 @@ public interface KeyRotationService {
   /**
    * Rotates the current key. New version, old version will expire out.
    *
+   * @param owner the owner
    * @param keyId that needs rotating.
    * @return a new key based on the old one.
    */

@@ -20,18 +20,37 @@ package com.codeheadsystems.keystore.server.exception;
  * An exception from the system that is retryable.
  */
 public class RetryableException extends RuntimeException {
+  /**
+   * Instantiates a new Retryable exception.
+   */
   public RetryableException() {
     super();
   }
 
+  /**
+   * Instantiates a new Retryable exception.
+   *
+   * @param message the message
+   */
   public RetryableException(final String message) {
     super(message);
   }
 
+  /**
+   * Instantiates a new Retryable exception.
+   *
+   * @param message the message
+   * @param cause   the cause
+   */
   public RetryableException(final String message, final Throwable cause) {
     super(message, cause);
   }
 
+  /**
+   * Instantiates a new Retryable exception.
+   *
+   * @param cause the cause
+   */
   public RetryableException(final Throwable cause) {
     super(cause);
   }

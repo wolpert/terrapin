@@ -35,8 +35,9 @@ public interface KeyReaderService {
   /**
    * Gets the latest version of this key.
    *
+   * @param owner the owner
    * @param keyId to be found.
-   * @return Key.
+   * @return Key. key
    */
   @GET
   @Timed
@@ -46,9 +47,10 @@ public interface KeyReaderService {
   /**
    * Gets a specific version of this key.
    *
+   * @param owner   the owner
    * @param keyId   to be found.
    * @param version to be found.
-   * @return Key.
+   * @return Key. key
    */
   @GET
   @Timed

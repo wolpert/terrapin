@@ -31,24 +31,44 @@ import org.immutables.value.Value;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public interface TableConfiguration {
 
+  /**
+   * Keyspace string.
+   *
+   * @return the string
+   */
   @Value.Default
   @JsonProperty("keyspace")
   default String keyspace() {
     return "keystore";
   }
 
+  /**
+   * Owners table string.
+   *
+   * @return the string
+   */
   @Value.Default
   @JsonProperty("ownersTable")
   default String ownersTable() {
     return "owners";
   }
 
+  /**
+   * Keys table string.
+   *
+   * @return the string
+   */
   @Value.Default
   @JsonProperty("keysTable")
   default String keysTable() {
     return "keys";
   }
 
+  /**
+   * Active keys table string.
+   *
+   * @return the string
+   */
   @Value.Default
   @JsonProperty("activeKeysTable")
   default String activeKeysTable() {

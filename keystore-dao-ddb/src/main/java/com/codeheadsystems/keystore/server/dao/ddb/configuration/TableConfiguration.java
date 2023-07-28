@@ -31,24 +31,44 @@ import org.immutables.value.Value;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public interface TableConfiguration {
 
+  /**
+   * Table name string.
+   *
+   * @return the string
+   */
   @Value.Default
   @JsonProperty("tableName")
   default String tableName() {
     return "keyservice";
   }
 
+  /**
+   * Hash key string.
+   *
+   * @return the string
+   */
   @Value.Default
   @JsonProperty("hashKey")
   default String hashKey() {
     return "hashKey";
   }
 
+  /**
+   * Range key string.
+   *
+   * @return the string
+   */
   @Value.Default
   @JsonProperty("rangeKey")
   default String rangeKey() {
     return "rangeKey";
   }
 
+  /**
+   * Ttl key string.
+   *
+   * @return the string
+   */
   @Value.Default
   @JsonProperty("ttlKey")
   default String ttlKey() {
@@ -57,6 +77,8 @@ public interface TableConfiguration {
 
   /**
    * The index for all active key versions.
+   *
+   * @return the string
    */
   @Value.Default
   @JsonProperty("activeIndex")
@@ -66,6 +88,8 @@ public interface TableConfiguration {
 
   /**
    * The index for every key record that is owned.
+   *
+   * @return the string
    */
   @Value.Default
   @JsonProperty("ownerIndex")
@@ -75,6 +99,8 @@ public interface TableConfiguration {
 
   /**
    * The index for every owner.
+   *
+   * @return the string
    */
   @Value.Default
   @JsonProperty("ownerSearchIndex")

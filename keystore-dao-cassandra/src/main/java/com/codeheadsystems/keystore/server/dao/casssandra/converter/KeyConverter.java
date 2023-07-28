@@ -34,12 +34,33 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class KeyConverter {
 
+  /**
+   * The constant CREATE_DATE.
+   */
   public static final String CREATE_DATE = "create_date";
+  /**
+   * The constant UPDATE_DATE.
+   */
   public static final String UPDATE_DATE = "update_date";
+  /**
+   * The constant TYPE.
+   */
   public static final String TYPE = "type";
+  /**
+   * The constant ACTIVE.
+   */
   public static final String ACTIVE = "active";
+  /**
+   * The constant OWNER.
+   */
   public static final String OWNER = "owner";
+  /**
+   * The constant KEY_NAME.
+   */
   public static final String KEY_NAME = "key_name";
+  /**
+   * The constant VERSION.
+   */
   public static final String VERSION = "version";
   private static final Logger LOGGER = LoggerFactory.getLogger(KeyConverter.class);
   private final TimestampManager timestampManager;

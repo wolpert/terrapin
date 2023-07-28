@@ -47,14 +47,28 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 @Module(includes = {DdbModule.Binder.class, MetricsModule.class})
 public class DdbModule {
 
+  /**
+   * The constant DDB_DAO_RETRY.
+   */
   public static final String DDB_DAO_RETRY = "DDB_DAO_RETRY";
 
+  /**
+   * Object mapper object mapper.
+   *
+   * @param factory the factory
+   * @return the object mapper
+   */
   @Provides
   @Singleton
   public ObjectMapper objectMapper(final DdbObjectMapperFactory factory) {
     return factory.generate();
   }
 
+  /**
+   * Table configuration table configuration.
+   *
+   * @return the table configuration
+   */
   @Provides
   @Singleton
   public TableConfiguration tableConfiguration() {
@@ -65,7 +79,7 @@ public class DdbModule {
    * Provides a retry object for dynamodb.
    *
    * @param metrics system we are using.
-   * @return retry.
+   * @return retry. retry
    */
   @Named(DDB_DAO_RETRY)
   @Provides
@@ -89,6 +103,12 @@ public class DdbModule {
   @Module
   public interface Binder {
 
+    /**
+     * Dao key dao.
+     *
+     * @param dao the dao
+     * @return the key dao
+     */
     @Binds
     KeyDao dao(KeyDaoDynamoDb dao);
 

@@ -72,7 +72,7 @@ public interface KeyDao {
    * Gets all the owners.
    *
    * @param nextToken nullable.
-   * @return owners
+   * @return owners batch
    */
   Batch<OwnerIdentifier> listOwners(Token nextToken);
 

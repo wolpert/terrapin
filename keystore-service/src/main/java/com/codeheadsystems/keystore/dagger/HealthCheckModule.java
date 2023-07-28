@@ -28,6 +28,12 @@ import dagger.multibindings.IntoSet;
 @Module
 public interface HealthCheckModule {
 
+  /**
+   * Basic health check health check.
+   *
+   * @param healthCheck the health check
+   * @return the health check
+   */
   @Binds
   @IntoSet
   HealthCheck basicHealthCheck(final BasicHealthCheck healthCheck);

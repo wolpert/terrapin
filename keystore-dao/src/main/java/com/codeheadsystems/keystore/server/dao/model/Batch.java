@@ -28,6 +28,11 @@ import org.immutables.value.Value;
 @Value.Immutable
 public interface Batch<T> {
 
+  /**
+   * List list.
+   *
+   * @return the list
+   */
   List<T> list();
 
   /**

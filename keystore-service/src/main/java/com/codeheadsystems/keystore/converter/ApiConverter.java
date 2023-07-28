@@ -33,7 +33,13 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class ApiConverter {
 
+  /**
+   * The constant ACTIVE.
+   */
   public static final String ACTIVE = "active";
+  /**
+   * The constant INACTIVE.
+   */
   public static final String INACTIVE = "inactive";
   private static final Logger LOGGER = LoggerFactory.getLogger(ApiConverter.class);
 

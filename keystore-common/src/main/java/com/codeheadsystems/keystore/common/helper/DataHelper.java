@@ -44,7 +44,7 @@ public class DataHelper {
    * Converts the string to bytes using standard charset.
    *
    * @param string to convert.
-   * @return bytes.
+   * @return bytes. byte [ ]
    */
   public byte[] toByte(final String string) {
     return string.getBytes(CHARSET);

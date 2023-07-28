@@ -23,8 +23,26 @@ import com.codeheadsystems.keystore.common.exception.CryptoException;
  */
 public interface Cryptor {
 
+  /**
+   * Encrypt byte [ ].
+   *
+   * @param key      the key
+   * @param clear    the clear
+   * @param ivLength the iv length
+   * @return the byte [ ]
+   * @throws CryptoException the crypto exception
+   */
   byte[] encrypt(final byte[] key, final byte[] clear, int ivLength) throws CryptoException;
 
+  /**
+   * Decrypt byte [ ].
+   *
+   * @param key      the key
+   * @param payload  the payload
+   * @param ivLength the iv length
+   * @return the byte [ ]
+   * @throws CryptoException the crypto exception
+   */
   byte[] decrypt(final byte[] key, final byte[] payload, int ivLength) throws CryptoException;
 
 }

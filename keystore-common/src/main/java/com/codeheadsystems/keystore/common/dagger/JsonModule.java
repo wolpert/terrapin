@@ -28,6 +28,12 @@ import javax.inject.Singleton;
 @Module
 public class JsonModule {
 
+  /**
+   * Object mapper object mapper.
+   *
+   * @param factory the factory
+   * @return the object mapper
+   */
   @Provides
   @Singleton
   public ObjectMapper objectMapper(final ObjectMapperFactory factory) {

@@ -16,5 +16,8 @@
 
 package com.codeheadsystems.keystore.server.dao;
 
+/**
+ * The type Sql key dao.
+ */
 public class SqlKeyDAO {
 }

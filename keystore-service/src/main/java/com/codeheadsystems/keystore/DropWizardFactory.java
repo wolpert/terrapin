@@ -44,6 +44,13 @@ public interface DropWizardFactory {
     }
   }
 
+  /**
+   * Build drop wizard component.
+   *
+   * @param configuration the configuration
+   * @param meterRegistry the meter registry
+   * @return the drop wizard component
+   */
   DropWizardComponent build(final KeyStoreConfiguration configuration,
                             final MeterRegistry meterRegistry);
 

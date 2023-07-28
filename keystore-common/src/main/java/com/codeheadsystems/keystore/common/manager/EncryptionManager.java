@@ -35,6 +35,9 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class EncryptionManager {
 
+  /**
+   * The constant LOADING_CACHE.
+   */
   public static final String LOADING_CACHE = "LoadingCache";
   private static final Logger LOGGER = LoggerFactory.getLogger(EncryptionManager.class);
   private final KeyManager keyManager;
@@ -55,6 +58,12 @@ public class EncryptionManager {
     this.cache = cache;
   }
 
+  /**
+   * Key for byte [ ].
+   *
+   * @param type the type
+   * @return the byte [ ]
+   */
   public byte[] keyFor(final CryptorType type) {
     LOGGER.debug("keyFor({})", type);
     return keyManager.generate(type);

@@ -36,6 +36,9 @@ import org.slf4j.LoggerFactory;
 public class Server extends Application<KeyStoreConfiguration> {
   private static final Logger LOGGER = LoggerFactory.getLogger(Server.class);
 
+  /**
+   * Instantiates a new Server.
+   */
   @Inject
   public Server() {
     LOGGER.info("Server()");

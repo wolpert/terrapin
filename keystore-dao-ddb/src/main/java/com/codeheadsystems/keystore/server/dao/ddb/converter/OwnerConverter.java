@@ -48,9 +48,21 @@ import software.amazon.awssdk.utils.ImmutableMap;
 @Singleton
 public class OwnerConverter {
 
+  /**
+   * The constant HASH.
+   */
   public static final String HASH = "owner:%s";
+  /**
+   * The constant INFO_RANGE.
+   */
   public static final String INFO_RANGE = "info";
+  /**
+   * The constant OWNER_SEARCH_IDX.
+   */
   public static final String OWNER_SEARCH_IDX = "ownerSearchIdx";
+  /**
+   * The constant KEY_RANGE_FORMAT.
+   */
   public static final String KEY_RANGE_FORMAT = "key:%s";
   private static final Logger LOGGER = LoggerFactory.getLogger(OwnerConverter.class);
   private final TableConfiguration configuration;

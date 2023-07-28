@@ -53,6 +53,12 @@ public class TimestampManager {
     return clock.instant();
   }
 
+  /**
+   * From date instant.
+   *
+   * @param date the date
+   * @return the instant
+   */
   public Instant fromDate(final Date date) {
     return date.toInstant();
   }
@@ -60,7 +66,7 @@ public class TimestampManager {
   /**
    * Converts the column in the row to a date via the zoned date time.
    *
-   * @param row from cassandra.
+   * @param row        from cassandra.
    * @param columnName the column name.
    * @return an optinal date.
    */

@@ -31,6 +31,11 @@ public class DdbObjectMapperFactory {
 
   private final ObjectMapperFactory factory;
 
+  /**
+   * Instantiates a new Ddb object mapper factory.
+   *
+   * @param factory the factory
+   */
   @Inject
   public DdbObjectMapperFactory(final ObjectMapperFactory factory) {
     this.factory = factory;

@@ -44,8 +44,8 @@ public class StatementBinderFactory {
   /**
    * Builds the statement binder.
    *
+   * @param <T>     type for the binder.
    * @param builder to use.
-   * @param <T> type for the binder.
    * @return a binder.
    */
   public <T> StatementBinder<T> build(final StatementBinder.Builder<T> builder) {

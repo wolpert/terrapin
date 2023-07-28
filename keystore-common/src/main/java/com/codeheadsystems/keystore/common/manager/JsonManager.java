@@ -46,6 +46,11 @@ public class JsonManager {
   }
 
 
+  /**
+   * Object mapper object mapper.
+   *
+   * @return the object mapper
+   */
   public ObjectMapper objectMapper() {
     return objectMapper;
   }
@@ -53,9 +58,9 @@ public class JsonManager {
   /**
    * Wrapper so no one has to catch the JSON processing exception. Safe logging, only logs the class, not the json.
    *
+   * @param <T>   the type.
    * @param json  to convert.
    * @param clazz to convert.
-   * @param <T>   the type.
    * @return an instance of the type.
    */
   public <T> T readValue(final String json, final Class<T> clazz) {
@@ -71,9 +76,9 @@ public class JsonManager {
   /**
    * Wrapper so no one has to catch the JSON processing exception. Safe logging, only logs the class, not the json.
    *
+   * @param <T>           the type.
    * @param json          to convert.
    * @param typeReference to convert.
-   * @param <T>           the type.
    * @return an instance of the type.
    */
   public <T> T readValue(final String json, final TypeReference<T> typeReference) {
@@ -89,9 +94,9 @@ public class JsonManager {
   /**
    * Writes the value to json.
    *
-   * @param object the value to read
    * @param <T>    the type of object it is.
-   * @return json.
+   * @param object the value to read
+   * @return json. string
    */
   public <T> String writeValue(final T object) {
     LOGGER.debug("writeValue(json,{})", object.getClass());

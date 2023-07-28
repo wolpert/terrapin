@@ -22,18 +22,37 @@ package com.codeheadsystems.keystore.server.exception;
  */
 public class DatalayerException extends RuntimeException {
 
+  /**
+   * Instantiates a new Datalayer exception.
+   */
   public DatalayerException() {
     super();
   }
 
+  /**
+   * Instantiates a new Datalayer exception.
+   *
+   * @param message the message
+   */
   public DatalayerException(final String message) {
     super(message);
   }
 
+  /**
+   * Instantiates a new Datalayer exception.
+   *
+   * @param message the message
+   * @param cause   the cause
+   */
   public DatalayerException(final String message, final Throwable cause) {
     super(message, cause);
   }
 
+  /**
+   * Instantiates a new Datalayer exception.
+   *
+   * @param cause the cause
+   */
   public DatalayerException(final Throwable cause) {
     super(cause);
   }

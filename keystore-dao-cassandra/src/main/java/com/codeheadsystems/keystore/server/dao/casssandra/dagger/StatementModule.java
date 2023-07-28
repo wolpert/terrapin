@@ -35,25 +35,67 @@ import javax.inject.Singleton;
 @Module
 public class StatementModule {
 
+  /**
+   * The constant DETAILS.
+   */
   public static final String DETAILS = "details";
+  /**
+   * The constant OWNER_STORE_STMT.
+   */
   public static final String OWNER_STORE_STMT = "owner.store";
+  /**
+   * The constant OWNER_STORE_KEY_STMT.
+   */
   public static final String OWNER_STORE_KEY_STMT = "owner.store.key";
+  /**
+   * The constant OWNER_LOAD_STMT.
+   */
   public static final String OWNER_LOAD_STMT = "owner.load";
+  /**
+   * The constant OWNER_LOAD_KEY_STMT.
+   */
   public static final String OWNER_LOAD_KEY_STMT = "owner.load.key";
+  /**
+   * The constant KEY_STORE_STMT.
+   */
   public static final String KEY_STORE_STMT = "key.store";
+  /**
+   * The constant KEY_STORE_ACTIVE_STMT.
+   */
   public static final String KEY_STORE_ACTIVE_STMT = "key.store.active";
+  /**
+   * The constant KEY_DELETE_ACTIVE_STMT.
+   */
   public static final String KEY_DELETE_ACTIVE_STMT = "key.delete.active";
+  /**
+   * The constant KEY_DELETE_VERSION_STMT.
+   */
   public static final String KEY_DELETE_VERSION_STMT = "key.delete.version";
+  /**
+   * The constant KEY_LOAD_VERSION_STMT.
+   */
   public static final String KEY_LOAD_VERSION_STMT = "key.load.version";
+  /**
+   * The constant KEY_LOAD_ACTIVE_VERSION_STMT.
+   */
   public static final String KEY_LOAD_ACTIVE_VERSION_STMT = "key.load.active.version";
+  /**
+   * The constant KEY_LIST_VERSION_STMT.
+   */
   public static final String KEY_LIST_VERSION_STMT = "key.list.version";
+  /**
+   * The constant KEY_LIST_STMT.
+   */
   public static final String KEY_LIST_STMT = "key.list";
+  /**
+   * The constant OWNER_LIST_STMT.
+   */
   public static final String OWNER_LIST_STMT = "owner.list";
 
   /**
    * Prepared statement: store owners.
    *
-   * @param timestampManager for managing times.
+   * @param timestampManager   for managing times.
    * @param tableConfiguration table configuration.
    * @return statement binder.
    */
@@ -74,7 +116,7 @@ public class StatementModule {
   /**
    * Prepared statement: store keys.
    *
-   * @param timestampManager for managing times.
+   * @param timestampManager   for managing times.
    * @param tableConfiguration table configuration.
    * @return statement binder.
    */
@@ -223,7 +265,7 @@ public class StatementModule {
   /**
    * Prepared statement: store the keys.
    *
-   * @param timestampManager for managing times.
+   * @param timestampManager   for managing times.
    * @param tableConfiguration table configuration.
    * @return statement binder.
    */
@@ -250,7 +292,7 @@ public class StatementModule {
   /**
    * Prepared statement: store active keys.
    *
-   * @param timestampManager for managing times.
+   * @param timestampManager   for managing times.
    * @param tableConfiguration table configuration.
    * @return statement binder.
    */

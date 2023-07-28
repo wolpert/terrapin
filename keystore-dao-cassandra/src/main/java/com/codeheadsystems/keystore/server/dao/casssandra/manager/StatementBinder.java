@@ -26,6 +26,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Provides ability to convert an object to the correct prepared statement.
+ *
+ * @param <T> the type parameter
  */
 public class StatementBinder<T> {
 
@@ -50,6 +52,12 @@ public class StatementBinder<T> {
     this.cqlStatement = builder.cqlStatement;
   }
 
+  /**
+   * Builder builder.
+   *
+   * @param <T> the type parameter
+   * @return the builder
+   */
   public static <T> Builder<T> builder() {
     return new Builder<>();
   }
@@ -80,15 +88,30 @@ public class StatementBinder<T> {
     private String cqlStatement;
     private Function<T, Object[]> binder;
 
+    /**
+     * Instantiates a new Builder.
+     */
     protected Builder() {
 
     }
 
+    /**
+     * With builder.
+     *
+     * @param cqlStatement the cql statement
+     * @return the builder
+     */
     public Builder<T> with(final String cqlStatement) {
       this.cqlStatement = cqlStatement;
       return this;
     }
 
+    /**
+     * With builder.
+     *
+     * @param binder the binder
+     * @return the builder
+     */
     public Builder<T> with(final Function<T, Object[]> binder) {
       this.binder = binder;
       return this;

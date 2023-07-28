@@ -34,6 +34,9 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 @Singleton
 public class TokenManager {
 
+  /**
+   * The constant TYPE_REFERENCE.
+   */
   public static final TypeReference<HashMap<String, AttributeValue.Builder>> TYPE_REFERENCE = new TypeReference<>() {
   };
   private final DataHelper dataHelper;
@@ -43,7 +46,7 @@ public class TokenManager {
    * Deafult constructor.
    *
    * @param dataHelper for string manipulation.
-   * @param mapper for json binder.
+   * @param mapper     for json binder.
    */
   @Inject
   public TokenManager(final DataHelper dataHelper,

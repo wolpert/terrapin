@@ -32,15 +32,35 @@ import org.immutables.value.Value;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public interface DataStore {
 
+  /**
+   * Connection url string.
+   *
+   * @return the string
+   */
   @JsonProperty("connectionUrl")
   String connectionUrl();
 
+  /**
+   * Username string.
+   *
+   * @return the string
+   */
   @JsonProperty("username")
   String username();
 
+  /**
+   * Password string.
+   *
+   * @return the string
+   */
   @JsonProperty("password")
   String password();
 
+  /**
+   * Aux map.
+   *
+   * @return the map
+   */
   @JsonProperty("aux")
   Map<String, String> aux();
 

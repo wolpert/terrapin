@@ -32,7 +32,13 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class OwnerConverter {
 
+  /**
+   * The constant OWNER.
+   */
   public static final String OWNER = "owner";
+  /**
+   * The constant LOOKUP.
+   */
   public static final String LOOKUP = "lookup";
   private static final Logger LOGGER = LoggerFactory.getLogger(OwnerConverter.class);
 
@@ -49,7 +55,7 @@ public class OwnerConverter {
    * *
    *
    * @param row from cassandra. Cannot be null;
-   * @return OwnerIdentifier.
+   * @return OwnerIdentifier. owner identifier
    */
   public OwnerIdentifier toOwnerIdentifier(final Row row) {
     LOGGER.debug("toOwnerIdentifier()");

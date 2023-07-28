@@ -73,7 +73,13 @@ public class KeyConverter {
    * What type of key is it.
    */
   public static final String TYPE = "type";
+  /**
+   * The constant CREATE.
+   */
   public static final String CREATE = "create";
+  /**
+   * The constant UPDATE.
+   */
   public static final String UPDATE = "update";
   /**
    * The info record for a key. Parent object if you will.
@@ -91,9 +97,21 @@ public class KeyConverter {
    * The format for the hashkey for a key.
    */
   public static final String KEY_VERSION_HASH = "keyVersion:%s:%s";
+  /**
+   * The constant INVALID_INDEX.
+   */
   public static final String INVALID_INDEX = "invalid.index";
+  /**
+   * The constant KEYCONVERTER_ACTIVEINDEX.
+   */
   public static final String KEYCONVERTER_ACTIVEINDEX = "keyconverter.activeindex";
+  /**
+   * The constant MISSING_BUT_EXPECTED.
+   */
   public static final String MISSING_BUT_EXPECTED = "missing.but.expected";
+  /**
+   * The constant FOUND_UNEXPECTEDLY.
+   */
   public static final String FOUND_UNEXPECTEDLY = "found.unexpectedly";
   private static final Logger LOGGER = LoggerFactory.getLogger(KeyConverter.class);
   private final TableConfiguration configuration;
@@ -105,8 +123,8 @@ public class KeyConverter {
    * Default constructor.
    *
    * @param configuration for table configuration.
-   * @param metrics for reporting.
-   * @param tokenManager for batch conversion.
+   * @param metrics       for reporting.
+   * @param tokenManager  for batch conversion.
    */
   @Inject
   public KeyConverter(final TableConfiguration configuration,
@@ -268,7 +286,7 @@ public class KeyConverter {
    * Gets a query request for active keys.
    *
    * @param identifier for the request.
-   * @param nextToken token to use if set.
+   * @param nextToken  token to use if set.
    * @return the request.
    */
   public QueryRequest toKeyVersionsQueryRequest(final KeyIdentifier identifier,

@@ -21,18 +21,37 @@ package com.codeheadsystems.keystore.server.exception;
  */
 public class DependencyException extends RuntimeException {
 
+  /**
+   * Instantiates a new Dependency exception.
+   */
   public DependencyException() {
     super();
   }
 
+  /**
+   * Instantiates a new Dependency exception.
+   *
+   * @param message the message
+   */
   public DependencyException(final String message) {
     super(message);
   }
 
+  /**
+   * Instantiates a new Dependency exception.
+   *
+   * @param message the message
+   * @param cause   the cause
+   */
   public DependencyException(final String message, final Throwable cause) {
     super(message, cause);
   }
 
+  /**
+   * Instantiates a new Dependency exception.
+   *
+   * @param cause the cause
+   */
   public DependencyException(final Throwable cause) {
     super(cause);
   }

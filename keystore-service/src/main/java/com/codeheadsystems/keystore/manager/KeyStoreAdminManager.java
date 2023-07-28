@@ -41,6 +41,9 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class KeyStoreAdminManager {
 
+  /**
+   * The constant KEY_SIZE.
+   */
   public static final int KEY_SIZE = 32;
   private static final Logger LOGGER = LoggerFactory.getLogger(KeyStoreAdminManager.class);
   private final KeyDao keyDao;

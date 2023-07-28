@@ -29,6 +29,9 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class KeyRotationResource implements KeyRotationService, JettyResource {
 
+  /**
+   * The constant LOGGER.
+   */
   public static final Logger LOGGER = LoggerFactory.getLogger(KeyRotationResource.class);
 
   /**

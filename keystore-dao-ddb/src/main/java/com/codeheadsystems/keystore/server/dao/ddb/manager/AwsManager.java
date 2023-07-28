@@ -47,6 +47,12 @@ public class AwsManager {
   private final DynamoDbClient client;
   private final TableConfiguration tableConfiguration;
 
+  /**
+   * Instantiates a new Aws manager.
+   *
+   * @param client             the client
+   * @param tableConfiguration the table configuration
+   */
   @Inject
   public AwsManager(final DynamoDbClient client,
                     final TableConfiguration tableConfiguration) {
@@ -54,6 +60,11 @@ public class AwsManager {
     this.tableConfiguration = tableConfiguration;
   }
 
+  /**
+   * Create table request create table request.
+   *
+   * @return the create table request
+   */
   protected CreateTableRequest createTableRequest() {
     final KeySchemaElement hashKey = KeySchemaElement.builder()
         .keyType(KeyType.HASH).attributeName(tableConfiguration.hashKey()).build();
@@ -111,11 +122,19 @@ public class AwsManager {
   }
 
 
+  /**
+   * Create table.
+   */
   public void createTable() {
     client.createTable(createTableRequest());
     client.updateTimeToLive(updateTimeToLiveRequest());
   }
 
+  /**
+   * Update time to live request update time to live request.
+   *
+   * @return the update time to live request
+   */
   protected UpdateTimeToLiveRequest updateTimeToLiveRequest() {
     return UpdateTimeToLiveRequest.builder()
         .tableName(tableConfiguration.tableName())

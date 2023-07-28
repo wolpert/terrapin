@@ -34,7 +34,7 @@ public interface KeyIdentifier extends OwnerIdentifier {
   /**
    * The id of the key. Unique to the group.
    *
-   * @return String.
+   * @return String. string
    */
   @JsonProperty("key")
   String key();

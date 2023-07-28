@@ -39,6 +39,7 @@ public class BoundStatementManager {
    * Default Constructor.
    *
    * @param preparedStatementMap for binding.
+   * @param factory              the factory
    */
   @Inject
   public BoundStatementManager(final Map<String, StatementBinder.Builder<?>> preparedStatementMap,
@@ -53,6 +54,7 @@ public class BoundStatementManager {
   /**
    * Binds the object to the prepared statement for execution.
    *
+   * @param <T>                    the type parameter
    * @param statementMapIdentifier for the lookup.
    * @param object                 to bind.
    * @return a statement that can be executed.

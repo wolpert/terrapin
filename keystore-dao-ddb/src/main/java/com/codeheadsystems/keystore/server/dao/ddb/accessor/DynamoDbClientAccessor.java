@@ -54,10 +54,25 @@ import software.amazon.awssdk.services.dynamodb.model.TransactionConflictExcepti
 @Singleton
 public class DynamoDbClientAccessor {
 
+  /**
+   * The constant DDB_ACCESSOR.
+   */
   public static final String DDB_ACCESSOR = "ddbAccessor.";
+  /**
+   * The constant PUT_ITEM_METRIC.
+   */
   public static final String PUT_ITEM_METRIC = DDB_ACCESSOR + "putItem";
+  /**
+   * The constant GET_ITEM_METRIC.
+   */
   public static final String GET_ITEM_METRIC = DDB_ACCESSOR + "getItem";
+  /**
+   * The constant DELETE_ITEM_METRIC.
+   */
   public static final String DELETE_ITEM_METRIC = DDB_ACCESSOR + "deleteItem";
+  /**
+   * The constant BATCH_WRITE_ITEM_METRIC.
+   */
   public static final String BATCH_WRITE_ITEM_METRIC = DDB_ACCESSOR + "batchWriteItem";
   private static final Logger LOGGER = LoggerFactory.getLogger(DynamoDbClientAccessor.class);
   private static final String QUERY_METRIC = DDB_ACCESSOR + "query";
@@ -74,10 +89,10 @@ public class DynamoDbClientAccessor {
   /**
    * Default constructor.
    *
-   * @param dynamoDbClient for aws access.
-   * @param metrics for reporting.
+   * @param dynamoDbClient      for aws access.
+   * @param metrics             for reporting.
    * @param batchWriteConverter converter for the batch.
-   * @param retry retry policy.
+   * @param retry               retry policy.
    */
   @Inject
   public DynamoDbClientAccessor(final DynamoDbClient dynamoDbClient,

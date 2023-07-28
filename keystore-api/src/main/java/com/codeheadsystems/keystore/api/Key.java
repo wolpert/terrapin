@@ -31,18 +31,43 @@ import org.immutables.value.Value;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public interface Key {
 
+  /**
+   * Owner string.
+   *
+   * @return the string
+   */
   @JsonProperty("owner")
   String owner();
 
+  /**
+   * Id string.
+   *
+   * @return the string
+   */
   @JsonProperty("id")
   String id();
 
+  /**
+   * Version long.
+   *
+   * @return the long
+   */
   @JsonProperty("version")
   Long version();
 
+  /**
+   * Status string.
+   *
+   * @return the string
+   */
   @JsonProperty("status")
   String status();
 
+  /**
+   * Key byte [ ].
+   *
+   * @return the byte [ ]
+   */
   @JsonProperty("key")
   byte[] key();
 
