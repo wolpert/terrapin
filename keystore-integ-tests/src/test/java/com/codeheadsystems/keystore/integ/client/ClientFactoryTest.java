@@ -43,7 +43,7 @@ import org.testcontainers.utility.DockerImageName;
 @ExtendWith(UniqueStringExtension.class)
 class ClientFactoryTest {
 
-  public static final String CASSANDRA_VERSION = "4.0.5";
+  public static final String CASSANDRA_VERSION = "4.1.3";
   public static final String KEYSTORE_CQL = "keystore.cql";
   private static ObjectMapper objectMapper;
   private static String connectionUrl;
