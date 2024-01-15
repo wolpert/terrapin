@@ -87,6 +87,7 @@ public class KeyConverterTest {
         .containsOnlyKeys(TABLE_CONFIGURATION.hashKey(),
             TABLE_CONFIGURATION.rangeKey(),
             KEY_VALUE,
+            KEY_AUX,
             ACTIVE,
             TYPE,
             CREATE,
@@ -108,6 +109,7 @@ public class KeyConverterTest {
         .containsOnlyKeys(TABLE_CONFIGURATION.hashKey(),
             TABLE_CONFIGURATION.rangeKey(),
             KEY_VALUE,
+            KEY_AUX,
             TYPE,
             ACTIVE,
             ACTIVE_HASH,
@@ -122,6 +124,7 @@ public class KeyConverterTest {
     builder.put(TABLE_CONFIGURATION.hashKey(), fromS(HASHKEY));
     builder.put(TABLE_CONFIGURATION.rangeKey(), fromS(RANGEKEY));
     builder.put(KEY_VALUE, fromB(SdkBytes.fromByteArray(new byte[]{0, 1, 2})));
+    builder.put(KEY_AUX, fromB(SdkBytes.fromByteArray(new byte[]{4, 5, 6})));
     builder.put(TYPE, fromS("type"));
     builder.put(ACTIVE, fromBool(true));
     builder.put(CREATE, fromN(Long.toString(100)));
@@ -146,6 +149,7 @@ public class KeyConverterTest {
     builder.put(TABLE_CONFIGURATION.hashKey(), fromS(HASHKEY));
     builder.put(TABLE_CONFIGURATION.rangeKey(), fromS(RANGEKEY));
     builder.put(KEY_VALUE, fromB(SdkBytes.fromByteArray(new byte[]{0, 1, 2})));
+    builder.put(KEY_AUX, fromB(SdkBytes.fromByteArray(new byte[]{4, 5, 6})));
     builder.put(TYPE, fromS("type"));
     builder.put(ACTIVE, fromBool(false));
     builder.put(CREATE, fromN(Long.toString(100)));
@@ -171,6 +175,7 @@ public class KeyConverterTest {
     builder.put(TABLE_CONFIGURATION.hashKey(), fromS(HASHKEY));
     builder.put(TABLE_CONFIGURATION.rangeKey(), fromS(RANGEKEY));
     builder.put(KEY_VALUE, fromB(SdkBytes.fromByteArray(new byte[]{0, 1, 2})));
+    builder.put(KEY_AUX, fromB(SdkBytes.fromByteArray(new byte[]{4, 5, 6})));
     builder.put(TYPE, fromS("type"));
     builder.put(ACTIVE, fromBool(true));
     builder.put(CREATE, fromN(Long.toString(100)));

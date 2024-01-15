@@ -30,6 +30,7 @@ class KeyTest extends BaseJacksonTest<Key> {
     return ImmutableKey.builder()
         .owner("owner")
         .id("id")
+        .aux(new byte[]{1, 2, 3})
         .version(2L)
         .status("status")
         .key(new byte[]{5, 6, 7})

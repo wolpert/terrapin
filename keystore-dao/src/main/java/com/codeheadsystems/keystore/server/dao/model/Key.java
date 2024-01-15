@@ -54,6 +54,14 @@ public interface Key {
   byte[] value();
 
   /**
+   * Used for de/encryption. Not protected. May be ignored.
+   *
+   * @return the aux bytes.
+   */
+  @JsonProperty("aux")
+  byte[] aux();
+
+  /**
    * Boolean if the key is active.
    *
    * @return boolean. boolean

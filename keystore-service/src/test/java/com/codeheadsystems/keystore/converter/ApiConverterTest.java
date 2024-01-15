@@ -40,6 +40,7 @@ class ApiConverterTest {
       .createDate(new Date())
       .type("AES")
       .value(BYTES)
+      .aux(BYTES)
       .build();
   private ApiConverter converter;
 

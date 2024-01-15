@@ -6,6 +6,7 @@
   },
   "type": "AES-GCM-SIV",
   "value": "AQIDAwMD",
+  "aux": "AQIDAwMD",
   "active": true,
   "createDate": 1656602894461,
   "updateDate": 1656602894461

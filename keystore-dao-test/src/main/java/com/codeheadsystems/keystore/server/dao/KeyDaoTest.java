@@ -407,11 +407,14 @@ public abstract class KeyDaoTest extends BaseMetricTest {
       final Key key = mapper.readValue(stream, Key.class);
       final byte[] value = new byte[32];
       random.nextBytes(value);
+      final byte[] aux = new byte[16];
+      random.nextBytes(aux);
       final KeyVersionIdentifier identifier = ImmutableKeyVersionIdentifier.copyOf(key.keyVersionIdentifier())
           .withVersion(version)
           .withOwner(owner);
       return ImmutableKey.copyOf(key)
           .withValue(value)
+          .withAux(aux)
           .withActive(active)
           .withKeyVersionIdentifier(identifier);
     } catch (IOException e) {

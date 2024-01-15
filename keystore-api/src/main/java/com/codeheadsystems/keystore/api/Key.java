@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import java.util.Optional;
 import org.immutables.value.Value;
 
 /**
@@ -62,6 +63,14 @@ public interface Key {
    */
   @JsonProperty("status")
   String status();
+
+  /**
+   * Used for de/encryption. Not protected. May be ignored
+   *
+   * @return the optional
+   */
+  @JsonProperty("aux")
+  byte[] aux();
 
   /**
    * Key byte [ ].

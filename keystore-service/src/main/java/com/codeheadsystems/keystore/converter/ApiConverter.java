@@ -98,6 +98,7 @@ public class ApiConverter {
         .id(identifier.key())
         .version(identifier.version())
         .key(daoKey.value())
+        .aux(daoKey.aux())
         .status(daoKey.active() ? ACTIVE : INACTIVE)
         .build();
   }

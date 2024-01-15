@@ -18,6 +18,7 @@ package com.codeheadsystems.keystore.manager;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -82,7 +83,7 @@ class KeyStoreAdminManagerTest {
         .hasFieldOrPropertyWithValue("owner", OWNER)
         .hasFieldOrPropertyWithValue("key", KEY_ID)
         .hasFieldOrPropertyWithValue("version", 1L);
-    verify(rng).random(byteCapture.capture());
+    verify(rng, times(2)).random(byteCapture.capture());
     verify(dataHelper).clear(byteCapture.capture());
   }
 

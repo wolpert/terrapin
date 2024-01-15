@@ -277,13 +277,13 @@ public class StatementModule {
                                              final TableConfiguration tableConfiguration) {
     final String baseInsert = """
         insert into %s.%s 
-          (owner, key_name, version, value, active, type, create_date, update_date)
-          values (?,?,?,?,?,?,?,?)""";
+          (owner, key_name, version, value, aux, active, type, create_date, update_date)
+          values (?,?,?,?,?,?,?,?,?)""";
     final String insert = String.format(baseInsert,
         tableConfiguration.keyspace(), tableConfiguration.keysTable());
     return StatementBinder.<Key>builder().with(insert).with((key) -> new Object[]{
         key.keyVersionIdentifier().owner(), key.keyVersionIdentifier().key(), key.keyVersionIdentifier().version(),
-        key.value(), key.active(), key.type(),
+        key.value(), key.aux(), key.active(), key.type(),
         timestampManager.fromDate(key.createDate()),
         key.updateDate().map(timestampManager::fromDate).orElse(null)
     });
@@ -304,13 +304,13 @@ public class StatementModule {
                                                    final TableConfiguration tableConfiguration) {
     final String baseInsert = """
         insert into %s.%s 
-          (owner, key_name, version, value, active, type, create_date, update_date)
-          values (?,?,?,?,?,?,?,?)""";
+          (owner, key_name, version, value, aux, active, type, create_date, update_date)
+          values (?,?,?,?,?,?,?,?,?)""";
     final String insert = String.format(baseInsert,
         tableConfiguration.keyspace(), tableConfiguration.activeKeysTable());
     return StatementBinder.<Key>builder().with(insert).with((key) -> new Object[]{
         key.keyVersionIdentifier().owner(), key.keyVersionIdentifier().key(), key.keyVersionIdentifier().version(),
-        key.value(), key.active(), key.type(),
+        key.value(), key.aux(), key.active(), key.type(),
         timestampManager.fromDate(key.createDate()),
         key.updateDate().map(timestampManager::fromDate).orElse(null)
     });

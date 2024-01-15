@@ -89,6 +89,7 @@ public class KeyConverter {
         .active(row.getBoolean(ACTIVE))
         .type(row.getString(TYPE))
         .value(row.get("value", ExtraTypeCodecs.BLOB_TO_ARRAY))
+        .aux(row.get("aux", ExtraTypeCodecs.BLOB_TO_ARRAY))
         .createDate(timestampManager.toDate(row, CREATE_DATE)
             .orElseThrow(() -> new IllegalArgumentException("CreateDate is null: " + row.getString(CREATE_DATE))))
         .updateDate(timestampManager.toDate(row, UPDATE_DATE))

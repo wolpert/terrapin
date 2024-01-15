@@ -64,6 +64,10 @@ public class KeyConverter {
    * The data that makes up the key itself; used for encryption/decryption.
    */
   public static final String KEY_VALUE = "key_value";
+  /**
+   * Aux data used for encryption/decryption.
+   */
+  public static final String KEY_AUX = "key_aux";
 
   /**
    * Is this key version active.
@@ -152,6 +156,7 @@ public class KeyConverter {
     builder.put(configuration.hashKey(), fromS(hashKey));
     builder.put(configuration.rangeKey(), fromS(rangeKey(identifier)));
     builder.put(KEY_VALUE, fromB(SdkBytes.fromByteArray(key.value())));
+    builder.put(KEY_AUX, fromB(SdkBytes.fromByteArray(key.aux())));
     builder.put(TYPE, fromS(key.type()));
     builder.put(ACTIVE, fromBool(key.active()));
     builder.put(CREATE, fromN(Long.toString(key.createDate().getTime())));
@@ -215,6 +220,7 @@ public class KeyConverter {
     final ImmutableKey.Builder builder = ImmutableKey.builder()
         .keyVersionIdentifier(versionIdentifierFrom(item))
         .value(item.get(KEY_VALUE).b().asByteArray())
+        .aux(item.get(KEY_AUX).b().asByteArray())
         .active(item.get(ACTIVE).bool())
         .type(item.get(TYPE).s())
         .createDate(new Date(Long.parseLong(item.get(CREATE).n())));

@@ -45,6 +45,10 @@ public class KeyStoreAdminManager {
    * The constant KEY_SIZE.
    */
   public static final int KEY_SIZE = 32;
+  /**
+   * The constant AUX_SIZE.
+   */
+  public static final int AUX_SIZE = 16;
   private static final Logger LOGGER = LoggerFactory.getLogger(KeyStoreAdminManager.class);
   private final KeyDao keyDao;
   private final Rng rng;
@@ -85,12 +89,15 @@ public class KeyStoreAdminManager {
         .owner(identifier.owner()).key(identifier.key()).version(1L).build();
     final byte[] secret = new byte[KEY_SIZE];
     rng.random(secret);
+    final byte[] aux = new byte[AUX_SIZE];
+    rng.random(aux);
     final Key key = ImmutableKey.builder()
         .keyVersionIdentifier(newKeyIdentifier)
         .type("256")
         .active(true)
         .createDate(new Date())
         .value(secret)
+        .aux(aux)
         .build();
     keyDao.store(key);
     dataHelper.clear(secret); // secret is copied to make the key.

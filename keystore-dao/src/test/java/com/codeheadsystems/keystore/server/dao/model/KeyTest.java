@@ -39,6 +39,7 @@ public class KeyTest extends BaseJacksonTest<Key> {
             .version(2L)
             .build())
         .value((byte) 1, (byte) 2, (byte) 3)
+        .aux((byte) 4, (byte) 5, (byte) 6)
         .build();
   }
 }
