@@ -20,9 +20,9 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.0.1'
-        classpath 'com.google.gms:google-services:4.3.3'
-        classpath 'io.github.gradle-nexus:publish-plugin:1.1.0'
+        classpath 'com.android.tools.build:gradle:8.13.0'
+        classpath 'com.google.gms:google-services:4.4.3'
+        classpath 'io.github.gradle-nexus:publish-plugin:2.0.0'
     }
 }
 
@@ -35,9 +35,9 @@ nexusPublishing {
 // gradle :<project>:bintrayUpload
 
 ext {
-    codeheadTestVersion = '1.0.3'
-    codeheadMetricsVersion = '1.0.1'
-    codeheadDatabaseTestVersion = '1.0.1'
+    codeheadTestVersion = '3.0.5'
+    codeheadMetricsVersion = '3.0.5'
+    codeheadDatabaseTestVersion = '3.0.5'
     javaxInjectVersion = '1'
 }
 
