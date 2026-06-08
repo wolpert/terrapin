@@ -35,9 +35,9 @@ nexusPublishing {
 // gradle :<project>:bintrayUpload
 
 ext {
-    codeheadTestVersion = '3.1.0'
-    codeheadMetricsVersion = '3.1.0'
-    codeheadDatabaseTestVersion = '3.1.0'
+    codeheadTestVersion = '3.1.1'
+    codeheadMetricsVersion = '3.1.1'
+    codeheadDatabaseTestVersion = '3.1.1'
     javaxInjectVersion = '1'
 }
 
